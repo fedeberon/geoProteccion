@@ -53,7 +53,7 @@ const SocketController = () => {
         });
       }
       connectSocket();
-    });x
+    });
   }, []);
 
   return null;

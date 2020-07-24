@@ -8,5 +8,14 @@ module.exports = {
       webpackConfig.resolve.plugins.splice(scopePluginIndex, 1);
       return webpackConfig;
     }
+  },
+  devServer: {
+    proxy: {
+      '/api': 'http://164.68.101.162:8082',
+      '/api/socket': {
+        target: 'ws://164.68.101.162:8082',
+        secure: true
+      }
+    }
   }
 };
