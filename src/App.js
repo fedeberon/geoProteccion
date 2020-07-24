@@ -1,10 +1,10 @@
 import React from 'react';
 import { Switch, Route } from 'react-router-dom'
 import CssBaseline from '@material-ui/core/CssBaseline';
-import MainPage from './MainPage';
-import LoginPage from './LoginPage';
-import RouteReportPage from './RouteReportPage';
-import DevicePage from './DevicePage';
+import MainPage from './containers/MainPage';
+import LoginPage from './containers/LoginPage';
+import RouteReportPage from './containers/RouteReportPage';
+import DevicePage from './containers/DevicePage';
 
 const App = () => {
   return (
