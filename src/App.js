@@ -1,3 +1,4 @@
+import { hot } from 'react-hot-loader/root'
 import React from 'react';
 import { Switch, Route } from 'react-router-dom'
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -20,4 +21,4 @@ const App = () => {
   );
 }
 
-export default App;
+export default hot(App);
