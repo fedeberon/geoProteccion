@@ -9,6 +9,7 @@ import { makeStyles } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
 
 import t from '../common/localization';
+import * as service from '../utils/serviceManager';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -63,17 +64,17 @@ const LoginPage = () => {
     // TODO: Implement registration
   }
 
-  const handleLogin = (event) => {
+  const handleLogin = async (event) => {
     event.preventDefault();
-    fetch('/api/session', { method: 'POST', body: new URLSearchParams(`email=${email}&password=${password}`) }).then(response => {
-      if (response.ok) {
-        dispatch(sessionActions.authenticated(true));
-        history.push('/');
-      } else {
-        setFailed(true);
-        setPassword('');
-      }
-    });
+    const response = await service.getSession(email, password);
+
+    if (response.ok) {
+      dispatch(sessionActions.authenticated(true));
+      history.push('/');
+    } else {
+      setFailed(true);
+      setPassword('');
+    }
   }
 
   return (
