@@ -19,7 +19,9 @@ import ListItemText from '@material-ui/core/ListItemText';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import BarChartIcon from '@material-ui/icons/BarChart';
 import SettingsIcon from '@material-ui/icons/Settings';
+
 import t from '../common/localization';
+import * as service from '../utils/serviceManager';
 
 const useStyles = makeStyles(theme => ({
   flex: {
@@ -39,6 +41,7 @@ const useStyles = makeStyles(theme => ({
 
 const MainToolbar = () => {
   const dispatch = useDispatch();
+  
   const [drawer, setDrawer] = useState(false);
   const classes = useStyles();
   const history = useHistory();
@@ -46,13 +49,22 @@ const MainToolbar = () => {
   const openDrawer = () => { setDrawer(true) }
   const closeDrawer = () => { setDrawer(false) }
 
-  const handleLogout = () => {
-    fetch('/api/session', { method: 'DELETE' }).then(response => {
-      if (response.ok) {
-        dispatch(sessionActions.authenticated(false));
-        history.push('/login');
-      }
-    })
+  // const handleLogout = () => {
+  //   fetch('/api/session', { method: 'DELETE' }).then(response => {
+  //     if (response.ok) {
+  //       dispatch(sessionActions.authenticated(false));
+  //       history.push('/login');
+  //     }
+  //   })
+  // }
+
+  const handleLogout = async () => {
+    const response = await service.deleteSession();
+    
+    if (response.ok) {
+      dispatch(sessionActions.authenticated(false));
+      history.push('/login');
+    }
   }
 
   return (

@@ -6,13 +6,24 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 
+import * as service from '../utils/serviceManager';
+
+// const RemoveDialog = (props) => {
+//   const handleRemove = () => {
+//     fetch(`/api/devices/${props.deviceId}`, { method: 'DELETE' }).then(response => {
+//       if (response.ok) {
+//         props.onResult(true);
+//       }
+//     });
+//   }
+
 const RemoveDialog = (props) => {
-  const handleRemove = () => {
-    fetch(`/api/devices/${props.deviceId}`, { method: 'DELETE' }).then(response => {
-      if (response.ok) {
-        props.onResult(true);
-      }
-    });
+  const handleRemove = async () => {
+    const response = await service.deleteSession(props.deviceId);
+
+    if (response.ok) {
+      props.onResult(true);
+    }
   }
 
   return (

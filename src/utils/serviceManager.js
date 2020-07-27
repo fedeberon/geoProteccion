@@ -4,6 +4,20 @@ const getSession = (email, password) => {
     .then(response => response);
 }
 
+const deleteSession = () => {
+  return fetch('/api/session', { method: 'DELETE' })
+    .catch(function (error) { console.log('deleteSession error:', error)})
+    .then(response => response);
+}
+
+const deleteDialog = (deviceId) => {
+  return fetch(`/api/devices/${deviceId}`, { method: 'DELETE' })
+  .catch(function (error) { console.log('deleteDialog error:', error)})
+  .then(response => response);
+}
+
 export {
   getSession,
+  deleteSession,
+
 };
