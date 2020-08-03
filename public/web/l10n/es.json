@@ -428,5 +428,10 @@
     "categoryVan": "Van",
     "categoryScooter": "Moto",
     "maintenanceStart": "Iniciar",
-    "maintenancePeriod": "Período"
+    "maintenancePeriod": "Período",
+    "currentAddress": "Dirección Actual",
+    "currentStatus": "Estado Actual",
+    "circuitBreaker": "Corta Corriente",
+    "mileage": "Kilometraje",
+    "activateCircuitBreaker": "Activar Corta Corriente"
 }

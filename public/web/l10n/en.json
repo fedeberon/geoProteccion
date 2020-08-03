@@ -429,5 +429,10 @@
     "categoryVan": "Van",
     "categoryScooter": "Scooter",
     "maintenanceStart": "Start",
-    "maintenancePeriod": "Period"
+    "maintenancePeriod": "Period",
+    "currentAddress": "Current Address",
+    "currentStatus": "Current Status",
+    "circuitBreaker": "Circut Breaker",
+    "mileage": "Mileage",
+    "activateCircuitBreaker": "Activate Circuit Breaker"
 }

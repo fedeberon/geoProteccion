@@ -19,7 +19,11 @@ import ListItemText from '@material-ui/core/ListItemText';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import BarChartIcon from '@material-ui/icons/BarChart';
 import SettingsIcon from '@material-ui/icons/Settings';
+
 import t from '../common/localization';
+import PopupInfo from '../components/PopupInfo';
+import Table  from '../components/Tabla';
+import Tabla from '../components/Tabla';
 
 const useStyles = makeStyles(theme => ({
   flex: {
@@ -42,6 +46,8 @@ const MainToolbar = () => {
   const [drawer, setDrawer] = useState(false);
   const classes = useStyles();
   const history = useHistory();
+  const [ openPopup, setOpenPopup ] = useState(false);
+  const [ openTable, setOpenTable ] = useState (false); 
 
   const openDrawer = () => { setDrawer(true) }
   const closeDrawer = () => { setDrawer(false) }
@@ -55,6 +61,13 @@ const MainToolbar = () => {
     })
   }
 
+  const handleDialog = () => {
+    setOpenPopup(!openPopup);
+  }
+
+  const handleTable = () => {
+    setOpenTable(!openTable);
+  }
   return (
     <>
       <AppBar position="static" className={classes.appBar}>
@@ -68,7 +81,9 @@ const MainToolbar = () => {
           <Typography variant="h6" color="inherit" className={classes.flex}>
             Traccar
         </Typography>
-          <Button color="inherit" onClick={handleLogout}>{t('loginLogout')}</Button>
+          <Button onClick={handleDialog}>Apretame ;)</Button>
+          <Button onClick={handleTable}>Tablita</Button>
+          <Button color="inherit" onClick={handleLogout}>{t('loginLogout')}</Button> 
         </Toolbar>
       </AppBar>
       <Drawer open={drawer} onClose={closeDrawer}>
@@ -155,6 +170,8 @@ const MainToolbar = () => {
           </List>
         </div>
       </Drawer>
+      <PopupInfo open={openPopup} handleDialog={handleDialog}></PopupInfo>
+      <Tabla open={openTable} handleTable={handleTable}></Tabla>
     </>
   );
 }
