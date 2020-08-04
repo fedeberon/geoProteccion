@@ -9,6 +9,7 @@ import { makeStyles } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
 
 import t from '../common/localization';
+
 import * as service from '../utils/serviceManager';
 
 const useStyles = makeStyles(theme => ({

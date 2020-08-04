@@ -19,5 +19,5 @@ const deleteDialog = (deviceId) => {
 export {
   getSession,
   deleteSession,
-
+  deleteDialog,
 };

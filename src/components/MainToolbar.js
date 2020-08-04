@@ -21,6 +21,7 @@ import BarChartIcon from '@material-ui/icons/BarChart';
 import SettingsIcon from '@material-ui/icons/Settings';
 
 import t from '../common/localization';
+
 import * as service from '../utils/serviceManager';
 
 const useStyles = makeStyles(theme => ({

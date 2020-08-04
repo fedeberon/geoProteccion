@@ -1,4 +1,3 @@
-import t from '../common/localization'
 import React from 'react';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
@@ -6,20 +5,22 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 
+import t from '../common/localization'
+
 import * as service from '../utils/serviceManager';
 
-// const RemoveDialog = (props) => {
-//   const handleRemove = () => {
-//     fetch(`/api/devices/${props.deviceId}`, { method: 'DELETE' }).then(response => {
-//       if (response.ok) {
-//         props.onResult(true);
-//       }
-//     });
-//   }
+//  const RemoveDialog = (props) => {
+//    const handleRemove = () => {
+//      fetch(`/api/devices/${props.deviceId}`, { method: 'DELETE' }).then(response => {
+//        if (response.ok) {
+//          props.onResult(true);
+//        }
+//      });
+//    }
 
 const RemoveDialog = (props) => {
   const handleRemove = async () => {
-    const response = await service.deleteSession(props.deviceId);
+    const response = await service.deleteDialog(props.deviceId);
 
     if (response.ok) {
       props.onResult(true);
