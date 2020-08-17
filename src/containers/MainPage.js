@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect , useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { sessionActions } from '../store';
 import { useHistory } from 'react-router-dom';
@@ -6,11 +6,14 @@ import { isWidthUp, makeStyles, withWidth } from '@material-ui/core';
 import Drawer from '@material-ui/core/Drawer';
 import ContainerDimensions from 'react-container-dimensions';
 import LinearProgress from '@material-ui/core/LinearProgress';
+import Button from '@material-ui/core/Button';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
 
 import DeviceList from '../components/DeviceList';
 import MainMap from '../components/MainMap';
-import MainToolbar from '../components/MainToolbar';
 import SocketController from '../components/SocketController';
+import MyMenuComponet from '../components/MyMenuComponet';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -28,7 +31,7 @@ const useStyles = makeStyles(theme => ({
     }
   },
   drawerPaper: {
-    position: 'relative',
+    position: 'right',
     [theme.breakpoints.up('sm')]: {
       width: 350
     },
@@ -47,6 +50,9 @@ const MainPage = ({ width }) => {
   const classes = useStyles();
   const history = useHistory();
 
+  
+
+  
   useEffect(() => {
     if (!authenticated) {
       fetch('/api/session').then(response => {
@@ -62,20 +68,21 @@ const MainPage = ({ width }) => {
   return !authenticated ? (<LinearProgress />) : (
     <div className={classes.root}>
       <SocketController />
-      <MainToolbar />
       <div className={classes.content}>
         <Drawer
-          anchor={isWidthUp('sm', width) ? "left" : "bottom"}
+          anchor='right'
           variant="permanent"
           classes={{ paper: classes.drawerPaper }}>
           <DeviceList />
         </Drawer>
         <div className={classes.mapContainer}>
+        <MyMenuComponet/>
           <ContainerDimensions>
             <MainMap />
           </ContainerDimensions>
         </div>
       </div>
+
     </div>
   );
 }

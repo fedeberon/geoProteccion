@@ -26,7 +26,8 @@ const useStyles = makeStyles(theme => ({
   list: {
       maxHeight: '100%',
       overflow: 'auto',
-  },
+      
+  }, 
   fab: {
     position: 'absolute',
     bottom: theme.spacing(2),
@@ -80,7 +81,7 @@ const DeviceList = () => {
         {devices.map((device, index, list) => (
           <Fragment key={device.id}>
             <ListItem button key={device.id} onClick={() => dispatch(devicesActions.select(device))}>
-              <ListItemAvatar>
+            <ListItemAvatar>
                 <Avatar>
                   <LocationOnIcon />
                 </Avatar>

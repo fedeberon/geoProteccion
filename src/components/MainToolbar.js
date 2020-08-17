@@ -19,7 +19,10 @@ import ListItemText from '@material-ui/core/ListItemText';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import BarChartIcon from '@material-ui/icons/BarChart';
 import SettingsIcon from '@material-ui/icons/Settings';
+
 import t from '../common/localization';
+import PopupInfo from '../components/PopupInfo';
+import Tabla from '../components/Tabla';
 
 const useStyles = makeStyles(theme => ({
   flex: {
@@ -28,6 +31,7 @@ const useStyles = makeStyles(theme => ({
   appBar: {
     zIndex: theme.zIndex.drawer + 1,
   },
+
   list: {
     width: 250
   },
@@ -39,9 +43,11 @@ const useStyles = makeStyles(theme => ({
 
 const MainToolbar = () => {
   const dispatch = useDispatch();
-  const [drawer, setDrawer] = useState(false);
+  const [drawer, setDrawer] = useState(true);
   const classes = useStyles();
   const history = useHistory();
+  const [ openPopup, setOpenPopup ] = useState(false);
+  const [ openTable, setOpenTable ] = useState (false); 
 
   const openDrawer = () => { setDrawer(true) }
   const closeDrawer = () => { setDrawer(false) }
@@ -55,6 +61,13 @@ const MainToolbar = () => {
     })
   }
 
+  const handleDialog = () => {
+    setOpenPopup(!openPopup);
+  }
+
+  const handleTable = () => {
+    setOpenTable(!openTable);
+  }
   return (
     <>
       <AppBar position="static" className={classes.appBar}>
@@ -68,11 +81,12 @@ const MainToolbar = () => {
           <Typography variant="h6" color="inherit" className={classes.flex}>
             Traccar
         </Typography>
-          <Button color="inherit" onClick={handleLogout}>{t('loginLogout')}</Button>
+          <Button onClick={handleDialog}>Apretame ;)</Button>
+          <Button onClick={handleTable}>Tablita</Button>
         </Toolbar>
       </AppBar>
       <Drawer open={drawer} onClose={closeDrawer}>
-        <div
+        <div className={classes.zIndezModal}
           tabIndex={0}
           className={classes.list}
           role="button"
@@ -83,78 +97,40 @@ const MainToolbar = () => {
               <ListItemIcon>
                 <DashboardIcon />
               </ListItemIcon>
-              <ListItemText primary={t('mapTitle')} />
+              <ListItemText primary={t('mapTitle')} />  
             </ListItem>
           </List>
-          <Divider />
-          <List subheader={<ListSubheader>
-            {t('reportTitle')}
-          </ListSubheader>}>
-            <ListItem button disabled onClick={() => { history.push('/reports/route') }}>
-              <ListItemIcon>
-                <BarChartIcon />
-              </ListItemIcon>
-              <ListItemText primary={t('reportRoute')} />
-            </ListItem>
+          <List>
             <ListItem button disabled>
-              <ListItemIcon>
-                <BarChartIcon />
-              </ListItemIcon>
-              <ListItemText primary={t('reportEvents')} />
-            </ListItem>
-            <ListItem button disabled>
-              <ListItemIcon>
-                <BarChartIcon />
-              </ListItemIcon>
-              <ListItemText primary={t('reportTrips')} />
-            </ListItem>
-            <ListItem button disabled>
-              <ListItemIcon>
-                <BarChartIcon />
-              </ListItemIcon>
-              <ListItemText primary={t('reportStops')} />
-            </ListItem>
-            <ListItem button disabled>
-              <ListItemIcon>
-                <BarChartIcon />
-              </ListItemIcon>
-              <ListItemText primary={t('reportSummary')} />
-            </ListItem>
-            <ListItem button disabled>
-              <ListItemIcon>
-                <BarChartIcon />
-              </ListItemIcon>
-              <ListItemText primary={t('reportChart')} />
-            </ListItem>
-          </List>
-          <Divider />
-          <List
-            subheader={
-              <ListSubheader>
-                {t('settingsTitle')}
-              </ListSubheader>
-            }>
-            <ListItem button disabled>
-              <ListItemIcon>
-                <SettingsIcon />
-              </ListItemIcon>
               <ListItemText primary={t('settingsUser')} />
             </ListItem>
-            <ListItem button disabled>
-              <ListItemIcon>
-                <SettingsIcon />
-              </ListItemIcon>
-              <ListItemText primary={t('settingsServer')} />
+            <ListItem button>
+              <ListItemText primary={t('sharedDevice')} />
             </ListItem>
-            <ListItem button disabled>
-              <ListItemIcon>
-                <SettingsIcon />
-              </ListItemIcon>
+            <ListItem button>
+              <ListItemText primary={t('settingsGroups')} />
+            </ListItem>
+            <ListItem button>
+              <ListItemText primary={t('geozones')} />
+            </ListItem>
+            <ListItem button>
               <ListItemText primary={t('sharedNotifications')} />
+            </ListItem>
+            <ListItem button>
+              <ListItemText primary={t('sharedCalendars')} />
+            </ListItem>
+            <ListItem button>
+              <ListItemText primary={t('sharedMaintenance')} />
+            </ListItem>
+            <Divider />
+            <ListItem>
+              <Button color="inherit" onClick={handleLogout}>{t('loginLogout')}</Button>
             </ListItem>
           </List>
         </div>
       </Drawer>
+      <PopupInfo open={openPopup} handleDialog={handleDialog}></PopupInfo>
+      <Tabla open={openTable} handleTable={handleTable}></Tabla>
     </>
   );
 }
