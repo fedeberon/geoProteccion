@@ -17,14 +17,27 @@ const MainMap = () => {
     }
     return null;
   });
-  
+
+  let states = {
+
+    "check_coutries": {
+      "name": "country=",
+      "values": []
+    },
+    "check_species": {
+      "name": "species=",
+      "values": []
+    },
+
+  }
+
   const createFeature = (state, position) => {
     const device = state.devices.items[position.deviceId] || null;
     return {
       name: device ? device.name : '',
     }
   };
-  
+
   const positions = useSelector(state => ({
     type: 'FeatureCollection',
     features: Object.values(state.positions.items).map(position => ({
@@ -36,7 +49,7 @@ const MainMap = () => {
       properties: createFeature(state, position),
     })),
   }));
-  
+
   useLayoutEffect(() => {
     const currentEl = containerEl.current;
     currentEl.appendChild(mapManager.element);

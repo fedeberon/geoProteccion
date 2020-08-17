@@ -20,6 +20,7 @@ import AddIcon from '@material-ui/icons/Add';
 import { devicesActions } from '../store';
 import t from '../common/localization';
 import RemoveDialog from './RemoveDialog';
+import SuccessSnackbar from "./SuccessSnackbar";
 
 const useStyles = makeStyles(theme => ({
   list: {
@@ -98,6 +99,7 @@ const DeviceList = () => {
       <Fab size="medium" color="primary" className={classes.fab} onClick={handleAdd}>
         <AddIcon />
       </Fab>
+
       <Menu id="device-menu" anchorEl={menuAnchorEl} keepMounted open={Boolean(menuAnchorEl)} onClose={handleMenuClose}>
         <MenuItem onClick={handleMenuEdit}>{t('sharedEdit')}</MenuItem>
         <MenuItem onClick={handleMenuRemove}>{t('sharedRemove')}</MenuItem>

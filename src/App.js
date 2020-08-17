@@ -6,11 +6,13 @@ import MainPage from './containers/MainPage';
 import LoginPage from './containers/LoginPage';
 import RouteReportPage from './containers/RouteReportPage';
 import DevicePage from './containers/DevicePage';
+import SuccessSnackbar from "./components/SuccessSnackbar";
 
 const App = () => {
   return (
     <>
       <CssBaseline />
+      <SuccessSnackbar />
       <Switch>
         <Route exact path='/' component={MainPage} />
         <Route exact path='/login' component={LoginPage} />

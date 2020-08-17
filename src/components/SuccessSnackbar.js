@@ -1,46 +1,44 @@
-import React from 'react';
-import Button from '@material-ui/core/Button';
-import Snackbar from '@material-ui/core/Snackbar';
-import Slide from '@material-ui/core/Slide';
+import {useDispatch, useSelector} from "react-redux";
+import Snackbar from "@material-ui/core/Snackbar";
+import React from "react";
+import {notificationActions} from "../store";
+import Button from "@material-ui/core/Button";
+import Slide from "@material-ui/core/Slide";
 
-function TransitionLeft(props) {
-  return <Slide {...props} direction="left" />;
-}
+export default function SuccessSnackbar() {
+  const dispatch = useDispatch();
+  const { successSnackbarMessage, successSnackbarOpen } = useSelector(state => state.notification);
 
-function TransitionUp(props) {
-  return <Slide {...props} direction="up" />;
-}
+  const Transition = React.forwardRef(function Transition(props, ref) {
+    return <Slide direction="right" ref={ref} {...props} />;
+  });
 
-function TransitionRight(props) {
-  return <Slide {...props} direction="right" />;
-}
 
-function TransitionDown(props) {
-  return <Slide {...props} direction="down" />;
-}
-
-export default function NotificationComponent(){
-  const [open, setOpen] = React.useState(true);
-  const [transition, setTransition] = React.useState(undefined);
-
-  const handleClick = (Transition) => () => {
-    setTransition(() => Transition);
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
+  function handleClose() {
+    dispatch(notificationActions.apply({type: 'SNACKBAR_CLEAR'}));
+  }
 
   return (
-    <div>
-      <Snackbar
-        open={open}
-        onClose={handleClose}
-        TransitionComponent={TransitionDown}
-        message="I love snacks"
-        key={transition ? transition.name : ''}
-      />
-    </div>
+    <Snackbar
+      anchorOrigin={{
+        vertical: "bottom",
+        horizontal: "right"
+      }}
+      open={successSnackbarOpen}
+      autoHideDuration={4000}
+      onClose={handleClose}
+      aria-describedby="client-snackbar"
+      TransitionComponent={Transition}
+      message={
+        <span id="client-snackbar">
+          {successSnackbarMessage}
+        </span>
+      }
+      action={
+        <Button onClick={handleClose} color="inherit" size="small">
+          Ok
+        </Button>
+      }
+    />
   );
 }

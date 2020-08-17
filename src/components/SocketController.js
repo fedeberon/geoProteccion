@@ -1,24 +1,6 @@
-import { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
-import { connect } from 'react-redux';
-import { positionsActions, devicesActions } from '../store';
-
-const displayNotifications = events => {
-  if ("Notification" in window) {
-    if (Notification.permission === "granted") {
-      for (const event of events) {
-        const notification = new Notification(`Event: ${event.type}`);
-        setTimeout(notification.close.bind(notification), 4 * 1000);
-      }
-    } else if (Notification.permission !== "denied") {
-      Notification.requestPermission(permission => {
-        if (permission === "granted") {
-          displayNotifications(events);
-        }
-      });
-    }
-  }
-};
+import React, {useEffect} from 'react';
+import {connect, useDispatch} from 'react-redux';
+import {devicesActions, notificationActions, positionsActions} from '../store';
 
 const SocketController = () => {
   const dispatch = useDispatch();
@@ -32,6 +14,7 @@ const SocketController = () => {
     };
 
     socket.onmessage = (event) => {
+      debugger;
       const data = JSON.parse(event.data);
       if (data.devices) {
         dispatch(devicesActions.update(data.devices));
@@ -40,7 +23,7 @@ const SocketController = () => {
         dispatch(positionsActions.update(data.positions));
       }
       if (data.events) {
-        displayNotifications(data.events);
+        dispatch(notificationActions.apply({type: 'SNACKBAR_SUCCESS', message: data.events}));
       }
     };
   }
