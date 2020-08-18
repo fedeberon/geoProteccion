@@ -14,7 +14,6 @@ const SocketController = () => {
     };
 
     socket.onmessage = (event) => {
-      debugger;
       const data = JSON.parse(event.data);
       if (data.devices) {
         dispatch(devicesActions.update(data.devices));

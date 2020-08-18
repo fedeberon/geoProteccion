@@ -33,12 +33,16 @@ const useStyles = makeStyles(theme => ({
   },
 
   list: {
-    width: 250
+    width: 150,
   },
   menuButton: {
     marginLeft: -12,
     marginRight: 20,
   },
+  menu: {
+    margin: 30
+  }
+
 }));
 
 const MainToolbar = () => {
@@ -47,7 +51,7 @@ const MainToolbar = () => {
   const classes = useStyles();
   const history = useHistory();
   const [ openPopup, setOpenPopup ] = useState(false);
-  const [ openTable, setOpenTable ] = useState (false); 
+  const [ openTable, setOpenTable ] = useState (false);
 
   const openDrawer = () => { setDrawer(true) }
   const closeDrawer = () => { setDrawer(false) }
@@ -70,7 +74,7 @@ const MainToolbar = () => {
   }
   return (
     <>
-      <AppBar position="static" className={classes.appBar}>
+    {/*  <AppBar position="static" className={classes.appBar}>
         <Toolbar>
           <IconButton
             className={classes.menuButton}
@@ -84,8 +88,8 @@ const MainToolbar = () => {
           <Button onClick={handleDialog}>Apretame ;)</Button>
           <Button onClick={handleTable}>Tablita</Button>
         </Toolbar>
-      </AppBar>
-      <Drawer open={drawer} onClose={closeDrawer}>
+      </AppBar>*/}
+      <Drawer open={drawer} onClose={closeDrawer} variant={"permanent"} >
         <div className={classes.zIndezModal}
           tabIndex={0}
           className={classes.list}
@@ -97,7 +101,7 @@ const MainToolbar = () => {
               <ListItemIcon>
                 <DashboardIcon />
               </ListItemIcon>
-              <ListItemText primary={t('mapTitle')} />  
+              <ListItemText primary={t('mapTitle')} />
             </ListItem>
           </List>
           <List>
