@@ -4,6 +4,13 @@ const getSession = (email, password) => {
     .then(response => response);
 }
 
+const getPositions = (id) => {
+  return fetch(`/api/positions?${id}`, { method: 'GET'})
+  .catch(function (error) { console.log('getPositions error:', error)})
+  .then(response => response);
+}
+
 export {
   getSession,
+  getPositions,
 };

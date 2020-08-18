@@ -4,7 +4,8 @@ const { reducer, actions } = createSlice({
   name: 'devices',
   initialState: {
     items: {},
-    selectedId: null
+    selectedId: null,
+    device: null,
   },
   reducers: {
     update(state, action) {
@@ -16,6 +17,9 @@ const { reducer, actions } = createSlice({
     remove(state, action) {
       delete state.items[action.payload];
     },
+    get(state, action) {
+      state.device = state.items[state.selectedId];
+    }
   }
 });
 

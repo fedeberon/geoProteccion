@@ -1,147 +1,139 @@
-import React, { useState } from 'react';
-import Button from '@material-ui/core/Button';
-import Dialog from '@material-ui/core/Dialog';
-import { palette } from '@material-ui/system';
-import Typography from '@material-ui/core/Typography'
+import React, {useEffect, useState} from 'react';
+import {useDispatch, useSelector} from 'react-redux'
+import {devicesActions} from '../store'
+
+import { makeStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
-import ListSubheader from '@material-ui/core/ListSubheader';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
+import Dialog from '@material-ui/core/Dialog';
+import Button from '@material-ui/core/Button';
+import Typography from '@material-ui/core/Typography';
+import { withStyles } from "@material-ui/core/styles";
+
 import RoomIcon from '@material-ui/icons/Room';
 import TrendingUpIcon from '@material-ui/icons/TrendingUp';
 import SpeedIcon from '@material-ui/icons/Speed';
-import OfflineBoltOutlinedIcon from '@material-ui/icons/OfflineBoltOutlined';
-import NavigationOutlinedIcon from '@material-ui/icons/NavigationOutlined';
-import {makeStyles} from '@material-ui/core';
+import OfflineBoltIcon from '@material-ui/icons/OfflineBolt';
+import NavigationIcon from '@material-ui/icons/Navigation';
 
 import t from '../common/localization';
 
-
-const useStyles = makeStyles(theme => ({
-  popupBackground: {
-    background: 'black',
-  },
-  textColor:{
-    color:'white',
-  },
-  subTextColor:{
-    color:'gray',
-  },
-  display:{
-    display: 'inline-table',
-  },
-  align:{
-    textAlign:'left',
-  },
-  overflowHidden: {
-    overflow: 'hidden',
-  },
-  textSize: {
-    fontSize: '50px',
-    //MuiTypography : 'disable',
-  }
-}));
-
 const PopupInfo = (props) => {
-  //esto es texto que figura arriba del popup
-  const [ idAuto, setidAuto ] = useState('LFPX13');
-  
-  //esto es texto del tipo de auto
-  const [ type, setType ] = useState('Berlingo');
-  
-  //esto es año del modelo de auto
-  const [ model, setModel ] = useState('2019');
+  const useStyles = makeStyles((theme) => ({
+    root: {
+      width: '100%',
+      maxWidth: 360,
+      color: '#ffffff !important',
+      backgroundColor: '#1B1B1B',
+      overflow: 'hidden',
+    },
+    nested: {
+      paddingLeft: theme.spacing(4),
+    },
+    title:{
+      textAlign: 'left',
+      fontSize: '30 px',
+      textTransform: 'uppercase',
+    },
+    subtitle:{
+      textAlign: 'left',
+      fontSize: '20 px',
+    },
+    topStyle: {
+      position: 'relative',
+      marginLeft: '30%',
+    },
+    style: {
+      position: 'relative',
+      marginLeft: '15%',
+      textAlign: 'center',
+    },
+    iconColor: {
+      color: '#3f51b5',
+    },
+  }));
 
-  //esto es marca del auto
-  const [ brand, setBrand ] = useState('Citroen');
+  const dispatch = useDispatch();
+  const {device, setDevice} = useState(null);
+  useEffect(() => {
+    const x = dispatch(devicesActions.get());
+      this.setDevice(x);
+  }, []);
 
-  //esto es marca de empresa
-  const [ company, setCompany ] = useState('Cable Nielsen');
-
-  //esto es esto estado
-  const [ status, setStatus ] = useState('Conectado');
-
-  //esto es tiempo de conectado
-  const [ time, setTime ] = useState('50');
-
-  //esto es la unidad de medida del tiempo transcurrido
-  const [ timeUnit, setTimeUnit ] = useState('minutos');
- 
-
+  const WhiteTextListItemText = withStyles({
+    root: {
+      color: "#FFFFFF"
+    }
+  })(ListItemText);
 
   const classes = useStyles();
-
-
+  const devices = useSelector(state => (state.positions.deviceSelected));
   return (
-    <div>
-      <Dialog open={props.open} onClose={props.handleDialog}>
-        <List componemt="nav" className={`${classes.popupBackground} ${classes.overflowHidden}`} >
-        <ListSubheader component="div" id="nested-list-subheader">
-            <Typography align='center' className={classes.textColor}>
-              <p><b>{idAuto}</b> ({idAuto} - {type})</p>
-              <p className={classes.subTextColor}>{brand} {type} {model}</p>
-              <p className={classes.subTextColor}>{company}</p>
-              <p className={classes.subTextColor}>{status} .hace {time} {timeUnit}</p>
-            </Typography>   
-        </ListSubheader>
+    <Dialog open={props.open} onClose={props.handleDialog}> 
+      <div className={classes.root}>
+        <List component="nav">
+          <div className={classes.topStyle}>
+            <Typography color="#fff" className={classes.title}>
+              name
+            </Typography>
+            <Typography className={classes.subtitle}>
+              model
+            </Typography>
+            <Typography className={classes.subtitle}>
+              type
+            </Typography>
+            <Typography className={classes.subtitle}>
+              status
+            </Typography>
+          </div>
+
           <ListItem>
-            <ListItemIcon>
-              <RoomIcon color="primary"/>
+            <ListItemIcon className={classes.iconColor}>
+              <RoomIcon />
             </ListItemIcon>
-            <ListItem className={`${classes.display}`}>
-              <ListItemText primary={t('currentAddress').toUpperCase()} className={`${classes.textColor} ${classes.textSize}`}/>
-              <ListItemText primary="variable" className={classes.textColor}/>
-            </ListItem>
-          </ListItem>  
+            <ListItemText primary={t('currentAddress')} secondary={<Typography style={{ color: '#FFFFFF', fontSize: 12 }}>MyTitle</Typography>} />
+          </ListItem>
+
           <ListItem>
-            <ListItemIcon>
-              <TrendingUpIcon color="primary"/>
+            <ListItemIcon className={classes.iconColor}>
+              <TrendingUpIcon />
             </ListItemIcon>
-            <ListItem className={classes.display}> 
-              <ListItemText primary={t('currentStatus').toUpperCase()} className={classes.textColor}/>
-              <ListItemText primary="variable" className={classes.textColor}/>
-            </ListItem>
+            <ListItemText primary={t('currentStatus')} secondary={<Typography style={{ color: '#FFFFFF', fontSize: 12 }}>MyTitle</Typography>} />
           </ListItem>
+
           <ListItem>
-            <ListItemIcon>
-              <SpeedIcon color="primary"/>
+            <ListItemIcon className={classes.iconColor}>
+              <SpeedIcon />
             </ListItemIcon>
-              <ListItem className={classes.display}>
-                <ListItemText primary={t('positionSpeed').toUpperCase()} className={classes.textColor}/>
-                <ListItemText primary="variable" className={classes.textColor}/>
-              </ListItem>
+            <ListItemText primary={t('positionSpeed')} secondary={<Typography style={{ color: '#FFFFFF', fontSize: 12 }}>MyTitle</Typography>} />
           </ListItem>
+
           <ListItem>
-            <ListItemIcon>
-              <OfflineBoltOutlinedIcon color="primary"/>
+            <ListItemIcon className={classes.iconColor}>
+              <OfflineBoltIcon />
             </ListItemIcon>
-              <ListItem className={classes.display}> 
-                <ListItemText primary={t('circuitBreaker').toUpperCase()} className={classes.textColor}/>
-                <ListItemText primary="variable" className={classes.textColor}/>
-              </ListItem>
+            <ListItemText primary={t('circuitBreaker')} secondary={<Typography style={{ color: '#FFFFFF', fontSize: 12 }}>MyTitle</Typography>} />
           </ListItem>
-          <ListItem>  
-            <ListItemIcon>
-              <NavigationOutlinedIcon color="primary"/>
-            </ListItemIcon>
-            <ListItem className={classes.display}>
-              <ListItemText primary={t('mileage').toUpperCase()} className={classes.textColor}/>
-              <ListItemText primary="variable" className={classes.textColor}/>
-            </ListItem>
-          </ListItem>
-          <ListItem>  
-            <Button variant="contained" color="primary" fullWidth >{t('activateCircuitBreaker').toUpperCase()}</Button>
-          </ListItem>
+
           <ListItem>
-            <Button fullWidth className={classes.textColor}>
-            {t('reportTitle').toUpperCase()}
-            </Button>
-          </ListItem>  
-        </List>  
-      </Dialog>
-      
-    </div>
+            <ListItemIcon className={classes.iconColor}>
+              <NavigationIcon />
+            </ListItemIcon>
+            <ListItemText primary={t('mileage')} secondary={<Typography style={{ color: '#FFFFFF', fontSize: 12 }}>MyTitle</Typography>} />
+          </ListItem>
+        </List>
+
+        <Button variant="contained" className={classes.style} color="primary">
+          {t('activateCircuitBreaker')}
+        </Button>
+
+        <Button className={classes.root} fullWidth size="medium">
+          {t('reportTitle')}
+        </Button>
+      </div>
+    </Dialog>
   );
 }
 

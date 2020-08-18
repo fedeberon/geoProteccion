@@ -1,5 +1,6 @@
 import React, { Fragment, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+
 import { makeStyles } from '@material-ui/core/styles';
 import { useHistory } from 'react-router-dom';
 import Avatar from '@material-ui/core/Avatar';
@@ -17,9 +18,13 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import Fab from '@material-ui/core/Fab';
 import AddIcon from '@material-ui/icons/Add';
 
+import PopupInfo from '../components/PopupInfo';
+
 import { devicesActions } from '../store';
+import { positionsActions } from '../store';
 import t from '../common/localization';
 import RemoveDialog from './RemoveDialog';
+import * as service from '../utils/serviceManager';
 
 const useStyles = makeStyles(theme => ({
   list: {
@@ -41,6 +46,7 @@ const DeviceList = () => {
   const dispatch = useDispatch();
   const classes = useStyles();
   const history = useHistory();
+  const [ openPopup, setOpenPopup ] = useState(false);
 
   const handleMenuClick = (event, deviceId) => {
     setMenuDeviceId(deviceId);
@@ -73,6 +79,13 @@ const DeviceList = () => {
     }
   }
 
+  let devicesId = useSelector(state => (state.devices.selectedId));
+
+   const handleDialog = () => {
+    dispatch(positionsActions.set(devicesId));
+    setOpenPopup(!openPopup);
+   }
+
   return (
     <>
       <List className={classes.list}>
@@ -84,7 +97,7 @@ const DeviceList = () => {
                   <LocationOnIcon />
                 </Avatar>
               </ListItemAvatar>
-              <ListItemText primary={device.name} secondary={device.uniqueId} />
+              <ListItemText primary={device.name} secondary={device.uniqueId} onClick={handleDialog}/> 
               <ListItemSecondaryAction>
                 <IconButton onClick={(event) => handleMenuClick(event, device.id)}>
                   <MoreVertIcon />
@@ -103,6 +116,7 @@ const DeviceList = () => {
         <MenuItem onClick={handleMenuRemove}>{t('sharedRemove')}</MenuItem>
       </Menu>
       <RemoveDialog deviceId={menuDeviceId} open={removeDialogOpen} onResult={handleRemoveResult} />
+      <PopupInfo open={openPopup} handleDialog={() => handleDialog()}></PopupInfo>
     </>
   );
 }
