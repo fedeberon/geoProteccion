@@ -434,5 +434,6 @@
     "currentStatus": "Current Status",
     "circuitBreaker": "Circut Breaker",
     "mileage": "Mileage",
-    "activateCircuitBreaker": "Activate Circuit Breaker"
+    "activateCircuitBreaker": "Activate Circuit Breaker",
+    "geozones": "Geozoness"
 }

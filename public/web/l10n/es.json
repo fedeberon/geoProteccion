@@ -433,5 +433,6 @@
     "currentStatus": "Estado Actual",
     "circuitBreaker": "Corta Corriente",
     "mileage": "Kilometraje",
-    "activateCircuitBreaker": "Activar Corta Corriente"
+    "activateCircuitBreaker": "Activar Corta Corriente",
+    "geozones": "Geozonas"
 }
