@@ -1,5 +1,5 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import {makeStyles} from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Backdrop from '@material-ui/core/Backdrop';
 import SpeedDial from '@material-ui/lab/SpeedDial';
@@ -10,8 +10,13 @@ import SaveIcon from '@material-ui/icons/Save';
 import PrintIcon from '@material-ui/icons/Print';
 import ShareIcon from '@material-ui/icons/Share';
 import FavoriteIcon from '@material-ui/icons/Favorite';
-import {useDispatch} from "react-redux";
+import MenuIcon from '@material-ui/icons/Menu';
+import CloseIcon from '@material-ui/icons/Close';
+import LocationOnIcon from '@material-ui/icons/LocationOn';
+import MoreIcon from '@material-ui/icons/More';
+
 import {modalsActions} from "../store";
+import {useDispatch} from "react-redux";
 
 const useStyles = makeStyles((theme) => ({
   speedDial: {
@@ -30,14 +35,12 @@ const actions = [
 ];
 
 export default function SpeedDialTooltipOpen() {
-  const dispatch = useDispatch();
   const classes = useStyles();
+  const dispatch = useDispatch();
   const [open, setOpen] = React.useState(false);
   const [hidden, setHidden] = React.useState(false);
 
-
   const handleVisibilityModal = (name) => {
-    debugger;
     dispatch(modalsActions.show(name));
   }
 
@@ -55,13 +58,13 @@ export default function SpeedDialTooltipOpen() {
 
   return (
     <div className={classes.root}>
-      <Button onClick={handleVisibility}>Toggle Speed Dial</Button>
+      {/*<Button onClick={handleVisibility}>Boton Menu</Button>*/}
       <Backdrop open={open} />
       <SpeedDial
-        ariaLabel="SpeedDial tooltip example"
+        ariaLabel="Menu"
         className={classes.speedDial}
         hidden={hidden}
-        icon={<SpeedDialIcon />}
+        icon={<SpeedDialIcon icon={<MenuIcon/>} openIcon={<CloseIcon/>}/>}
         onClose={handleClose}
         onOpen={handleOpen}
         open={open}
@@ -69,8 +72,19 @@ export default function SpeedDialTooltipOpen() {
 
         <SpeedDialAction
           key='search'
-          icon=<FileCopyIcon/>
-          tooltipTitle='Buscador'
+          icon={<MoreIcon/>}
+          tooltipTitle='Menu'
+          tooltipOpen
+          onClick={e => {
+            e.stopPropagation();
+            handleVisibilityModal('menu')
+          }}
+        />
+
+        <SpeedDialAction
+          key='devices'
+          icon={<LocationOnIcon/>}
+          tooltipTitle='Devices'
           tooltipOpen
           onClick={e => {
             e.stopPropagation();
@@ -78,27 +92,6 @@ export default function SpeedDialTooltipOpen() {
           }}
         />
 
-        <SpeedDialAction
-          key='devices'
-          icon=<FileCopyIcon/>
-          tooltipTitle='Devices'
-          tooltipOpen
-          onClick={e => {
-          e.stopPropagation();
-          handleVisibilityModal('search')
-        }}
-          />
-
-
-        {/* {actions.map((action) => (
-          <SpeedDialAction
-            key={action.name}
-            icon={action.icon}
-            tooltipTitle={action.name}
-            tooltipOpen
-            onClick={handleClose}
-          />
-        ))}*/}
       </SpeedDial>
     </div>
   );

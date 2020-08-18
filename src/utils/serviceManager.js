@@ -4,6 +4,7 @@ const getSession = (email, password) => {
     .then(response => response);
 }
 
+
 export {
   getSession,
 };

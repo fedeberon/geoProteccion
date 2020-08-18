@@ -12,6 +12,16 @@ import {useDispatch, useSelector} from "react-redux";
 import {useHistory} from "react-router-dom";
 import {makeStyles} from "@material-ui/core/styles";
 import {modalsActions} from "../store";
+import DraftsIcon from '@material-ui/icons/Drafts';
+import AccountBoxIcon from '@material-ui/icons/AccountBox';
+import GpsFixedIcon from '@material-ui/icons/GpsFixed';
+import GroupWorkIcon from '@material-ui/icons/GroupWork';
+import MapIcon from '@material-ui/icons/Map';
+import NotificationsActiveIcon from '@material-ui/icons/NotificationsActive';
+import DateRangeIcon from '@material-ui/icons/DateRange';
+import BuildIcon from '@material-ui/icons/Build';
+import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
+import ListSubheader from "@material-ui/core/ListSubheader";
 
 const useStyles = makeStyles({
 
@@ -22,7 +32,7 @@ const useStyles = makeStyles({
   },
 
   list: {
-    width: 200,
+    width: 250,
   },
   menuButton: {
     marginLeft: -12,
@@ -30,15 +40,15 @@ const useStyles = makeStyles({
   },
   paper: {
     margin: 30,
-    background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
     boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
+    background: 'linear-gradient(0deg, rgba(34,193,195,1) 0%, rgba(255,208,108,1) 100%)',
     borderRadius:   5
   }
 
 });
 
 export default function MyMenuComponet() {
-  const open = useSelector(state => state.modals.items.search);
+  const open = useSelector(state => state.modals.items.menu);
   const classes = useStyles();
   const history = useHistory();
   const dispatch = useDispatch();
@@ -47,48 +57,69 @@ export default function MyMenuComponet() {
     dispatch(modalsActions.hide(name));
   }
 
+
   return (
       <>
         <Drawer
           open={open}
-          classes={{ paper: classes.paper }}>
+          classes={{ paper: classes.paper }}
+          elevation={4}>
           <div
                tabIndex={0}
                className={classes.list}
                role="button">
-            <List>
-              <ListItem button onClick={() => history.push('/')}>
+            <List subheader={<ListSubheader>Menu</ListSubheader>}>
+              <ListItem button>
                 <ListItemIcon>
-                  <DashboardIcon />
+                  <AccountBoxIcon />
                 </ListItemIcon>
-                <ListItemText primary={t('mapTitle')} />
-              </ListItem>
-            </List>
-            <List>
-              <ListItem button disabled>
                 <ListItemText primary={t('settingsUser')} />
               </ListItem>
               <ListItem button>
+                <ListItemIcon>
+                  <GpsFixedIcon />
+                </ListItemIcon>
                 <ListItemText primary={t('sharedDevice')} />
               </ListItem>
               <ListItem button>
+                <ListItemIcon>
+                  <GroupWorkIcon />
+                </ListItemIcon>
                 <ListItemText primary={t('settingsGroups')} />
               </ListItem>
               <ListItem button>
+                <ListItemIcon>
+                  <MapIcon />
+                </ListItemIcon>
                 <ListItemText primary={t('geozones')} />
               </ListItem>
               <ListItem button>
+                <ListItemIcon>
+                  <NotificationsActiveIcon />
+                </ListItemIcon>
                 <ListItemText primary={t('sharedNotifications')} />
               </ListItem>
               <ListItem button>
+                <ListItemIcon>
+                  <DateRangeIcon />
+                </ListItemIcon>
                 <ListItemText primary={t('sharedCalendars')} />
               </ListItem>
               <ListItem button>
+                <ListItemIcon>
+                  <BuildIcon />
+                </ListItemIcon>
                 <ListItemText primary={t('sharedMaintenance')} />
               </ListItem>
               <Divider />
               <ListItem>
-                <Button color="inherit" onClick={() => handleHideModal('search')}>{t('sharedHide')}</Button>
+                <ListItemIcon>
+                  <ChevronLeftIcon />
+                </ListItemIcon>
+                <Button color="inherit" onClick={e => {
+                  e.stopPropagation();
+                  handleHideModal('menu')
+                }}>{t('sharedHide')}</Button>
               </ListItem>
             </List>
           </div>

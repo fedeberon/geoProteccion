@@ -1,7 +1,7 @@
-import React, { Fragment, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
-import { useHistory } from 'react-router-dom';
+import React, {Fragment, useState} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
+import {makeStyles} from '@material-ui/core/styles';
+import {useHistory} from 'react-router-dom';
 import Avatar from '@material-ui/core/Avatar';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
@@ -16,23 +16,29 @@ import LocationOnIcon from '@material-ui/icons/LocationOn';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import Fab from '@material-ui/core/Fab';
 import AddIcon from '@material-ui/icons/Add';
+import CloseIcon from '@material-ui/icons/Close';
 
-import { devicesActions } from '../store';
+import {devicesActions, modalsActions} from '../store';
 import t from '../common/localization';
 import RemoveDialog from './RemoveDialog';
-import SuccessSnackbar from "./SuccessSnackbar";
 
 const useStyles = makeStyles(theme => ({
   list: {
       maxHeight: '100%',
       overflow: 'auto',
-      
-  }, 
+
+  },
   fab: {
     position: 'absolute',
     bottom: theme.spacing(2),
     right: theme.spacing(2),
   },
+  fab_close: {
+    position: 'absolute',
+    bottom: theme.spacing(2),
+    right: theme.spacing(10),
+  },
+
 }));
 
 const DeviceList = () => {
@@ -75,6 +81,11 @@ const DeviceList = () => {
     }
   }
 
+  const handleHideModal = (name) => {
+    dispatch(modalsActions.hide(name));
+  }
+
+
   return (
     <>
       <List className={classes.list}>
@@ -99,6 +110,13 @@ const DeviceList = () => {
       </List>
       <Fab size="medium" color="primary" className={classes.fab} onClick={handleAdd}>
         <AddIcon />
+      </Fab>
+
+      <Fab size="medium" color="primary" className={classes.fab_close} onClick={e => {
+        e.stopPropagation();
+        handleHideModal('search');
+      }}>
+        <CloseIcon />
       </Fab>
 
       <Menu id="device-menu" anchorEl={menuAnchorEl} keepMounted open={Boolean(menuAnchorEl)} onClose={handleMenuClose}>

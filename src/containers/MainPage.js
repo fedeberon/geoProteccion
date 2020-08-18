@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-import {sessionActions} from '../store';
+import {modalsActions, sessionActions} from '../store';
 import {useHistory} from 'react-router-dom';
 import {makeStyles, withWidth} from '@material-ui/core';
 import Drawer from '@material-ui/core/Drawer';
@@ -18,9 +18,7 @@ import Slide from "@material-ui/core/Slide";
 import Fab from "@material-ui/core/Fab";
 import AddIcon from '@material-ui/icons/Add';
 import SpeedDialsComponent from "../components/SpeedDialsComponent";
-
-
-
+import {handleVisibilityModal} from "../utils/serviceManager";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -62,12 +60,11 @@ const MainPage = ({ width }) => {
   const authenticated = useSelector(state => state.session.authenticated);
   const classes = useStyles();
   const history = useHistory();
+  const open = useSelector(state => state.modals.items.search);
 
-  const [checked, setChecked] = React.useState(false);
-
-  const handleChange = () => {
-    setChecked((prev) => !prev);
-  };
+  const handleVisibilityModal = (name) => {
+    dispatch(modalsActions.show(name));
+  }
 
   useEffect(() => {
     if (!authenticated) {
@@ -88,9 +85,15 @@ const MainPage = ({ width }) => {
       <div className={classes.content}>
         <Drawer
           anchor='right'
-          open={checked}
-          onClose={handleChange}
-          onClick={handleChange}
+          open={open}
+          onClose={e => {
+            e.stopPropagation();
+            handleVisibilityModal('search')
+          }}
+          onClick={e => {
+            e.stopPropagation();
+            handleVisibilityModal('search')
+          }}
           classes={{ paper: classes.drawerPaper }}>
           <DeviceList />
         </Drawer>
@@ -104,11 +107,7 @@ const MainPage = ({ width }) => {
         </div>
       </div>
 
-
       <SpeedDialsComponent />
-  {/*    <Fab size="medium" color="primary" className={classes.fab}>
-        <AddIcon />
-      </Fab>*/}
 
     </div>
   );
