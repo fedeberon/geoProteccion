@@ -21,6 +21,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import {devicesActions, modalsActions} from '../store';
 import t from '../common/localization';
 import RemoveDialog from './RemoveDialog';
+import ListSubheader from "@material-ui/core/ListSubheader";
 
 const useStyles = makeStyles(theme => ({
   list: {
@@ -49,6 +50,9 @@ const DeviceList = () => {
   const dispatch = useDispatch();
   const classes = useStyles();
   const history = useHistory();
+
+
+
 
   const handleMenuClick = (event, deviceId) => {
     setMenuDeviceId(deviceId);
@@ -88,7 +92,7 @@ const DeviceList = () => {
 
   return (
     <>
-      <List className={classes.list}>
+      <List className={classes.list} subheader={<ListSubheader>Dispositivos</ListSubheader>}>
         {devices.map((device, index, list) => (
           <Fragment key={device.id}>
             <ListItem button key={device.id} onClick={() => dispatch(devicesActions.select(device))}>
