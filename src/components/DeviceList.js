@@ -17,6 +17,11 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import Fab from '@material-ui/core/Fab';
 import AddIcon from '@material-ui/icons/Add';
 import CloseIcon from '@material-ui/icons/Close';
+import Paper from "@material-ui/core/Paper";
+import InputBase from "@material-ui/core/InputBase";
+import SearchIcon from "@material-ui/icons/Search";
+import LocalShippingOutlinedIcon from '@material-ui/icons/LocalShippingOutlined';
+import CardMedia from '@material-ui/core/CardMedia';
 
 import {devicesActions, modalsActions} from '../store';
 import t from '../common/localization';
@@ -39,7 +44,20 @@ const useStyles = makeStyles(theme => ({
     bottom: theme.spacing(2),
     right: theme.spacing(10),
   },
-
+  root: {
+    padding: "4px 4px",
+    display: "flex",
+    alignItems: "center",
+    width: '94%',
+    marginLeft: '3%'
+  },
+  input: {
+    marginLeft: theme.spacing(1),
+    flex: 1
+  },
+  iconButton: {
+    padding: 10
+  },
 }));
 
 const DeviceList = () => {
@@ -91,17 +109,35 @@ const DeviceList = () => {
 
 
   return (
-    <>
-      <List className={classes.list} subheader={<ListSubheader>Dispositivos</ListSubheader>}>
+    <div>
+      <List className={classes.list} subheader={<ListSubheader>{t('deviceTitle')}</ListSubheader>}>
+        <Paper component="form" className={classes.root}>
+          <IconButton
+            type="submit"
+            className={classes.iconButton}
+            aria-label="search"
+          >
+            <SearchIcon />
+          </IconButton>
+          <InputBase
+            className={classes.input}
+            placeholder="Buscar"
+            inputProps={{ "aria-label": "search google maps" }}
+          />
+        </Paper>
         {devices.map((device, index, list) => (
           <Fragment key={device.id}>
             <ListItem button key={device.id} onClick={() => dispatch(devicesActions.select(device))}>
             <ListItemAvatar>
                 <Avatar>
-                  <LocationOnIcon />
+                  <LocalShippingOutlinedIcon />
                 </Avatar>
               </ListItemAvatar>
               <ListItemText primary={device.name} secondary={device.uniqueId} />
+              
+              <Avatar src={require('../../public/images/gps.gif')}/>
+                  
+                  
               <ListItemSecondaryAction>
                 <IconButton onClick={(event) => handleMenuClick(event, device.id)}>
                   <MoreVertIcon />
@@ -111,6 +147,7 @@ const DeviceList = () => {
             {index < list.length - 1 ? <Divider /> : null}
           </Fragment>
         ))}
+        <Divider />
       </List>
       <Fab size="medium" color="primary" className={classes.fab} onClick={handleAdd}>
         <AddIcon />
@@ -128,7 +165,7 @@ const DeviceList = () => {
         <MenuItem onClick={handleMenuRemove}>{t('sharedRemove')}</MenuItem>
       </Menu>
       <RemoveDialog deviceId={menuDeviceId} open={removeDialogOpen} onResult={handleRemoveResult} />
-    </>
+    </div>
   );
 }
 
