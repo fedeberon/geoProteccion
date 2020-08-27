@@ -51,9 +51,6 @@ const DeviceList = () => {
   const classes = useStyles();
   const history = useHistory();
 
-
-
-
   const handleMenuClick = (event, deviceId) => {
     setMenuDeviceId(deviceId);
     setMenuAnchorEl(event.currentTarget);
