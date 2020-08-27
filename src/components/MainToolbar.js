@@ -1,25 +1,16 @@
-import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core/styles';
-import { useDispatch } from 'react-redux';
-import { sessionActions } from '../store';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
+import React, {useState} from 'react';
+import {useHistory} from 'react-router-dom';
+import {makeStyles} from '@material-ui/core/styles';
+import {useDispatch} from 'react-redux';
+import {sessionActions} from '../store';
 import Button from '@material-ui/core/Button';
-import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
 import Drawer from '@material-ui/core/Drawer';
 import List from '@material-ui/core/List';
-import ListSubheader from '@material-ui/core/ListSubheader';
 import Divider from '@material-ui/core/Divider';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import DashboardIcon from '@material-ui/icons/Dashboard';
-import BarChartIcon from '@material-ui/icons/BarChart';
-import SettingsIcon from '@material-ui/icons/Settings';
-
+import MapIcon from '@material-ui/icons/Map';
 import t from '../common/localization';
 import PopupInfo from '../components/PopupInfo';
 import Tabla from '../components/Tabla';
@@ -74,21 +65,6 @@ const MainToolbar = () => {
   }
   return (
     <>
-    {/*  <AppBar position="static" className={classes.appBar}>
-        <Toolbar>
-          <IconButton
-            className={classes.menuButton}
-            color="inherit"
-            onClick={openDrawer}>
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" color="inherit" className={classes.flex}>
-            Traccar
-        </Typography>
-          <Button onClick={handleDialog}>Apretame ;)</Button>
-          <Button onClick={handleTable}>Tablita</Button>
-        </Toolbar>
-      </AppBar>*/}
       <Drawer open={drawer} onClose={closeDrawer} variant={"permanent"} >
         <div className={classes.zIndezModal}
           tabIndex={0}
@@ -99,7 +75,7 @@ const MainToolbar = () => {
           <List>
             <ListItem button onClick={() => history.push('/')}>
               <ListItemIcon>
-                <DashboardIcon />
+                <MapIcon />
               </ListItemIcon>
               <ListItemText primary={t('mapTitle')} />
             </ListItem>

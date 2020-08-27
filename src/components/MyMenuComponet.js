@@ -4,15 +4,13 @@ import Drawer from "@material-ui/core/Drawer";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
-import DashboardIcon from "@material-ui/icons/Dashboard";
 import ListItemText from "@material-ui/core/ListItemText";
 import t from "../common/localization";
 import Divider from "@material-ui/core/Divider";
 import {useDispatch, useSelector} from "react-redux";
-import {useHistory} from "react-router-dom";
+import {NavLink} from "react-router-dom";
 import {makeStyles} from "@material-ui/core/styles";
 import {modalsActions} from "../store";
-import DraftsIcon from '@material-ui/icons/Drafts';
 import AccountBoxIcon from '@material-ui/icons/AccountBox';
 import GpsFixedIcon from '@material-ui/icons/GpsFixed';
 import GroupWorkIcon from '@material-ui/icons/GroupWork';
@@ -47,10 +45,11 @@ const useStyles = makeStyles({
 
 });
 
+
+
 export default function MyMenuComponet() {
   const open = useSelector(state => state.modals.items.menu);
   const classes = useStyles();
-  const history = useHistory();
   const dispatch = useDispatch();
 
   const handleHideModal = (name) => {
@@ -69,7 +68,7 @@ export default function MyMenuComponet() {
                className={classes.list}
                role="button">
             <List subheader={<ListSubheader>Menu</ListSubheader>}>
-              <ListItem button>
+              <ListItem  component={NavLink} to={"/reports/route"}>
                 <ListItemIcon>
                   <AccountBoxIcon />
                 </ListItemIcon>
