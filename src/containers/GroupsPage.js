@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import MainToolbar from '../components/MainToolbar';
 import withStyles from '@material-ui/core/styles/withStyles';
 import withWidth from '@material-ui/core/withWidth';
 import { useHistory } from 'react-router-dom';
-import {makeStyles} from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -13,12 +13,11 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 
 import t from '../common/localization';
+
 const styles = theme => ({});
 
-
-
 const useStyles = makeStyles(theme => ({
-  UserPageSize : {
+  GroupsPageSize : {
     float: 'right',
     width:'70%',
     marginRight: '10%',
@@ -31,32 +30,21 @@ function createData(field, userData,) {
 
 
 const rows = [
-  createData("Name:", "Erwin Nabaes", ),
-  createData("Email:", "example@gmail.com",),
-  createData("Phone:", "+23144022020",),
-  createData("Map:","ni idea que va aca",),
-  createData("Latitude:", "0,0",),
-  createData("Longitude:", "0,0",),
-  createData("Zoom:", "0",),
-  createData("Attributes", "0",),
-  createData("TwelveHourFormat:", "Disable",),
-  createData("CoordinateFormat", "0",),
+  createData("Id:", "", ),
+  createData("Name:", "", ),
+  createData("Groupid:", "", ),
+  createData("Attributes", "",),
 ];
 
-
-const UserPage = () => {
+const GroupsPage = () => {
   const history = useHistory();
-
   const classes = useStyles();
 
-
-
   return (
-    
     <div>
       <MainToolbar history={history} />
-        <div className={classes.UserPageSize}>
-    
+        <div className={classes.GroupsPageSize}>
+      
           <TableContainer component={Paper}>
             <Table className={classes.table} aria-label="simple table">
               <TableHead>
@@ -80,4 +68,4 @@ const UserPage = () => {
   );
 }
 
-export default withWidth()(withStyles(styles)(UserPage));
+export default withWidth()(withStyles(styles)(GroupsPage));

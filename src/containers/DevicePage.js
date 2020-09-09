@@ -6,6 +6,13 @@ import TextField from '@material-ui/core/TextField';
 import Container from '@material-ui/core/Container';
 import Button from '@material-ui/core/Button';
 import FormControl from '@material-ui/core/FormControl';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableContainer from '@material-ui/core/TableContainer';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import Paper from '@material-ui/core/Paper';
 
 import t from '../common/localization';
 
@@ -20,7 +27,36 @@ const useStyles = makeStyles(theme => ({
       flexBasis: '33%',
     },
   },
+  DivicePageSize : {
+    float: 'right',
+    width:'70%',
+    marginRight: '10%',
+    marginTop: '6%',
+  }
 }));
+
+
+function createData(field, userData,) {
+  return { field, userData,  };
+}
+
+
+const rows = [
+  createData("Id:", "", ),
+  createData("Name:", "", ),
+  createData("Uniqueld:", "",),
+  createData("Status:", "", ),
+  createData("Disable:", "", ),
+  createData("lastUpdate:", "", ),
+  createData("Positionid:", "", ),
+  createData("Groupid:", "", ),
+  createData("Phone:", "",),
+  createData(" Model", "",),
+  createData("Contact:", "",),
+  createData("Category:", "",),
+  createData("Geofenceids:", "", ),
+  createData("Attributes", "",),
+];
 
 const DevicePage = () => {
   const history = useHistory();
@@ -68,6 +104,27 @@ const DevicePage = () => {
   return (
     <>
       <MainToolbar history={history} />
+        <div className={classes.DivicePageSize}>
+    
+          <TableContainer component={Paper}>
+            <Table className={classes.table} aria-label="simple table">
+              <TableHead>
+                <TableRow>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {rows.map((row) => (
+                  <TableRow key={row.field}>
+                    <TableCell component="th" scope="row">
+                      {row.field}
+                    </TableCell>
+                    <TableCell align="left">{row.userData}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </div>
       <Container maxWidth='xs' className={classes.container}>
         <form>
           {(!id || device) &&
