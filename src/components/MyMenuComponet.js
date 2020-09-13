@@ -68,13 +68,13 @@ export default function MyMenuComponet() {
                className={classes.list}
                role="button">
             <List subheader={<ListSubheader>Menu</ListSubheader>}>
-              <ListItem  component={NavLink} to={"/user/:1"}>
+              <ListItem  component={NavLink} to={"/account"}>
                 <ListItemIcon>
                   <AccountBoxIcon />
                 </ListItemIcon>
                 <ListItemText primary={t('settingsUser')} />
               </ListItem>
-              <ListItem component={NavLink} to={"/device/:1"}>
+              <ListItem component={NavLink} to={"/device/list"}>
                 <ListItemIcon>
                   <GpsFixedIcon />
                 </ListItemIcon>

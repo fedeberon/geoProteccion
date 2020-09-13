@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import MainToolbar from '../components/MainToolbar';
 import withStyles from '@material-ui/core/styles/withStyles';
 import withWidth from '@material-ui/core/withWidth';
-import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -37,14 +35,11 @@ const rows = [
 ];
 
 const GroupsPage = () => {
-  const history = useHistory();
   const classes = useStyles();
 
   return (
     <div>
-      <MainToolbar history={history} />
         <div className={classes.GroupsPageSize}>
-      
           <TableContainer component={Paper}>
             <Table className={classes.table} aria-label="simple table">
               <TableHead>

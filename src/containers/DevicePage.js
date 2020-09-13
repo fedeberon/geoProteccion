@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import MainToolbar from '../components/MainToolbar';
 import { useHistory, useParams } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
@@ -59,8 +58,8 @@ const rows = [
 ];
 
 const DevicePage = () => {
-  const history = useHistory();
   const classes = useStyles();
+  const history = useHistory();
   const { id } = useParams();
   const [device, setDevice] = useState();
   const [name, setName] = useState('');
@@ -103,9 +102,8 @@ const DevicePage = () => {
 
   return (
     <>
-      <MainToolbar history={history} />
         <div className={classes.DivicePageSize}>
-    
+
           <TableContainer component={Paper}>
             <Table className={classes.table} aria-label="simple table">
               <TableHead>

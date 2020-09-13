@@ -1,8 +1,7 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import MainToolbar from '../components/MainToolbar';
 import withStyles from '@material-ui/core/styles/withStyles';
 import withWidth from '@material-ui/core/withWidth';
-import { useHistory } from 'react-router-dom';
 import {makeStyles} from '@material-ui/core';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -13,9 +12,10 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 
 import t from '../common/localization';
+import * as service from '../utils/serviceManager';
+import { useSelector } from 'react-redux';
+
 const styles = theme => ({});
-
-
 
 const useStyles = makeStyles(theme => ({
   UserPageSize : {
@@ -25,57 +25,57 @@ const useStyles = makeStyles(theme => ({
     marginTop: '6%',
   }
 }));
-function createData(field, userData,) {
-  return { field, userData,  };
+
+function createData(field, userData) {
+  userData = userData != undefined ? userData.toString() : '';
+  return { field, userData };
 }
 
-
-const rows = [
-  createData("Name:", "Erwin Nabaes", ),
-  createData("Email:", "example@gmail.com",),
-  createData("Phone:", "+23144022020",),
-  createData("Map:","ni idea que va aca",),
-  createData("Latitude:", "0,0",),
-  createData("Longitude:", "0,0",),
-  createData("Zoom:", "0",),
-  createData("Attributes", "0",),
-  createData("TwelveHourFormat:", "Disable",),
-  createData("CoordinateFormat", "0",),
-];
-
-
 const UserPage = () => {
-  const history = useHistory();
-
   const classes = useStyles();
 
+  const user = useSelector(state => state.session.user);
+  const [rows, setRows] = useState([]);
 
+  console.log(user);
+
+  useEffect(() => {
+    let name = createData(t('sharedName'), user.name);
+    let email = createData(t('userEmail'), user.email);
+    let phone = createData(t('sharedPhone'), user.phone);
+    let map = createData(t('mapTitle'), user.map);
+    let latitude = createData(t('positionLatitude'), user.latitude);
+    let longitude = createData(t('positionLongitude'), user.longitude);
+    let zoom = createData(t('serverZoom'), user.zoom);
+    let attributes = createData(t('sharedAttributes'), 'NOT FINISHED');
+    let twelveHourFormat = createData(t('settingsTwelveHourFormat'), user.twelveHourFormat);
+    let coordinatesFormat = createData(t('settingsCoordinateFormat'), user.coordinateFormat);
+    setRows([ name, email, phone, map, latitude, longitude, zoom, attributes, twelveHourFormat, coordinatesFormat ]);
+  },[user]);
 
   return (
-    
+
     <div>
-      <MainToolbar history={history} />
-        <div className={classes.UserPageSize}>
-    
-          <TableContainer component={Paper}>
-            <Table className={classes.table} aria-label="simple table">
-              <TableHead>
-                <TableRow>
+      <div className={classes.UserPageSize}>
+        <TableContainer component={Paper}>
+          <Table className={classes.table} aria-label="simple table">
+            <TableHead>
+              <TableRow>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {rows.map((row) => (
+                <TableRow key={row.field}>
+                  <TableCell component="th" scope="row">
+                    {row.field}
+                  </TableCell>
+                  <TableCell align="left">{row.userData}</TableCell>
                 </TableRow>
-              </TableHead>
-              <TableBody>
-                {rows.map((row) => (
-                  <TableRow key={row.field}>
-                    <TableCell component="th" scope="row">
-                      {row.field}
-                    </TableCell>
-                    <TableCell align="left">{row.userData}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </div>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </div>
     </div>
   );
 }
