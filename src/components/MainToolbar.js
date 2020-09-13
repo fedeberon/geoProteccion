@@ -85,7 +85,7 @@ const MainToolbar = ({ history, visible }) => {
               <ListItemText primary={t('settingsUser')} />
             </ListItem>
             <ListItem button onClick={() => history.push('/device/list')}>
-              <ListItemText primary={t('sharedDevice')} />
+              <ListItemText primary={t('deviceTitle')} />
             </ListItem>
             <ListItem button onClick={() => history.push('/groups')}>
               <ListItemText primary={t('settingsGroups')} />

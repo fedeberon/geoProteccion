@@ -78,7 +78,7 @@ export default function MyMenuComponet() {
                 <ListItemIcon>
                   <GpsFixedIcon />
                 </ListItemIcon>
-                <ListItemText primary={t('sharedDevice')} />
+                <ListItemText primary={t('deviceTitle')} />
               </ListItem>
               <ListItem component={NavLink} to={"/groups"}>
                 <ListItemIcon>
