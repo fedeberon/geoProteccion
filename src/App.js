@@ -7,6 +7,7 @@ import LoginPage from './containers/LoginPage';
 import RouteReportPage from './containers/RouteReportPage';
 import DevicePage from './containers/DevicePage';
 import SuccessSnackbar from "./components/SuccessSnackbar";
+import UserPage from "./containers/UserPage";
 
 const App = () => {
   return (
@@ -17,6 +18,7 @@ const App = () => {
         <Route exact path='/' component={MainPage} />
         <Route exact path='/login' component={LoginPage} />
         <Route exact path='/device/:id?' component={DevicePage} />
+        <Route exact path='/user/:id' component={UserPage} />
         <Route exact path='/reports/route' component={RouteReportPage} />
       </Switch>
     </>

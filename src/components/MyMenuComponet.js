@@ -68,24 +68,28 @@ export default function MyMenuComponet() {
                className={classes.list}
                role="button">
             <List subheader={<ListSubheader>Menu</ListSubheader>}>
-              <ListItem  component={NavLink} to={"/reports/route"}>
+
+              <ListItem  component={NavLink} to={"/user/1"}>
                 <ListItemIcon>
                   <AccountBoxIcon />
                 </ListItemIcon>
                 <ListItemText primary={t('settingsUser')} />
               </ListItem>
+
               <ListItem button>
                 <ListItemIcon>
                   <GpsFixedIcon />
                 </ListItemIcon>
                 <ListItemText primary={t('sharedDevice')} />
               </ListItem>
+
               <ListItem button>
                 <ListItemIcon>
                   <GroupWorkIcon />
                 </ListItemIcon>
                 <ListItemText primary={t('settingsGroups')} />
               </ListItem>
+
               <ListItem button>
                 <ListItemIcon>
                   <MapIcon />
