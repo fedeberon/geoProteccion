@@ -37,8 +37,6 @@ const UserPage = () => {
   const user = useSelector(state => state.session.user);
   const [rows, setRows] = useState([]);
 
-  console.log(user);
-
   useEffect(() => {
     let name = createData(t('sharedName'), user.name);
     let email = createData(t('userEmail'), user.email);
