@@ -4,7 +4,7 @@ import withWidth from '@material-ui/core/withWidth';
 
 const styles = theme => ({});
 
-const RouteReportPage = () => {
+const NotificationsPage = () => {
 
   return (
     <div>
@@ -12,4 +12,4 @@ const RouteReportPage = () => {
   );
 }
 
-export default withWidth()(withStyles(styles)(RouteReportPage));
+export default withWidth()(withStyles(styles)(NotificationsPage));

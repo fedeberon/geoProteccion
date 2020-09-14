@@ -1,5 +1,4 @@
 import React, {useState} from 'react';
-import {useHistory} from 'react-router-dom';
 import {makeStyles} from '@material-ui/core/styles';
 import {useDispatch} from 'react-redux';
 import {sessionActions} from '../store';
@@ -36,11 +35,10 @@ const useStyles = makeStyles(theme => ({
 
 }));
 
-const MainToolbar = () => {
+const MainToolbar = ({ history, visible }) => {
   const dispatch = useDispatch();
   const [drawer, setDrawer] = useState(true);
   const classes = useStyles();
-  const history = useHistory();
   const [ openPopup, setOpenPopup ] = useState(false);
   const [ openTable, setOpenTable ] = useState (false);
 
@@ -63,7 +61,9 @@ const MainToolbar = () => {
   const handleTable = () => {
     setOpenTable(!openTable);
   }
+
   return (
+    visible ?
     <>
       <Drawer open={drawer} onClose={closeDrawer} variant={"permanent"} >
         <div className={classes.zIndezModal}
@@ -81,25 +81,25 @@ const MainToolbar = () => {
             </ListItem>
           </List>
           <List>
-            <ListItem button disabled>
+            <ListItem button onClick={() => history.push('/account')}>
               <ListItemText primary={t('settingsUser')} />
             </ListItem>
-            <ListItem button>
-              <ListItemText primary={t('sharedDevice')} />
+            <ListItem button onClick={() => history.push('/device/list')}>
+              <ListItemText primary={t('deviceTitle')} />
             </ListItem>
-            <ListItem button>
+            <ListItem button onClick={() => history.push('/groups')}>
               <ListItemText primary={t('settingsGroups')} />
             </ListItem>
-            <ListItem button>
+            <ListItem button onClick={() => history.push('/geozones')}>
               <ListItemText primary={t('geozones')} />
             </ListItem>
-            <ListItem button>
+            <ListItem button onClick={() => history.push('/notifications')}>
               <ListItemText primary={t('sharedNotifications')} />
             </ListItem>
-            <ListItem button>
+            <ListItem button onClick={() => history.push('/calendars')}>
               <ListItemText primary={t('sharedCalendars')} />
             </ListItem>
-            <ListItem button>
+            <ListItem button onClick={() => history.push('/maintenance')}>
               <ListItemText primary={t('sharedMaintenance')} />
             </ListItem>
             <Divider />
@@ -111,6 +111,9 @@ const MainToolbar = () => {
       </Drawer>
       <PopupInfo open={openPopup} handleDialog={handleDialog}></PopupInfo>
       <Tabla open={openTable} handleTable={handleTable}></Tabla>
+    </>
+    :
+    <>
     </>
   );
 }

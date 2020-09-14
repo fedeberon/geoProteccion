@@ -90,10 +90,12 @@ const LoginPage = () => {
 
   const handleLogin = async (event) => {
     event.preventDefault();
-    const response = await service.getSession(email, password);
+    const response = await service.setSession(email, password);
+    const user = await response.json();
 
     if (response.ok) {
       dispatch(sessionActions.authenticated(true));
+      dispatch(sessionActions.setUser(user))
       history.push('/');
     } else {
       setFailed(true);

@@ -68,47 +68,43 @@ export default function MyMenuComponet() {
                className={classes.list}
                role="button">
             <List subheader={<ListSubheader>Menu</ListSubheader>}>
-
-              <ListItem  component={NavLink} to={"/user/1"}>
+              <ListItem  component={NavLink} to={"/account"}>
                 <ListItemIcon>
                   <AccountBoxIcon />
                 </ListItemIcon>
                 <ListItemText primary={t('settingsUser')} />
               </ListItem>
-
-              <ListItem button>
+              <ListItem component={NavLink} to={"/device/list"}>
                 <ListItemIcon>
                   <GpsFixedIcon />
                 </ListItemIcon>
-                <ListItemText primary={t('sharedDevice')} />
+                <ListItemText primary={t('deviceTitle')} />
               </ListItem>
-
-              <ListItem button>
+              <ListItem component={NavLink} to={"/groups"}>
                 <ListItemIcon>
                   <GroupWorkIcon />
                 </ListItemIcon>
                 <ListItemText primary={t('settingsGroups')} />
               </ListItem>
-
-              <ListItem button>
+              <ListItem component={NavLink} to={"/geozones"}>
                 <ListItemIcon>
                   <MapIcon />
                 </ListItemIcon>
                 <ListItemText primary={t('geozones')} />
               </ListItem>
-              <ListItem button>
+              <ListItem component={NavLink} to={"/notifications"}>
                 <ListItemIcon>
                   <NotificationsActiveIcon />
                 </ListItemIcon>
                 <ListItemText primary={t('sharedNotifications')} />
               </ListItem>
-              <ListItem button>
+              <ListItem component={NavLink} to={"/calendars"}>
                 <ListItemIcon>
                   <DateRangeIcon />
                 </ListItemIcon>
                 <ListItemText primary={t('sharedCalendars')} />
               </ListItem>
-              <ListItem button>
+              <ListItem component={NavLink} to={"/maintenance"}>
                 <ListItemIcon>
                   <BuildIcon />
                 </ListItemIcon>
