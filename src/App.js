@@ -1,5 +1,5 @@
 import { hot } from 'react-hot-loader/root'
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { Switch, Route, useHistory } from 'react-router-dom'
 import CssBaseline from '@material-ui/core/CssBaseline';
 import MainPage from './containers/MainPage';
@@ -14,9 +14,13 @@ import CalendarsPage from './containers/CalendarsPage';
 import MaintenancePage from './containers/MaintenancePage';
 import SuccessSnackbar from "./components/SuccessSnackbar";
 import MainToolbar from './components/MainToolbar';
+import {sessionActions} from "./store";
+import {useDispatch, useSelector} from "react-redux";
 
 const App = () => {
   const history = useHistory();
+  const dispatch = useDispatch();
+  const authenticated = useSelector(state => state.session.authenticated);
 
   const checkToolbarVisibility = (path) => {
     return  !( path === '/' || path === '/login' || path === '/reports/route');
@@ -28,6 +32,19 @@ const App = () => {
     let isVisible = checkToolbarVisibility(location.pathname);
     setToolbarVisible(isVisible);
   });
+
+
+  useEffect(() => {
+    if (!authenticated) {
+      fetch('/api/session').then(response => {
+        if (response.ok) {
+          dispatch(sessionActions.authenticated(true));
+        } else {
+          history.push('/login');
+        }
+      });
+    }
+  }, [authenticated]);
 
   return (
     <>
