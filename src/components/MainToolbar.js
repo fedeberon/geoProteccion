@@ -13,6 +13,7 @@ import MapIcon from '@material-ui/icons/Map';
 import t from '../common/localization';
 import PopupInfo from '../components/PopupInfo';
 import Tabla from '../components/Tabla';
+import { useHistory } from 'react-router-dom';
 
 const useStyles = makeStyles(theme => ({
   flex: {
@@ -35,7 +36,8 @@ const useStyles = makeStyles(theme => ({
 
 }));
 
-const MainToolbar = ({ history, visible }) => {
+const MainToolbar = () => {
+  const history = useHistory();
   const dispatch = useDispatch();
   const [drawer, setDrawer] = useState(true);
   const classes = useStyles();
@@ -63,7 +65,6 @@ const MainToolbar = ({ history, visible }) => {
   }
 
   return (
-    visible ?
     <>
       <Drawer open={drawer} onClose={closeDrawer} variant={"permanent"} >
         <div className={classes.zIndezModal}
@@ -111,9 +112,6 @@ const MainToolbar = ({ history, visible }) => {
       </Drawer>
       <PopupInfo open={openPopup} handleDialog={handleDialog}></PopupInfo>
       <Tabla open={openTable} handleTable={handleTable}></Tabla>
-    </>
-    :
-    <>
     </>
   );
 }

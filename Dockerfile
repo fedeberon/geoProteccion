@@ -14,5 +14,5 @@ CMD ["nginx", "-g", "daemon off;"]
 
 
 #Start up
-#docker build -t juuk-web .
-#docker run --name juuk-web-container -d -p 8080:8080 juuk-web
+#docker build -t geo-proteccion .
+#docker run --name geo-proteccion-container -d -p 8080:8080 geo-proteccion
