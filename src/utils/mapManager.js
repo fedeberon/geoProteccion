@@ -138,7 +138,6 @@ const map = new mapboxgl.Map({
 map.addControl(new mapboxgl.NavigationControl());
 
 map.on('load', () => {
-
   loadImage('images/background.svg').then((background) => {
     Promise.all([
       loadIcon('icon-marker', background, 'images/icon/marker.svg')
@@ -153,6 +152,7 @@ map.on('load', () => {
 });
 
 export default {
+  mapboxgl,
   element,
   map,
   registerListener,

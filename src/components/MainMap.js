@@ -35,6 +35,7 @@ const MainMap = () => {
     const device = state.devices.items[position.deviceId] || null;
     return {
       name: device ? device.name : '',
+      description: `<p>${device.name}</p><a href="#/device/${device.id}">Details</a>`
     }
   };
 
@@ -67,11 +68,11 @@ const MainMap = () => {
 
   useEffect(() => {
     if (mapReady) {
-      mapManager.map.addSource('positions', {
+      mapManager.map.addSource('places', {
         'type': 'geojson',
         'data': positions,
       });
-      mapManager.addLayer('device-icon', 'positions', 'icon-marker', '{name}');
+      mapManager.addLayer('device-icon', 'places', 'icon-marker', '{name}');
 
       const bounds = mapManager.calculateBounds(positions.features);
       if (bounds) {
@@ -83,7 +84,7 @@ const MainMap = () => {
 
       return () => {
         mapManager.map.removeLayer('device-icon');
-        mapManager.map.removeSource('positions');
+        mapManager.map.removeSource('places');
       };
     }
   }, [mapReady]);
@@ -95,7 +96,7 @@ const MainMap = () => {
   }, [mapCenter]);
 
   useEffect(() => {
-    const source = mapManager.map.getSource('positions');
+    const source = mapManager.map.getSource('places');
     if (source) {
       source.setData(positions);
     }
@@ -105,6 +106,30 @@ const MainMap = () => {
     width: '100%',
     height: '100%',
   };
+
+  useEffect(() => {
+    mapManager.map.on('click', 'device-icon', function (e) {
+      let coordinates = e.features[0].geometry.coordinates.slice();
+      let description = e.features[0].properties.description;
+
+      while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+      coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+      }
+
+      new mapManager.mapboxgl.Popup()
+      .setLngLat(coordinates)
+      .setHTML(description)
+      .addTo(mapManager.map);
+    });
+
+    mapManager.map.on('mouseenter', 'device-icon', function (e) {
+        mapManager.map.getCanvas().style.cursor = 'pointer';
+    });
+
+    mapManager.map.on('mouseleave', 'device-icon', function (e) {
+      mapManager.map.getCanvas().style.cursor = '';
+    });
+  })
 
   return <div style={style} ref={containerEl} />;
 }
