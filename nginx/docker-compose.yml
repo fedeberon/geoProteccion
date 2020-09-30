@@ -1,0 +1,10 @@
+version: "3"
+services:
+  geoProteccion:
+    container_name: geo-proteccion-container
+    build: .
+    image: geo-proteccion
+    ports:
+      - "8082:8082"
+    volumes:
+      - "../build:/usr/share/nginx/html"
