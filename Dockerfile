@@ -2,8 +2,10 @@
 FROM node:12 as react-build
 WORKDIR /app
 COPY . ./
-RUN yarn
-RUN yarn build
+RUN npm install
+
+RUN npm run build
+
 
 # Stage 2 - the production environment
 FROM nginx:alpine
