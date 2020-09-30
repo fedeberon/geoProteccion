@@ -1,4 +1,4 @@
 FROM nginx:alpine
 COPY nginx.conf /etc/nginx/conf.d/default.conf
-EXPOSE 8082
+EXPOSE 8888
 CMD ["nginx", "-g", "daemon off;"]
