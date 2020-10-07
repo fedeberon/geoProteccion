@@ -35,7 +35,7 @@ const MainMap = () => {
     const device = state.devices.items[position.deviceId] || null;
     return {
       name: device ? device.name : '',
-      description: `<p>${device.name}</p><a href="#/device/${device.id}">Details</a>`
+      description: `<div class="popup-map-div"><p>${device.id}</p><p>${device.model}</p><p>${device.name}</p><p>${device.status}</p><a href="#/device/${device.id}">Details</a></div>`
     }
   };
 
@@ -50,6 +50,20 @@ const MainMap = () => {
       properties: createFeature(state, position),
     })),
   }));
+
+  var markerHeight = 0, markerRadius = 0, linearOffset = 0;
+  var popupOffsets = {
+    'top': [0, 0],
+    'top-left': [0, 0],
+    'top-right': [0, 0],
+    'bottom': [0, -markerHeight],
+    'bottom-left': [linearOffset, (markerHeight - markerRadius + linearOffset) * -1],
+    'bottom-right': [-linearOffset, (markerHeight - markerRadius + linearOffset) * -1],
+    'left': [markerRadius, (markerHeight - markerRadius) * -1],
+    'right': [-markerRadius, (markerHeight - markerRadius) * -1]
+  };
+
+  let popup = new mapManager.mapboxgl.Popup({offset: popupOffsets, className: 'popup-map'});
 
   useLayoutEffect(() => {
     const currentEl = containerEl.current;
@@ -116,10 +130,7 @@ const MainMap = () => {
       coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
       }
 
-      new mapManager.mapboxgl.Popup()
-      .setLngLat(coordinates)
-      .setHTML(description)
-      .addTo(mapManager.map);
+      popup.setLngLat(coordinates).setHTML(description).addTo(mapManager.map);
     });
 
     mapManager.map.on('mouseenter', 'device-icon', function (e) {
@@ -129,7 +140,7 @@ const MainMap = () => {
     mapManager.map.on('mouseleave', 'device-icon', function (e) {
       mapManager.map.getCanvas().style.cursor = '';
     });
-  })
+  },[mapManager.map])
 
   return <div style={style} ref={containerEl} />;
 }

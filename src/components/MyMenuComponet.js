@@ -19,7 +19,7 @@ import NotificationsActiveIcon from '@material-ui/icons/NotificationsActive';
 import DateRangeIcon from '@material-ui/icons/DateRange';
 import BuildIcon from '@material-ui/icons/Build';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import ListSubheader from "@material-ui/core/ListSubheader";
+import { Typography } from "@material-ui/core";
 
 const useStyles = makeStyles({
 
@@ -28,7 +28,6 @@ const useStyles = makeStyles({
   },
   appBar: {
   },
-
   list: {
     width: 250,
   },
@@ -37,10 +36,18 @@ const useStyles = makeStyles({
     marginRight: 20,
   },
   paper: {
+    height: 'auto',
+    top: 200,
+    color: 'white',
+    textDecoration: 'bold',
     margin: 30,
-    boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
-    background: 'linear-gradient(0deg, rgba(34,193,195,1) 0%, rgba(255,208,108,1) 100%)',
-    borderRadius:   5
+    boxShadow: '0 3px 5px 2px #1c2939aa',
+    background: 'linear-gradient(25deg, #2dc6d4 0%, #1c2939 100%)',
+    borderRadius: 25,
+  },
+  white: {
+    textDecoration: 'none',
+    color: 'white!important'
   }
 
 });
@@ -67,55 +74,83 @@ export default function MyMenuComponet() {
                tabIndex={0}
                className={classes.list}
                role="button">
-            <List subheader={<ListSubheader>Menu</ListSubheader>}>
+            <List subheader={<img loading="lazy" style={{ width: 80, marginLeft: 85, marginRight: 85, marginTop: 20 }} src={require('../../public/images/LogoGeos.png')}></img>}>
               <ListItem  component={NavLink} to={"/account"}>
                 <ListItemIcon>
-                  <AccountBoxIcon />
+                  <AccountBoxIcon htmlColor={'white'} fontSize={'large'} />
                 </ListItemIcon>
-                <ListItemText primary={t('settingsUser')} />
+                <ListItemText
+                  disableTypography
+                  classes={{ white: classes.white }}
+                  primary={<Typography type="body2" style={{color: 'white', fontWeight: 'bold', fontSize: 24}}>{t('settingsUser')}</Typography>}
+                />
               </ListItem>
               <ListItem component={NavLink} to={"/device/list"}>
                 <ListItemIcon>
-                  <GpsFixedIcon />
+                  <GpsFixedIcon htmlColor={'white'} fontSize={'large'} />
                 </ListItemIcon>
-                <ListItemText primary={t('deviceTitle')} />
+                <ListItemText
+                  disableTypography
+                  classes={{ white: classes.white }}
+                  primary={<Typography type="body2" style={{color: 'white', fontWeight: 'bold', fontSize: 24}}>{t('deviceTitle')}</Typography>}
+                />
               </ListItem>
               <ListItem component={NavLink} to={"/groups"}>
                 <ListItemIcon>
-                  <GroupWorkIcon />
+                  <GroupWorkIcon htmlColor={'white'} fontSize={'large'} />
                 </ListItemIcon>
-                <ListItemText primary={t('settingsGroups')} />
+                <ListItemText
+                  disableTypography
+                  classes={{ white: classes.white }}
+                  primary={<Typography type="body2" style={{color: 'white', fontWeight: 'bold', fontSize: 24}}>{t('settingsGroups')}</Typography>}
+                />
               </ListItem>
               <ListItem component={NavLink} to={"/geozones"}>
                 <ListItemIcon>
-                  <MapIcon />
+                  <MapIcon htmlColor={'white'} fontSize={'large'} />
                 </ListItemIcon>
-                <ListItemText primary={t('geozones')} />
+                <ListItemText
+                  disableTypography
+                  classes={{ white: classes.white }}
+                  primary={<Typography type="body2" style={{color: 'white', fontWeight: 'bold', fontSize: 24}}>{t('geozones')}</Typography>}
+                />
               </ListItem>
               <ListItem component={NavLink} to={"/notifications"}>
                 <ListItemIcon>
-                  <NotificationsActiveIcon />
+                  <NotificationsActiveIcon htmlColor={'white'} fontSize={'large'} />
                 </ListItemIcon>
-                <ListItemText primary={t('sharedNotifications')} />
+                <ListItemText
+                  disableTypography
+                  classes={{ white: classes.white }}
+                  primary={<Typography type="body2" style={{color: 'white', fontWeight: 'bold', fontSize: 24}}>{t('sharedNotifications')}</Typography>}
+                />
               </ListItem>
               <ListItem component={NavLink} to={"/calendars"}>
                 <ListItemIcon>
-                  <DateRangeIcon />
+                  <DateRangeIcon htmlColor={'white'} fontSize={'large'} />
                 </ListItemIcon>
-                <ListItemText primary={t('sharedCalendars')} />
+                <ListItemText
+                  disableTypography
+                  classes={{ white: classes.white }}
+                  primary={<Typography type="body2" style={{color: 'white', fontWeight: 'bold', fontSize: 24}}>{t('sharedCalendars')}</Typography>}
+                />
               </ListItem>
               <ListItem component={NavLink} to={"/maintenance"}>
                 <ListItemIcon>
-                  <BuildIcon />
+                  <BuildIcon htmlColor={'white'} fontSize={'large'} />
                 </ListItemIcon>
-                <ListItemText primary={t('sharedMaintenance')} />
+                <ListItemText
+                  disableTypography
+                  classes={{ white: classes.white }}
+                  primary={<Typography type="body2" style={{color: 'white', fontWeight: 'bold', fontSize: 24}}>{t('sharedMaintenance')}</Typography>}
+                />
               </ListItem>
               <Divider />
               <ListItem>
                 <ListItemIcon>
-                  <ChevronLeftIcon />
+                  <ChevronLeftIcon htmlColor={'white'} fontSize={'large'} />
                 </ListItemIcon>
-                <Button color="inherit" onClick={e => {
+                <Button color="inherit" style={{ fontSize: 24 }} onClick={e => {
                   e.stopPropagation();
                   handleHideModal('menu')
                 }}>{t('sharedHide')}</Button>
