@@ -21,8 +21,8 @@ import {useDispatch} from "react-redux";
 const useStyles = makeStyles((theme) => ({
   speedDial: {
     position: 'absolute',
-    bottom: theme.spacing(2),
-    right: theme.spacing(2),
+    top: '3%',
+    right: theme.spacing(6),
   },
 }));
 
@@ -68,6 +68,7 @@ export default function SpeedDialTooltipOpen() {
         onClose={handleClose}
         onOpen={handleOpen}
         open={open}
+        direction="down"
       >
 
         <SpeedDialAction
@@ -79,6 +80,7 @@ export default function SpeedDialTooltipOpen() {
             e.stopPropagation();
             handleVisibilityModal('menu')
           }}
+          tooltipPlacement="left"
         />
 
         <SpeedDialAction
@@ -90,6 +92,7 @@ export default function SpeedDialTooltipOpen() {
             e.stopPropagation();
             handleVisibilityModal('search')
           }}
+          tooltipPlacement="left"
         />
 
       </SpeedDial>

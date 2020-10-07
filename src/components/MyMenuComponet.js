@@ -37,7 +37,7 @@ const useStyles = makeStyles({
   },
   paper: {
     height: 'auto',
-    top: 200,
+    top: '10%',
     color: 'white',
     textDecoration: 'bold',
     margin: 30,
