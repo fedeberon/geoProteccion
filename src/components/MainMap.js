@@ -33,9 +33,46 @@ const MainMap = () => {
 
   const createFeature = (state, position) => {
     const device = state.devices.items[position.deviceId] || null;
+    const name = device.name ? device.name : 'NOT FOUND';
+    const model = device.attributes.MODELO ? device.attributes.MODELO : 'NOT FOUND';
+    const carPlate = device.attributes.PATENTE ? device.attributes.PATENTE : 'NOT FOUND';
+    const brand = device.attributes.MARCA ? device.attributes.MARCA : 'NOT FOUND';
+    const year = device.attributes.ANO ? device.attributes.ANO : 'NOT FOUND';
+    const status = device.status ? device.status : 'NOT FOUND';
+    const lastUpdate = device.lastUpdate ? new Date(device.lastUpdate) : 'NOT FOUND';
+    const protocol = position.protocol ? position.protocol : 'NOT FOUND';
+    const speed = position.speed ? position.speed : 'NOT FOUND';
+    const kilometers = position.attributes.totalDistance ? position.attributes.totalDistance : 'NOT FOUND';
+
     return {
       name: device ? device.name : '',
-      description: `<div class="popup-map-div"><p>${device.id}</p><p>${device.model}</p><p>${device.name}</p><p>${device.status}</p><a href="#/device/${device.id}">Details</a></div>`
+      description: `<div class="popup-map-div">
+                      <div class="popup-map-header">
+                        <p> <strong>${carPlate + '</strong> (' + name + ')' } </p>
+                        <p>${brand + ' ' + model + ' ' + year }</p>
+                        <p>${protocol}</p>
+                        <div class="display-flex">
+                          <p class="status-${status}">${status}</p> <p style="padding-left: 10px" class="status-inactive"> ${lastUpdate.getHours()} hours ago </p>
+                        </div>
+                      </div>
+                      <div class="popup-map-body">
+                        <p class="bold">Direcci&oacute;n actual</p>
+                        <a href="">VER DIRECCI&Oacute;N</a>
+
+                        <p class="bold">Estado actual</p>
+                        <p class="status-inactive">detenido</p>
+
+                        <p class="bold">Velocidad</p>
+                        <p class="status-inactive">${speed}</p>
+
+                        <p class="bold">Corta corriente</p>
+                        <p class="status-inactive"> deshabilitado </p>
+
+                        <p class="bold">Kilometraje</p>
+                        <p class="status-inactive">${kilometers}</p>
+                      </div>
+                      <a class="btn" href="#/device/${device.id}">Details</a>
+                    </div>`
     }
   };
 
