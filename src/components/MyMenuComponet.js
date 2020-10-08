@@ -37,7 +37,7 @@ const useStyles = makeStyles({
   },
   paper: {
     height: 'auto',
-    top: '10%',
+    top: '2%',
     color: 'white',
     textDecoration: 'bold',
     margin: 30,
@@ -82,7 +82,7 @@ export default function MyMenuComponet() {
                 <ListItemText
                   disableTypography
                   classes={{ white: classes.white }}
-                  primary={<Typography type="body2" style={{color: 'white', fontWeight: 'bold', fontSize: 24}}>{t('settingsUser')}</Typography>}
+                  primary={<Typography type="body2" style={{color: 'white', fontWeight: 'bold', fontSize: 18}}>{t('settingsUser')}</Typography>}
                 />
               </ListItem>
               <ListItem component={NavLink} to={"/device/list"}>
@@ -92,7 +92,7 @@ export default function MyMenuComponet() {
                 <ListItemText
                   disableTypography
                   classes={{ white: classes.white }}
-                  primary={<Typography type="body2" style={{color: 'white', fontWeight: 'bold', fontSize: 24}}>{t('deviceTitle')}</Typography>}
+                  primary={<Typography type="body2" style={{color: 'white', fontWeight: 'bold', fontSize: 18}}>{t('deviceTitle')}</Typography>}
                 />
               </ListItem>
               <ListItem component={NavLink} to={"/groups"}>
@@ -102,7 +102,7 @@ export default function MyMenuComponet() {
                 <ListItemText
                   disableTypography
                   classes={{ white: classes.white }}
-                  primary={<Typography type="body2" style={{color: 'white', fontWeight: 'bold', fontSize: 24}}>{t('settingsGroups')}</Typography>}
+                  primary={<Typography type="body2" style={{color: 'white', fontWeight: 'bold', fontSize: 18}}>{t('settingsGroups')}</Typography>}
                 />
               </ListItem>
               <ListItem component={NavLink} to={"/geozones"}>
@@ -112,7 +112,7 @@ export default function MyMenuComponet() {
                 <ListItemText
                   disableTypography
                   classes={{ white: classes.white }}
-                  primary={<Typography type="body2" style={{color: 'white', fontWeight: 'bold', fontSize: 24}}>{t('geozones')}</Typography>}
+                  primary={<Typography type="body2" style={{color: 'white', fontWeight: 'bold', fontSize: 18}}>{t('geozones')}</Typography>}
                 />
               </ListItem>
               <ListItem component={NavLink} to={"/notifications"}>
@@ -122,7 +122,7 @@ export default function MyMenuComponet() {
                 <ListItemText
                   disableTypography
                   classes={{ white: classes.white }}
-                  primary={<Typography type="body2" style={{color: 'white', fontWeight: 'bold', fontSize: 24}}>{t('sharedNotifications')}</Typography>}
+                  primary={<Typography type="body2" style={{color: 'white', fontWeight: 'bold', fontSize: 18}}>{t('sharedNotifications')}</Typography>}
                 />
               </ListItem>
               <ListItem component={NavLink} to={"/calendars"}>
@@ -132,7 +132,7 @@ export default function MyMenuComponet() {
                 <ListItemText
                   disableTypography
                   classes={{ white: classes.white }}
-                  primary={<Typography type="body2" style={{color: 'white', fontWeight: 'bold', fontSize: 24}}>{t('sharedCalendars')}</Typography>}
+                  primary={<Typography type="body2" style={{color: 'white', fontWeight: 'bold', fontSize: 18}}>{t('sharedCalendars')}</Typography>}
                 />
               </ListItem>
               <ListItem component={NavLink} to={"/maintenance"}>
@@ -142,7 +142,7 @@ export default function MyMenuComponet() {
                 <ListItemText
                   disableTypography
                   classes={{ white: classes.white }}
-                  primary={<Typography type="body2" style={{color: 'white', fontWeight: 'bold', fontSize: 24}}>{t('sharedMaintenance')}</Typography>}
+                  primary={<Typography type="body2" style={{color: 'white', fontWeight: 'bold', fontSize: 18}}>{t('sharedMaintenance')}</Typography>}
                 />
               </ListItem>
               <Divider />
@@ -150,7 +150,7 @@ export default function MyMenuComponet() {
                 <ListItemIcon>
                   <ChevronLeftIcon htmlColor={'white'} fontSize={'large'} />
                 </ListItemIcon>
-                <Button color="inherit" style={{ fontSize: 24 }} onClick={e => {
+                <Button color="inherit" style={{ fontSize: 18 }} onClick={e => {
                   e.stopPropagation();
                   handleHideModal('menu')
                 }}>{t('sharedHide')}</Button>
