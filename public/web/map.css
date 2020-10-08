@@ -1,0 +1,22 @@
+.popup-map-div {
+  font-size: 1rem;
+  background-color: #1d1d1d;
+  color: white;
+}
+
+.popup-map-div > a {
+  text-decoration: none;
+  color: white;
+}
+
+.mapboxgl-popup-content {
+  background-color: #1d1d1d !important;
+}
+
+.MuiButton-containedPrimary {
+  background-image: linear-gradient(25deg, #2dc6d4 0%, #1c2939 100%);
+}
+
+.MuiFab-primary {
+  background-image: linear-gradient(25deg, #2dc6d4 0%, #1c2939 100%);
+}
