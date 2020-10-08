@@ -39,7 +39,7 @@ const useStyles = makeStyles((theme) => ({
     height: '100vh',
   },
   image: {
-    backgroundImage: 'url(https://codematters.online/wp-content/uploads/2018/08/How-Bing-Maps-API-features-compare-to-Google-Maps.jpg)',
+    backgroundImage: 'url(http://164.68.101.162:8093/img/Tesla-maps.jpg)',
     backgroundRepeat: 'no-repeat',
     backgroundColor:
       theme.palette.type === 'light' ? theme.palette.grey[50] : theme.palette.grey[900],
