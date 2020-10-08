@@ -4,6 +4,12 @@ const setSession = (email, password) => {
     .then(response => response);
 }
 
+// const getDeviceByUserId = (id) => {
+//   return fetch('/api/devices?userId=', { method: 'GET' })
+//     .catch(function (error) { console.log('setDevices error:', error)})
+//     .then(response => response);
+// }
+
 export {
   setSession,
 };

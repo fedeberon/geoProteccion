@@ -39,7 +39,7 @@ const useStyles = makeStyles((theme) => ({
     height: '100vh',
   },
   image: {
-    backgroundImage: 'url(https://codematters.online/wp-content/uploads/2018/08/How-Bing-Maps-API-features-compare-to-Google-Maps.jpg)',
+    backgroundImage: 'url(http://164.68.101.162:8093/img/Tesla-maps.jpg)',
     backgroundRepeat: 'no-repeat',
     backgroundColor:
       theme.palette.type === 'light' ? theme.palette.grey[50] : theme.palette.grey[900],
@@ -110,7 +110,7 @@ const LoginPage = () => {
       <Grid item xs={false} sm={4} md={7} className={classes.image} />
       <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
         <div className={classes.paper}>
-          <img loading="lazy" style={{ width: 80, margin: 20 }} src={require('../../public/images/LogoGeos.png')}></img>
+        <img loading="lazy" style={{ width: 80, margin: 20 }} src={require('../../public/images/LogoGeos.png')}></img>
           <Typography component="h1" variant="h5">
             Ingresar
           </Typography>
