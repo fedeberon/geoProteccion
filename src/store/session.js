@@ -5,6 +5,9 @@ const { reducer, actions } = createSlice({
   initialState: {
     authenticated: false,
     user: {},
+    deviceAttributes: {
+      isViewportDesktop: true,
+    }
   },
   reducers: {
     authenticated(state, action) {
@@ -12,6 +15,9 @@ const { reducer, actions } = createSlice({
     },
     setUser(state, action) {
       state.user = action.payload
+    },
+    setDeviceAttribute(state, action) {
+      state.deviceAttributes[action.payload.attribute] = action.payload.value;
     }
   }
 });

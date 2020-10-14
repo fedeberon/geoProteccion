@@ -32,7 +32,6 @@ const useStyles = makeStyles(theme => ({
   list: {
       maxHeight: '100%',
       overflow: 'auto',
-
   },
   fab: {
     position: 'absolute',
@@ -131,10 +130,10 @@ const DeviceList = () => {
                 </Avatar>
               </ListItemAvatar>
               <ListItemText primary={device.name} secondary={device.uniqueId} />
-              
+
               <Avatar src={require('../../public/images/gps.gif')}/>
-                  
-                  
+
+
               <ListItemSecondaryAction>
                 <IconButton onClick={(event) => handleMenuClick(event, device.id)}>
                   <MoreVertIcon />

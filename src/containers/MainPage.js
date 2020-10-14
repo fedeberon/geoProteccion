@@ -1,7 +1,7 @@
 import React from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {modalsActions, sessionActions} from '../store';
-import {makeStyles, withWidth} from '@material-ui/core';
+import {IconButton, InputBase, List, makeStyles, Paper, withWidth} from '@material-ui/core';
 import Drawer from '@material-ui/core/Drawer';
 import ContainerDimensions from 'react-container-dimensions';
 import LinearProgress from '@material-ui/core/LinearProgress';
@@ -9,7 +9,8 @@ import DeviceList from '../components/DeviceList';
 import MainMap from '../components/MainMap';
 import SocketController from '../components/SocketController';
 import MyMenuComponet from '../components/MyMenuComponet';
-import SpeedDialsComponent from "../components/SpeedDialsComponent";
+import Menu from "../components/Menu";
+import ShortcutsMenu from "../components/ShorcutsMenu";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -91,8 +92,8 @@ const MainPage = ({ width }) => {
         </div>
       </div>
 
-      <SpeedDialsComponent />
-
+      <ShortcutsMenu />
+      <Menu />
     </div>
   );
 }
