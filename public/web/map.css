@@ -1,43 +1,46 @@
 .popup-map-div {
-  font-size: 12px;
-  background-color: #1d1d1d;
-  color: white;
+  font-size: 0.9em;
+  color: black;
+}
+
+.footer-sp {
+  display: flex;
+  justify-content: center;
+}
+
+.mapboxgl-popup-close-button {
+  top: 93% !important;
+  right: -2% !important;
+  padding: 7px;
+  border-radius: 6px;
+  font-size: 20px;
 }
 
 .button-black {
-  color: #d7d7d7;
-  border: solid 1px #333;
-  background: #252424;
-  margin-left: 33.33%;
-  margin-top: 10px;
-  font-family: system-ui;
-  font-size: 13px;
-}
-
-.button-blue {
-  width: 100%;
-  border-radius: 12px;
-  background-color: #1a52ecfa;
+  width: 75%;
+  border-radius: 6px;
+  background-color: #1d193e;
   text-transform: uppercase;
   color: white;
-  margin-top: 5px;
-  padding: 5px;
+  margin-top: 10px;
+  padding: 10px;
   border: thick;
   font-family: system-ui;
-  font-size: 12px;
+  font-size: 13px;
+  border: solid 1px #333;
 }
 
 .icon-fa {
-  font-size: 25px;
-  padding: 0.5rem;
+  font-size: 18px;
   color: #2b2ba9;
+  display: flex !important;
+  justify-content: center;
 }
 
 .head-list {
   text-align: left;
   list-style-type: none;
-  width: 60%;
-  padding-left: 0px;
+  padding-left: 33px;
   margin-left: auto;
   margin-right: auto;
   font-size: 12px;
@@ -64,18 +67,30 @@
   margin-right: auto;
 }
 
+.vehicule-type {
+  font-size: 25px;
+  color: #716a77;
+  left: 75%;
+  position: absolute;
+  top: 55%;
+}
+
 .popup-map-div > a {
   text-decoration: none;
-  color: white;
+  color: black;
+  background-color: white !important;
 }
 .mapboxgl-popup {
   min-width: 280px !important;
-  max-width: 400px !important;
+  max-width: 350px !important;
 }
 
 .mapboxgl-popup-content {
-  background-color: #1d1d1d !important;
-  border-radius: 10px !important;
+  background-color: white !important;
+  border-radius: 60px !important;
+  -webkit-box-shadow: 0px 0px 20px 1px rgba(102,97,102,0.8) !important;
+  -moz-box-shadow: 0px 0px 20px 1px rgba(102,97,102,0.8) !important;
+  box-shadow: 0px 0px 20px 1px rgba(102,97,102,0.8) !important;
 }
 
 .MuiButton-containedPrimary {

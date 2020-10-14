@@ -53,9 +53,9 @@ function createData(field, userData,) {
 
 
 const rows = [
-  createData("Id:", "1",),
-  createData("Names:", "2",),
-  createData("Uniqueld:", "3",),
+  createData("id:", "",),
+  createData("names:", "",),
+  createData("uniqueId:", "",),
   createData("Status:", "",),
   createData("Disable:", "",),
   createData("lastUpdate:", "",),
@@ -65,7 +65,7 @@ const rows = [
   createData("Model", "",),
   createData("Contact:", "",),
   createData("Category:", "",),
-  createData("Geofenceids:", "",),
+  createData("GeofenceIds:", "",),
   createData("Attributes", "",),
 ];
 
@@ -141,7 +141,7 @@ const DevicePage = () => {
                 <TableCell>Phone</TableCell>
                 <TableCell>Model</TableCell>
                 <TableCell>Category</TableCell>
-                <TableCell>GeoFenceids</TableCell>
+                <TableCell>GeoFenceIds</TableCell>
                 <TableCell>Attributes</TableCell>
               </TableRow>
             </TableHead>
