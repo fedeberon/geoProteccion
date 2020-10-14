@@ -16,14 +16,23 @@ import LocationOnIcon from '@material-ui/icons/LocationOn';
 import MoreIcon from '@material-ui/icons/More';
 
 import {modalsActions} from "../store";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
+import { isWidthUp } from '@material-ui/core';
+import { getBreakpointFromWidth } from '../utils/functions';
 
 const useStyles = makeStyles((theme) => ({
   speedDial: {
     position: 'absolute',
-    top: '3%',
-    right: theme.spacing(6),
-  },
+    bottom: '1%',
+    left: '50vw',
+    right: '50vw',
+    [theme.breakpoints.up('md')]: {
+      top: '1%',
+      left: '1%',
+      right: 'auto',
+      bottom: 'auto'
+    },
+  }
 }));
 
 const actions = [
@@ -34,11 +43,12 @@ const actions = [
   { icon: <FavoriteIcon />, name: 'Like' },
 ];
 
-export default function SpeedDialTooltipOpen() {
+export default function Menu() {
   const classes = useStyles();
   const dispatch = useDispatch();
   const [open, setOpen] = React.useState(false);
   const [hidden, setHidden] = React.useState(false);
+  const isViewportDesktop = useSelector(state => state.session.deviceAttributes.isViewportDesktop);
 
   const handleVisibilityModal = (name) => {
     dispatch(modalsActions.show(name));
@@ -58,7 +68,6 @@ export default function SpeedDialTooltipOpen() {
 
   return (
     <div className={classes.root}>
-      {/*<Button onClick={handleVisibility}>Boton Menu</Button>*/}
       <Backdrop open={open} />
       <SpeedDial
         ariaLabel="Menu"
@@ -68,7 +77,7 @@ export default function SpeedDialTooltipOpen() {
         onClose={handleClose}
         onOpen={handleOpen}
         open={open}
-        direction="down"
+        direction={isViewportDesktop ? 'down' : 'up'}
       >
 
         <SpeedDialAction
@@ -80,7 +89,7 @@ export default function SpeedDialTooltipOpen() {
             e.stopPropagation();
             handleVisibilityModal('menu')
           }}
-          tooltipPlacement="left"
+          tooltipPlacement={isViewportDesktop ? 'right' : 'left'}
         />
 
         <SpeedDialAction
@@ -92,7 +101,7 @@ export default function SpeedDialTooltipOpen() {
             e.stopPropagation();
             handleVisibilityModal('search')
           }}
-          tooltipPlacement="left"
+          tooltipPlacement={isViewportDesktop ? 'right' : 'left'}
         />
 
       </SpeedDial>

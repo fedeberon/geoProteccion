@@ -16,9 +16,17 @@ import SuccessSnackbar from "./components/SuccessSnackbar";
 import MainToolbar from './components/MainToolbar';
 import { useDispatch, useSelector } from 'react-redux';
 import PrivateRoute from './components/ PrivateRoute';
+import { isWidthUp } from '@material-ui/core';
+import { getBreakpointFromWidth } from './utils/functions';
+import { sessionActions } from './store';
 
 const App = () => {
+  const dispatch = useDispatch();
   const authenticated = useSelector(state => state.session.authenticated);
+  useEffect(() => {
+    const isViewportDesktop = isWidthUp('md', getBreakpointFromWidth(window.innerWidth));
+    dispatch(sessionActions.setDeviceAttribute({ attribute: 'isViewportDesktop', value: isViewportDesktop }));
+  });
 
   return (
     <>

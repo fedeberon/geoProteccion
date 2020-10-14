@@ -135,7 +135,7 @@ const map = new mapboxgl.Map({
   zoom: 1
 });
 
-map.addControl(new mapboxgl.NavigationControl());
+map.addControl(new mapboxgl.NavigationControl(), 'bottom-right');
 
 map.on('load', () => {
   loadImage('images/background.svg').then((background) => {
