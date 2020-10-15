@@ -111,9 +111,6 @@ const LoginPage = () => {
       <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
         <div className={classes.paper}>
         <img loading="lazy" style={{ width: 80, margin: 20 }} src={require('../../public/images/LogoGeos.png')}></img>
-          <Typography component="h1" variant="h5">
-            Ingresar
-          </Typography>
 
           <form className={classes.form} noValidate onSubmit={handleLogin}>
 
@@ -154,6 +151,7 @@ const LoginPage = () => {
               variant="contained"
               color="primary"
               className={classes.submit}
+              style={{color: 'white'}}
               disabled={!email || !password}>
               {t('loginLogin')}
             </Button>

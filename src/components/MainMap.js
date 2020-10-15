@@ -38,6 +38,8 @@ const MainMap = () => {
     },
   }));
 
+  const isViewportDesktop = useSelector(state => state.session.deviceAttributes.isViewportDesktop);
+
   const createFeature = (state, position) => {
     const device = state.devices.items[position.deviceId] || null;
     const name = device.name ? device.name : 'Undefined';
@@ -50,67 +52,72 @@ const MainMap = () => {
     const protocol = position.protocol ? position.protocol : 'Undefined';
     const speed = position.speed ? position.speed : 'Undefined';
     const kilometers = position.attributes.totalDistance ? position.attributes.totalDistance : 'Undefined|';
-
+    const desktopView = isViewportDesktop;
 
     return {
       name: device ? device.name : '',
-      description: `<div class="popup-map-div">
+      description: `<div class="${desktopView ? 'popup-map-div' : 'popup-map-div-mobile'}">
                       <div class="popup-map-header">
                       <ul class="head-list">
-                        <li><p class="bold"> <strong>${carPlate + '</strong> (' + name + ')'} </p></li>
-                        <li><p>${brand + ' ' + model + ' ' + year}</p></li>
-                        <li><p>${protocol}</p></li>
-                        <li><p class="display-flex status-${status}">${status}<span class="status-inactive">&nbsp;${lastUpdate.getHours()} hours ago</span></p></li>
+                        <li><p style="${desktopView ? 'font-size: 16px' : 'font-size: 20px'}"><strong  class="bold">${carPlate + '</strong> - ' + name} </p></li>
+                        <li><p>18:21:32  14/07/2020 <span class="display-flex status-${status}">${status}<span class="${desktopView ? 'status-inactive' : 'status-inactive-mobile'}">&nbsp;${lastUpdate.getHours()} hours ago</span></span></p></li>
+                        <!--<li><p>${brand + ' ' + model + ' ' + year}</p></li>
+                        <li><p>${protocol}</p></li>-->
+                        <li>
+                        <tr>
+                        <p><strong>Direccion:</strong>
+                        199 Los Libertadores, Santa Cruz Región del Libertador General Bernardo O'Higgins, CL</p>
+                        </tr>
+                        </li>
                         </ul>
                       </div>
                       <div>
                     </div>
 
-                      <div class="popup-map-body col-md-6">
-
+                      <div class="popup-map-body">
+                        <i style="${desktopView ? '' : 'color: white'}"class="fas fa-truck-moving vehicule-type"></i>
                         <table class="body-list">
                         <tr>
-                        <td rowspan="2"><i class="icon-fa fas fa-map-marker-alt"/></td>
-                        <th>Dirección actual</th>
+                        <td><i class="icon-fa fas fa-map-marker-alt"/></td>
+                        <th>Contacto</th>
+                        <td>
+                        <td><p class="${desktopView ? 'status-inactive' : 'status-inactive-mobile'}">Abierto</p></td>
+                        </td>
                         </tr>
                         <tr>
-                        <td><a href="">Ver direccion</a></td>
+                        <td><i class="icon-fa fas fa-car-alt"/></td>
+                        <th>Movimiento</th>
+                        <td>
+                        <td><p class="${desktopView ? 'status-inactive' : 'status-inactive-mobile'}">No</p></td>
+                        </td>
                         </tr>
                         <tr>
-                        <td rowspan="2"><i class="icon-fa fas fa-car-alt"/></td>
-                        <th>Estado actual</th>
-                        </tr>
-                        <tr>
-                        <td><p class="status-inactive">Detenido</p></td>
-                        </tr>
-                        <tr>
-                        <td rowspan="2"><i class="icon-fa fas fa-tachometer-alt"/></td>
+                        <td><i class="icon-fa fas fa-tachometer-alt"/></td>
                         <th>Velocidad</th>
+                        <td>
+                        <td><p class="${desktopView ? 'status-inactive' : 'status-inactive-mobile'}">${speed}</p></td>
+                        </td>
                         </tr>
                         <tr>
-                        <td><p class="status-inactive">${speed}</p></td>
+                        <td><i class="icon-fa fas fa-road"/></td>
+                        <th>Odómetro</th>
+                        <td>
+                        <td><p class="${desktopView ? 'status-inactive' : 'status-inactive-mobile'}">${kilometers}</p></td>
+                        </td>
                         </tr>
                         <tr>
-                        <td rowspan="2"><i class="icon-fa fas fa-bolt"/></td>
+                        <td><i class="icon-fa fas fa-bolt"/></td>
                         <th>Corta corriente</th>
-                        </tr>
-                        <tr>
-                        <td><p class="status-inactive"> deshabilitado</p></td>
-                        </tr>
-                        <tr>
-                        <td rowspan="2"><i class="icon-fa fas fa-road"/></td>
-                        <th>Kilometraje</th>
-                        </tr>
-                        <tr>
-                        <td><p class="status-inactive">${kilometers}</p></td>
+                        <td>
+                        <td><p class="${desktopView ? 'status-inactive' : 'status-inactive-mobile'}">Desactivado</p></td>
+                        </td>
                         </tr>
                         </table>
 
                       </div>
                       <div class="footer-sp">
-                      <button class="button-blue btn-lg" href="#/device/${device.id}">
+                      <button class="${desktopView ? 'button-black' : 'button-black-mobile'}" href="#/device/${device.id}">
                       Activar corta corriente</button>
-                    <button class="button-black" style="border-radius: 5px">REPORTES</button>
                     </div>
                     </div>`
     }

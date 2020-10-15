@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { useHistory, useParams } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core/styles';
+import React, {useEffect, useState} from 'react';
+import {useHistory, useParams} from 'react-router-dom';
+import {makeStyles} from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Container from '@material-ui/core/Container';
 import Button from '@material-ui/core/Button';
@@ -12,8 +12,9 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
-
+import * as service from '../utils/serviceManager';
 import t from '../common/localization';
+import {useSelector} from "react-redux";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -26,52 +27,74 @@ const useStyles = makeStyles(theme => ({
       flexBasis: '33%',
     },
   },
-  DivicePageSize : {
+  DivicePageSize: {
     float: 'right',
-    width:'70%',
+    width: '70%',
     marginRight: '10%',
     marginTop: '6%',
+  },
+  table: {
+    minWidth: 700,
+  },
+  devicesTable: {
+    width: '70%',
+    marginRight: '15%',
+    float: 'right',
+    marginTop: 'theme.spacing.unit * 3',
+    overflowX: 'auto',
   }
+
 }));
 
 
 function createData(field, userData,) {
-  return { field, userData,  };
+  return {field, userData,};
 }
 
 
 const rows = [
-  createData("Id:", "", ),
-  createData("Name:", "", ),
-  createData("Uniqueld:", "",),
-  createData("Status:", "", ),
-  createData("Disable:", "", ),
-  createData("lastUpdate:", "", ),
-  createData("Positionid:", "", ),
-  createData("Groupid:", "", ),
+  createData("id:", "",),
+  createData("names:", "",),
+  createData("uniqueId:", "",),
+  createData("Status:", "",),
+  createData("Disable:", "",),
+  createData("lastUpdate:", "",),
+  createData("Positionid:", "",),
+  createData("Groupid:", "",),
   createData("Phone:", "",),
-  createData(" Model", "",),
+  createData("Model", "",),
   createData("Contact:", "",),
   createData("Category:", "",),
-  createData("Geofenceids:", "", ),
+  createData("GeofenceIds:", "",),
   createData("Attributes", "",),
 ];
 
 const DevicePage = () => {
   const classes = useStyles();
   const history = useHistory();
-  const { id } = useParams();
+  const {id} = useParams();
   const [device, setDevice] = useState();
   const [name, setName] = useState('');
   const [uniqueId, setUniqueId] = useState('');
+  const userId = useSelector((state) => state.session.user.id)
+  const [devices, setDevices] = useState([])
 
   useEffect(() => {
-    fetch(`/api/devices/${id}`).then(response => {
-      if (response.ok) {
-        response.json().then(setDevice);
-      }
-    });
-  }, [id]);
+    const getDevices = async (userId) => {
+      const response = await service.getDeviceByUserId(userId);
+      console.log(response);
+      setDevices(response);
+    }
+    getDevices(userId);
+  }, [userId]);
+
+  // useEffect(()=>{
+  //   fetch(`/api/devices/${id}`).then(response => {
+  //     if (response.ok) {
+  //       response.json().then(setDevice);
+  //     }
+  //   });
+  // })
 
   const handleSave = () => {
     const updatedDevice = id ? device : {};
@@ -82,13 +105,13 @@ const DevicePage = () => {
     if (id) {
       request = fetch(`/api/devices/${id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(updatedDevice),
       });
     } else {
       request = fetch('/api/devices', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(updatedDevice),
       });
     }
@@ -102,53 +125,65 @@ const DevicePage = () => {
 
   return (
     <>
-        <div className={classes.DivicePageSize}>
-
-          <TableContainer component={Paper}>
-            <Table className={classes.table} aria-label="simple table">
-              <TableHead>
-                <TableRow>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {rows.map((row) => (
-                  <TableRow key={row.field}>
-                    <TableCell component="th" scope="row">
-                      {row.field}
-                    </TableCell>
-                    <TableCell align="left">{row.userData}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </div>
+      <div className={classes.devicesTable}>
+        <TableContainer component={Paper}>
+          <Table className={classes.table}>
+            <TableHead>
+              <TableRow>
+                <TableCell>UserID</TableCell>
+                <TableCell>Names</TableCell>
+                <TableCell>UniqueID</TableCell>
+                <TableCell>Status</TableCell>
+                <TableCell>Disable</TableCell>
+                <TableCell>LastUpdate</TableCell>
+                <TableCell>PositionID</TableCell>
+                <TableCell>GroupID</TableCell>
+                <TableCell>Phone</TableCell>
+                <TableCell>Model</TableCell>
+                <TableCell>Category</TableCell>
+                <TableCell>GeoFenceIds</TableCell>
+                <TableCell>Attributes</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {rows.map((row) => (
+                <TableCell key={row.field}>
+                  <TableRow>
+                    {row.userData}</TableRow>
+                </TableCell>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </div>
       <Container maxWidth='xs' className={classes.container}>
         <form>
           {(!id || device) &&
-            <TextField
-              margin="normal"
-              fullWidth
-              defaultValue={device && device.name}
-              onChange={(event) => setName(event.target.value)}
-              label={t('sharedName')}
-              variant="filled" />
+          <TextField
+            margin="normal"
+            fullWidth
+            defaultValue={device && device.name}
+            onChange={(event) => setName(event.target.value)}
+            label={t('sharedName')}
+            variant="filled"/>
           }
           {(!id || device) &&
-            <TextField
-              margin="normal"
-              fullWidth
-              defaultValue={device && device.uniqueId}
-              onChange={(event) => setUniqueId(event.target.value)}
-              label={t('deviceIdentifier')}
-              variant="filled" />
+          <TextField
+            margin="normal"
+            fullWidth
+            defaultValue={device && device.uniqueId}
+            onChange={(event) => setUniqueId(event.target.value)}
+            label={t('deviceIdentifier')}
+            variant="filled"/>
           }
           <FormControl fullWidth margin="normal">
             <div className={classes.buttons}>
-              <Button type="button" color="primary" variant="outlined" onClick={() => history.goBack()}>
+              <Button type="button" color="primary" variant="outlined"
+                      onClick={() => history.goBack()}>
                 {t('sharedCancel')}
               </Button>
-              <Button type="button" color="primary" variant="contained" onClick={handleSave}>
+              <Button type="button" color="primary" variant="contained"
+                      onClick={handleSave}>
                 {t('sharedSave')}
               </Button>
             </div>
