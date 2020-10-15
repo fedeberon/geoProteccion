@@ -3,6 +3,10 @@ html, body, #root, #root>div {
   overflow: hidden;
 }
 
+li {
+  list-style: none;
+}
+
 .popup-map-div {
   font-size: 0.9em;
   color: black;
@@ -177,6 +181,10 @@ html, body, #root, #root>div {
 .mapboxgl-canvas  {
   width: 100% !important;
   height: 100% !important;
+}
+
+.display-none {
+  display: none;
 }
 
 @media only screen and (max-width: 960px) {

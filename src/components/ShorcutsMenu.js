@@ -69,7 +69,7 @@ export default function ShortcutsMenu() {
             ariaLabel="Notifications"
             title="notifications"
             className={classes.speedDial}
-            icon={<i class="fas fa-bell fa-lg"/>}
+            icon={<i className="fas fa-bell fa-lg"/>}
             direction={isViewportDesktop ? 'down' : 'up'}
             open={false}
           />
@@ -77,7 +77,7 @@ export default function ShortcutsMenu() {
             ariaLabel="Forms"
             title="forms"
             className={classes.speedDial}
-            icon={<i class="fas fa-align-left fa-lg"/>}
+            icon={<i className="fas fa-align-left fa-lg"/>}
             direction={isViewportDesktop ? 'down' : 'up'}
             open={false}
           />
@@ -85,7 +85,7 @@ export default function ShortcutsMenu() {
             ariaLabel="Geofences"
             title="geofences"
             className={classes.speedDial}
-            icon={<i class="fas fa-draw-polygon fa-lg"/>}
+            icon={<i className="fas fa-draw-polygon fa-lg"/>}
             direction={isViewportDesktop ? 'down' : 'up'}
             open={false}
           />
@@ -98,7 +98,7 @@ export default function ShortcutsMenu() {
           ariaLabel="Notifications"
           title="notifications"
           className={!showShortcutMenu ? classes.speedDial : classes.speedDialOpen }
-          icon={<SpeedDialIcon icon={!showShortcutMenu ? <ArrowDownIcon/> : <ArrowUpIcon/>}/>}
+          icon={!showShortcutMenu ? <i className="fas fa-angle-down fa-lg"/> : <i className="fas fa-angle-up fa-lg"/>}
           direction={isViewportDesktop ? 'down' : 'up'}
           onClick={() => handleShowShortcutMenu()}
         />

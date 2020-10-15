@@ -80,7 +80,7 @@ export default function Menu() {
 
         <SpeedDialAction
           key='account'
-          icon={<i class="fas fa-user-circle fa-lg"/>}
+          icon={<i className="fas fa-user-circle fa-lg"/>}
           tooltipTitle={t('settingsUser')}
           tooltipOpen
           onClick={e => {
@@ -92,7 +92,7 @@ export default function Menu() {
 
         <SpeedDialAction
           key='devices'
-          icon={<i class="fas fa-map-marker-alt fa-lg"/>}
+          icon={<i className="fas fa-map-marker-alt fa-lg"/>}
           tooltipTitle={t('deviceTitle')}
           tooltipOpen
           onClick={e => {
@@ -104,7 +104,7 @@ export default function Menu() {
 
         <SpeedDialAction
           key='groups'
-          icon={<i class="fas fa-object-group fa-lg"/>}
+          icon={<i className="fas fa-object-group fa-lg"/>}
           tooltipTitle={t('settingsGroups')}
           tooltipOpen
           onClick={e => {
@@ -116,7 +116,7 @@ export default function Menu() {
 
         <SpeedDialAction
           key='geozones'
-          icon={<i class="fas fa-draw-polygon fa-lg"/>}
+          icon={<i className="fas fa-draw-polygon fa-lg"/>}
           tooltipTitle={t('geozones')}
           tooltipOpen
           onClick={e => {
@@ -128,7 +128,7 @@ export default function Menu() {
 
         <SpeedDialAction
           key='notifications'
-          icon={<i class="fas fa-bell fa-lg"/>}
+          icon={<i className="fas fa-bell fa-lg"/>}
           tooltipTitle={t('sharedNotifications')}
           tooltipOpen
           onClick={e => {
@@ -140,7 +140,7 @@ export default function Menu() {
 
         <SpeedDialAction
           key='calendars'
-          icon={<i class="fas fa-calendar-alt fa-lg"/>}
+          icon={<i className="fas fa-calendar-alt fa-lg"/>}
           tooltipTitle={t('sharedCalendars')}
           tooltipOpen
           onClick={e => {
@@ -152,7 +152,7 @@ export default function Menu() {
 
         <SpeedDialAction
           key='maintenance'
-          icon={<i class="fas fa-tools fa-lg"/>}
+          icon={<i className="fas fa-tools fa-lg"/>}
           tooltipTitle={t('sharedMaintenance')}
           tooltipOpen
           onClick={e => {
