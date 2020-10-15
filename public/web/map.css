@@ -4,8 +4,8 @@
 }
 
 .popup-map-div-mobile {
-  padding-left: 12%;
-  padding-right: 12%;
+  padding-left: 8%;
+  padding-right: 8%;
   padding-top: 3%;
   color: white;
   font-size: 13px;
@@ -161,6 +161,7 @@
 }
 
 @media only screen and (max-width: 960px) {
+
   .mapboxgl-popup {
     max-width: 100% !important;
     display: contents !important;
@@ -174,11 +175,12 @@
   }
 
   .mapboxgl-popup-close-button {
-    font-size: 36px !important;
-    top: -1% !important;
+    font-size: 20px !important;
+    top: 0% !important;
     right: 50% !important;
     padding: 0 !important;
-    color: white !important;
+    color: #5674a9 !important;
+    /*display: none !important;*/
   }
 
   .MuiSpeedDial-root {
@@ -194,4 +196,25 @@
     color: white;
   }
 }
+.mapboxgl-ctrl-bottom-right {
+  right: 0;
+  bottom: 25px;
+}
 
+.mapboxgl-canvas  {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+@media only screen and (max-width: 600px) {
+  .mapboxgl-popup-content {
+    top: 40% !important;
+  }
+}
+.mapboxgl-popup-tip {
+  display: none !important;
+}
+html, body, #root, #root>div {
+  height: 100%;
+  overflow: hidden;
+}
