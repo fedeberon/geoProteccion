@@ -9,18 +9,14 @@ import PrintIcon from '@material-ui/icons/Print';
 import ShareIcon from '@material-ui/icons/Share';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import Notifications from '@material-ui/icons/Notifications';
-import CloseIcon from '@material-ui/icons/Close';
-import SearchIcon from "@material-ui/icons/Search";
 import DescriptionIcon from "@material-ui/icons/Description";
 import GeofenceIcon from "@material-ui/icons/BlurCircular";
 import ArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
 import ArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
 import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
 
-import {modalsActions} from "../store";
 import {useDispatch, useSelector} from "react-redux";
-import { IconButton, InputBase, isWidthUp, Paper } from '@material-ui/core';
-import { getBreakpointFromWidth } from '../utils/functions';
+import DeviceSearch from './DeviceSearch';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -37,30 +33,12 @@ const useStyles = makeStyles((theme) => ({
       flexDirection: 'unset',
     },
   },
-  paper: {
-    padding: "4px 4px",
-    display: "flex",
-    alignItems: "center",
-    width: '76%',
-    height: '50px',
-    marginTop: '3%',
-    marginLeft: '3%',
-    position: 'fixed',
-    left: '0px',
-    [theme.breakpoints.up('md')]: {
-      position: 'unset',
-      marginTop: '1%',
-    },
-  },
   speedDial: {
     marginLeft: '8px',
   },
   speedDialOpen: {
     marginLeft: '8px',
     opacity: '60%'
-  },
-  iconButton: {
-    padding: 10
   },
 }));
 
@@ -91,7 +69,7 @@ export default function ShortcutsMenu() {
             ariaLabel="Notifications"
             title="notifications"
             className={classes.speedDial}
-            icon={<SpeedDialIcon icon={<Notifications/>}/>}
+            icon={<i class="fas fa-bell fa-lg"/>}
             direction={isViewportDesktop ? 'down' : 'up'}
             open={false}
           />
@@ -99,7 +77,7 @@ export default function ShortcutsMenu() {
             ariaLabel="Forms"
             title="forms"
             className={classes.speedDial}
-            icon={<SpeedDialIcon icon={<DescriptionIcon/>}/>}
+            icon={<i class="fas fa-align-left fa-lg"/>}
             direction={isViewportDesktop ? 'down' : 'up'}
             open={false}
           />
@@ -107,24 +85,11 @@ export default function ShortcutsMenu() {
             ariaLabel="Geofences"
             title="geofences"
             className={classes.speedDial}
-            icon={<SpeedDialIcon icon={<GeofenceIcon/>}/>}
+            icon={<i class="fas fa-draw-polygon fa-lg"/>}
             direction={isViewportDesktop ? 'down' : 'up'}
             open={false}
           />
-          <Paper component="form" className={classes.paper}>
-            <IconButton
-              type="submit"
-              className={classes.iconButton}
-              aria-label="search"
-            >
-              <SearchIcon />
-            </IconButton>
-            <InputBase
-              className={classes.input}
-              placeholder="Buscar"
-              inputProps={{ "aria-label": "search google maps" }}
-            />
-          </Paper>
+          <DeviceSearch/>
         </>
       }
 
