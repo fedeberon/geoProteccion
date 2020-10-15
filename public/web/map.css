@@ -3,6 +3,14 @@
   color: black;
 }
 
+.popup-map-div-mobile {
+  padding-left: 12%;
+  padding-right: 12%;
+  padding-top: 3%;
+  color: white;
+  font-size: 13px;
+}
+
 .footer-sp {
   display: flex;
   justify-content: center;
@@ -24,10 +32,23 @@
   color: white;
   margin-top: 10px;
   padding: 10px;
-  border: thick;
   font-family: system-ui;
   font-size: 13px;
   border: solid 1px #333;
+}
+
+.button-black-mobile {
+  width: 75%;
+  border-radius: 6px;
+  margin-top: 6px;
+  margin-bottom: 6px;
+  background-color: transparent;
+  border-color: white;
+  padding: 6px;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: white;
+  border: solid 1px;
 }
 
 .icon-fa {
@@ -45,6 +66,7 @@
   margin-right: auto;
   font-size: 12px;
 }
+
 .head-list > li > p {
   margin-bottom: 0px;
   margin-top: 0px;
@@ -80,6 +102,7 @@
   color: black;
   background-color: white !important;
 }
+
 .mapboxgl-popup {
   min-width: 280px !important;
   max-width: 350px !important;
@@ -88,9 +111,9 @@
 .mapboxgl-popup-content {
   background-color: white !important;
   border-radius: 60px !important;
-  -webkit-box-shadow: 0px 0px 20px 1px rgba(102,97,102,0.8) !important;
-  -moz-box-shadow: 0px 0px 20px 1px rgba(102,97,102,0.8) !important;
-  box-shadow: 0px 0px 20px 1px rgba(102,97,102,0.8) !important;
+  -webkit-box-shadow: 0px 0px 20px 1px rgba(102, 97, 102, 0.8) !important;
+  -moz-box-shadow: 0px 0px 20px 1px rgba(102, 97, 102, 0.8) !important;
+  box-shadow: 0px 0px 20px 1px rgba(102, 97, 102, 0.8) !important;
 }
 
 .MuiButton-containedPrimary {
@@ -118,6 +141,11 @@
   margin: 0;
 }
 
+.status-inactive-mobile {
+  color: white;
+  margin: 0 !important;
+}
+
 .display-flex {
   display: flex;
 }
@@ -131,3 +159,39 @@
   background-color: blue;
   padding: 8px;
 }
+
+@media only screen and (max-width: 960px) {
+  .mapboxgl-popup {
+    max-width: 100% !important;
+    display: contents !important;
+  }
+
+  .mapboxgl-popup-content {
+    display: flex !important;
+    top: 48% !important;
+    z-index: 2 !important;
+    background-image: linear-gradient(25deg, #2dc6d4 0%, #1c2939 100%) !important;
+  }
+
+  .mapboxgl-popup-close-button {
+    font-size: 36px !important;
+    top: -1% !important;
+    right: 50% !important;
+    padding: 0 !important;
+    color: white !important;
+  }
+
+  .MuiSpeedDial-root {
+    z-index: 1 !important;
+  }
+
+  th tr td {
+    padding: 0;
+    margin: 0;
+  }
+
+  .icon-fa {
+    color: white;
+  }
+}
+

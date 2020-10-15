@@ -38,6 +38,8 @@ const MainMap = () => {
     },
   }));
 
+  const isViewportDesktop = useSelector(state => state.session.deviceAttributes.isViewportDesktop);
+
   const createFeature = (state, position) => {
     const device = state.devices.items[position.deviceId] || null;
     const name = device.name ? device.name : 'Undefined';
@@ -50,15 +52,15 @@ const MainMap = () => {
     const protocol = position.protocol ? position.protocol : 'Undefined';
     const speed = position.speed ? position.speed : 'Undefined';
     const kilometers = position.attributes.totalDistance ? position.attributes.totalDistance : 'Undefined|';
-
+    const desktopView = isViewportDesktop;
 
     return {
       name: device ? device.name : '',
-      description: `<div class="popup-map-div">
+      description: `<div class="${desktopView ? 'popup-map-div' : 'popup-map-div-mobile'}">
                       <div class="popup-map-header">
                       <ul class="head-list">
-                        <li><p style="font-size: 16px"><strong  class="bold">${carPlate + '</strong> - ' + name} </p></li>
-                        <li><p>18:21:32  14/07/2020 <span class="display-flex status-${status}">${status}<span class="status-inactive">&nbsp;${lastUpdate.getHours()} hours ago</span></span></p></li>
+                        <li><p style="${desktopView ? 'font-size: 16px' : 'font-size: 20px'}"><strong  class="bold">${carPlate + '</strong> - ' + name} </p></li>
+                        <li><p>18:21:32  14/07/2020 <span class="display-flex status-${status}">${status}<span class="${desktopView ? 'status-inactive' : 'status-inactive-mobile'}">&nbsp;${lastUpdate.getHours()} hours ago</span></span></p></li>
                         <!--<li><p>${brand + ' ' + model + ' ' + year}</p></li>
                         <li><p>${protocol}</p></li>-->
                         <li>
@@ -73,48 +75,48 @@ const MainMap = () => {
                     </div>
 
                       <div class="popup-map-body">
-                        <i class="fas fa-truck-moving vehicule-type"></i>
+                        <i style="${desktopView ? '' : 'color: white'}"class="fas fa-truck-moving vehicule-type"></i>
                         <table class="body-list">
                         <tr>
                         <td><i class="icon-fa fas fa-map-marker-alt"/></td>
                         <th>Contacto</th>
                         <td>
-                        <td><p class="status-inactive">Abierto</p></td>
+                        <td><p class="${desktopView ? 'status-inactive' : 'status-inactive-mobile'}">Abierto</p></td>
                         </td>
                         </tr>
                         <tr>
                         <td><i class="icon-fa fas fa-car-alt"/></td>
                         <th>Movimiento</th>
                         <td>
-                        <td><p class="status-inactive">No</p></td>
+                        <td><p class="${desktopView ? 'status-inactive' : 'status-inactive-mobile'}">No</p></td>
                         </td>
                         </tr>
                         <tr>
                         <td><i class="icon-fa fas fa-tachometer-alt"/></td>
                         <th>Velocidad</th>
                         <td>
-                        <td><p class="status-inactive">${speed}</p></td>
+                        <td><p class="${desktopView ? 'status-inactive' : 'status-inactive-mobile'}">${speed}</p></td>
                         </td>
                         </tr>
                         <tr>
                         <td><i class="icon-fa fas fa-road"/></td>
                         <th>Odómetro</th>
                         <td>
-                        <td><p class="status-inactive">${kilometers}</p></td>
+                        <td><p class="${desktopView ? 'status-inactive' : 'status-inactive-mobile'}">${kilometers}</p></td>
                         </td>
                         </tr>
                         <tr>
                         <td><i class="icon-fa fas fa-bolt"/></td>
                         <th>Corta corriente</th>
                         <td>
-                        <td><p class="status-inactive">Desactivado</p></td>
+                        <td><p class="${desktopView ? 'status-inactive' : 'status-inactive-mobile'}">Desactivado</p></td>
                         </td>
                         </tr>
                         </table>
 
                       </div>
                       <div class="footer-sp">
-                      <button class="button-black" href="#/device/${device.id}">
+                      <button class="${desktopView ? 'button-black' : 'button-black-mobile'}" href="#/device/${device.id}">
                       Activar corta corriente</button>
                     </div>
                     </div>`
