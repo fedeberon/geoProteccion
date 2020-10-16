@@ -87,7 +87,7 @@ export default function Menu() {
             e.stopPropagation();
             history.push('/account');
           }}
-          tooltipPlacement={isViewportDesktop ? 'right' : 'left'}
+          tooltipPlacement={isViewportDesktop ? 'right' : 'right'}
         />
 
         <SpeedDialAction
@@ -99,7 +99,7 @@ export default function Menu() {
             e.stopPropagation();
             history.push('/device/list');
           }}
-          tooltipPlacement={isViewportDesktop ? 'right' : 'left'}
+          tooltipPlacement={isViewportDesktop ? 'right' : 'right'}
         />
 
         <SpeedDialAction
@@ -111,19 +111,7 @@ export default function Menu() {
             e.stopPropagation();
             history.push('/groups');
           }}
-          tooltipPlacement={isViewportDesktop ? 'right' : 'left'}
-        />
-
-        <SpeedDialAction
-          key='geozones'
-          icon={<i className="fas fa-draw-polygon fa-lg"/>}
-          tooltipTitle={t('geozones')}
-          tooltipOpen
-          onClick={e => {
-            e.stopPropagation();
-            history.push('/geozones');
-          }}
-          tooltipPlacement={isViewportDesktop ? 'right' : 'left'}
+          tooltipPlacement={isViewportDesktop ? 'right' : 'right'}
         />
 
         <SpeedDialAction
@@ -134,6 +122,18 @@ export default function Menu() {
           onClick={e => {
             e.stopPropagation();
             history.push('/notifications');
+          }}
+          tooltipPlacement={isViewportDesktop ? 'right' : 'top'}
+        />
+
+        <SpeedDialAction
+          key='geozones'
+          icon={<i className="fas fa-draw-polygon fa-lg"/>}
+          tooltipTitle={t('geozones')}
+          tooltipOpen
+          onClick={e => {
+            e.stopPropagation();
+            history.push('/geozones');
           }}
           tooltipPlacement={isViewportDesktop ? 'right' : 'left'}
         />

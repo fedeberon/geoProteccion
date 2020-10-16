@@ -232,32 +232,68 @@ li {
     transform: rotate(90deg) translate(-72px, 92px);
   }
 
+  #Menu-action-0-label {
+    transform: translate(-20px, 0px);
+    font-weight: bold;
+  }
+
   #Menu-action-1 {
     transform: rotate(90deg) translate(-32px, 46px);
+  }
+
+  #Menu-action-1-label {
+    transform: translate(-20px, -6px);
+    font-weight: bold;
   }
 
   #Menu-action-2 {
     transform: rotate(90deg) translate(-10px, 14px);
   }
 
+  #Menu-action-2-label {
+    transform: translate(-28px, -24px);
+    font-weight: bold;
+  }
+
   #Menu-action-3 {
     transform: rotate(90deg);
+  }
+
+  #Menu-action-3-label {
+    transform: translate(-38px, -28px);
+    font-weight: bold;
   }
 
   #Menu-action-4 {
     transform: rotate(90deg) translate(10px, 14px);
   }
 
+  #Menu-action-4-label {
+    transform: translate(28px, -24px);
+    font-weight: bold;
+  }
+
   #Menu-action-5 {
     transform: rotate(90deg) translate(32px, 46px);
+  }
+
+  #Menu-action-5-label {
+    transform: translate(20px, -6px);
+    font-weight: bold;
   }
 
   #Menu-action-6 {
     transform: rotate(90deg) translate(72px, 92px);
   }
 
+  #Menu-action-6-label {
+    transform: translate(20px, 0px);
+    font-weight: bold;
+  }
+
   .MuiSpeedDialAction-staticTooltipLabel {
-    display: none;
+    background-color: unset !important;
+    box-shadow: none !important;
   }
 }
 
