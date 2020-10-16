@@ -229,20 +229,20 @@ li {
   }
 
   #Menu-action-0 {
-    transform: rotate(90deg) translate(-72px, 92px);
+    transform: rotate(90deg) translate(-70px, 92px);
   }
 
   #Menu-action-0-label {
-    transform: translate(-20px, 0px);
+    transform: translate(-26px, 0px);
     font-weight: bold;
   }
 
   #Menu-action-1 {
-    transform: rotate(90deg) translate(-32px, 46px);
+    transform: rotate(90deg) translate(-34px, 50px);
   }
 
   #Menu-action-1-label {
-    transform: translate(-20px, -6px);
+    transform: translate(-26px, 0px);
     font-weight: bold;
   }
 
@@ -251,7 +251,7 @@ li {
   }
 
   #Menu-action-2-label {
-    transform: translate(-28px, -24px);
+    transform: translate(-26px, 0px);
     font-weight: bold;
   }
 
@@ -260,7 +260,7 @@ li {
   }
 
   #Menu-action-3-label {
-    transform: translate(-38px, -28px);
+    transform: translate(-24px, -20px);
     font-weight: bold;
   }
 
@@ -269,31 +269,32 @@ li {
   }
 
   #Menu-action-4-label {
-    transform: translate(28px, -24px);
+    transform: translate(26px, 0px);
     font-weight: bold;
   }
 
   #Menu-action-5 {
-    transform: rotate(90deg) translate(32px, 46px);
+    transform: rotate(90deg) translate(34px, 50px);
   }
 
   #Menu-action-5-label {
-    transform: translate(20px, -6px);
+    transform: translate(26px, 0px);
     font-weight: bold;
   }
 
   #Menu-action-6 {
-    transform: rotate(90deg) translate(72px, 92px);
+    transform: rotate(90deg) translate(70px, 92px);
   }
 
   #Menu-action-6-label {
-    transform: translate(20px, 0px);
+    transform: translate(26px, 0px);
     font-weight: bold;
   }
 
   .MuiSpeedDialAction-staticTooltipLabel {
     background-color: unset !important;
     box-shadow: none !important;
+    font-size: 12px !important;
   }
 }
 
