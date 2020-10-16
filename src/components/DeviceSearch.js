@@ -3,6 +3,7 @@ import SearchIcon from "@material-ui/icons/Search";
 import React, { Fragment, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { devicesActions } from '../store';
+import t from "../common/localization";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -55,7 +56,7 @@ function DeviceSearch() {
         </IconButton>
         <InputBase
           className={classes.input}
-          placeholder="Buscar"
+          placeholder={t("sharedSearch")}
           inputProps={{ "aria-label": "search google maps" }}
         />
       </div>
