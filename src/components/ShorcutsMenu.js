@@ -14,6 +14,7 @@ import GeofenceIcon from "@material-ui/icons/BlurCircular";
 import ArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
 import ArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
 import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
+import t from '../common/localization';
 
 import {useDispatch, useSelector} from "react-redux";
 import DeviceSearch from './DeviceSearch';
@@ -67,7 +68,7 @@ export default function ShortcutsMenu() {
           <Backdrop open={false}/>
           <SpeedDial
             ariaLabel="Notifications"
-            title="notifications"
+            title={t("sharedNotifications")}
             className={classes.speedDial}
             icon={<i className="fas fa-bell fa-lg"/>}
             direction={isViewportDesktop ? 'down' : 'up'}
@@ -83,7 +84,7 @@ export default function ShortcutsMenu() {
           />
           <SpeedDial
             ariaLabel="Geofences"
-            title="geofences"
+            title={t("geozones")}
             className={classes.speedDial}
             icon={<i className="fas fa-draw-polygon fa-lg"/>}
             direction={isViewportDesktop ? 'down' : 'up'}
@@ -96,7 +97,7 @@ export default function ShortcutsMenu() {
       { !isViewportDesktop &&
         <SpeedDial
           ariaLabel="Notifications"
-          title="notifications"
+          title={t("sharedNotifications")}
           className={!showShortcutMenu ? classes.speedDial : classes.speedDialOpen }
           icon={!showShortcutMenu ? <i className="fas fa-angle-down fa-lg"/> : <i className="fas fa-angle-up fa-lg"/>}
           direction={isViewportDesktop ? 'down' : 'up'}

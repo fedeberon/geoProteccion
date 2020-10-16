@@ -2,6 +2,7 @@ import React, {useRef, useLayoutEffect, useEffect, useState} from 'react';
 import {useSelector} from 'react-redux';
 import mapManager from '../utils/mapManager';
 import {makeStyles} from '@material-ui/core/styles';
+import t from '../common/localization';
 
 const MainMap = () => {
   const containerEl = useRef(null);
@@ -65,7 +66,7 @@ const MainMap = () => {
                         <li><p>${protocol}</p></li>-->
                         <li>
                         <tr>
-                        <p><strong>Direccion:</strong>
+                        <p><strong>${t("currentAddress")+':'}</strong>
                         199 Los Libertadores, Santa Cruz Región del Libertador General Bernardo O'Higgins, CL</p>
                         </tr>
                         </li>
@@ -86,28 +87,28 @@ const MainMap = () => {
                         </tr>
                         <tr>
                         <td><i class="icon-fa fas fa-car-alt"/></td>
-                        <th>Movimiento</th>
+                        <th>${t("currentStatus")}</th>
                         <td>
                         <td><p class="${desktopView ? 'status-inactive' : 'status-inactive-mobile'}">No</p></td>
                         </td>
                         </tr>
                         <tr>
                         <td><i class="icon-fa fas fa-tachometer-alt"/></td>
-                        <th>Velocidad</th>
+                        <th>${t("positionSpeed")}</th>
                         <td>
                         <td><p class="${desktopView ? 'status-inactive' : 'status-inactive-mobile'}">${speed}</p></td>
                         </td>
                         </tr>
                         <tr>
                         <td><i class="icon-fa fas fa-road"/></td>
-                        <th>Odómetro</th>
+                        <th>${t("mileage")}</th>
                         <td>
                         <td><p class="${desktopView ? 'status-inactive' : 'status-inactive-mobile'}">${kilometers}</p></td>
                         </td>
                         </tr>
                         <tr>
                         <td><i class="icon-fa fas fa-bolt"/></td>
-                        <th>Corta corriente</th>
+                        <th>${t("circuitBreaker")}</th>
                         <td>
                         <td><p class="${desktopView ? 'status-inactive' : 'status-inactive-mobile'}">Desactivado</p></td>
                         </td>
@@ -117,7 +118,7 @@ const MainMap = () => {
                       </div>
                       <div class="footer-sp">
                       <button class="${desktopView ? 'button-black' : 'button-black-mobile'}" href="#/device/${device.id}">
-                      Activar corta corriente</button>
+                      ${t("activateCircuitBreaker")}</button>
                     </div>
                     </div>`
     }

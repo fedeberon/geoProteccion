@@ -434,5 +434,9 @@
     "circuitBreaker": "Corta Corriente",
     "mileage": "Kilometraje",
     "activateCircuitBreaker": "Activar Corta Corriente",
-    "geozones": "Geozonas"
+    "geozones": "Geozonas",
+    "calories": "Calorías",
+    "fat": "Grasa",
+    "carbs": "Carbohidratos",
+    "protein": "Proteínas"
 }

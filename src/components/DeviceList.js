@@ -117,7 +117,7 @@ const DeviceList = () => {
           </IconButton>
           <InputBase
             className={classes.input}
-            placeholder="Buscar"
+            placeholder={t("sharedSearch")}
             inputProps={{ "aria-label": "search google maps" }}
           />
         </Paper>
