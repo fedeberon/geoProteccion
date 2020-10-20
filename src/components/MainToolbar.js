@@ -11,8 +11,6 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import MapIcon from '@material-ui/icons/Map';
 import t from '../common/localization';
-import PopupInfo from '../components/PopupInfo';
-import Tabla from '../components/Tabla';
 import { useHistory } from 'react-router-dom';
 
 const useStyles = makeStyles(theme => ({
@@ -67,7 +65,7 @@ const MainToolbar = () => {
   return (
     <>
       <Drawer open={drawer} onClose={closeDrawer} variant={"permanent"} >
-        <div className={classes.zIndezModal}
+        <div
           tabIndex={0}
           className={classes.list}
           role="button"
@@ -110,8 +108,6 @@ const MainToolbar = () => {
           </List>
         </div>
       </Drawer>
-      <PopupInfo open={openPopup} handleDialog={handleDialog}></PopupInfo>
-      <Tabla open={openTable} handleTable={handleTable}></Tabla>
     </>
   );
 }

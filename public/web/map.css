@@ -1,3 +1,12 @@
+html, body, #root, #root>div {
+  height: 100%;
+  overflow: hidden;
+}
+
+li {
+  list-style: none;
+}
+
 .popup-map-div {
   font-size: 0.9em;
   color: black;
@@ -160,6 +169,24 @@
   padding: 8px;
 }
 
+.mapboxgl-popup-tip {
+  display: none !important;
+}
+
+.mapboxgl-ctrl-bottom-right {
+  right: 0;
+  bottom: 25px;
+}
+
+.mapboxgl-canvas  {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.display-none {
+  display: none;
+}
+
 @media only screen and (max-width: 960px) {
 
   .mapboxgl-popup {
@@ -195,26 +222,84 @@
   .icon-fa {
     color: white;
   }
-}
-.mapboxgl-ctrl-bottom-right {
-  right: 0;
-  bottom: 25px;
-}
 
-.mapboxgl-canvas  {
-  width: 100% !important;
-  height: 100% !important;
+  #Menu-actions {
+    transform: rotate(270deg) translateX(-100px);
+    padding-bottom: 0px;
+  }
+
+  #Menu-action-0 {
+    transform: rotate(90deg) translate(-70px, 92px);
+  }
+
+  #Menu-action-0-label {
+    transform: translate(-26px, 0px);
+    font-weight: bold;
+  }
+
+  #Menu-action-1 {
+    transform: rotate(90deg) translate(-34px, 50px);
+  }
+
+  #Menu-action-1-label {
+    transform: translate(-26px, 0px);
+    font-weight: bold;
+  }
+
+  #Menu-action-2 {
+    transform: rotate(90deg) translate(-10px, 14px);
+  }
+
+  #Menu-action-2-label {
+    transform: translate(-26px, 0px);
+    font-weight: bold;
+  }
+
+  #Menu-action-3 {
+    transform: rotate(90deg);
+  }
+
+  #Menu-action-3-label {
+    transform: translate(-24px, -20px);
+    font-weight: bold;
+  }
+
+  #Menu-action-4 {
+    transform: rotate(90deg) translate(10px, 14px);
+  }
+
+  #Menu-action-4-label {
+    transform: translate(26px, 0px);
+    font-weight: bold;
+  }
+
+  #Menu-action-5 {
+    transform: rotate(90deg) translate(34px, 50px);
+  }
+
+  #Menu-action-5-label {
+    transform: translate(26px, 0px);
+    font-weight: bold;
+  }
+
+  #Menu-action-6 {
+    transform: rotate(90deg) translate(70px, 92px);
+  }
+
+  #Menu-action-6-label {
+    transform: translate(26px, 0px);
+    font-weight: bold;
+  }
+
+  .MuiSpeedDialAction-staticTooltipLabel {
+    background-color: unset !important;
+    box-shadow: none !important;
+    font-size: 12px !important;
+  }
 }
 
 @media only screen and (max-width: 600px) {
   .mapboxgl-popup-content {
     top: 40% !important;
   }
-}
-.mapboxgl-popup-tip {
-  display: none !important;
-}
-html, body, #root, #root>div {
-  height: 100%;
-  overflow: hidden;
 }

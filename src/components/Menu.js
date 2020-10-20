@@ -1,6 +1,5 @@
 import React from 'react';
 import {makeStyles} from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
 import Backdrop from '@material-ui/core/Backdrop';
 import SpeedDial from '@material-ui/lab/SpeedDial';
 import SpeedDialIcon from '@material-ui/lab/SpeedDialIcon';
@@ -12,13 +11,11 @@ import ShareIcon from '@material-ui/icons/Share';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import MenuIcon from '@material-ui/icons/Menu';
 import CloseIcon from '@material-ui/icons/Close';
-import LocationOnIcon from '@material-ui/icons/LocationOn';
-import MoreIcon from '@material-ui/icons/More';
+import t from '../common/localization';
 
 import {modalsActions} from "../store";
 import {useDispatch, useSelector} from "react-redux";
-import { isWidthUp } from '@material-ui/core';
-import { getBreakpointFromWidth } from '../utils/functions';
+import { useHistory } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
   speedDial: {
@@ -44,6 +41,7 @@ const actions = [
 ];
 
 export default function Menu() {
+  const history = useHistory();
   const classes = useStyles();
   const dispatch = useDispatch();
   const [open, setOpen] = React.useState(false);
@@ -81,29 +79,88 @@ export default function Menu() {
       >
 
         <SpeedDialAction
-          key='search'
-          icon={<MoreIcon/>}
-          tooltipTitle='Menu'
+          key='account'
+          icon={<i className="fas fa-user-circle fa-lg"/>}
+          tooltipTitle={t('settingsUser')}
           tooltipOpen
           onClick={e => {
             e.stopPropagation();
-            handleVisibilityModal('menu')
+            history.push('/account');
+          }}
+          tooltipPlacement={isViewportDesktop ? 'right' : 'right'}
+        />
+
+        <SpeedDialAction
+          key='devices'
+          icon={<i className="fas fa-map-marker-alt fa-lg"/>}
+          tooltipTitle={t('deviceTitle')}
+          tooltipOpen
+          onClick={e => {
+            e.stopPropagation();
+            history.push('/device/list');
+          }}
+          tooltipPlacement={isViewportDesktop ? 'right' : 'right'}
+        />
+
+        <SpeedDialAction
+          key='groups'
+          icon={<i className="fas fa-object-group fa-lg"/>}
+          tooltipTitle={t('settingsGroups')}
+          tooltipOpen
+          onClick={e => {
+            e.stopPropagation();
+            history.push('/groups');
+          }}
+          tooltipPlacement={isViewportDesktop ? 'right' : 'right'}
+        />
+
+        <SpeedDialAction
+          key='notifications'
+          icon={<i className="fas fa-bell fa-lg"/>}
+          tooltipTitle={t('sharedNotifications')}
+          tooltipOpen
+          onClick={e => {
+            e.stopPropagation();
+            history.push('/notifications');
+          }}
+          tooltipPlacement={isViewportDesktop ? 'right' : 'top'}
+        />
+
+        <SpeedDialAction
+          key='geozones'
+          icon={<i className="fas fa-draw-polygon fa-lg"/>}
+          tooltipTitle={t('geozones')}
+          tooltipOpen
+          onClick={e => {
+            e.stopPropagation();
+            history.push('/geozones');
           }}
           tooltipPlacement={isViewportDesktop ? 'right' : 'left'}
         />
 
         <SpeedDialAction
-          key='devices'
-          icon={<LocationOnIcon/>}
-          tooltipTitle='Devices'
+          key='calendars'
+          icon={<i className="fas fa-calendar-alt fa-lg"/>}
+          tooltipTitle={t('sharedCalendars')}
           tooltipOpen
           onClick={e => {
             e.stopPropagation();
-            handleVisibilityModal('search')
+            history.push('/calendars');
           }}
           tooltipPlacement={isViewportDesktop ? 'right' : 'left'}
         />
 
+        <SpeedDialAction
+          key='maintenance'
+          icon={<i className="fas fa-tools fa-lg"/>}
+          tooltipTitle={t('sharedMaintenance')}
+          tooltipOpen
+          onClick={e => {
+            e.stopPropagation();
+            history.push('/maintenance');
+          }}
+          tooltipPlacement={isViewportDesktop ? 'right' : 'left'}
+        />
       </SpeedDial>
     </div>
   );

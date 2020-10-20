@@ -8,7 +8,6 @@ import LinearProgress from '@material-ui/core/LinearProgress';
 import DeviceList from '../components/DeviceList';
 import MainMap from '../components/MainMap';
 import SocketController from '../components/SocketController';
-import MyMenuComponet from '../components/MyMenuComponet';
 import Menu from "../components/Menu";
 import ShortcutsMenu from "../components/ShorcutsMenu";
 
@@ -82,8 +81,6 @@ const MainPage = ({ width }) => {
           >
           <DeviceList />
         </Drawer>
-
-        <MyMenuComponet/>
 
         <div className={classes.mapContainer}>
           <ContainerDimensions>

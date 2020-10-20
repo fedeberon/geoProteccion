@@ -125,7 +125,7 @@ const LoginPage = () => {
               autoComplete="email"
               autoFocus
               onChange={handleEmailChange}
-              helperText={failed && 'Usuario o Contraseña invalido'} />
+              helperText={failed && `${t("loginFailed")}`} />
 
             <TextField
               margin="normal"
