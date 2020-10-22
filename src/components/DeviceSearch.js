@@ -1,7 +1,7 @@
 import { Avatar, Divider, IconButton, InputBase, ListItem, ListItemAvatar, ListItemSecondaryAction, ListItemText, makeStyles, Paper } from '@material-ui/core';
 import SearchIcon from "@material-ui/icons/Search";
-import React, { Fragment, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { Fragment, useEffect, useRef, useState } from 'react';
+import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { devicesActions } from '../store';
 import t from "../common/localization";
 
@@ -31,18 +31,38 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.up('md')]: {
       width: '460px'
     }
-  }
+  },
+  listItem: {
+    maxHeight: '80px',
+    fontSize: '10px',
+  },
 }));
 
 function DeviceSearch() {
   const dispatch = useDispatch();
   const classes = useStyles();
-  const devices = useSelector(state => Object.values(state.devices.items));
+  const devices = useSelector(state => Object.values(state.devices.items), shallowEqual);
+  const positions = useSelector(state => state.positions.items, shallowEqual);
+  const [ deviceList, setDeviceList ] = useState([]);
   const [ showDeviceList, setShowDeviceList ] = useState(false);
+
 
   const toggleDeviceList = () => {
     setShowDeviceList(!showDeviceList);
   }
+
+  const filterDevices = (value = '') => {
+    const regex = new RegExp(`${value !== '' ? value : '.+' }`, 'gi');
+    let filteredDevices = [];
+    if (devices.length > 0) {
+      filteredDevices = devices.filter(e => regex.test(e.name) || regex.test(e.attributes.carPlate));
+    }
+    setDeviceList(filteredDevices);
+  }
+
+  // useEffect(() => {
+  //   filterDevices();
+  // });
 
   return (
     <Paper component="form" className={classes.paper}>
@@ -58,6 +78,7 @@ function DeviceSearch() {
           className={classes.input}
           placeholder={t("sharedSearch")}
           inputProps={{ "aria-label": "search google maps" }}
+          onChange={event => filterDevices( event.target.value )}
         />
       </div>
       <div style={{display: 'flex', width: '100%', cursor: 'pointer'}} onClick={() => toggleDeviceList()}>
@@ -67,22 +88,30 @@ function DeviceSearch() {
           <i className="fas fa-angle-down fa-lg" style={{ margin: '0 auto'}}/>
         }
       </div>
-      <div className={showDeviceList ? '' : 'display-none'}>
-        {devices.map((device, index, list) => (
+      <div className={showDeviceList ? 'device-list' : 'display-none'}>
+        {deviceList.map((device, index, list) => (
             <Fragment key={device.id}>
-              <ListItem button key={device.id} onClick={() => dispatch(devicesActions.select(device))}>
-              <ListItemAvatar>
-                  <Avatar>
-                    <i className="fas fa-truck-moving" />
-                  </Avatar>
+              <ListItem className={classes.listItem} button key={device.id} onClick={() => dispatch(devicesActions.select(device))}>
+                <ListItemAvatar>
+                    <Avatar>
+                      <i className="fas fa-truck-moving" />
+                    </Avatar>
                 </ListItemAvatar>
-                <ListItemText primary={device.name} secondary={device.uniqueId} />
+                <ListItemText>
+                  <div style={{display: 'flex', flexDirection: 'column'}}>
+                    <p><strong> {device.attributes.carPlate} </strong>- {device.name}</p>
+                    <div style={{display: 'inline-flex'}}>{device.lastUpdate} <p className={`status-${device.status}`}> {device.status} </p></div>
+                  </div>
+                </ListItemText>
 
-                <Avatar src={require('../../public/images/gps.gif')}/>
+                <div style={{display: 'contents'}}>
+                  <p>{positions && positions[device.id] ? positions[device.id].speed : '0'} Km/h</p>
+                  <i className={`far fa-circle fa-2x device-icon-${device.status} status-${device.status}`} />
+                </div>
 
                 <ListItemSecondaryAction>
                   <IconButton>
-                  <i className="fas fa-info-circle" />
+                    <i className="fas fa-info-circle" />
                   </IconButton>
                 </ListItemSecondaryAction>
               </ListItem>

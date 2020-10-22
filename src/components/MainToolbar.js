@@ -20,7 +20,6 @@ const useStyles = makeStyles(theme => ({
   appBar: {
     zIndex: theme.zIndex.drawer + 1,
   },
-
   list: {
     width: 150,
   },
@@ -31,7 +30,6 @@ const useStyles = makeStyles(theme => ({
   menu: {
     margin: 30
   }
-
 }));
 
 const MainToolbar = () => {
