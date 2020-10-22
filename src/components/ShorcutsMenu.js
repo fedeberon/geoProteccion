@@ -75,8 +75,8 @@ export default function ShortcutsMenu() {
             open={false}
           />
           <SpeedDial
-            ariaLabel="Forms"
-            title="forms"
+            ariaLabel="Reports"
+            title={t("reportTitle")}
             className={classes.speedDial}
             icon={<i className="fas fa-align-left fa-lg"/>}
             direction={isViewportDesktop ? 'down' : 'up'}

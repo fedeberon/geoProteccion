@@ -43,25 +43,25 @@ const MainMap = () => {
 
   const createFeature = (state, position) => {
     const device = state.devices.items[position.deviceId] || null;
-    const name = device.name ? device.name : 'Undefined';
-    const model = device.attributes.MODELO ? device.attributes.MODELO : 'Undefined';
-    const carPlate = device.attributes.PATENTE ? device.attributes.PATENTE : 'Undefined';
-    const brand = device.attributes.MARCA ? device.attributes.MARCA : 'Undefined';
-    const year = device.attributes.ANO ? device.attributes.ANO : 'Undefined';
-    const status = device.status ? device.status : 'Undefined';
-    const lastUpdate = device.lastUpdate ? new Date(device.lastUpdate) : 'Undefined';
-    const protocol = position.protocol ? position.protocol : 'Undefined';
-    const speed = position.speed ? position.speed : 'Undefined';
-    const kilometers = position.attributes.totalDistance ? position.attributes.totalDistance : 'Undefined|';
+    const name = device.name;
+    const model = device.attributes.model;
+    const carPlate = device.attributes.carPlate;
+    const brand = device.attributes.brand;
+    const year = device.attributes.year;
+    const status = device.status;
+    const lastUpdate = device.lastUpdate;
+    const protocol = position.protocol;
+    const speed = position.speed;
+    const kilometers = position.attributes.totalDistance;
     const desktopView = isViewportDesktop;
 
     return {
-      name: device ? device.name : '',
+      name: device ? `${name} ${speed} Km/h` : '',
       description: `<div class="${desktopView ? 'popup-map-div' : 'popup-map-div-mobile'}">
                       <div class="popup-map-header">
                       <ul class="head-list">
                         <li><p style="${desktopView ? 'font-size: 16px' : 'font-size: 20px'}"><strong  class="bold">${carPlate + '</strong> - ' + name} </p></li>
-                        <li><p>18:21:32  14/07/2020 <span class="display-flex status-${status}">${status}<span class="${desktopView ? 'status-inactive' : 'status-inactive-mobile'}">&nbsp;${lastUpdate.getHours()} hours ago</span></span></p></li>
+                        <li><p>18:21:32  14/07/2020 <span class="display-flex status-${status}">${status}<span class="${desktopView ? 'status-inactive' : 'status-inactive-mobile'}">&nbsp;2 hours ago</span></span></p></li>
                         <!--<li><p>${brand + ' ' + model + ' ' + year}</p></li>
                         <li><p>${protocol}</p></li>-->
                         <li>
@@ -80,7 +80,7 @@ const MainMap = () => {
                         <table class="body-list">
                         <tr>
                         <td><i class="icon-fa fas fa-map-marker-alt"/></td>
-                        <th>Contacto</th>
+                        <th>${t("deviceContact")}</th>
                         <td>
                         <td><p class="${desktopView ? 'status-inactive' : 'status-inactive-mobile'}">Abierto</p></td>
                         </td>

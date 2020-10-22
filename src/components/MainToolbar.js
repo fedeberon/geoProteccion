@@ -20,7 +20,6 @@ const useStyles = makeStyles(theme => ({
   appBar: {
     zIndex: theme.zIndex.drawer + 1,
   },
-
   list: {
     width: 150,
   },
@@ -31,7 +30,6 @@ const useStyles = makeStyles(theme => ({
   menu: {
     margin: 30
   }
-
 }));
 
 const MainToolbar = () => {
@@ -64,7 +62,7 @@ const MainToolbar = () => {
 
   return (
     <>
-      <Drawer open={drawer} onClose={closeDrawer} variant={"permanent"} >
+      <Drawer style={{ float: 'left' }} open={drawer} onClose={closeDrawer} variant={"permanent"} >
         <div
           tabIndex={0}
           className={classes.list}
