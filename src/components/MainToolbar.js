@@ -64,7 +64,7 @@ const MainToolbar = () => {
 
   return (
     <>
-      <Drawer open={drawer} onClose={closeDrawer} variant={"permanent"} >
+      <Drawer style={{ float: 'left' }} open={drawer} onClose={closeDrawer} variant={"permanent"} >
         <div
           tabIndex={0}
           className={classes.list}

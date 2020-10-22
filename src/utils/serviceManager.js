@@ -7,7 +7,7 @@ const setSession = (email, password) => {
 
 const getDeviceByUserId = (id) => {
   return fetch(`/api/devices?userId=${id}`,
-    { method: 'GET', headers: {'Authorization': 'Basic ' + btoa('fede' + ":" + 'Fede1449')}})
+    { method: 'GET' })
     .catch(function (error) { console.log('setDevices error:', error)})
     .then(response => response.json());
 }
