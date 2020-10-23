@@ -12,13 +12,16 @@ const useStyles = makeStyles((theme) => ({
     alignItems: "center",
     width: '76%',
     height: 'auto',
-    marginTop: '3%',
-    marginLeft: '3%',
+    margin: '3%',
     position: 'fixed',
     left: '0px',
+    borderRadius: '40px',
+    webkitBoxShadow: '0px 0px 20px 1px rgba(102, 97, 102, 0.8)',
+    mozBoxShadow: '0px 0px 20px 1px rgba(102, 97, 102, 0.8)',
+    boxShadow: '0px 0px 20px 1px rgba(102, 97, 102, 0.8)',
     [theme.breakpoints.up('md')]: {
       position: 'unset',
-      marginTop: '1%',
+      margin: '1%',
     },
   },
   iconButton: {
@@ -33,9 +36,75 @@ const useStyles = makeStyles((theme) => ({
     }
   },
   listItem: {
-    maxHeight: '80px',
+    maxHeight: '75px',
     fontSize: '10px',
+    [theme.breakpoints.up('md')]: {
+      maxHeight: '80px',
+    },
   },
+  MuiAvatarRoot: {
+    width: '25px',
+    height: '25px',
+    fontSize: '12px',
+    display: 'inline-flex',
+    left: '-10px',
+       [theme.breakpoints.up('md')]: {
+         width: '40px',
+         height: '40px',
+         fontSize: '1.25rem',
+         display: 'flex',
+    },
+  },
+
+  devsearchSpeed: {
+    display: 'grid',
+    [theme.breakpoints.up('md')]: {
+      display: 'contents',
+    },
+  },
+
+  devsearchSpeedP: {
+    fontSize: '10px',
+    display: 'contents',
+    justifyContent: 'center',
+    [theme.breakpoints.up('md')]: {
+      fontSize: '15px',
+      padding: '0 5px 0 0',
+    },
+  },
+
+  devsearchSt: {
+    fontSize: '7px',
+    [theme.breakpoints.up('md')]: {
+      display: 'flex',
+      flexDirection: 'column',
+      fontSize: '12px',
+    },
+  },
+  devsearchStP: {
+    fontSize: '12px',
+    margin: '3px 0',
+    [theme.breakpoints.up('md')]: {
+      fontSize: '15px',
+      margin: 0,
+    },
+  },
+
+  devsearchSd: {
+    [theme.breakpoints.up('md')]: {
+      display: 'inline-flex',
+    },
+  },
+
+  devsearchSdP: {
+    margin: '3px 0',
+    fontSize: '9px',
+    [theme.breakpoints.up('md')]: {
+      paddingLeft: '10px',
+      margin: 0,
+    },
+  },
+
 }));
 
 function DeviceSearch() {
@@ -93,19 +162,20 @@ function DeviceSearch() {
             <Fragment key={device.id}>
               <ListItem className={classes.listItem} button key={device.id} onClick={() => dispatch(devicesActions.select(device))}>
                 <ListItemAvatar>
-                    <Avatar>
+                    <Avatar className={classes.MuiAvatarRoot}>
                       <i className="fas fa-truck-moving" />
                     </Avatar>
                 </ListItemAvatar>
                 <ListItemText>
-                  <div style={{display: 'flex', flexDirection: 'column'}}>
-                    <p><strong> {device.attributes.carPlate} </strong>- {device.name}</p>
-                    <div style={{display: 'inline-flex'}}>{device.lastUpdate} <p className={`status-${device.status}`}> {device.status} </p></div>
+                  <div className={classes.devsearchSt}>
+                    <p className={classes.devsearchStP}><strong> {device.attributes.carPlate} </strong>- {device.name}</p>
+                    <div className={classes.devsearchSd}>{device.lastUpdate}
+                    <p className={`status-${device.status} ${classes.devsearchSdP}`}> {device.status} </p></div>
                   </div>
                 </ListItemText>
 
-                <div style={{display: 'contents'}}>
-                  <p>{positions && positions[device.id] ? positions[device.id].speed : '0'} Km/h</p>
+                <div className={classes.devsearchSpeed}>
+                  <p className={classes.devsearchSpeedP}>{positions && positions[device.id] ? positions[device.id].speed.toFixed(1) : '0'} Km/h</p>
                   <i className={`far fa-circle fa-2x device-icon-${device.status} status-${device.status}`} />
                 </div>
 
