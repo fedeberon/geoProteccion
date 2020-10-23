@@ -5,17 +5,10 @@ import TextField from '@material-ui/core/TextField';
 import Container from '@material-ui/core/Container';
 import Button from '@material-ui/core/Button';
 import FormControl from '@material-ui/core/FormControl';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import * as service from '../utils/serviceManager';
 import t from '../common/localization';
 import {useSelector} from "react-redux";
-
 import clsx from 'clsx';
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
@@ -66,20 +59,30 @@ const useStyles = makeStyles(theme => ({
     minWidth: 700,
   },
   devicesTable: {
-    width: '85%',
+    width: '580px',
     height: '100%',
     overflow: 'auto',
-    marginLeft: '15%',
+    marginLeft: '5%',
     overflowY: 'scroll',
-    display: 'flex',
+    display: 'inherit',
     flexWrap: 'wrap',
+    [theme.breakpoints.up('md')]: {
+      width: '85%',
+      marginLeft: '15%',
+    },
   },
   root: {
-    width: '45%',
+    width: '50%',
+    height: 'auto',
     display: 'grid',
     borderRadius: '30px',
-    margin: '1%',
+    margin: '3%',
     boxShadow: '0px 0px 10px 2px #b5bcc1, 0px 0px 0px 0px rgb(146 146 150), 0px 0px 11px 1px rgb(155 155 156)',
+    [theme.breakpoints.up('md')]: {
+      width: '40%',
+      display: 'inline-grid',
+      height: 'auto',
+    },
   },
   media: {
     height: '160px',
@@ -101,7 +104,7 @@ const useStyles = makeStyles(theme => ({
   devicesPage: {
     width: '100%',
     textAlign: 'left',
-    marginLeft: '15%',
+    marginLeft: '17%',
     padding: '1%',
   },
   list: {
@@ -203,6 +206,7 @@ const DevicePage = () => {
 
   return (
     <>
+      {console.info("Fusionar devices.js en DevicePage")}
       <div className={classes.devicesPage}>
         <h1>Información de dispositivos</h1>
       </div>
