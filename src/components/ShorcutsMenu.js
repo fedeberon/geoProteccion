@@ -2,18 +2,11 @@ import React, { useState } from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import Backdrop from '@material-ui/core/Backdrop';
 import SpeedDial from '@material-ui/lab/SpeedDial';
-import SpeedDialIcon from '@material-ui/lab/SpeedDialIcon';
 import FileCopyIcon from '@material-ui/icons/FileCopyOutlined';
 import SaveIcon from '@material-ui/icons/Save';
 import PrintIcon from '@material-ui/icons/Print';
 import ShareIcon from '@material-ui/icons/Share';
 import FavoriteIcon from '@material-ui/icons/Favorite';
-import Notifications from '@material-ui/icons/Notifications';
-import DescriptionIcon from "@material-ui/icons/Description";
-import GeofenceIcon from "@material-ui/icons/BlurCircular";
-import ArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
-import ArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
-import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
 import t from '../common/localization';
 
 import {useDispatch, useSelector} from "react-redux";
@@ -43,17 +36,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const actions = [
-  { icon: <FileCopyIcon />, name: 'Copy' },
-  { icon: <SaveIcon />, name: 'Save' },
-  { icon: <PrintIcon />, name: 'Print' },
-  { icon: <ShareIcon />, name: 'Share' },
-  { icon: <FavoriteIcon />, name: 'Like' },
-];
-
 export default function ShortcutsMenu() {
   const classes = useStyles();
-  const dispatch = useDispatch();
   const isViewportDesktop = useSelector(state => state.session.deviceAttributes.isViewportDesktop);
   const [ showShortcutMenu, setShowShortcutMenu ] = useState(isViewportDesktop);
 

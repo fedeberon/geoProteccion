@@ -5,7 +5,6 @@ import TextField from '@material-ui/core/TextField';
 import Container from '@material-ui/core/Container';
 import Button from '@material-ui/core/Button';
 import FormControl from '@material-ui/core/FormControl';
-import Paper from '@material-ui/core/Paper';
 import * as service from '../utils/serviceManager';
 import t from '../common/localization';
 import {useSelector} from "react-redux";
@@ -18,14 +17,12 @@ import CardActions from '@material-ui/core/CardActions';
 import Collapse from '@material-ui/core/Collapse';
 import Avatar from '@material-ui/core/Avatar';
 import IconButton from '@material-ui/core/IconButton';
-import Typography from '@material-ui/core/Typography';
 import {red} from '@material-ui/core/colors';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import ShareIcon from '@material-ui/icons/Share';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 
-import ListSubheader from '@material-ui/core/ListSubheader';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -158,7 +155,6 @@ const DevicePage = () => {
   useEffect(() => {
     const getDevices = async (userId) => {
       const response = await service.getDeviceByUserId(userId);
-      console.log(response);
       setDevices(response);
     }
     getDevices(userId);
@@ -206,7 +202,6 @@ const DevicePage = () => {
 
   return (
     <>
-      {console.info("Fusionar devices.js en DevicePage")}
       <div className={classes.devicesPage}>
         <h1>Información de dispositivos</h1>
       </div>

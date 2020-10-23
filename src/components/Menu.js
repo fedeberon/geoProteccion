@@ -13,7 +13,6 @@ import MenuIcon from '@material-ui/icons/Menu';
 import CloseIcon from '@material-ui/icons/Close';
 import t from '../common/localization';
 
-import {modalsActions} from "../store";
 import {useDispatch, useSelector} from "react-redux";
 import { useHistory } from 'react-router-dom';
 
@@ -32,29 +31,12 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const actions = [
-  { icon: <FileCopyIcon />, name: 'Copy' },
-  { icon: <SaveIcon />, name: 'Save' },
-  { icon: <PrintIcon />, name: 'Print' },
-  { icon: <ShareIcon />, name: 'Share' },
-  { icon: <FavoriteIcon />, name: 'Like' },
-];
-
 export default function Menu() {
   const history = useHistory();
   const classes = useStyles();
-  const dispatch = useDispatch();
   const [open, setOpen] = React.useState(false);
   const [hidden, setHidden] = React.useState(false);
   const isViewportDesktop = useSelector(state => state.session.deviceAttributes.isViewportDesktop);
-
-  const handleVisibilityModal = (name) => {
-    dispatch(modalsActions.show(name));
-  }
-
-  const handleVisibility = () => {
-    setHidden((prevHidden) => !prevHidden);
-  };
 
   const handleOpen = () => {
     setOpen(true);

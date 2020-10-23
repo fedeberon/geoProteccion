@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import MainToolbar from '../components/MainToolbar';
 import withStyles from '@material-ui/core/styles/withStyles';
 import withWidth from '@material-ui/core/withWidth';
 import {makeStyles} from '@material-ui/core';
@@ -12,7 +11,6 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 
 import t from '../common/localization';
-import * as service from '../utils/serviceManager';
 import { useSelector } from 'react-redux';
 
 const styles = theme => ({});
@@ -27,7 +25,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function createData(field, userData) {
-  userData = userData != undefined ? userData.toString() : '';
+  userData = userData !== undefined ? userData.toString() : '';
   return { field, userData };
 }
 

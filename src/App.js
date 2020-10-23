@@ -1,6 +1,6 @@
 import { hot } from 'react-hot-loader/root'
-import React, { useEffect, useState } from 'react';
-import { Switch, Route, useHistory } from 'react-router-dom'
+import React, { useEffect } from 'react';
+import { Switch, Route } from 'react-router-dom'
 import CssBaseline from '@material-ui/core/CssBaseline';
 import MainPage from './containers/MainPage';
 import LoginPage from './containers/LoginPage';
@@ -13,7 +13,6 @@ import NotificationsPage from './containers/NotificationsPage';
 import CalendarsPage from './containers/CalendarsPage';
 import MaintenancePage from './containers/MaintenancePage';
 import SuccessSnackbar from "./components/SuccessSnackbar";
-import MainToolbar from './components/MainToolbar';
 import { useDispatch, useSelector } from 'react-redux';
 import PrivateRoute from './components/ PrivateRoute';
 import { isWidthUp } from '@material-ui/core';

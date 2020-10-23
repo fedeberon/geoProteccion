@@ -40,7 +40,6 @@ const MainToolbar = () => {
   const [ openPopup, setOpenPopup ] = useState(false);
   const [ openTable, setOpenTable ] = useState (false);
 
-  const openDrawer = () => { setDrawer(true) }
   const closeDrawer = () => { setDrawer(false) }
 
   const handleLogout = () => {
@@ -50,14 +49,6 @@ const MainToolbar = () => {
         history.push('/login');
       }
     })
-  }
-
-  const handleDialog = () => {
-    setOpenPopup(!openPopup);
-  }
-
-  const handleTable = () => {
-    setOpenTable(!openTable);
   }
 
   return (

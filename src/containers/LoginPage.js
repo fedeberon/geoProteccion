@@ -3,18 +3,14 @@ import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { sessionActions } from '../store';
 import Button from '@material-ui/core/Button';
-import FormControl from '@material-ui/core/FormControl';
 import Paper from '@material-ui/core/Paper';
 import { makeStyles } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
 
 import t from '../common/localization';
 import * as service from '../utils/serviceManager';
-import LoginComponent from "../components/LoginComponent";
 import Grid from "@material-ui/core/Grid";
 import CssBaseline from "@material-ui/core/CssBaseline";
-import Avatar from "@material-ui/core/Avatar";
-import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Typography from "@material-ui/core/Typography";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
@@ -110,7 +106,7 @@ const LoginPage = () => {
       <Grid item xs={false} sm={4} md={7} className={classes.image} />
       <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
         <div className={classes.paper}>
-        <img loading="lazy" style={{ width: 80, margin: 20 }} src={require('../../public/images/LogoGeos.png')}></img>
+        <img alt="logo" loading="lazy" style={{ width: 80, margin: 20 }} src={require('../../public/images/LogoGeos.png')}></img>
 
           <form className={classes.form} noValidate onSubmit={handleLogin}>
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-import {modalsActions, sessionActions} from '../store';
-import {IconButton, InputBase, List, makeStyles, Paper, withWidth} from '@material-ui/core';
+import {modalsActions} from '../store';
+import {makeStyles, withWidth} from '@material-ui/core';
 import Drawer from '@material-ui/core/Drawer';
 import ContainerDimensions from 'react-container-dimensions';
 import LinearProgress from '@material-ui/core/LinearProgress';
