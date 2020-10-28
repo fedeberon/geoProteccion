@@ -52,6 +52,9 @@ const UserPage = () => {
   return (
 
     <div>
+      <div className="title-section">
+        <h3>Información de Usuario</h3>
+      </div>
       <div className={classes.UserPageSize}>
         <TableContainer component={Paper}>
           <Table className={classes.table} aria-label="simple table">

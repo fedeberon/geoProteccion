@@ -209,25 +209,35 @@ const MainMap = () => {
     height: '100%',
   };
 
+  const createPopup = (e) => {
+    let coordinates = e.features[0].geometry.coordinates.slice();
+    let description = e.features[0].properties.description;
+
+    while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+      coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+    }
+    popup.setLngLat(coordinates).setHTML(description).addTo(mapManager.map);
+  }
+
+  const cursorPointer = () => {
+    mapManager.map.getCanvas().style.cursor = 'pointer';
+  }
+  const cursorDefault = () => {
+    mapManager.map.getCanvas().style.cursor = '';
+  }
+
   useEffect(() => {
-    mapManager.map.on('click', 'device-icon', function (e) {
-      let coordinates = e.features[0].geometry.coordinates.slice();
-      let description = e.features[0].properties.description;
+    mapManager.map.on('click', 'device-icon', createPopup);
 
-      while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-        coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
-      }
+    mapManager.map.on('mouseenter', 'device-icon', cursorPointer);
 
-      popup.setLngLat(coordinates).setHTML(description).addTo(mapManager.map);
-    });
+    mapManager.map.on('mouseleave', 'device-icon', cursorDefault);
 
-    mapManager.map.on('mouseenter', 'device-icon', function (e) {
-      mapManager.map.getCanvas().style.cursor = 'pointer';
-    });
-
-    mapManager.map.on('mouseleave', 'device-icon', function (e) {
-      mapManager.map.getCanvas().style.cursor = '';
-    });
+    return () => {
+      mapManager.map.off('click', 'device-icon', createPopup);
+      mapManager.map.off('mouseenter', 'device-icon', cursorPointer);
+      mapManager.map.off('mouseleave', 'device-icon', cursorDefault);
+    }
   }, [mapManager.map])
 
   return <div style={style} ref={containerEl}/>;

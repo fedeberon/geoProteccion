@@ -31,7 +31,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-export default function Menu() {
+export default function Menu({layout}) {
   const history = useHistory();
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);

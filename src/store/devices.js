@@ -27,7 +27,7 @@ const { reducer, actions } = createSlice({
           status: item.status,
           lastUpdate: item.lastUpdate,
           positionId: item.positionId,
-          geofencesIds: item.geofencesIds,
+          geofenceIds: item.geofenceIds,
           phone: item.phone,
           model: item.model,
           contact: item.contact,

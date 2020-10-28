@@ -28,6 +28,7 @@ const useStyles = makeStyles((theme) => ({
     padding: 10
   },
   div: {
+    paddingLeft: '5%',
     display: 'flex'
   },
   input: {
@@ -74,7 +75,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   devsearchSt: {
-    fontSize: '7px',
+    fontSize: '8px',
     [theme.breakpoints.up('md')]: {
       display: 'flex',
       flexDirection: 'column',
@@ -98,7 +99,7 @@ const useStyles = makeStyles((theme) => ({
 
   devsearchSdP: {
     margin: '3px 0',
-    fontSize: '9px',
+    fontSize: '10px',
     [theme.breakpoints.up('md')]: {
       paddingLeft: '10px',
       margin: 0,
@@ -175,8 +176,9 @@ function DeviceSearch() {
                 </ListItemText>
 
                 <div className={classes.devsearchSpeed}>
-                  <p className={classes.devsearchSpeedP}>{positions && positions[device.id] ? positions[device.id].speed.toFixed(1) : '0'} Km/h</p>
-                  <i className={`far fa-circle fa-2x device-icon-${device.status} status-${device.status}`} />
+                  <p className={classes.devsearchSpeedP}>{positions && positions[device.id] ? positions[device.id].speed.toFixed(0) : '0'} Km/h</p>
+                  <i className={`far fa-circle fa-2x device-icon-${device.status} status-${device.status}`}
+                  style={{paddingRight: '0px', display: 'flex', justifyContent: 'center'}}/>
                 </div>
 
                 <ListItemSecondaryAction>

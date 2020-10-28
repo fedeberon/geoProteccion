@@ -6,13 +6,19 @@ const setSession = (email, password) => {
 }
 
 const getDeviceByUserId = (id) => {
-  return fetch(`/api/devices?userId=${id}`,
-    { method: 'GET' })
-    .catch(function (error) { console.log('setDevices error:', error)})
+  return fetch(`/api/devices?userId=${id}`,{ method: 'GET' })
+    .catch(function (error) { console.log('setDevices error: ', error)})
+    .then(response => response.json());
+}
+
+const getGeozonesByUserId = (id) => {
+  return fetch(`api/geofences?userId=${id}`,{method: 'GET'})
+    .catch(function (error) { console.log('setGeofences error: ', error)})
     .then(response => response.json());
 }
 
 export {
   setSession,
   getDeviceByUserId,
+  getGeozonesByUserId,
 };

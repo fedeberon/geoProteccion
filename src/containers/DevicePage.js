@@ -7,7 +7,7 @@ import Button from '@material-ui/core/Button';
 import FormControl from '@material-ui/core/FormControl';
 import * as service from '../utils/serviceManager';
 import t from '../common/localization';
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import clsx from 'clsx';
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
@@ -22,17 +22,17 @@ import FavoriteIcon from '@material-ui/icons/Favorite';
 import ShareIcon from '@material-ui/icons/Share';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
-
+import MapIcon from '@material-ui/icons/Map';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
-import DraftsIcon from '@material-ui/icons/Drafts';
 import SendIcon from '@material-ui/icons/Send';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import StarBorder from '@material-ui/icons/StarBorder';
+import {sessionActions} from "../store";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -56,7 +56,7 @@ const useStyles = makeStyles(theme => ({
     minWidth: 700,
   },
   devicesTable: {
-    width: '580px',
+    width: 'auto',
     height: '100%',
     overflow: 'auto',
     marginLeft: '5%',
@@ -66,19 +66,23 @@ const useStyles = makeStyles(theme => ({
     [theme.breakpoints.up('md')]: {
       width: '85%',
       marginLeft: '15%',
+
     },
   },
   root: {
-    width: '50%',
+    width: '95%',
     height: 'auto',
     display: 'grid',
     borderRadius: '30px',
-    margin: '3%',
-    boxShadow: '0px 0px 10px 2px #b5bcc1, 0px 0px 0px 0px rgb(146 146 150), 0px 0px 11px 1px rgb(155 155 156)',
+    margin: '3% 0 3% 1%',
+    boxShadow: '0px 0px 10px 1px rgba(102, 97, 102, 0.8)',
+    mozBoxShadow: '0px 0px 10px 1px rgba(102, 97, 102, 0.8)',
+    webkitBoxShadow: '0px 0px 10px 1px rgba(102, 97, 102, 0.8)',
     [theme.breakpoints.up('md')]: {
-      width: '40%',
+      width: '28%',
       display: 'inline-grid',
       height: 'auto',
+      margin: '2%',
     },
   },
   media: {
@@ -96,19 +100,22 @@ const useStyles = makeStyles(theme => ({
     transform: 'rotate(180deg)',
   },
   avatar: {
-    backgroundColor: red[500],
+    backgroundColor: '#7093f5',
   },
   devicesPage: {
     width: '100%',
     textAlign: 'left',
-    marginLeft: '17%',
+    marginLeft: '6%',
     padding: '1%',
+    [theme.breakpoints.up('md')]: {
+      marginLeft: '16%',
+
+    },
   },
   list: {
     width: '100%',
     backgroundColor: theme.palette.background.paper,
     maxHeight: '170px',
-
   },
   nested: {
     paddingLeft: theme.spacing(4),
@@ -117,8 +124,15 @@ const useStyles = makeStyles(theme => ({
     padding: '10px',
   },
   MuiContentRoot: {
-    padding: '8px',
+    padding: '0',
     overflowY: "scroll",
+
+  },
+  cardItemText: {
+    fontSize: '12px',
+    [theme.breakpoints.up('md')]: {
+      fontSize: '14px',
+    },
   },
 
 }));
@@ -126,13 +140,13 @@ const useStyles = makeStyles(theme => ({
 const DevicePage = () => {
   const classes = useStyles();
   const history = useHistory();
+  const dispatch = useDispatch();
   const {id} = useParams();
   const [device, setDevice] = useState();
   const [name, setName] = useState('');
   const [uniqueId, setUniqueId] = useState('');
   const userId = useSelector((state) => state.session.user.id)
   const [devices, setDevices] = useState([])
-  const rows = useSelector(state => state.devices.items);
 
   const [collapsedIndex, setCollapsedIndex] = useState(-1);
 
@@ -160,11 +174,6 @@ const DevicePage = () => {
     getDevices(userId);
   }, [userId]);
 
-  function createData(field, deviceData,) {
-    deviceData = deviceData != undefined ? deviceData.toString() : 'Sin datos';
-    return {field, deviceData,};
-  }
-
   // useEffect(()=>{
   //   fetch(`/api/devices/${id}`).then(response => {
   //     if (response.ok) {
@@ -172,6 +181,14 @@ const DevicePage = () => {
   //     }
   //   });
   // })
+  const handleLogout = () => {
+    fetch('/api/session', { method: 'DELETE' }).then(response => {
+      if (response.ok) {
+        dispatch(sessionActions.authenticated(false));
+        history.push('/login');
+      }
+    })
+  }
 
   const handleSave = () => {
     const updatedDevice = id ? device : {};
@@ -202,8 +219,8 @@ const DevicePage = () => {
 
   return (
     <>
-      <div className={classes.devicesPage}>
-        <h1>Información de dispositivos</h1>
+      <div className="title-section">
+        <h3>Información de dispositivos</h3>
       </div>
       <div className={classes.devicesTable}>
         {devices.map((device, index) => (
@@ -217,7 +234,7 @@ const DevicePage = () => {
                         avatar={
                           <Avatar aria-label="recipe"
                                   className={classes.avatar}>
-                            R
+                            <i className="fas fa-truck-moving" />
                           </Avatar>
                         }
                         action={
@@ -225,8 +242,8 @@ const DevicePage = () => {
                             <MoreVertIcon/>
                           </IconButton>
                         }
-                        title={`Dispositivo #${index + 1} - ${device.name}`}
-                        subheader="September 14, 2016"/>
+                        title={`${device.attributes.carPlate} - ${device.name}`}
+                        subheader={device.lastUpdate}/>
              <CardActions disableSpacing>
               <IconButton aria-label="add to favorites">
                 <FavoriteIcon/>
@@ -252,103 +269,106 @@ const DevicePage = () => {
                   aria-labelledby="nested-list-subheader"
                   className={classes.list}>
                   <ListItem>
-                    <ListItemIcon>
-                      <SendIcon/>
+                    <ListItemIcon style={{minWidth: '30px'}}>
+                      <SendIcon style={{fontSize: '17px'}}/>
                     </ListItemIcon>
                     {/*<ListItemText primary={`UserId:  ${row.id}`}/>*/}
-                    <li>{`UserId:  ${device.id}`}</li>
+                    <ListItemText className={classes.cardItemText}>
+                      <strong className={classes.cardItemText}>User Id:</strong>
+                      { ` ${device.id} ` }
+                    </ListItemText>
                   </ListItem>
-                  <ListItem button>
-                    <ListItemIcon>
-                      <SendIcon/>
+                  <ListItem>
+                    <ListItemIcon style={{minWidth: '30px'}}>
+                      <SendIcon style={{fontSize: '17px'}}/>
                     </ListItemIcon>
-                    <li>{`UniqueId:  ${device.uniqueId}`}</li>
+                    <ListItemText>
+                      <strong  className={classes.cardItemText}>Unique Id:</strong>
+                      { ` ${device.uniqueId} ` }</ListItemText>
                   </ListItem>
-                  <ListItem button>
-                    <ListItemIcon>
-                      <SendIcon/>
+                  <ListItem>
+                    <ListItemIcon style={{minWidth: '30px'}}>
+                      <SendIcon style={{fontSize: '17px'}}/>
                     </ListItemIcon>
-                    <ListItemText primary="Status"/>
+                    <ListItemText>
+                      <strong className={classes.cardItemText}>Status:</strong>
+                      { ` ${device.status} ` }
+                    </ListItemText>
                   </ListItem>
-                  <ListItem button>
-                    <ListItemIcon>
-                      <SendIcon/>
+                  <ListItem>
+                    <ListItemIcon style={{minWidth: '30px'}}>
+                      <SendIcon style={{fontSize: '17px'}}/>
                     </ListItemIcon>
-                    <ListItemText primary="Disable"/>
+                    <ListItemText><strong className={classes.cardItemText}>Disable:</strong>{ ` ${device.disable} ` }</ListItemText>
                   </ListItem>
-                  <ListItem button>
-                    <ListItemIcon>
-                      <SendIcon/>
+                  <ListItem>
+                    <ListItemIcon style={{minWidth: '30px'}}>
+                      <SendIcon style={{fontSize: '17px'}}/>
                     </ListItemIcon>
-                    <ListItemText primary="LastUpdate"/>
+                    <ListItemText><strong className={classes.cardItemText}>Position Id:</strong>{ ` ${device.positionId} ` }</ListItemText>
                   </ListItem>
-                  <ListItem button>
-                    <ListItemIcon>
-                      <SendIcon/>
+                  <ListItem>
+                    <ListItemIcon style={{minWidth: '30px'}}>
+                      <SendIcon style={{fontSize: '17px'}}/>
                     </ListItemIcon>
-                    <ListItemText primary="PositionId"/>
+                    <ListItemText><strong className={classes.cardItemText}>Group Id:</strong>{ ` ${device.groupId} ` }</ListItemText>
                   </ListItem>
-                  <ListItem button>
-                    <ListItemIcon>
-                      <SendIcon/>
+                  <ListItem>
+                    <ListItemIcon style={{minWidth: '30px'}}>
+                      <SendIcon style={{fontSize: '17px'}}/>
                     </ListItemIcon>
-                    <ListItemText primary="GroupId"/>
+                    <ListItemText><strong className={classes.cardItemText}>Phone:</strong>{ ` ${device.phone} ` }</ListItemText>
                   </ListItem>
-                  <ListItem button>
-                    <ListItemIcon>
-                      <SendIcon/>
+                  <ListItem>
+                    <ListItemIcon style={{minWidth: '30px'}}>
+                      <SendIcon style={{fontSize: '17px'}}/>
                     </ListItemIcon>
-                    <ListItemText primary="Phone"/>
+                    <ListItemText><strong className={classes.cardItemText}>Model:</strong>{ ` ${device.model} ` }</ListItemText>
                   </ListItem>
-                  <ListItem button>
-                    <ListItemIcon>
-                      <SendIcon/>
+                  <ListItem>
+                    <ListItemIcon style={{minWidth: '30px'}}>
+                      <SendIcon style={{fontSize: '17px'}}/>
                     </ListItemIcon>
-                    <ListItemText primary="Model"/>
+                    <ListItemText><strong className={classes.cardItemText}>Category:</strong>{ ` ${device.category} ` }</ListItemText>
                   </ListItem>
-                  <ListItem button>
-                    <ListItemIcon>
-                      <SendIcon/>
+                  <ListItem>
+                    <ListItemIcon style={{minWidth: '30px'}}>
+                      <SendIcon style={{fontSize: '17px'}}/>
                     </ListItemIcon>
-                    <ListItemText primary="Category"/>
-                  </ListItem>
-                  <ListItem button>
-                    <ListItemIcon>
-                      <DraftsIcon/>
-                    </ListItemIcon>
-                    <ListItemText primary="Drafts"/>
+                    <ListItemText><strong className={classes.cardItemText}>Contact:</strong>{ ` ${device.contact} ` }</ListItemText>
                   </ListItem>
                   <ListItem button onClick={handleClickListG}>
-                    <ListItemIcon>
-                      <InboxIcon/>
+                    <ListItemIcon style={{minWidth: '30px'}}>
+                      <InboxIcon style={{fontSize: '17px'}}/>
                     </ListItemIcon>
-                    <ListItemText primary="Geofences"/>
+                    <ListItemText style={{maxWidth: '100%'}}><strong className={classes.cardItemText}>Geofences Ids:</strong></ListItemText>
                     {openG ? <ExpandLess/> : <ExpandMore/>}
                   </ListItem>
                   <Collapse in={openG} timeout="auto" unmountOnExit>
                     <List component="div" disablePadding>
-                      {/*mapeo de geofences aca*/}
+                      {/*{Object.entries(device.geofenceIds).map(([index]) =>*/}
                       <ListItem button className={classes.nested}>
-                        <ListItemIcon>
-                          <StarBorder/>
+                        <ListItemIcon style={{minWidth: '30px'}}>
+                          <StarBorder style={{fontSize: '17px'}}/>
                         </ListItemIcon>
-                        <ListItemText primary="Zona 1"/>
+                        <ListItemText primary={index} secondary="Value"/>
                       </ListItem>
+                      {/*)}*/}
                     </List>
                   </Collapse>
                   <ListItem button onClick={handleClickList}>
-                    <ListItemIcon>
-                      <InboxIcon/>
+                    <ListItemIcon style={{minWidth: '30px'}}>
+                      <InboxIcon style={{fontSize: '17px'}}/>
                     </ListItemIcon>
-                    <ListItemText primary="Attributes"/>
+                    <ListItemText style={{maxWidth: '100%'}}><strong className={classes.cardItemText}>Attributes:</strong></ListItemText>
                     {open ? <ExpandLess/> : <ExpandMore/>}
                   </ListItem>
                   <Collapse in={open} timeout="auto" unmountOnExit>
                     <List component="div" disablePadding>
                       {Object.entries(device.attributes).map(([key, value]) =>
                         <ListItem className={classes.nested}>
-                          <ListItemIcon>
-                            <StarBorder/>
+                          <ListItemIcon style={{minWidth: '30px'}}>
+                            <StarBorder style={{fontSize: '17px'}}/>
                           </ListItemIcon>
                           <ListItemText primary={key} secondary={value}/>
                         </ListItem>
@@ -360,46 +380,6 @@ const DevicePage = () => {
             </Collapse>
           </Card>
         ))}
-
-        {/*<TableContainer component={Paper}>*/}
-        {/*  <Table className={classes.table}>*/}
-        {/*    <TableHead>*/}
-        {/*      <TableRow>*/}
-        {/*        <TableCell>UserID</TableCell>*/}
-        {/*        <TableCell>Names</TableCell>*/}
-        {/*        <TableCell>UniqueID</TableCell>*/}
-        {/*        <TableCell>Status</TableCell>*/}
-        {/*        <TableCell>Disable</TableCell>*/}
-        {/*        <TableCell>LastUpdate</TableCell>*/}
-        {/*        <TableCell>PositionID</TableCell>*/}
-        {/*        <TableCell>GroupID</TableCell>*/}
-        {/*        <TableCell>Phone</TableCell>*/}
-        {/*        <TableCell>Model</TableCell>*/}
-        {/*        <TableCell>Category</TableCell>*/}
-        {/*        <TableCell>GeoFenceIds</TableCell>*/}
-        {/*        <TableCell>Attributes</TableCell>*/}
-        {/*      </TableRow>*/}
-        {/*    </TableHead>*/}
-        {/*    <TableBody>*/}
-        {/*      {devices.map((row, index) => (*/}
-        {/*        <TableRow key={index}>*/}
-        {/*          <TableCell>{row.id}</TableCell>*/}
-        {/*          <TableCell>{row.name}</TableCell>*/}
-        {/*          <TableCell>{row.uniqueId}</TableCell>*/}
-        {/*          <TableCell>{row.status}</TableCell>*/}
-        {/*          <TableCell>{row.disabled}</TableCell>*/}
-        {/*          <TableCell>{row.lastUpdate}</TableCell>*/}
-        {/*          <TableCell>{row.positionId}</TableCell>*/}
-        {/*          <TableCell>{row.phone}</TableCell>*/}
-        {/*          <TableCell>{row.model}</TableCell>*/}
-        {/*          <TableCell>{row.contact}</TableCell>*/}
-        {/*          <TableCell>{row.category}</TableCell>*/}
-        {/*          <TableCell>{row.geofencesIds}</TableCell>*/}
-        {/*        </TableRow>*/}
-        {/*      ))}*/}
-        {/*    </TableBody>*/}
-        {/*  </Table>*/}
-        {/*</TableContainer>*/}
 
         <Container maxWidth='xs' className={classes.container}>
           <form>

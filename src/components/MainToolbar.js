@@ -12,6 +12,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import MapIcon from '@material-ui/icons/Map';
 import t from '../common/localization';
 import { useHistory } from 'react-router-dom';
+import HomeIcon from "@material-ui/icons/Home";
 
 const useStyles = makeStyles(theme => ({
   flex: {
@@ -29,7 +30,23 @@ const useStyles = makeStyles(theme => ({
   },
   menu: {
     margin: 30
-  }
+  },
+  titlePage: {
+    backgroundColor: 'cadetblue',
+    backgroundImage: 'linear-gradient(25deg, #2dc6d4 0%, #1c2939 100%)',
+    boxShadow: 'rgba(102, 97, 102, 0.8) 0px 0px 15px 5px',
+    display: 'inline-flex', justifyContent: 'space-between',
+    position: 'absolute',
+    bottom: '0',
+    zIndex: '2',
+    width: '100%',
+    padding: '2%',
+    [theme.breakpoints.up('md')]: {
+      top: 0,
+      height: 'fit-content',
+      padding: '10px',
+    },
+  },
 }));
 
 const MainToolbar = () => {
@@ -37,10 +54,10 @@ const MainToolbar = () => {
   const dispatch = useDispatch();
   const [drawer, setDrawer] = useState(true);
   const classes = useStyles();
-  const [ openPopup, setOpenPopup ] = useState(false);
-  const [ openTable, setOpenTable ] = useState (false);
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const openMenu = Boolean(anchorEl);
 
-  const closeDrawer = () => { setDrawer(false) }
+  const closeDrawer = () => { setAnchorEl(false) }
 
   const handleLogout = () => {
     fetch('/api/session', { method: 'DELETE' }).then(response => {
@@ -51,23 +68,54 @@ const MainToolbar = () => {
     })
   }
 
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
   return (
     <>
-      <Drawer style={{ float: 'left' }} open={drawer} onClose={closeDrawer} variant={"permanent"} >
+      <div className={classes.titlePage}>
+        <div style={{display: 'flex'}}>
+          <Button style={{display: 'contents'}}
+                  variant="contained"
+                  onClick={() => history.push('/')}
+                  color="primary"
+                  size="small"
+                  className={classes.button}
+                  startIcon={<MapIcon />}>Ir a Mapa
+          </Button>
+        </div>
+        <div style={{display: 'flex'}}>
+          <Button
+            aria-controls="fade-menu"
+            aria-haspopup="true"
+            onClick={handleClick}
+            style={{display: 'contents'}}
+            variant="contained"
+            color="primary"
+            size="small"
+            className={classes.button}
+            startIcon={<HomeIcon />}>
+            Menu
+          </Button>
+        </div>
+      </div>
+      <Drawer anchor={"right"}
+              open={openMenu}
+              onClose={closeDrawer}
+              variant={"temporary"}
+              anchorEl={anchorEl}>
         <div
           tabIndex={0}
           className={classes.list}
           role="button"
           onClick={closeDrawer}
-          onKeyDown={closeDrawer}>
-          <List>
-            <ListItem button onClick={() => history.push('/')}>
-              <ListItemIcon>
-                <MapIcon />
-              </ListItemIcon>
-              <ListItemText primary={t('mapTitle')} />
-            </ListItem>
-          </List>
+          onKeyDown={closeDrawer}
+          style={{color: 'white'}}>
           <List>
             <ListItem button onClick={() => history.push('/account')}>
               <ListItemText primary={t('settingsUser')} />
