@@ -1,10 +1,11 @@
 import React, {useRef, useLayoutEffect, useEffect, useState} from 'react';
 import {useSelector} from 'react-redux';
 import mapManager from '../utils/mapManager';
+import MapboxCircle from 'mapbox-gl-circle'
 import {makeStyles} from '@material-ui/core/styles';
 import t from '../common/localization';
 
-const MainMap = () => {
+const MainMap = ({ geozones }) => {
   const containerEl = useRef(null);
 
   const [mapReady, setMapReady] = useState(false);
@@ -239,6 +240,57 @@ const MainMap = () => {
       mapManager.map.off('mouseleave', 'device-icon', cursorDefault);
     }
   }, [mapManager.map])
+
+  const createCircle = (attributes) => {
+    const options = {
+      editable: false,
+      strokeColor: attributes.color,
+      strokeWeight: 2,
+      strokeOpacity: 0.75,
+      fillColor: attributes.color,
+      fillOpacity: 0.25,
+      refineStroke: true,
+      minRadius: 10,
+      maxRadius: 1.1e6,
+    }
+
+    let circle = new MapboxCircle({ lat: attributes.lat, lng: attributes.lng}, attributes.radius, options );
+    circle.addTo(mapManager.map);
+  }
+
+  useEffect(() => {
+    let attributes = {
+      lat: null,
+      lng: null,
+      radius: null,
+      color: '#' + Math.floor(Math.random()*16777215).toString(16),
+    }
+    let geozoneType = '';
+
+    const typeRegEx = /(\w*)[ ]?(?=[(])/;
+    const circlePositionRegEx = /(?<=[(])(.*) (.*)(?=[,])/;
+    const radiusRegEx = /(?<=[,][ ]).*(?=[)])/;
+
+    geozones.map((e) => {
+      geozoneType = e.area.match(typeRegEx)[1];
+
+      switch (geozoneType) {
+        case 'CIRCLE':
+            attributes.lat = parseFloat(e.area.match(circlePositionRegEx)[1]);
+            attributes.lng = parseFloat(e.area.match(circlePositionRegEx)[2]);
+            attributes.radius = parseFloat(e.area.match(radiusRegEx)[0]);
+            if (e.attributes.color) {
+              attributes.color = e.attributes.color;
+            }
+            createCircle(attributes);
+          break;
+        default:
+          break;
+      }
+    });
+    return () => {
+    }
+  }, [geozones])
 
   return <div style={style} ref={containerEl}/>;
 }

@@ -8,9 +8,9 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const MapSidebar = (props) => {
-    const [anchorEl, setAnchorEl] = React.useState(null);
+    const [anchorEl, setAnchorEl] = React.useState(undefined);
     const handleClose = () => {
-        setAnchorEl(null);
+        setAnchorEl(undefined);
       };
 
 const classes = useStyles();

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {modalsActions} from '../store';
 import {makeStyles, withWidth} from '@material-ui/core';
@@ -10,6 +10,7 @@ import MainMap from '../components/MainMap';
 import SocketController from '../components/SocketController';
 import Menu from "../components/Menu";
 import ShortcutsMenu from "../components/ShorcutsMenu";
+import * as service from "../utils/serviceManager";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -53,18 +54,28 @@ const useStyles = makeStyles(theme => ({
 
 const MainPage = ({ width }) => {
   const dispatch = useDispatch();
+  const [geozones, setGeozones] = useState([]);
   const authenticated = useSelector(state => state.session.authenticated);
   const classes = useStyles();
   const open = useSelector(state => state.modals.items.search);
+  const userId = useSelector((state) => state.session.user.id);
 
   const handleVisibilityModal = (name) => {
     dispatch(modalsActions.show(name));
   }
 
+  useEffect(() => {
+    const getGeozones = async (userId) => {
+      const response = await service.getGeozonesByUserId(userId);
+      setGeozones(response);
+    }
+    getGeozones(userId);
+  }, [userId]);
+
   return !authenticated ? (<LinearProgress />) : (
     <div className={classes.root}>
       <SocketController />
-
+      {console.log(geozones)}
       <div className={classes.content}>
         <Drawer
           anchor='right'
@@ -84,7 +95,7 @@ const MainPage = ({ width }) => {
 
         <div className={classes.mapContainer}>
           <ContainerDimensions>
-            <MainMap />
+            <MainMap geozones={geozones}/>
           </ContainerDimensions>
         </div>
       </div>

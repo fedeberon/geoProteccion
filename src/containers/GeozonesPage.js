@@ -198,14 +198,14 @@ export default function GeozonesPages() {
     handleClose();
   }
 
-  // const handleDelete = () => {
-  //   fetch(`/api/geofences/${id}`, { method: 'DELETE' }).then(response => {
-  //     if (response.ok) {
-  //       dispatch(geofencesActions.remove({geozones.id}));
-  //       history.goBack();
-  //     }
-  //   })
-  // }
+  const handleDelete = (id) => {
+    fetch(`/api/geofences/${id}`, { method: 'DELETE' }).then(response => {
+      console.log(response);
+      if (response.ok) {
+        history.goBack();
+      }
+    })
+  }
 
   return (
 
@@ -218,7 +218,7 @@ export default function GeozonesPages() {
           Crear nueva geozona
         </Button>
       </Container>
-      {geozones.map((geozones, index) => (
+      {geozones.map((geozone, index) => (
         <Accordion key={index} className={classes.accordionStyle}>
           <AccordionSummary
             expandIcon={<ExpandMoreIcon/>}
@@ -229,18 +229,18 @@ export default function GeozonesPages() {
               <Typography
                 className={classes.heading}><strong>Nombre</strong></Typography>
               <Typography
-                className={classes.heading}>#{geozones.id} {geozones.name}</Typography>
+                className={classes.heading}>#{geozone.id} {geozone.name}</Typography>
             </div>
             <div className={classes.column}>
               <Typography
                 className={classes.heading}><strong>Descripcion</strong></Typography>
               <Typography className={classes.secondaryHeading}>
-                {`${geozones.description ? geozones.description : 'Undefined'}`}
+                {`${geozone.description ? geozone.description : 'Undefined'}`}
               </Typography>
             </div>
             <div className={classes.column}>
               <Typography
-                classname={classes.heading}><strong>Attributes</strong></Typography>
+                className={classes.heading}><strong>Attributes</strong></Typography>
             </div>
           </AccordionSummary>
           <AccordionDetails className={classes.details}>
@@ -253,13 +253,13 @@ export default function GeozonesPages() {
               {/*}}/>*/}
               <Typography
                 className={classes.heading}><strong>Área</strong></Typography>
-              <ListItemText className={classes.heading}>{geozones.area}</ListItemText>
+              <ListItemText className={classes.heading}>{geozone.area}</ListItemText>
             </div>
             <div className={clsx(classes.column, classes.helper)}>
               <Typography variant="caption">
                 <List component="div" disablePadding>
-                  {Object.entries(geozones.attributes).map(([key, value]) =>
-                    <ListItem className={classes.nested}>
+                  {Object.entries(geozone.attributes).map(([key, value]) =>
+                    <ListItem key={key} className={classes.nested}>
                       <ListItemIcon style={{minWidth: '30px'}}>
                         <StarBorder style={{fontSize: '15px'}}/>
                       </ListItemIcon>
@@ -274,13 +274,13 @@ export default function GeozonesPages() {
           <Divider/>
           <AccordionActions>
             <Fab style={{height: '25px'}} size="small" variant="extended"
-                 color="disable" aria-label="edit">
+                 color="default" aria-label="edit">
               <EditIcon className={classes.extendedIcon}/>Editar
             </Fab>
             <Fab style={{height: '25px'}} size="small" variant="extended"
-                 color="disable" aria-label="edit">
+                 color="default" aria-label="edit">
               <AddIcon style={{transform: 'rotateZ(45deg)'}}
-                       className={classes.extendedIcon}/>Eliminar
+                       className={classes.extendedIcon} onClick={() => handleDelete(geozone.id)}/>Eliminar
             </Fab>
           </AccordionActions>
         </Accordion>

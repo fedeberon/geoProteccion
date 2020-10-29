@@ -169,6 +169,7 @@ const DevicePage = () => {
   useEffect(() => {
     const getDevices = async (userId) => {
       const response = await service.getDeviceByUserId(userId);
+      console.log(response);
       setDevices(response);
     }
     getDevices(userId);
@@ -366,7 +367,7 @@ const DevicePage = () => {
                   <Collapse in={open} timeout="auto" unmountOnExit>
                     <List component="div" disablePadding>
                       {Object.entries(device.attributes).map(([key, value]) =>
-                        <ListItem className={classes.nested}>
+                        <ListItem key={key} className={classes.nested}>
                           <ListItemIcon style={{minWidth: '30px'}}>
                             <StarBorder style={{fontSize: '17px'}}/>
                           </ListItemIcon>

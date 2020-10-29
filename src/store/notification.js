@@ -10,6 +10,8 @@ const { reducer, actions } = createSlice({
   },
   reducers: {
     apply(state, action) {
+      console.log(action);
+      console.log(action.payload);
       switch (action.payload.type) {
         case "SNACKBAR_SUCCESS":
           return {

@@ -54,10 +54,10 @@ const MainToolbar = () => {
   const dispatch = useDispatch();
   const [drawer, setDrawer] = useState(true);
   const classes = useStyles();
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorEl, setAnchorEl] = React.useState(undefined);
   const openMenu = Boolean(anchorEl);
 
-  const closeDrawer = () => { setAnchorEl(false) }
+  const closeDrawer = () => { setAnchorEl(undefined) }
 
   const handleLogout = () => {
     fetch('/api/session', { method: 'DELETE' }).then(response => {
@@ -73,7 +73,7 @@ const MainToolbar = () => {
   };
 
   const handleClose = () => {
-    setAnchorEl(null);
+    setAnchorEl(undefined);
   };
 
   return (
@@ -108,7 +108,7 @@ const MainToolbar = () => {
               open={openMenu}
               onClose={closeDrawer}
               variant={"temporary"}
-              anchorEl={anchorEl}>
+              anchorel={anchorEl}>
         <div
           tabIndex={0}
           className={classes.list}

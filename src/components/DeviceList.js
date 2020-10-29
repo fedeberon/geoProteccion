@@ -59,7 +59,7 @@ const useStyles = makeStyles(theme => ({
 
 const DeviceList = () => {
   const [menuDeviceId, setMenuDeviceId] = useState(null);
-  const [menuAnchorEl, setMenuAnchorEl] = useState(null);
+  const [menuAnchorEl, setMenuAnchorEl] = useState(undefined);
   const [removeDialogOpen, setRemoveDialogOpen] = useState(false);
   const devices = useSelector(state => Object.values(state.devices.items));
   const dispatch = useDispatch();
@@ -72,7 +72,7 @@ const DeviceList = () => {
   }
 
   const handleMenuClose = () => {
-    setMenuAnchorEl(null);
+    setMenuAnchorEl(undefined);
   }
 
   const handleMenuEdit = () => {
@@ -154,7 +154,7 @@ const DeviceList = () => {
         <CloseIcon />
       </Fab>
 
-      <Menu id="device-menu" anchorEl={menuAnchorEl} keepMounted open={Boolean(menuAnchorEl)} onClose={handleMenuClose}>
+      <Menu id="device-menu" anchorel={menuAnchorEl} keepMounted open={Boolean(menuAnchorEl)} onClose={handleMenuClose}>
         <MenuItem onClick={handleMenuEdit}>{t('sharedEdit')}</MenuItem>
         <MenuItem onClick={handleMenuRemove}>{t('sharedRemove')}</MenuItem>
       </Menu>
