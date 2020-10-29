@@ -106,7 +106,7 @@ const LoginPage = () => {
       <Grid item xs={false} sm={4} md={7} className={classes.image} />
       <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
         <div className={classes.paper}>
-        <img alt="logo" loading="lazy" style={{ width: 80, margin: 20 }} src={require('../../public/images/LogoGeos.png')}></img>
+        <img alt="logo" loading="lazy" style={{ width: 80, margin: 20 }} src={require('../../public/images/LogoGeos.png').default}></img>
 
           <form className={classes.form} noValidate onSubmit={handleLogin}>
 
