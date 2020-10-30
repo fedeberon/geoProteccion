@@ -7,7 +7,7 @@ import t from '../common/localization';
 import { EvStation } from '@material-ui/icons';
 import { AttributionControl } from 'mapbox-gl';
 
-const MainMap = ({ geozones }) => {
+const MainMap = ({ geozones, areGeozonesVisible }) => {
   const containerEl = useRef(null);
 
   const [mapReady, setMapReady] = useState(false);
@@ -402,8 +402,6 @@ const MainMap = ({ geozones }) => {
 
         switch (geozoneType) {
           case 'CIRCLE':
-            console.log(mapManager.map.getLayer(`circles-${index}`));
-            console.log(mapManager.map.getSource(`circles-${index}`))
             mapManager.map.removeLayer(`circles-${index}`);
             mapManager.map.removeSource(`circles-${index}`);
             break;
@@ -419,6 +417,25 @@ const MainMap = ({ geozones }) => {
       mapManager.map.removeSource('geozones-labels');
     }
   }, [geozones]);
+
+  useEffect(() => {
+    const typeRegEx = /(\w*)[ ]?(?=[(])/;
+    geozones.map((element, index) => {
+      let geozoneType = element.area.match(typeRegEx)[1];
+
+      switch (geozoneType) {
+        case 'CIRCLE':
+          mapManager.map.setLayoutProperty(`circles-${index}`, 'visibility', areGeozonesVisible ? 'visible' : 'none');
+          break;
+        case 'POLYGON':
+          mapManager.map.setLayoutProperty(`polygons-${index}`, 'visibility', areGeozonesVisible ? 'visible' : 'none');
+          break;
+        default:
+          break;
+      }
+    });
+    mapManager.map.setLayoutProperty('geozones-labels', 'visibility', areGeozonesVisible ? 'visible' : 'none');
+  }, [areGeozonesVisible]);
 
   return <div style={style} ref={containerEl}/>;
 }

@@ -36,7 +36,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function ShortcutsMenu() {
+export default function ShortcutsMenu({ toggleGeozones }) {
   const classes = useStyles();
   const isViewportDesktop = useSelector(state => state.session.deviceAttributes.isViewportDesktop);
   const [ showShortcutMenu, setShowShortcutMenu ] = useState(isViewportDesktop);
@@ -73,6 +73,7 @@ export default function ShortcutsMenu() {
             icon={<i className="fas fa-draw-polygon fa-lg"/>}
             direction={isViewportDesktop ? 'down' : 'up'}
             open={false}
+            onClick={() => toggleGeozones()}
           />
           <DeviceSearch/>
         </>

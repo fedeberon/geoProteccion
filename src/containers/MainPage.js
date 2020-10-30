@@ -59,6 +59,7 @@ const MainPage = ({ width }) => {
   const classes = useStyles();
   const open = useSelector(state => state.modals.items.search);
   const userId = useSelector((state) => state.session.user.id);
+  const [ areGeozonesVisible, setAreGeozonesVisible] = useState(true);
 
   const handleVisibilityModal = (name) => {
     dispatch(modalsActions.show(name));
@@ -71,6 +72,10 @@ const MainPage = ({ width }) => {
     }
     getGeozones(userId);
   }, [userId]);
+
+  const handleGeozones = () => {
+    setAreGeozonesVisible(!areGeozonesVisible);
+  }
 
   return !authenticated ? (<LinearProgress />) : (
     <div className={classes.root}>
@@ -94,12 +99,12 @@ const MainPage = ({ width }) => {
 
         <div className={classes.mapContainer}>
           <ContainerDimensions>
-            <MainMap geozones={geozones}/>
+            <MainMap geozones={geozones} areGeozonesVisible={areGeozonesVisible}/>
           </ContainerDimensions>
         </div>
       </div>
 
-      <ShortcutsMenu />
+      <ShortcutsMenu toggleGeozones={handleGeozones} />
       <Menu />
     </div>
   );
