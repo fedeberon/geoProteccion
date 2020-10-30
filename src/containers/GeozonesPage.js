@@ -33,6 +33,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import {useHistory, useParams} from 'react-router-dom';
 import {sessionActions} from "../store";
 import {geofencesActions} from "../store/geofences";
+import {getGeozonesByUserId} from "../utils/serviceManager";
 
 const useStyles = makeStyles((theme) => ({
     //Todos los estilos corresponden a Desktop (Falta hacer mobile)
@@ -180,7 +181,7 @@ export default function GeozonesPages() {
       setGeozones(response);
     }
     getGeozones(userId);
-  }, [userId]);
+  }, [userId, geozones]);
 
   const handleAdd = () => {
     const addGeozone = id ? geozones : {};
@@ -188,23 +189,35 @@ export default function GeozonesPages() {
     addGeozone.description = description || addGeozone.description;
 
     let request;
-    if (id) {
-      request = fetch(`api/geofences`, {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(addGeozone),
-      });
-    }
-    handleClose();
-  }
 
-  const handleDelete = (id) => {
-    fetch(`/api/geofences/${id}`, { method: 'DELETE' }).then(response => {
-      console.log(response);
-      if (response.ok) {
-        history.goBack();
-      }
-    })
+      request = fetch(`/api/geofences`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify(addGeozone)
+      }).then(response => console.log(response))
+
+if(request) {
+  console.log(addGeozone);
+  handleClose();
+  // history.refresh();
+}}
+
+  const handleRemove = (id) => {
+    let option = confirm('¿Eliminar Geozona N°' + id + '?');
+    if (option) {
+      fetch(`/api/geofences/${id}`, {method: 'DELETE'}).then(response => {
+        if (response.ok) {
+          const getGeozones = async (userId) => {
+            const response = await service.getGeozonesByUserId(userId);
+            setGeozones(response);
+          }
+          getGeozones(userId);
+        }
+      })
+    }
   }
 
   return (
@@ -227,7 +240,7 @@ export default function GeozonesPages() {
           >
             <div className={classes.column}>
               <Typography
-                className={classes.heading}><strong>Nombre</strong></Typography>
+                className={classes.heading}><strong>{t('sharedName')}</strong></Typography>
               <Typography
                 className={classes.heading}>#{geozone.id} {geozone.name}</Typography>
             </div>
@@ -252,7 +265,7 @@ export default function GeozonesPages() {
               {/*<Chip label="Santiago de Chile" onDelete={() => {*/}
               {/*}}/>*/}
               <Typography
-                className={classes.heading}><strong>Área</strong></Typography>
+                className={classes.heading}><strong>{t('sharedArea')}</strong></Typography>
               <ListItemText className={classes.heading}>{geozone.area}</ListItemText>
             </div>
             <div className={clsx(classes.column, classes.helper)}>
@@ -278,9 +291,9 @@ export default function GeozonesPages() {
               <EditIcon className={classes.extendedIcon}/>Editar
             </Fab>
             <Fab style={{height: '25px'}} size="small" variant="extended"
-                 color="default" aria-label="edit">
+                 color="default" aria-label="edit" onClick={() => handleRemove(geozone.id)}>
               <AddIcon style={{transform: 'rotateZ(45deg)'}}
-                       className={classes.extendedIcon} onClick={() => handleDelete(geozone.id)}/>Eliminar
+                       className={classes.extendedIcon}/>{t('sharedRemove')}
             </Fab>
           </AccordionActions>
         </Accordion>
@@ -297,20 +310,20 @@ export default function GeozonesPages() {
                        label="Id" name="id" variant="outlined" disabled
             /><br/>
             <TextField onChange={(event) => setName(event.target.value)}
-                       id="outlined-basic"
-                       name="name" label="Nombre" variant="outlined"/><br/>
+                       id="outlined-basic"  value={name}
+                       name="name" label={t('sharedName')} variant="outlined"/><br/>
             <TextField onChange={(event) => setDescription(event.target.value)}
-                       id="outline)d-basic"
-                       name="description" label="Descripcion"
+                       id="outline)d-basic" value={description}
+                       name="description" label={t('sharedDescription')}
                        variant="outlined"/><br/>
             <Button style={{width: '150px', height: '50px'}}
                     variant="outlined" label="Area" variant="outlined"
-            >Área</Button><br/>
+            >{t('sharedArea')}</Button><br/>
           </form>
         </DialogContent>
         <DialogActions>
-          <Button autoFocus color="primary">
-            Guardar
+          <Button onClick={handleAdd} autoFocus color="primary">
+            {t('sharedSave')}
           </Button>
         </DialogActions>
       </Dialog>

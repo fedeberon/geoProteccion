@@ -249,7 +249,7 @@ const MainMap = ({ geozones }) => {
       strokeOpacity: 0.75,
       fillColor: attributes.color,
       fillOpacity: 0.25,
-      refineStroke: true,
+      refineStroke: false,
       minRadius: 10,
       maxRadius: 1.1e6,
     }

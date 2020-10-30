@@ -327,7 +327,7 @@ li {
 {/* ancho de pantalla de mas de 960px (desktop-notebook)*/}
 @media only screen and (min-width: 960px){
   .MuiListItem-secondaryAction {
-    padding-right: 35px !important;
+    padding-right: 42px !important;
   }
   .MuiListItemSecondaryAction-root {
     right: 5px !important;

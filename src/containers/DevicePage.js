@@ -175,13 +175,6 @@ const DevicePage = () => {
     getDevices(userId);
   }, [userId]);
 
-  // useEffect(()=>{
-  //   fetch(`/api/devices/${id}`).then(response => {
-  //     if (response.ok) {
-  //       response.json().then(setDevice);
-  //     }
-  //   });
-  // })
   const handleLogout = () => {
     fetch('/api/session', { method: 'DELETE' }).then(response => {
       if (response.ok) {
@@ -213,7 +206,8 @@ const DevicePage = () => {
 
     request.then(response => {
       if (response.ok) {
-        history.goBack();
+
+        history.refresh();
       }
     });
   }
