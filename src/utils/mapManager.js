@@ -68,6 +68,41 @@ const addLayer = (id, source, icon, text) => {
   map.addLayer(layer);
 }
 
+const addPolygonLayer = (id, source, color) => {
+  const layer = {
+    'id': id,
+    'type': 'fill',
+    'source': source,
+    'layout': {},
+    'paint': {
+      'fill-color': color,
+      'fill-opacity': 0.5,
+    },
+  };
+  map.addLayer(layer);
+}
+
+const addLabel = (id, source, text) => {
+  const layer = {
+    'id': id,
+    'type': 'symbol',
+    'source': source,
+    'layout': {
+      'text-field': text,
+      'text-allow-overlap': true,
+      'text-anchor': 'bottom',
+      'text-offset': [0, 0.5],
+      'text-font': ['Roboto Regular'],
+      'text-size': 12,
+    },
+    'paint': {
+      'text-halo-color': 'white',
+      'text-halo-width': 1,
+    }
+  };
+  map.addLayer(layer);
+}
+
 const calculateBounds = features => {
   if (features && features.length) {
     const first = features[0].geometry.coordinates;
@@ -157,5 +192,7 @@ export default {
   map,
   registerListener,
   addLayer,
+  addPolygonLayer,
+  addLabel,
   calculateBounds,
 };

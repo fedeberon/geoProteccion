@@ -200,7 +200,6 @@ export default function GeozonesPages() {
 
   const handleDelete = (id) => {
     fetch(`/api/geofences/${id}`, { method: 'DELETE' }).then(response => {
-      console.log(response);
       if (response.ok) {
         history.goBack();
       }

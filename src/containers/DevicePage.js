@@ -169,7 +169,6 @@ const DevicePage = () => {
   useEffect(() => {
     const getDevices = async (userId) => {
       const response = await service.getDeviceByUserId(userId);
-      console.log(response);
       setDevices(response);
     }
     getDevices(userId);
