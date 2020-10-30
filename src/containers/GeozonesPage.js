@@ -34,6 +34,8 @@ import {useHistory, useParams} from 'react-router-dom';
 import {sessionActions} from "../store";
 import {geofencesActions} from "../store/geofences";
 import {getGeozonesByUserId} from "../utils/serviceManager";
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert from '@material-ui/lab/Alert';
 
 const useStyles = makeStyles((theme) => ({
     //Todos los estilos corresponden a Desktop (Falta hacer mobile)
@@ -53,9 +55,9 @@ const useStyles = makeStyles((theme) => ({
     imgItem: {
       display: 'none',
     },
-      [theme.breakpoints.up('md')]: {
+    [theme.breakpoints.up('md')]: {
       height: '100px',
-        display: 'block',
+      display: 'block',
     },
     accordionStyle: {
       margin: '10px 0px',
@@ -67,7 +69,7 @@ const useStyles = makeStyles((theme) => ({
     heading: {
       fontSize: '12px',
     },
-      [theme.breakpoints.up('md')]: {
+    [theme.breakpoints.up('md')]: {
       fontSize: theme.typography.pxToRem(15),
     },
     secondaryHeading: {
@@ -85,7 +87,7 @@ const useStyles = makeStyles((theme) => ({
     column: {
       flexBasis: '33.33%',
     },
-      [theme.breakpoints.up('md')]: {
+    [theme.breakpoints.up('md')]: {
       flexBasis: '33.33%',
     },
     helper: {
@@ -161,18 +163,36 @@ export default function GeozonesPages() {
   const classes = useStyles();
   const [geozones, setGeozones] = useState([]);
   const userId = useSelector((state) => state.session.user.id);
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
+  const [openEditModal, setOpenEditModal] = useState(false)
   const history = useHistory();
   const dispatch = useDispatch();
   const {id} = useParams();
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
+  const [area, setArea] = useState('');
+  const [openAlert, setOpenAlert] = useState(false);
+
+  let selectedItem = {
+    id: '',
+    name: '',
+    description: '',
+  }
 
   const handleClickOpen = () => {
     setOpen(true);
   };
+
   const handleClose = () => {
     setOpen(false);
+    setOpenEditModal(false)
+  };
+
+  const handleClickOpenEditModal = (object) => {
+    setOpenEditModal(true);
+    selectedItem = object;
+    console.log('object value:' + object)
+    console.log('selectedItemvalue: ' + selectedItem)
   };
 
   useEffect(() => {
@@ -181,29 +201,54 @@ export default function GeozonesPages() {
       setGeozones(response);
     }
     getGeozones(userId);
-  }, [userId, geozones]);
+  }, [userId]);
 
   const handleAdd = () => {
     const addGeozone = id ? geozones : {};
     addGeozone.name = name || addGeozone.name;
     addGeozone.description = description || addGeozone.description;
+    addGeozone.area = area || addGeozone.area
 
-    let request;
+    fetch(`api/geofences`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify({
+        name: "c3",
+        description: "d2222",
+        area: "CIRCLE (-37.55969208751518 -43.69553803351972, 3180.2)",
+      })
+    }).then(response => {
+        if (response.ok) {
+          const getGeozones = async (userId) => {
+            const response = await service.getGeozonesByUserId(userId);
+            setGeozones(response);
+            getGeozones(userId);
+          }
+        }
+      })
+    handleClose();
+    }
 
-      request = fetch(`/api/geofences`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-        body: JSON.stringify(addGeozone)
-      }).then(response => console.log(response))
 
-if(request) {
-  console.log(addGeozone);
-  handleClose();
-  // history.refresh();
-}}
+  const handleEdit = (id) => {
+    const editGeozone = geozones;
+    editGeozone.name = name || editGeozone.name;
+    editGeozone.description = description || editGeozone.name;
+
+    fetch(`/api/geofences/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify(editGeozone)
+    }).then(response => console.log(response))
+      .then(data => setGeozones(data.json()))
+    handleClose();
+  }
 
   const handleRemove = (id) => {
     let option = confirm('¿Eliminar Geozona N°' + id + '?');
@@ -266,7 +311,8 @@ if(request) {
               {/*}}/>*/}
               <Typography
                 className={classes.heading}><strong>{t('sharedArea')}</strong></Typography>
-              <ListItemText className={classes.heading}>{geozone.area}</ListItemText>
+              <ListItemText
+                className={classes.heading}>{geozone.area}</ListItemText>
             </div>
             <div className={clsx(classes.column, classes.helper)}>
               <Typography variant="caption">
@@ -286,12 +332,20 @@ if(request) {
           </AccordionDetails>
           <Divider/>
           <AccordionActions>
-            <Fab style={{height: '25px'}} size="small" variant="extended"
-                 color="default" aria-label="edit">
-              <EditIcon className={classes.extendedIcon}/>Editar
+            <Fab style={{height: '25px'}}
+                 size="small"
+                 variant="extended"
+                 color="default"
+                 aria-label="edit"
+                 onClick={() => handleClickOpenEditModal(geozone)}>
+              <EditIcon className={classes.extendedIcon}/>{t('sharedEdit')}
             </Fab>
-            <Fab style={{height: '25px'}} size="small" variant="extended"
-                 color="default" aria-label="edit" onClick={() => handleRemove(geozone.id)}>
+            <Fab style={{height: '25px'}}
+                 size="small"
+                 variant="extended"
+                 color="default"
+                 aria-label="edit"
+                 onClick={() => handleRemove(geozone.id)}>
               <AddIcon style={{transform: 'rotateZ(45deg)'}}
                        className={classes.extendedIcon}/>{t('sharedRemove')}
             </Fab>
@@ -299,6 +353,7 @@ if(request) {
         </Accordion>
       ))}
 
+      {/*Modal Add New Geozone*/}
       <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title"
               open={open}>
         <DialogTitle id="customized-dialog-title" onClose={handleClose}>
@@ -310,8 +365,9 @@ if(request) {
                        label="Id" name="id" variant="outlined" disabled
             /><br/>
             <TextField onChange={(event) => setName(event.target.value)}
-                       id="outlined-basic"  value={name}
-                       name="name" label={t('sharedName')} variant="outlined"/><br/>
+                       id="outlined-basic" value={name}
+                       name="name" label={t('sharedName')}
+                       variant="outlined"/><br/>
             <TextField onChange={(event) => setDescription(event.target.value)}
                        id="outline)d-basic" value={description}
                        name="description" label={t('sharedDescription')}
@@ -324,6 +380,46 @@ if(request) {
         <DialogActions>
           <Button onClick={handleAdd} autoFocus color="primary">
             {t('sharedSave')}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/*Modal Edit Geozone*/}
+      <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title"
+              open={openEditModal}>
+        <DialogTitle id="customized-dialog-title" onClose={handleClose}>
+          {` Editar Geozona `}
+        </DialogTitle>
+        <DialogContent dividers>
+          <form className={classes.rootmodal} noValidate autoComplete="off">
+            <TextField id="outlined-basic"
+                       value={`${selectedItem.id}`}
+                       label={`${selectedItem.id}`}
+                       name="id"
+                       variant="outlined" disabled
+            /><br/>
+            <TextField onChange={(event) => setName(event.target.value)}
+                       id="outlined-basic"
+                       value={name}
+                       name="name"
+                       label={t('sharedName')}
+                       variant="outlined"/><br/>
+            <TextField onChange={(event) => setDescription(event.target.value)}
+                       id="outline)d-basic"
+                       value={description}
+                       name="description"
+                       label={t('sharedDescription')}
+                       variant="outlined"/><br/>
+            <Button style={{width: '150px', height: '50px'}}
+                    variant="outlined" label="Area" variant="outlined"
+            >{t('sharedArea')}</Button><br/>
+          </form>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => handleEdit()}
+            autoFocus color="primary">
+            {t('sharedEdit')}
           </Button>
         </DialogActions>
       </Dialog>
