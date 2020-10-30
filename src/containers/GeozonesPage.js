@@ -34,8 +34,6 @@ import {useHistory, useParams} from 'react-router-dom';
 import {sessionActions} from "../store";
 import {geofencesActions} from "../store/geofences";
 import {getGeozonesByUserId} from "../utils/serviceManager";
-import Snackbar from '@material-ui/core/Snackbar';
-import MuiAlert from '@material-ui/lab/Alert';
 
 const useStyles = makeStyles((theme) => ({
     //Todos los estilos corresponden a Desktop (Falta hacer mobile)
@@ -55,9 +53,9 @@ const useStyles = makeStyles((theme) => ({
     imgItem: {
       display: 'none',
     },
-    [theme.breakpoints.up('md')]: {
+      [theme.breakpoints.up('md')]: {
       height: '100px',
-      display: 'block',
+        display: 'block',
     },
     accordionStyle: {
       margin: '10px 0px',
@@ -69,7 +67,7 @@ const useStyles = makeStyles((theme) => ({
     heading: {
       fontSize: '12px',
     },
-    [theme.breakpoints.up('md')]: {
+      [theme.breakpoints.up('md')]: {
       fontSize: theme.typography.pxToRem(15),
     },
     secondaryHeading: {
@@ -87,7 +85,7 @@ const useStyles = makeStyles((theme) => ({
     column: {
       flexBasis: '33.33%',
     },
-    [theme.breakpoints.up('md')]: {
+      [theme.breakpoints.up('md')]: {
       flexBasis: '33.33%',
     },
     helper: {
@@ -230,7 +228,7 @@ export default function GeozonesPages() {
         }
       })
     handleClose();
-    }
+  }
 
 
   const handleEdit = (id) => {

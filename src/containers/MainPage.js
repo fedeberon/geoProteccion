@@ -75,7 +75,6 @@ const MainPage = ({ width }) => {
   return !authenticated ? (<LinearProgress />) : (
     <div className={classes.root}>
       <SocketController />
-      {console.log(geozones)}
       <div className={classes.content}>
         <Drawer
           anchor='right'

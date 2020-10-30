@@ -1,9 +1,11 @@
 import React, {useRef, useLayoutEffect, useEffect, useState} from 'react';
 import {useSelector} from 'react-redux';
 import mapManager from '../utils/mapManager';
-import MapboxCircle from 'mapbox-gl-circle'
+import circleToPolygon from 'circle-to-polygon';
 import {makeStyles} from '@material-ui/core/styles';
 import t from '../common/localization';
+import { EvStation } from '@material-ui/icons';
+import { AttributionControl } from 'mapbox-gl';
 
 const MainMap = ({ geozones }) => {
   const containerEl = useRef(null);
@@ -32,6 +34,7 @@ const MainMap = ({ geozones }) => {
     },
 
   }
+
   const useStyles = makeStyles((theme) => ({
     root: {
       width: '100%',
@@ -39,6 +42,28 @@ const MainMap = ({ geozones }) => {
       backgroundColor: theme.palette.background.paper,
     },
   }));
+
+  const calculatePolygonCenter = (coordinates) => {
+		let north = -90;
+		let west = -180;
+		let south = 90;
+    let east = 180;
+
+    coordinates.map((e) => {
+      let lng = parseFloat(e[0]);
+      let lat = parseFloat(e[1]);
+
+      west = lng > west ? lng : west;
+      east = lng < east ? lng : east;
+      north = lat > north ? lat : north;
+      south = lat < south ? lat : south;
+    });
+
+    return {
+      lng: (west + east) / 2,
+      lat: (north + south) /2
+    }
+  }
 
   const isViewportDesktop = useSelector(state => state.session.deviceAttributes.isViewportDesktop);
 
@@ -136,6 +161,56 @@ const MainMap = ({ geozones }) => {
       properties: createFeature(state, position),
     })),
   }));
+
+  const createCircles = (geozones) => {
+    return {
+      type: 'FeatureCollection',
+      features: geozones.map(geozone => ({
+        type: 'Feature',
+        geometry: {
+          type: 'Polygon',
+          coordinates: circleToPolygon([geozone.attributes.lng, geozone.attributes.lat], geozone.attributes.radius).coordinates
+        },
+        properties: { ...geozone.properties },
+      })),
+    }
+  };
+
+  const createLabels = (geozones) => {
+    return {
+      type: 'FeatureCollection',
+      features: geozones.map(geozone => ({
+        type: 'Feature',
+        geometry: {
+          type: 'Point',
+          coordinates: [geozone.attributes.lng, geozone.attributes.lat]
+        },
+        properties: { ...geozone.properties },
+      })),
+    }
+  };
+
+  const createPolygon = (geozone) => {
+    return {
+      type: 'Feature',
+      geometry: {
+        type: 'Polygon',
+        coordinates: [ geozone.attributes.coordinates ]
+      },
+      properties: { ...geozone.properties },
+    }
+  };
+
+  const createCircle = (geozone) => {
+    return {
+      type: 'Feature',
+      geometry: {
+        type: 'Polygon',
+        coordinates: circleToPolygon([geozone.attributes.lng, geozone.attributes.lat], geozone.attributes.radius).coordinates
+      },
+      properties: { ...geozone.properties },
+    }
+  }
 
   var markerHeight = 0, markerRadius = 0, linearOffset = 0;
   var popupOffsets = {
@@ -241,54 +316,95 @@ const MainMap = ({ geozones }) => {
     }
   }, [mapManager.map])
 
-  const createCircle = (attributes) => {
-    const options = {
-      editable: false,
-      strokeColor: attributes.color,
-      strokeWeight: 2,
-      strokeOpacity: 0.75,
-      fillColor: attributes.color,
-      fillOpacity: 0.25,
-      refineStroke: false,
-      minRadius: 10,
-      maxRadius: 1.1e6,
-    }
-
-    let circle = new MapboxCircle({ lat: attributes.lat, lng: attributes.lng}, attributes.radius, options );
-    circle.addTo(mapManager.map);
-  }
-
   useEffect(() => {
     let attributes = {
       lat: null,
       lng: null,
       radius: null,
-      color: '#' + Math.floor(Math.random()*16777215).toString(16),
+      coordinates: [],
+      color: '',
+    }
+    let properties = {
+      name: '',
+      description: ''
     }
     let geozoneType = '';
+    let geozonesFiltered = [];
 
     const typeRegEx = /(\w*)[ ]?(?=[(])/;
     const circlePositionRegEx = /(?<=[(])(.*) (.*)(?=[,])/;
     const radiusRegEx = /(?<=[,][ ]).*(?=[)])/;
+    const polygonRegEx = /(?<=[(]{2}).*(?=[)]{2})/;
 
-    geozones.map((e) => {
-      geozoneType = e.area.match(typeRegEx)[1];
+    geozones.map((element, index) => {
+      geozoneType = element.area.match(typeRegEx)[1];
 
       switch (geozoneType) {
         case 'CIRCLE':
-            attributes.lat = parseFloat(e.area.match(circlePositionRegEx)[1]);
-            attributes.lng = parseFloat(e.area.match(circlePositionRegEx)[2]);
-            attributes.radius = parseFloat(e.area.match(radiusRegEx)[0]);
-            if (e.attributes.color) {
-              attributes.color = e.attributes.color;
-            }
-            createCircle(attributes);
+          attributes.lat = parseFloat(element.area.match(circlePositionRegEx)[1]);
+          attributes.lng = parseFloat(element.area.match(circlePositionRegEx)[2]);
+          attributes.radius = parseFloat(element.area.match(radiusRegEx)[0]);
+          attributes.color = element.attributes.color ? element.attributes.color : '#' + Math.floor(Math.random()*16777215).toString(16);
+
+          properties.name = element.name;
+          const circle = createCircle({ attributes: {...attributes}, properties: {...properties}});
+
+          geozonesFiltered.push({ attributes: {...attributes}, properties: {...properties}});
+
+          mapManager.map.addSource(`circles-${index}`, {
+            'type': 'geojson',
+            'data': circle,
+          });
+          mapManager.addPolygonLayer(`circles-${index}`, `circles-${index}`, attributes.color, '{name}');
+          break;
+        case 'POLYGON':
+          const coordinates = element.area.match(polygonRegEx)[0].split(', ');
+          coordinates.map((element) => {
+            const latLng = element.split(' ');
+            attributes.coordinates.push(latLng.reverse());
+          });
+          attributes.color = element.attributes.color ? element.attributes.color : '#' + Math.floor(Math.random()*16777215).toString(16);
+
+          properties.name = element.name;
+          const polygon = createPolygon({ attributes: {...attributes}, properties: {...properties}});
+
+          const polygonCenter = calculatePolygonCenter(attributes.coordinates);
+          attributes.lat = polygonCenter.lat;
+          attributes.lng = polygonCenter.lng;
+
+          geozonesFiltered.push({ attributes: {...attributes}, properties: {...properties}});
+
+          mapManager.map.addSource(`polygons-${index}`, {
+            'type': 'geojson',
+            'data': polygon,
+          });
+          mapManager.addPolygonLayer(`polygons-${index}`, `polygons-${index}`, attributes.color, '{name}');
+
+          attributes.coordinates = [];
           break;
         default:
           break;
       }
     });
+
+    const labels = createLabels(geozonesFiltered);
+
+    mapManager.map.addSource('geozones-labels', {
+      'type': 'geojson',
+      'data': labels,
+    });
+
+    mapManager.addLabel('geozones-labels', 'geozones-labels', '{name}');
+
     return () => {
+      geozones.map((e, index) => {
+        mapManager.map.removeLayer(`circles-${index}`);
+        mapManager.map.removeSource(`circles-${index}`);
+        mapManager.map.removeLayer(`polygons-${index}`);
+        mapManager.map.removeSource(`polygons-${index}`);
+      });
+      mapManager.map.removeLayer('geozones-labels');
+      mapManager.map.removeSource('geozones-labels');
     }
   }, [geozones])
 
