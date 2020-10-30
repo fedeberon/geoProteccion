@@ -397,16 +397,28 @@ const MainMap = ({ geozones }) => {
     mapManager.addLabel('geozones-labels', 'geozones-labels', '{name}');
 
     return () => {
-      geozones.map((e, index) => {
-        mapManager.map.removeLayer(`circles-${index}`);
-        mapManager.map.removeSource(`circles-${index}`);
-        mapManager.map.removeLayer(`polygons-${index}`);
-        mapManager.map.removeSource(`polygons-${index}`);
+      geozones.map((element, index) => {
+        geozoneType = element.area.match(typeRegEx)[1];
+
+        switch (geozoneType) {
+          case 'CIRCLE':
+            console.log(mapManager.map.getLayer(`circles-${index}`));
+            console.log(mapManager.map.getSource(`circles-${index}`))
+            mapManager.map.removeLayer(`circles-${index}`);
+            mapManager.map.removeSource(`circles-${index}`);
+            break;
+          case 'POLYGON':
+            mapManager.map.removeLayer(`polygons-${index}`);
+            mapManager.map.removeSource(`polygons-${index}`);
+            break;
+          default:
+            break;
+        }
       });
       mapManager.map.removeLayer('geozones-labels');
       mapManager.map.removeSource('geozones-labels');
     }
-  }, [geozones])
+  }, [geozones]);
 
   return <div style={style} ref={containerEl}/>;
 }
