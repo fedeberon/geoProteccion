@@ -31,12 +31,14 @@ import {withStyles} from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import MenuItem from '@material-ui/core/MenuItem';
 import {useHistory, useParams} from 'react-router-dom';
-import {sessionActions} from "../store";
-import {geofencesActions} from "../store/geofences";
-import {getGeozonesByUserId} from "../utils/serviceManager";
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import Slide from '@material-ui/core/Slide';
+
+
 
 const useStyles = makeStyles((theme) => ({
-    //Todos los estilos corresponden a Desktop (Falta hacer mobile)
+
     root: {
       overflowY: 'scroll',
       height: '100%',
@@ -49,6 +51,18 @@ const useStyles = makeStyles((theme) => ({
         paddingTop: '5%',
         paddingRight: '15%',
       },
+    },
+    appBar: {
+
+    },
+      [theme.breakpoints.up('md')]: {
+      position: 'relative',
+    },
+    title: {
+    },
+    [theme.breakpoints.up('md')]: {
+      marginLeft: theme.spacing(2),
+      flex: 1,
     },
     imgItem: {
       display: 'none',
@@ -128,6 +142,10 @@ const styles = (theme) => ({
   },
 });
 
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
+
 const DialogTitle = withStyles(styles)((props) => {
   const {children, classes, onClose, ...other} = props;
   return (
@@ -169,7 +187,17 @@ export default function GeozonesPages() {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [area, setArea] = useState('');
-  const [openAlert, setOpenAlert] = useState(false);
+  const [openModalMap, setOpenModalMap] = useState(false);
+
+
+  const handleClickOpenModalMap = () => {
+    setOpenModalMap(true);
+  };
+
+  const handleCloseModalMap = () => {
+    setOpenModalMap(false);
+  };
+
 
   let selectedItem = {
     id: '',
@@ -372,7 +400,10 @@ export default function GeozonesPages() {
                        variant="outlined"/><br/>
             <Button style={{width: '150px', height: '50px'}}
                     variant="outlined" label="Area" variant="outlined"
-            >{t('sharedArea')}</Button><br/>
+            >{t('sharedArea')}</Button>
+            <Button variant="outlined" color="primary" onClick={handleClickOpenModalMap}>
+              Open alert dialog
+            </Button>
           </form>
         </DialogContent>
         <DialogActions>
@@ -421,6 +452,40 @@ export default function GeozonesPages() {
           </Button>
         </DialogActions>
       </Dialog>
+
+      <div>
+          <Dialog
+            fullScreen open={openModalMap}
+            onClose={handleCloseModalMap}
+            TransitionComponent={Transition}>
+            <AppBar className={classes.appBar}>
+              <Toolbar>
+                <IconButton edge="start" color="inherit" onClick={handleCloseModalMap} aria-label="close">
+                  <CloseIcon />
+                </IconButton>
+                <Typography variant="h6" className={classes.title}>
+                  {t('sharedArea')}
+                </Typography>
+                <Button autoFocus style={{flex: '1'}} color="inherit" onClick={handleCloseModalMap}>
+                  {t('sharedSave')}
+                </Button>
+              </Toolbar>
+            </AppBar>
+            <List>
+              <ListItem button>
+                <ListItemText primary="Phone ringtone" secondary="Titania" />
+              </ListItem>
+              <Divider />
+              <ListItem button>
+                <ListItemText primary="Default notification ringtone" secondary="Tethys" />
+              </ListItem>
+            </List>
+            <div>
+
+            </div>
+
+          </Dialog>
+      </div>
     </div>
   );
 }
