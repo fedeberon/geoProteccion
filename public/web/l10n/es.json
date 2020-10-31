@@ -435,8 +435,7 @@
     "mileage": "Kilometraje",
     "activateCircuitBreaker": "Activar Corta Corriente",
     "geozones": "Geozonas",
-    "calories": "Calorías",
-    "fat": "Grasa",
-    "carbs": "Carbohidratos",
-    "protein": "Proteínas"
+    "sharedCircle": "Circulo",
+    "sharedPolygon": "Poligono",
+    "sharedPolyline": "Polilinea"
 }
