@@ -29,7 +29,6 @@ import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import {withStyles} from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
-import MenuItem from '@material-ui/core/MenuItem';
 import {useHistory, useParams} from 'react-router-dom';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -38,8 +37,11 @@ import Drawer from '@material-ui/core/Drawer';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MailIcon from '@material-ui/icons/Mail';
-
-
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import FormHelperText from '@material-ui/core/FormHelperText';
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
 
 const useStyles = makeStyles((theme) => ({
 
@@ -55,6 +57,13 @@ const useStyles = makeStyles((theme) => ({
         paddingTop: '5%',
         paddingRight: '15%',
       },
+    },
+    formControl: {
+      margin: theme.spacing(1),
+      minWidth: '90%',
+    },
+    selectEmpty: {
+      marginTop: theme.spacing(2),
     },
     appBar: {
 
@@ -216,7 +225,11 @@ export default function GeozonesPages() {
   const [description, setDescription] = useState('');
   const [area, setArea] = useState('');
   const [openModalMap, setOpenModalMap] = useState(false);
+  const [geozoneType, setGeozoneType] = useState('');
 
+  const handleChangeGeozoneType = (event) => {
+    setGeozoneType(event.target.value);
+  };
 
   const handleClickOpenModalMap = () => {
     setOpenModalMap(true);
@@ -426,11 +439,8 @@ export default function GeozonesPages() {
                        id="outline)d-basic" value={description}
                        name="description" label={t('sharedDescription')}
                        variant="outlined"/><br/>
-            <Button style={{width: '150px', height: '50px'}}
-                    variant="outlined" label="Area" variant="outlined"
-            >{t('sharedArea')}</Button>
-            <Button variant="outlined" color="primary" onClick={handleClickOpenModalMap}>
-              Open alert dialog
+            <Button variant="outlined" color="default" onClick={handleClickOpenModalMap}>
+              {t('sharedArea')}
             </Button>
           </form>
         </DialogContent>
@@ -511,22 +521,35 @@ export default function GeozonesPages() {
                 >
                   <Toolbar />
                   <div className={classes.drawerContainerMap}>
-                    <List>
-                      {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-                        <ListItem button key={text}>
-                          <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-                          <ListItemText primary={text} />
-                        </ListItem>
-                      ))}
-                    </List>
+                    <FormControl variant="outlined" className={classes.formControl}>
+                      <InputLabel id="demo-simple-select-outlined-label">{t('reportChartType')}</InputLabel>
+                      <Select
+                        labelId="demo-simple-select-outlined-label"
+                        id="demo-simple-select-outlined"
+                        value={geozoneType}
+                        onChange={handleChangeGeozoneType}
+                        label={t('reportChartType')}
+                      >
+
+                        <MenuItem value={10}>{t('sharedCircle')}</MenuItem>
+                        <MenuItem value={20}>{t('sharedPolygon')}</MenuItem>
+                        <MenuItem value={30}>{t('sharedPolyline')}</MenuItem>
+                      </Select>
+                    </FormControl>
                     <Divider />
                     <List>
-                      {['All mail', 'Trash', 'Spam'].map((text, index) => (
-                        <ListItem button key={text}>
-                          <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-                          <ListItemText primary={text} />
-                        </ListItem>
-                      ))}
+                      <ListItem>
+                        Attributes
+                      </ListItem>
+                      <ListItem>Color</ListItem>
+                      <ListItem>Speed Limit</ListItem>
+                      <ListItem>Poliline Distance</ListItem>
+                      {/*{['All mail', 'Trash', 'Spam'].map((text, index) => (*/}
+                      {/*  <ListItem button key={text}>*/}
+                      {/*    <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>*/}
+                      {/*    <ListItemText primary={text} />*/}
+                      {/*  </ListItem>*/}
+                      {/*))}*/}
                     </List>
                   </div>
                 </Drawer>
