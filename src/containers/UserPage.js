@@ -12,10 +12,19 @@ import Paper from '@material-ui/core/Paper';
 
 import t from '../common/localization';
 import { useSelector } from 'react-redux';
+import Divider from "@material-ui/core/Divider";
 
 const styles = theme => ({});
 
 const useStyles = makeStyles(theme => ({
+
+  root: {
+    width: '100%',
+    height: '100%',
+    overflowY: 'scroll',
+    paddingTop: '5%',
+    paddingRight: '15%',
+  },
   UserPageSize : {
     float: 'right',
     width:'70%',
@@ -51,9 +60,10 @@ const UserPage = () => {
 
   return (
 
-    <div>
+    <div className={classes.root}>
       <div className="title-section">
-        <h3>Información de Usuario</h3>
+        <h2>Información de Usuario</h2>
+        <Divider />
       </div>
       <div className={classes.UserPageSize}>
         <TableContainer component={Paper}>

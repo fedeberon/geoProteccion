@@ -15,6 +15,7 @@
     "ol": "^6.4.3",
     "ol-mapbox-style": "^6.1.4",
     "react": "^16.13.0",
+    "react-color": "^2.19.3",
     "react-container-dimensions": "^1.4.1",
     "react-dom": "^16.13.0",
     "react-hot-loader": "^4.13.0",

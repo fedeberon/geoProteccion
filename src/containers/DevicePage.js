@@ -33,6 +33,7 @@ import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import StarBorder from '@material-ui/icons/StarBorder';
 import {sessionActions} from "../store";
+import Divider from "@material-ui/core/Divider";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -213,8 +214,9 @@ const DevicePage = () => {
 
   return (
     <>
-      <div className="title-section">
-        <h3>Información de dispositivos</h3>
+      <div style={{marginTop: '5%'}} className="title-section">
+        <h2>Información de dispositivos</h2>
+        <Divider/>
       </div>
       <div className={classes.devicesTable}>
         {devices.map((device, index) => (
