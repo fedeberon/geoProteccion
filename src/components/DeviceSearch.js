@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
     boxShadow: '0px 0px 20px 1px rgba(102, 97, 102, 0.8)',
     [theme.breakpoints.up('md')]: {
       position: 'unset',
-      margin: '1%',
+      margin: '0px 15px 0px 10px',
     },
   },
   iconButton: {
@@ -121,6 +121,11 @@ function DeviceSearch() {
     setShowDeviceList(!showDeviceList);
   }
 
+  const dispatchDevice = (device) => {
+    dispatch(devicesActions.select(device))
+    toggleDeviceList();
+  }
+
   const filterDevices = (value = '') => {
     const regex = new RegExp(`${value !== '' ? value : '.+' }`, 'gi');
     let filteredDevices = [];
@@ -161,7 +166,7 @@ function DeviceSearch() {
       <div className={showDeviceList ? 'device-list' : 'display-none'}>
         {deviceList.map((device, index, list) => (
             <Fragment key={device.id}>
-              <ListItem className={classes.listItem} button key={device.id} onClick={() => dispatch(devicesActions.select(device))}>
+              <ListItem className={classes.listItem} button key={device.id} onClick={() => dispatchDevice(device)}>
                 <ListItemAvatar>
                     <Avatar className={classes.MuiAvatarRoot}>
                       <i className="fas fa-truck-moving" />

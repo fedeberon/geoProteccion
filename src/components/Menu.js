@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
     left: '50vw',
     right: '50vw',
     [theme.breakpoints.up('md')]: {
-      top: '1%',
+      top: '4%',
       left: '1%',
       right: 'auto',
       bottom: 'auto'

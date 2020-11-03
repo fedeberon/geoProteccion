@@ -534,9 +534,9 @@ export default function GeozonesPages() {
                         label={t('reportChartType')}
                       >
 
-                        <MenuItem value={10}>{t('sharedCircle')}</MenuItem>
-                        <MenuItem value={20}>{t('sharedPolygon')}</MenuItem>
-                        <MenuItem value={30}>{t('sharedPolyline')}</MenuItem>
+                        <MenuItem value={10}>{t('mapShapeCircle')}</MenuItem>
+                        <MenuItem value={20}>{t('mapShapePolygon')}</MenuItem>
+                        <MenuItem value={30}>{t('mapShapePolyline')}</MenuItem>
                       </Select>
                     </FormControl>
                     <Divider />
