@@ -335,7 +335,7 @@ button {
   }
 }
 
-{/* ancho de pantalla de mas de 960px (desktop-notebook)*/}
+/* ancho de pantalla de mas de 960px (desktop-notebook)*/
 @media only screen and (min-width: 960px){
   .MuiListItem-secondaryAction {
     padding-right: 42px !important;
@@ -367,9 +367,12 @@ button {
     height: 39px !important;
     margin: 0px 2px 15px 2px !important;
   }
+  .MuiFab-extended {
+    min-width: 110px !important;
+  }
 }
 
-{/* ancho de pantalla de menos de 600px* (mobile)*/}
+/* ancho de pantalla de menos de 600px* (mobile)*/
 @media only screen and (max-width: 600px) {
   .mapboxgl-popup-content {
     top: 36% !important;
