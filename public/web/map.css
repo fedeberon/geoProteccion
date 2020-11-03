@@ -7,6 +7,10 @@ li {
   list-style: none;
 }
 
+button {
+  cursor: pointer !important;
+}
+
 .popup-map-div {
   font-size: 0.9em;
   color: black;

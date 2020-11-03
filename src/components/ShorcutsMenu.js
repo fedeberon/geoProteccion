@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
     [theme.breakpoints.up('md')]: {
-      top: '4%',
+      top: '3%',
       right: '1%',
       left: 'auto',
       flexDirection: 'unset',

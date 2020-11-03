@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
     left: '50vw',
     right: '50vw',
     [theme.breakpoints.up('md')]: {
-      top: '4%',
+      top: '3%',
       left: '1%',
       right: 'auto',
       bottom: 'auto'
@@ -64,7 +64,7 @@ export default function Menu({layout}) {
           key='account'
           icon={<i className="fas fa-user-circle fa-lg"/>}
           tooltipTitle={t('settingsUser')}
-          tooltipOpen
+          tooltipOpen={!isViewportDesktop}
           onClick={e => {
             e.stopPropagation();
             history.push('/account');
@@ -76,7 +76,7 @@ export default function Menu({layout}) {
           key='devices'
           icon={<i className="fas fa-map-marker-alt fa-lg"/>}
           tooltipTitle={t('deviceTitle')}
-          tooltipOpen
+          tooltipOpen={!isViewportDesktop}
           onClick={e => {
             e.stopPropagation();
             history.push('/device/list');
@@ -88,7 +88,7 @@ export default function Menu({layout}) {
           key='groups'
           icon={<i className="fas fa-object-group fa-lg"/>}
           tooltipTitle={t('settingsGroups')}
-          tooltipOpen
+          tooltipOpen={!isViewportDesktop}
           onClick={e => {
             e.stopPropagation();
             history.push('/groups');
@@ -100,7 +100,7 @@ export default function Menu({layout}) {
           key='notifications'
           icon={<i className="fas fa-bell fa-lg"/>}
           tooltipTitle={t('sharedNotifications')}
-          tooltipOpen
+          tooltipOpen={!isViewportDesktop}
           onClick={e => {
             e.stopPropagation();
             history.push('/notifications');
@@ -112,7 +112,7 @@ export default function Menu({layout}) {
           key='geozones'
           icon={<i className="fas fa-draw-polygon fa-lg"/>}
           tooltipTitle={t('geozones')}
-          tooltipOpen
+          tooltipOpen={!isViewportDesktop}
           onClick={e => {
             e.stopPropagation();
             history.push('/geozones');
@@ -124,7 +124,7 @@ export default function Menu({layout}) {
           key='calendars'
           icon={<i className="fas fa-calendar-alt fa-lg"/>}
           tooltipTitle={t('sharedCalendars')}
-          tooltipOpen
+          tooltipOpen={!isViewportDesktop}
           onClick={e => {
             e.stopPropagation();
             history.push('/calendars');
@@ -136,7 +136,7 @@ export default function Menu({layout}) {
           key='maintenance'
           icon={<i className="fas fa-tools fa-lg"/>}
           tooltipTitle={t('sharedMaintenance')}
-          tooltipOpen
+          tooltipOpen={!isViewportDesktop}
           onClick={e => {
             e.stopPropagation();
             history.push('/maintenance');
