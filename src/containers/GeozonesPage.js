@@ -555,6 +555,7 @@ export default function GeozonesPages() {
                           <MenuItem >
                             <CirclePicker
                              color={'#fff'}
+                             colors={["#008000", "#993300", "#000000", "#333300"]}
                              colorSize={25}
                             />
                           </MenuItem>

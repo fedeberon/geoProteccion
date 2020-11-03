@@ -344,7 +344,7 @@ const MainMap = ({ geozones, areGeozonesVisible }) => {
           attributes.lat = parseFloat(element.area.match(circlePositionRegEx)[1]);
           attributes.lng = parseFloat(element.area.match(circlePositionRegEx)[2]);
           attributes.radius = parseFloat(element.area.match(radiusRegEx)[0]);
-          attributes.color = element.attributes.color ? element.attributes.color : '#' + Math.floor(Math.random()*16777215).toString(16);
+          attributes.color = element.attributes.color ? element.attributes.color : '#' + Math.floor(Math.random() * 2 ** 24).toString(16).padStart(6, "0");
 
           properties.name = element.name;
           const circle = createCircle({ attributes: {...attributes}, properties: {...properties}});
@@ -363,7 +363,7 @@ const MainMap = ({ geozones, areGeozonesVisible }) => {
             const latLng = element.split(' ');
             attributes.coordinates.push(latLng.reverse());
           });
-          attributes.color = element.attributes.color ? element.attributes.color : '#' + Math.floor(Math.random()*16777215).toString(16);
+          attributes.color = element.attributes.color ? element.attributes.color : '#' + Math.floor(Math.random() * 2 ** 24).toString(16).padStart(6, "0");
 
           properties.name = element.name;
           const polygon = createPolygon({ attributes: {...attributes}, properties: {...properties}});
