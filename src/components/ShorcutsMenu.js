@@ -21,13 +21,16 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
     [theme.breakpoints.up('md')]: {
-      top: '1%',
+      top: '4%',
       right: '1%',
       left: 'auto',
       flexDirection: 'unset',
     },
   },
   speedDial: {
+
+  },
+    [theme.breakpoints.up('md')]: {
     marginLeft: '8px',
   },
   speedDialOpen: {

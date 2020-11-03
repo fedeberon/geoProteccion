@@ -35,14 +35,12 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Slide from '@material-ui/core/Slide';
 import Drawer from '@material-ui/core/Drawer';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
-import MailIcon from '@material-ui/icons/Mail';
 import DrawableMap from '../components/DrawableMap';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
-import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
+import { CirclePicker } from 'react-color';
 
 const useStyles = makeStyles((theme) => ({
 
@@ -336,9 +334,13 @@ export default function GeozonesPages() {
   return (
 
     <div className={classes.root}>
-      <h2>Información de Geozonas</h2>
+      <div className="title-section">
+        <h2>Información de Geozonas</h2>
+        <Divider />
+      </div>
+
       <Container>
-        <Button type="button" color="primary" variant="outlined"
+        <Button style={{margin: '10px 0px'}} type="button" color="primary" variant="outlined"
                 onClick={handleClickOpen}>
           <AddIcon color="primary"/>
           Crear nueva geozona
@@ -532,25 +534,50 @@ export default function GeozonesPages() {
                         label={t('reportChartType')}
                       >
 
-                        <MenuItem value={10}>{t('sharedCircle')}</MenuItem>
-                        <MenuItem value={20}>{t('sharedPolygon')}</MenuItem>
-                        <MenuItem value={30}>{t('sharedPolyline')}</MenuItem>
+                        <MenuItem value={10}>{t('mapShapeCircle')}</MenuItem>
+                        <MenuItem value={20}>{t('mapShapePolygon')}</MenuItem>
+                        <MenuItem value={30}>{t('mapShapePolyline')}</MenuItem>
                       </Select>
                     </FormControl>
                     <Divider />
                     <List>
-                      <ListItem>
-                        Attributes
+                      <ListItem style={{fontSize: '20px', color: 'cadetblue'}}>
+                        <strong>Attributes</strong>
                       </ListItem>
-                      <ListItem>Color</ListItem>
-                      <ListItem>Speed Limit</ListItem>
-                      <ListItem>Poliline Distance</ListItem>
-                      {/*{['All mail', 'Trash', 'Spam'].map((text, index) => (*/}
-                      {/*  <ListItem button key={text}>*/}
-                      {/*    <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>*/}
-                      {/*    <ListItemText primary={text} />*/}
-                      {/*  </ListItem>*/}
-                      {/*))}*/}
+                      <FormControl variant="outlined" className={classes.formControl}>
+                        <InputLabel id="demo-simple-select-outlined-label">Color</InputLabel>
+                        <Select
+                          labelId="demo-simple-select-outlined-label"
+                          id="demo-simple-select-outlined"
+                          value=""
+                          label="Color"
+                        >
+                          <MenuItem >
+                            <CirclePicker
+                             color={'#fff'}
+                             colorSize={25}
+                            />
+                          </MenuItem>
+                        </Select>
+                      </FormControl>
+                      <TextField style={{width: '187px'}} className={classes.formControl}
+                                 id="outlined-number"
+                                 label="Speed Limit"
+                                 type="number"
+                                 InputLabelProps={{
+                                   shrink: true,
+                                 }}
+                                 variant="outlined"
+                      />
+                      <TextField style={{width: '187px'}} className={classes.formControl}
+                                 id="outlined-number"
+                                 label="Polyline Distance"
+                                 type="number"
+                                 InputLabelProps={{
+                                   shrink: true,
+                                 }}
+                                 variant="outlined"
+                      />
                     </List>
                   </div>
                 </Drawer>

@@ -434,8 +434,5 @@
     "circuitBreaker": "Corta Corriente",
     "mileage": "Kilometraje",
     "activateCircuitBreaker": "Activar Corta Corriente",
-    "geozones": "Geozonas",
-    "sharedCircle": "Circulo",
-    "sharedPolygon": "Poligono",
-    "sharedPolyline": "Polilinea"
+    "geozones": "Geozonas"
 }
