@@ -363,6 +363,9 @@ li {
     height: 39px !important;
     margin: 0px 2px 15px 2px !important;
   }
+  .MuiFab-extended {
+    min-width: 110px !important;
+  }
 }
 
 {/* ancho de pantalla de menos de 600px* (mobile)*/}
