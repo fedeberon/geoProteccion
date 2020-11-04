@@ -167,11 +167,11 @@ export default function NotificationsPage() {
               <Table className={classes.table} aria-label="simple table">
                 <TableHead>
                   <TableRow>
-                    <TableCell align="left">ID</TableCell>
-                    <TableCell align="left">Tipo de notificacion</TableCell>
-                    <TableCell align="left">Todos los dispositivos</TableCell>
-                    <TableCell align="left">Alarma</TableCell>
-                    <TableCell align="left">Canales</TableCell>
+                    <TableCell align="center">ID</TableCell>
+                    <TableCell align="center">Tipo de notificacion</TableCell>
+                    <TableCell align="center">Todos los dispositivos</TableCell>
+                    <TableCell align="center">Alarma</TableCell>
+                    <TableCell align="center">Canales</TableCell>
                     <TableCell align="center"/>
                   </TableRow>
                 </TableHead>
@@ -183,7 +183,10 @@ export default function NotificationsPage() {
                       <TableCell align="center">{`${Boolean(notification.always)}`}</TableCell>
                       <TableCell align="center">Undefined</TableCell>
                       <TableCell align="center">{notification.notificators}</TableCell>
-                      <TableCell align="center"><EditTwoToneIcon/><DeleteTwoTone/></TableCell>
+                      <TableCell align="center">
+                        <EditTwoToneIcon/>
+                        <DeleteTwoTone/>
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
