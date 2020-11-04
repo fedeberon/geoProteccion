@@ -534,10 +534,9 @@ export default function GeozonesPages() {
                         onChange={handleChangeGeozoneType}
                         label={t('reportChartType')}
                       >
-                        <MenuItem value={'0'}>{t('sharedSet')}</MenuItem>
-                        <MenuItem value={'1'}>{t('mapShapeCircle')}</MenuItem>
-                        <MenuItem value={'2'}>{t('mapShapePolygon')}</MenuItem>
-                        <MenuItem value={'3'}>{t('mapShapePolyline')}</MenuItem>
+                        <MenuItem value={'0'}>{t('mapShapeCircle')}</MenuItem>
+                        <MenuItem value={'1'}>{t('mapShapePolygon')}</MenuItem>
+                        <MenuItem value={'2'}>{t('mapShapePolyline')}</MenuItem>
                       </Select>
                     </FormControl>
                     <Divider />
@@ -550,7 +549,8 @@ export default function GeozonesPages() {
                         <Select
                           labelId="demo-simple-select-outlined-label"
                           id="demo-simple-select-outlined"
-                          value=""
+                          value={color}
+                          style={{ backgroundColor: color + '88' }}
                           label="Color"
                         >
                           <MenuItem >

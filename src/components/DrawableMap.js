@@ -4,9 +4,9 @@ import mapManager from '../utils/mapManager';
 import circleToPolygon from 'circle-to-polygon';
 import {makeStyles} from '@material-ui/core/styles';
 import t from '../common/localization';
-import MapboxDraw from "@mapbox/mapbox-gl-draw";
+// import MapboxDraw from "@mapbox/mapbox-gl-draw";
 
-const typesArray = ['none', 'polygon', 'polygon', 'line_string'];
+const typesArray = ['circle', 'polygon', 'polyline'];
 
 const getDistanceBtwnCoords = (first, second) => {
   const R = 6371e3; // metres
@@ -27,8 +27,8 @@ const DrawableMap = ({ geozoneType: type, color }) => {
   const containerEl = useRef(null);
   const [mapReady, setMapReady] = useState(false);
 
-  let controls = { [typesArray[type]]: true , trash: true };
-  let draw  = new MapboxDraw({displayControlsDefault: false, controls});
+  // let controls = { [typesArray[type]]: true , trash: true };
+  // let draw  = new MapboxDraw({displayControlsDefault: false, controls});
   const [ lngLat, setLngLat ] = useState([]);
 
   const useStyles = makeStyles((theme) => ({
@@ -54,21 +54,29 @@ const DrawableMap = ({ geozoneType: type, color }) => {
 
   useEffect(() => {
     mapManager.registerListener(() => setMapReady(true));
+    return () => {
+      if (mapManager.map.getLayer('circle')) {
+        mapManager.map.removeLayer(`circle`);
+      }
+      if (mapManager.map.getSource('circle')) {
+        mapManager.map.removeSource(`circle`);
+      }
+    }
   }, []);
 
-  useEffect(() => {
-    mapManager.map.addControl(draw, 'bottom-right');
-    return () => {
-      mapManager.map.removeControl(draw);
-    }
-  }, [controls]);
+  // useEffect(() => {
+  //   mapManager.map.addControl(draw, 'bottom-right');
+  //   return () => {
+  //     mapManager.map.removeControl(draw);
+  //   }
+  // }, [controls]);
 
   function getLngLat (event) {
     setLngLat([...lngLat, { lng: event.lngLat.lng, lat: event.lngLat.lat }]);
   }
 
   function getCurrentPosition (event) {
-    if (lngLat.length === 1 && type === '1') {
+    if (lngLat.length === 1 && type === '0') {
       
       if (mapManager.map.getSource('circle') && lngLat.length > 1) {
         mapManager.map.removeSource(`circle`);
@@ -100,7 +108,7 @@ const DrawableMap = ({ geozoneType: type, color }) => {
   }
 
   useEffect(() => {
-    if (type === '1' && lngLat.length > 1) {
+    if (type === '0' && lngLat.length > 1) {
       setLngLat([]);
     }
   }, [lngLat]);
