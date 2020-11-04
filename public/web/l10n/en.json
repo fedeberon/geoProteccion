@@ -436,8 +436,7 @@
     "mileage": "Mileage",
     "activateCircuitBreaker": "Activate Circuit Breaker",
     "geozones": "Geozones",
-    "calories": "Calories",
-    "fat": "Fat",
-    "carbs": "Carbs",
-    "protein": "Proteín"
+    "sharedCircle": "Circle",
+    "sharedPolygon": "Polygon",
+    "sharedPolyline": "Polyline"
 }

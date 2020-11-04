@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@craco/craco": "^5.7.0",
+    "@mapbox/mapbox-gl-draw": "^1.2.0",
     "@material-ui/core": "^4.9.7",
     "@material-ui/icons": "^4.9.1",
     "@material-ui/lab": "^4.0.0-alpha.56",
@@ -12,6 +13,7 @@
     "http-proxy-middleware": "^1.0.5",
     "mapbox-gl": "^1.12.0",
     "mapbox-gl-circle": "^1.6.5",
+    "mapbox-gl-draw": "^0.16.0",
     "ol": "^6.4.3",
     "ol-mapbox-style": "^6.1.4",
     "react": "^16.13.0",
