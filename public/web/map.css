@@ -30,7 +30,7 @@ button {
 }
 
 .mapboxgl-popup-close-button {
-  top: 86% !important;
+  top: 87% !important;
   right: 2% !important;
   padding: 0 5px 0 0;
   border-radius: 10px 2px 35px 0 !important;
@@ -38,7 +38,7 @@ button {
   border-left: 1px !important;
   border-right: none !important;
   border-bottom: none !important;
-  height: 30px;
+  height: 29px;
   width: 30px;
   box-shadow: 0 0 3px 0 rgba(102, 97, 102, 0.8) !important;
   font-size: 19px;
@@ -157,7 +157,7 @@ button {
 }
 
 .status-online {
-  color: green;
+  color: #68f368;
 }
 
 .status-offline {
@@ -246,15 +246,6 @@ button {
     top: 48% !important;
     z-index: 2 !important;
     background-image: linear-gradient(25deg, #2dc6d4 0%, #1c2939 100%) !important;
-  }
-
-  .mapboxgl-popup-close-button {
-    font-size: 20px !important;
-    top: 0% !important;
-    right: 50% !important;
-    padding: 0 !important;
-    color: #5674a9 !important;
-    /*display: none !important;*/
   }
 
   .MuiSpeedDial-root {
@@ -347,7 +338,7 @@ button {
 
 /* ancho de pantalla de mas de 960px (desktop-notebook)*/
 @media only screen and (min-width: 960px){
-  .MuiListItem-secondaryAction {
+   .MuiListItem-secondaryAction {
     padding-right: 42px !important;
   }
   .MuiListItemSecondaryAction-root {
@@ -387,8 +378,27 @@ button {
 
 /* ancho de pantalla de menos de 600px* (mobile)*/
 @media only screen and (max-width: 600px) {
+  .MuiAppBar-colorPrimary {
+    background-image: linear-gradient(25deg, rgb(45, 198, 212) 0%, rgb(28, 41, 57) 100%);
+  }
+  .mapboxgl-popup-close-button {
+    top: 3% !important;
+    right: 3% !important;
+    padding: 0;
+    border-radius: 0px 19px 0px 13px !important;
+    border-top: 1px !important;
+    border-left: 1px !important;
+    border-right: none !important;
+    border-bottom: none !important;
+    height: 29px;
+    width: 30px;
+    box-shadow: 0 0 3px 0 rgba(102, 97, 102, 0.8) !important;
+    font-size: 25px;
+    background-color: transparent !important;
+  }
+
   .mapboxgl-popup-content {
-    top: 36% !important;
+    top: 42% !important;
   }
 
   .MuiListItemAvatar-root {

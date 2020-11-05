@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {makeStyles} from '@material-ui/core/styles';
+import {makeStyles, useTheme} from '@material-ui/core/styles';
 import clsx from 'clsx';
 import Accordion from '@material-ui/core/Accordion';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
@@ -40,7 +40,10 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
-import { CirclePicker } from 'react-color';
+import {CirclePicker} from 'react-color';
+import MenuIcon from '@material-ui/icons/Menu';
+import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
+import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 
 const useStyles = makeStyles((theme) => ({
 
@@ -64,14 +67,11 @@ const useStyles = makeStyles((theme) => ({
     selectEmpty: {
       marginTop: theme.spacing(2),
     },
-    appBar: {
-
-    },
-      [theme.breakpoints.up('md')]: {
+    appBar: {},
+    [theme.breakpoints.up('md')]: {
       position: 'relative',
     },
-    title: {
-    },
+    title: {},
     [theme.breakpoints.up('md')]: {
       marginLeft: theme.spacing(2),
       flex: 1,
@@ -79,9 +79,9 @@ const useStyles = makeStyles((theme) => ({
     imgItem: {
       display: 'none',
     },
-      [theme.breakpoints.up('md')]: {
+    [theme.breakpoints.up('md')]: {
       height: '100px',
-        display: 'block',
+      display: 'block',
     },
     accordionStyle: {
       margin: '10px 0px',
@@ -93,7 +93,7 @@ const useStyles = makeStyles((theme) => ({
     heading: {
       fontSize: '12px',
     },
-      [theme.breakpoints.up('md')]: {
+    [theme.breakpoints.up('md')]: {
       fontSize: theme.typography.pxToRem(15),
     },
     secondaryHeading: {
@@ -155,12 +155,64 @@ const useStyles = makeStyles((theme) => ({
     },
     drawerContainerMap: {
       overflow: 'auto',
+      marginTop: '5%',
     },
     contentMap: {
       flexGrow: 1,
       height: '100vh',
     },
     //Fin estilos modal map
+
+    //Persistent Drawer Mobile
+    rootPersistent: {
+      display: 'flex',
+    },
+    appBarPersistent: {
+      transition: theme.transitions.create(['margin', 'width'], {
+        easing: theme.transitions.easing.sharp,
+        duration: theme.transitions.duration.leavingScreen,
+      }),
+    },
+    appBarShift: {
+      width: `calc(100% - ${drawerWidth}px)`,
+      marginLeft: drawerWidth,
+      transition: theme.transitions.create(['margin', 'width'], {
+        easing: theme.transitions.easing.easeOut,
+        duration: theme.transitions.duration.enteringScreen,
+      }),
+    },
+    contentPer: {
+      flexGrow: 1,
+      height: '100vh',
+      width: '100vh',
+      transition: theme.transitions.create('margin', {
+        easing: theme.transitions.easing.sharp,
+        duration: theme.transitions.duration.leavingScreen,
+      }),
+      marginLeft: -drawerWidth,
+    },
+    menuButton: {
+      marginRight: theme.spacing(2),
+    },
+    hide: {
+      display: 'none',
+    },
+    drawerHeader: {
+      display: 'flex',
+      alignItems: 'center',
+      padding: theme.spacing(0, 1),
+      // necessary for content to be below app bar
+      ...theme.mixins.toolbar,
+      justifyContent: 'flex-end',
+    },
+    contentShift: {
+      transition: theme.transitions.create('margin', {
+        easing: theme.transitions.easing.easeOut,
+        duration: theme.transitions.duration.enteringScreen,
+      }),
+      marginLeft: 0,
+    },
+    //Persistent Drawer Mobile
   }
 ));
 const styles = (theme) => ({
@@ -214,9 +266,11 @@ export default function GeozonesPages() {
 
   const classes = useStyles();
   const [geozones, setGeozones] = useState([]);
+  const theme = useTheme();
   const userId = useSelector((state) => state.session.user.id);
   const [open, setOpen] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false)
+  const isViewportDesktop = useSelector(state => state.session.deviceAttributes.isViewportDesktop);
   const history = useHistory();
   const dispatch = useDispatch();
   const {id} = useParams();
@@ -226,6 +280,11 @@ export default function GeozonesPages() {
   const [openModalMap, setOpenModalMap] = useState(false);
   const [geozoneType, setGeozoneType] = useState('0');
   const [color, setColor] = useState('#000000');
+  const [openPer, setOpenPer] = React.useState(false);
+
+  const handleDrawerShow = () => {
+    setOpenPer(!openPer);
+  };
 
   const handleChangeGeozoneType = (event) => {
     setGeozoneType(event.target.value);
@@ -288,14 +347,14 @@ export default function GeozonesPages() {
         area: "POLYGON((-34.1554644022778 -70.7979463690622, -34.223456939830555 -70.7882760618276, -34.21546066305507 -70.56240531427665, -34.124592571218244 -70.59832359829086, -34.1554644022778 -70.7979463690622))",
       })
     }).then(response => {
-        if (response.ok) {
-          const getGeozones = async (userId) => {
-            const response = await service.getGeozonesByUserId(userId);
-            setGeozones(response);
-            getGeozones(userId);
-          }
+      if (response.ok) {
+        const getGeozones = async (userId) => {
+          const response = await service.getGeozonesByUserId(userId);
+          setGeozones(response);
+          getGeozones(userId);
         }
-      })
+      }
+    })
     handleClose();
   }
 
@@ -337,11 +396,12 @@ export default function GeozonesPages() {
     <div className={classes.root}>
       <div className="title-section">
         <h2>Información de Geozonas</h2>
-        <Divider />
+        <Divider/>
       </div>
 
       <Container>
-        <Button style={{margin: '10px 0px'}} type="button" color="primary" variant="outlined"
+        <Button style={{margin: '10px 0px'}} type="button" color="primary"
+                variant="outlined"
                 onClick={handleClickOpen}>
           <AddIcon color="primary"/>
           Crear nueva geozona
@@ -443,7 +503,8 @@ export default function GeozonesPages() {
                        id="outline)d-basic" value={description}
                        name="description" label={t('sharedDescription')}
                        variant="outlined"/><br/>
-            <Button variant="outlined" color="default" onClick={handleClickOpenModalMap}>
+            <Button variant="outlined" color="default"
+                    onClick={handleClickOpenModalMap}>
               {t('sharedArea')}
             </Button>
           </form>
@@ -496,104 +557,251 @@ export default function GeozonesPages() {
       </Dialog>
 
       <div>
-          <Dialog
-            fullScreen open={openModalMap}
-            onClose={handleCloseModalMap}
-            TransitionComponent={Transition}>
-            <div>
-              <div className={classes.rootMap}>
-                <CssBaseline />
-                <AppBar position="fixed" className={classes.appBarMap}>
-                  <Toolbar>
-                    <IconButton edge="start" color="inherit" onClick={handleCloseModalMap} aria-label="close">
-                      <CloseIcon />
-                    </IconButton>
-                    <Typography variant="h6" className={classes.title}>
-                      {t('sharedArea')}
-                    </Typography>
-                    <Button autoFocus style={{flex: '1'}} color="inherit" onClick={handleCloseModalMap}>
-                      {t('sharedSave')}
-                    </Button>
-                  </Toolbar>
-                </AppBar>
-                <Drawer
-                  className={classes.drawerMap}
-                  variant="permanent"
-                  classes={{
-                    paper: classes.drawerPaperMap,
-                  }}
-                >
-                  <Toolbar />
-                  <div className={classes.drawerContainerMap}>
-                    <FormControl variant="outlined" className={classes.formControl}>
-                      <InputLabel id="demo-simple-select-outlined-label">{t('reportChartType')}</InputLabel>
-                      <Select
-                        labelId="demo-simple-select-outlined-label"
-                        id="demo-simple-select-outlined"
-                        value={geozoneType}
-                        onChange={handleChangeGeozoneType}
-                        label={t('reportChartType')}
-                      >
-                        <MenuItem value={'0'}>{t('mapShapeCircle')}</MenuItem>
-                        <MenuItem value={'1'}>{t('mapShapePolygon')}</MenuItem>
-                        <MenuItem value={'2'}>{t('mapShapePolyline')}</MenuItem>
-                      </Select>
-                    </FormControl>
-                    <Divider />
-                    <List>
-                      <ListItem style={{fontSize: '20px', color: 'cadetblue'}}>
-                        <strong>Attributes</strong>
-                      </ListItem>
-                      <FormControl variant="outlined" className={classes.formControl}>
-                        <InputLabel id="demo-simple-select-outlined-label">Color</InputLabel>
+        <Dialog
+          fullScreen open={openModalMap}
+          onClose={handleCloseModalMap}
+          TransitionComponent={Transition}>
+          <div>
+            <div className={classes.rootMap}>
+              <CssBaseline/>
+              {isViewportDesktop ?
+                <div>
+                  <AppBar position="fixed" className={classes.appBarMap}>
+                    <Toolbar>
+                      <Typography variant="h6" className={classes.title}>
+                        {t('sharedArea')}
+                      </Typography>
+                      <Button autoFocus style={{flex: '1'}} color="inherit"
+                              onClick={handleCloseModalMap}>
+                        {t('sharedSave')}
+                      </Button>
+                      <IconButton edge="start" color="inherit"
+                                  onClick={handleCloseModalMap}
+                                  aria-label="close">
+                        <CloseIcon/>
+                      </IconButton>
+                    </Toolbar>
+                  </AppBar>
+                  <Drawer
+                    className={classes.drawerMap}
+                    variant="permanent"
+                    classes={{
+                      paper: classes.drawerPaperMap,
+                    }}
+                  >
+                    <Toolbar/>
+                    <div className={classes.drawerContainerMap}>
+                      <FormControl variant="outlined"
+                                   className={classes.formControl}>
+                        <InputLabel
+                          id="demo-simple-select-outlined-label">{t('reportChartType')}</InputLabel>
                         <Select
                           labelId="demo-simple-select-outlined-label"
                           id="demo-simple-select-outlined"
-                          value={color}
-                          style={{ backgroundColor: color + '88' }}
-                          label="Color"
+                          value={geozoneType}
+                          onChange={handleChangeGeozoneType}
+                          label={t('reportChartType')}
                         >
-                          <MenuItem >
-                            <CirclePicker
-                              width="220px"
-                              colors={["#000000", "#993300" , "#333300", "#003300", "#003366", "#000080", "#333399", "#333333", "#800000", "#FF6600", "#808000", "#008000", "#008080", "#0000FF","#666699", "#808080", "#FF0000", "#FF9900", "#99CC00","#339966", "#33CCCC", "#3366FF", "#800080", "#969696","#FF00FF", "#FFCC00", "#FFFF00", "#00FF00", "#00FFFF","#00CCFF", "#993366", "#C0C0C0", "#FF99CC", "#FFCC99", "#FFFF99"]}
-                              colorSize={35}
-                              onChangeComplete={(color) => {setColor(color.hex)}}
-                            />
-                          </MenuItem>
+                          <MenuItem
+                            value={'0'}>{t('mapShapeCircle')}</MenuItem>
+                          <MenuItem
+                            value={'1'}>{t('mapShapePolygon')}</MenuItem>
+                          <MenuItem
+                            value={'2'}>{t('mapShapePolyline')}</MenuItem>
                         </Select>
                       </FormControl>
-                      <TextField style={{width: '187px'}} className={classes.formControl}
-                                 id="outlined-number"
-                                 label="Speed Limit"
-                                 type="number"
-                                 InputLabelProps={{
-                                   shrink: true,
-                                 }}
-                                 variant="outlined"
-                      />
-                      <TextField style={{width: '187px'}} className={classes.formControl}
-                                 id="outlined-number"
-                                 label="Polyline Distance"
-                                 type="number"
-                                 InputLabelProps={{
-                                   shrink: true,
-                                 }}
-                                 variant="outlined"
-                      />
-                    </List>
-                  </div>
-                </Drawer>
+                      <Divider/>
+                      <List>
+                        <ListItem
+                          style={{fontSize: '20px', color: 'cadetblue'}}>
+                          <strong>Attributes</strong>
+                        </ListItem>
+                        <FormControl variant="outlined"
+                                     className={classes.formControl}>
+                          <InputLabel
+                            id="demo-simple-select-outlined-label">Color</InputLabel>
+                          <Select
+                            labelId="demo-simple-select-outlined-label"
+                            id="demo-simple-select-outlined"
+                            value={color}
+                            style={{backgroundColor: color + '88'}}
+                            label="Color"
+                          >
+                            <MenuItem>
+                              <CirclePicker
+                                width="220px"
+                                colors={["#000000", "#993300", "#333300", "#003300", "#003366", "#000080", "#333399", "#333333", "#800000", "#FF6600", "#808000", "#008000", "#008080", "#0000FF", "#666699", "#808080", "#FF0000", "#FF9900", "#99CC00", "#339966", "#33CCCC", "#3366FF", "#800080", "#969696", "#FF00FF", "#FFCC00", "#FFFF00", "#00FF00", "#00FFFF", "#00CCFF", "#993366", "#C0C0C0", "#FF99CC", "#FFCC99", "#FFFF99"]}
+                                colorSize={35}
+                                onChangeComplete={(color) => {
+                                  setColor(color.hex)
+                                }}
+                              />
+                            </MenuItem>
+                          </Select>
+                        </FormControl>
+                        <TextField style={{width: '187px'}}
+                                   className={classes.formControl}
+                                   id="outlined-number"
+                                   label="Speed Limit"
+                                   type="number"
+                                   InputLabelProps={{
+                                     shrink: true,
+                                   }}
+                                   variant="outlined"
+                        />
+                        <TextField style={{width: '187px'}}
+                                   className={classes.formControl}
+                                   id="outlined-number"
+                                   label="Polyline Distance"
+                                   type="number"
+                                   InputLabelProps={{
+                                     shrink: true,
+                                   }}
+                                   variant="outlined"
+                        />
+                      </List>
+                    </div>
+                  </Drawer>
+
+                </div> :
+
+                <div style={{display: 'flex'}}>
+                  <AppBar
+                    position="fixed"
+                    className={clsx(classes.appBarPersistent, {
+                      [classes.appBarShift]: openPer,
+                    })}>
+                    <Toolbar>
+                      <IconButton
+                        color="inherit"
+                        aria-label="open drawer"
+                        onClick={handleDrawerShow}
+                        edge="start"
+                        className={clsx(classes.menuButton, openPer && classes.hide)}
+                      >
+                        <MenuIcon/>
+                      </IconButton>
+                      <Typography style={{display: `${openPer ? 'none' : 'block'}`}} variant="h6" noWrap>
+                        {t('sharedArea')}
+                      </Typography>
+                      <Button autoFocus style={{flex: '1',}} color="inherit"
+                              onClick={handleCloseModalMap}>
+                        {t('sharedSave')}
+                      </Button>
+                      <IconButton edge="start" color="inherit"
+                                  onClick={handleCloseModalMap}
+                                  aria-label="close">
+                        <CloseIcon/>
+                      </IconButton>
+                    </Toolbar>
+                  </AppBar>
+                  <Drawer
+                    className={classes.drawerMap}
+                    variant="persistent"
+                    anchor="left"
+                    open={openPer}
+                    classes={{
+                      paper: classes.drawerPaperMap,}}>
+                    <div className={classes.drawerHeader}>
+                      <IconButton onClick={handleDrawerShow}>
+                        {theme.direction === 'ltr' ? <ChevronLeftIcon/> :
+                          <ChevronRightIcon/>}
+                      </IconButton>
+                      <Divider/>
+                    </div>
+                      <FormControl variant="outlined"
+                                   className={classes.formControl}>
+                        <InputLabel
+                          id="demo-simple-select-outlined-label">{t('reportChartType')}</InputLabel>
+                        <Select
+                          labelId="demo-simple-select-outlined-label"
+                          id="demo-simple-select-outlined"
+                          value={geozoneType}
+                          onChange={handleChangeGeozoneType}
+                          label={t('reportChartType')}
+                        >
+                          <MenuItem
+                            value={'0'}>{t('mapShapeCircle')}</MenuItem>
+                          <MenuItem
+                            value={'1'}>{t('mapShapePolygon')}</MenuItem>
+                          <MenuItem
+                            value={'2'}>{t('mapShapePolyline')}</MenuItem>
+                        </Select>
+                      </FormControl>
+                      <Divider/>
+                      <List>
+                        <ListItem
+                          style={{fontSize: '20px', color: 'cadetblue'}}>
+                          <strong>Attributes</strong>
+                        </ListItem>
+                        <FormControl variant="outlined"
+                                     className={classes.formControl}>
+                          <InputLabel
+                            id="demo-simple-select-outlined-label">Color</InputLabel>
+                          <Select
+                            labelId="demo-simple-select-outlined-label"
+                            id="demo-simple-select-outlined"
+                            value={color}
+                            style={{backgroundColor: color + '88'}}
+                            label="Color"
+                          >
+                            <MenuItem>
+                              <CirclePicker
+                                width="220px"
+                                colors={["#000000", "#993300", "#333300", "#003300", "#003366", "#000080", "#333399", "#333333", "#800000", "#FF6600", "#808000", "#008000", "#008080", "#0000FF", "#666699", "#808080", "#FF0000", "#FF9900", "#99CC00", "#339966", "#33CCCC", "#3366FF", "#800080", "#969696", "#FF00FF", "#FFCC00", "#FFFF00", "#00FF00", "#00FFFF", "#00CCFF", "#993366", "#C0C0C0", "#FF99CC", "#FFCC99", "#FFFF99"]}
+                                colorSize={35}
+                                onChangeComplete={(color) => {
+                                  setColor(color.hex)
+                                }}
+                              />
+                            </MenuItem>
+                          </Select>
+                        </FormControl>
+                        <TextField style={{width: '187px'}}
+                                   className={classes.formControl}
+                                   id="outlined-number"
+                                   label="Speed Limit"
+                                   type="number"
+                                   InputLabelProps={{
+                                     shrink: true,
+                                   }}
+                                   variant="outlined"
+                        />
+                        <TextField style={{width: '187px'}}
+                                   className={classes.formControl}
+                                   id="outlined-number"
+                                   label="Polyline Distance"
+                                   type="number"
+                                   InputLabelProps={{
+                                     shrink: true,
+                                   }}
+                                   variant="outlined"
+                        />
+                      </List>
+                  </Drawer>
+                </div>
+              }
+
+              {isViewportDesktop ?
                 <main className={classes.contentMap}>
-                  { geozoneType &&
-                    < DrawableMap geozoneType={geozoneType} color={color} />
+                  {geozoneType &&
+                  < DrawableMap geozoneType={geozoneType} color={color}/>
                   }
                 </main>
-              </div>
+              :
+                <main
+                  className={clsx(classes.contentPer, {
+                    [classes.contentShift]: openPer,
+                  })}>
+                  <div className={classes.drawerHeader}/>
+                  {geozoneType &&
+                  < DrawableMap geozoneType={geozoneType} color={color}/>
+                  }
+                </main>}
             </div>
-          </Dialog>
+          </div>
+        </Dialog>
       </div>
     </div>
   );
 }
-
