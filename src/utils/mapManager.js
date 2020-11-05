@@ -40,6 +40,18 @@ const loadIcon = (key, background, url) => {
   });
 };
 
+const addDot = (id, source, color) => {
+  const layer = {
+    'id': id,
+    'type': 'circle',
+    'source': source,
+    'paint': {
+      'circle-color': color
+    },
+  };
+  map.addLayer(layer);
+}
+
 const addLayer = (id, source, icon, text) => {
   const layer = {
     'id': id,
@@ -194,5 +206,6 @@ export default {
   addLayer,
   addPolygonLayer,
   addLabel,
+  addDot,
   calculateBounds,
 };

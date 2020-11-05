@@ -73,9 +73,23 @@ const DrawableMap = ({ geozoneType: type, color }) => {
 
   function getLngLat (event) {
     setLngLat([...lngLat, { lng: event.lngLat.lng, lat: event.lngLat.lat }]);
+  
+    if(!isViewportDesktop) {
+      if (lngLat.length === 0) {
+        mapManager.map.addSource(`dot`, {
+          'type': 'geojson',
+          'data': { type: 'Feature', geometry: { type: 'Point', coordinates: [event.lngLat.lng, event.lngLat.lat] } }
+        });
+
+        mapManager.addDot(`dot`, `dot`, color);
+      } else {
+        mapManager.map.removeLayer('dot');
+        mapManager.map.removeSource('dot');
+      }
+    }
   }
 
-  function getCurrentPosition (event) {
+  function drawShape (event) {
     if (lngLat.length === 1 && type === '0') {
       
       if (mapManager.map.getSource('circle') && lngLat.length > 1) {
@@ -115,11 +129,11 @@ const DrawableMap = ({ geozoneType: type, color }) => {
 
   useEffect(() => {
     mapManager.map.on('click', getLngLat);
-    mapManager.map.on('mousemove', getCurrentPosition);
+    mapManager.map.on('mousemove', drawShape);
 
     return () => {
       mapManager.map.off('click', getLngLat);
-      mapManager.map.off('mousemove', getCurrentPosition);
+      mapManager.map.off('mousemove', drawShape);
     }
   }, [mapManager.map, lngLat])
 
