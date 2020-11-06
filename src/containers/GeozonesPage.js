@@ -319,8 +319,6 @@ export default function GeozonesPages() {
   const handleClickOpenEditModal = (object) => {
     setOpenEditModal(true);
     selectedItem = object;
-    console.log('object value:' + object)
-    console.log('selectedItemvalue: ' + selectedItem)
   };
 
   useEffect(() => {
@@ -401,7 +399,6 @@ export default function GeozonesPages() {
     } else {
       geozoneCopy[property] = data;
     }
-    console.log(geozoneCopy);
     setGeozone(geozoneCopy);
   }
 

@@ -179,7 +179,6 @@ export default function NotificationsPage() {
   }
 
   const getChannel = () => {
-    console.log(notificators);
   }
 
   const handleOpenNotification = () => {

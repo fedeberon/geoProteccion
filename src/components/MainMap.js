@@ -342,8 +342,6 @@ const MainMap = ({ geozones, areGeozonesVisible }) => {
     let geozoneType = '';
     let geozonesFiltered = [];
 
-    console.log(geozones);
-
     const typeRegEx = /(\w*)[ ]?(?=[(])/;
     const circlePositionRegEx = /(?<=[(])(.*) (.*)(?=[,])/;
     const radiusRegEx = /(?<=[,][ ]).*(?=[)])/;
@@ -406,8 +404,6 @@ const MainMap = ({ geozones, areGeozonesVisible }) => {
 
           properties.name = element.name;
           const polyline = createPolyline({ attributes: {...attributes}, properties: {...properties}});
-
-          console.log(polyline);
 
           const polylineCenter = calculatePolygonCenter(attributes.coordinates);
           attributes.lat = polylineCenter.lat;

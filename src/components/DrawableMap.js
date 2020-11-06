@@ -26,7 +26,6 @@ const getDistanceBtwnCoords = (first, second) => {
 const getGeozoneArea = (type, coordinates, radius) => {
   let areaString = '';
   let coordinatesString = '';
-  console.log(coordinates);
 
   if (type === '0') {
     coordinatesString = `(${coordinates[1]} ${coordinates[0]}, ${radius})`;
