@@ -39,7 +39,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function ShortcutsMenu({ toggleGeozones }) {
+export default function ShortcutsMenu({ toggleGeozones, showReportDialog }) {
   const classes = useStyles();
   const isViewportDesktop = useSelector(state => state.session.deviceAttributes.isViewportDesktop);
   const [ showShortcutMenu, setShowShortcutMenu ] = useState(isViewportDesktop);
@@ -68,6 +68,7 @@ export default function ShortcutsMenu({ toggleGeozones }) {
             icon={<i className="fas fa-align-left fa-lg"/>}
             direction={isViewportDesktop ? 'down' : 'up'}
             open={false}
+            onClick={() => showReportDialog()}
           />
           <SpeedDial
             ariaLabel="Geofences"

@@ -1,5 +1,6 @@
 import React, {useEffect} from 'react';
 import PropTypes from 'prop-types';
+import * as service from "../utils/serviceManager";
 import {makeStyles} from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
@@ -108,10 +109,10 @@ export default function NotificationsPage() {
     setOpenConfirm(false);
   };
 
-  function getNotifications() {
-    fetch(`api/notifications?userId=${userId}`)
-      .then(response => response.json())
-      .then(data => setNotifications(data))
+  const getNotifications = async (userId) => {
+    const response = await service.getNotificationsByUserId(userId);
+      setNotifications(response);
+      getNotifications(userId);
   }
 
   // const removeConfirm = () => {
@@ -139,11 +140,6 @@ export default function NotificationsPage() {
         <Divider/>
       </div>
       {/*<button type="button "onClick={getNotificationsByUserId}>Obtener notif</button>*/}
-      <ButtonGroup variant="text" color="default" aria-label="text primary button group">
-        <Button>Agregar Notificacion </Button>
-        <Button>Editar Notificacion</Button>
-        <Button>Eliminar Notificacion</Button>
-      </ButtonGroup>
       <div className={classes.root}>
         <AppBar position="static" color="default">
           <Tabs
@@ -155,7 +151,7 @@ export default function NotificationsPage() {
             scrollButtons="auto"
             aria-label="scrollable auto tabs example"
           >
-            <Tab onClick={getNotifications} label="By User ID" {...a11yProps(0)} />
+            <Tab onClick={() => getNotifications(userId)} label="By User ID" {...a11yProps(0)} />
             <Tab label="By Device ID" {...a11yProps(1)} />
             <Tab label="By Group ID" {...a11yProps(2)} />
             <Tab label="All Notifications" {...a11yProps(3)} />

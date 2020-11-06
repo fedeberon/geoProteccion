@@ -280,7 +280,7 @@ export default function GeozonesPages() {
   const [openModalMap, setOpenModalMap] = useState(false);
   const [geozoneType, setGeozoneType] = useState('0');
   const [color, setColor] = useState('#000000');
-  const [openPer, setOpenPer] = React.useState(false);
+  const [openPer, setOpenPer] = React.useState(true);
 
   const [geozone, setGeozone] = useState({ name: '', description: '', area: '', attributes: {}})
 
@@ -728,6 +728,7 @@ export default function GeozonesPages() {
                       </IconButton>
                     </Toolbar>
                   </AppBar>
+
                   <Drawer
                     className={classes.drawerMap}
                     variant="persistent"
@@ -812,6 +813,7 @@ export default function GeozonesPages() {
                         />
                       </List>
                   </Drawer>
+
                 </div>
               }
 
@@ -822,16 +824,18 @@ export default function GeozonesPages() {
                   }
                 </main>
               :
+                <div style={{display: 'flex',}}>
                 <main
                   className={clsx(classes.contentPer, {
                     [classes.contentShift]: openPer,
                   })}>
-                  <div className={classes.drawerHeader}/>
-                  { geozoneType &&
-                    < DrawableMap geozoneType={geozoneType} color={color} addGeozoneProperty={handleGeozoneProperties}/>
+                  {/*<div className={classes.drawerHeader}/>*/}
+                  {geozoneType &&
+                  < DrawableMap geozoneType={geozoneType} color={color} addGeozoneProperty={handleGeozoneProperties}/>
                   }
                 </main>
-                }
+                </div>
+              }
             </div>
           </div>
         </Dialog>

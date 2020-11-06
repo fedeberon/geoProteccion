@@ -9,8 +9,10 @@ import DeviceList from '../components/DeviceList';
 import MainMap from '../components/MainMap';
 import SocketController from '../components/SocketController';
 import Menu from "../components/Menu";
-import ShortcutsMenu from "../components/ShorcutsMenu";
 import * as service from "../utils/serviceManager";
+import ShortcutsMenu from "../components/ShorcutsMenu";
+import ReportsDialog from "../components/ReportsDialog";
+
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -60,6 +62,7 @@ const MainPage = ({ width }) => {
   const open = useSelector(state => state.modals.items.search);
   const userId = useSelector((state) => state.session.user.id);
   const [ areGeozonesVisible, setAreGeozonesVisible] = useState(true);
+  const [showReports, setShowReports] = useState(false)
 
   const handleVisibilityModal = (name) => {
     dispatch(modalsActions.show(name));
@@ -75,6 +78,10 @@ const MainPage = ({ width }) => {
 
   const handleGeozones = () => {
     setAreGeozonesVisible(!areGeozonesVisible);
+  }
+
+  const handleReports = (value = true) => {
+    setShowReports(value);
   }
 
   return !authenticated ? (<LinearProgress />) : (
@@ -104,8 +111,13 @@ const MainPage = ({ width }) => {
         </div>
       </div>
 
-      <ShortcutsMenu toggleGeozones={handleGeozones} />
+      <ShortcutsMenu toggleGeozones={handleGeozones} showReportDialog={handleReports}/>
       <Menu />
+
+      <div >
+        <ReportsDialog showReports={showReports} showReportsDialog={handleReports} />
+      </div>
+
     </div>
   );
 }
