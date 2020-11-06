@@ -63,7 +63,14 @@ const addDotLayer = (id, source, color) => {
     'type': 'circle',
     'source': source,
     'paint': {
-      'circle-color': color
+      'circle-color': color,
+      'circle-radius': {
+        'base': 4,
+        'stops': [
+          [12, 4],
+          [22, 360]
+        ]
+      }
     },
   };
   map.addLayer(layer);

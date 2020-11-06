@@ -99,12 +99,14 @@ const DrawableMap = ({ geozoneType: type, color }) => {
     let lng = event.lngLat.lng;
     let lat = event.lngLat.lat;
 
-    if (lngLat.length > 0 && Math.abs(Math.abs(parseFloat(lngLat[0].lng)) - Math.abs(parseFloat(event.lngLat.lng))) < 0.2 && Math.abs(Math.abs(parseFloat(lngLat[0].lat)) - Math.abs(parseFloat(event.lngLat.lat))) < 0.2) {
+    let zoom = mapManager.map.getZoom();
+
+    if (lngLat.length > 0 && Math.abs(Math.abs(parseFloat(lngLat[0].lng)) - Math.abs(parseFloat(event.lngLat.lng))) < 0.001 * (0.002 * Math.pow(2, 22 - parseInt(zoom))) && Math.abs(Math.abs(parseFloat(lngLat[0].lat)) - Math.abs(parseFloat(event.lngLat.lat))) < 0.001 * (0.002 * Math.pow(2, 22 - parseInt(zoom)))) {
       lng = lngLat[0].lng;
       lat = lngLat[0].lat;
     }
 
-    if (lngLat.length > 0 && type === '2' && Math.abs(Math.abs(parseFloat(lngLat[lngLat.length - 1].lng)) - Math.abs(parseFloat(event.lngLat.lng))) < 0.2 && Math.abs(Math.abs(parseFloat(lngLat[lngLat.length - 1].lat)) - Math.abs(parseFloat(event.lngLat.lat))) < 0.2) {
+    if (lngLat.length > 0 && type === '2' && Math.abs(Math.abs(parseFloat(lngLat[lngLat.length - 1].lng)) - Math.abs(parseFloat(event.lngLat.lng))) < 0.001 * (0.002 * Math.pow(2, 22 - parseInt(zoom))) && Math.abs(Math.abs(parseFloat(lngLat[lngLat.length - 1].lat)) - Math.abs(parseFloat(event.lngLat.lat))) < 0.001 * (0.002 * Math.pow(2, 22 - parseInt(zoom)))) {
       lng = lngLat[lngLat.length - 1].lng;
       lat = lngLat[lngLat.length - 1].lat;
     }
@@ -166,13 +168,15 @@ const DrawableMap = ({ geozoneType: type, color }) => {
       let lat = event.lngLat.lat;
 
       lngLat.map((element) => { coordinates.push([element.lng, element.lat]) });
+      
+      let zoom = mapManager.map.getZoom();
 
-      if (lngLat.length > 1 && Math.abs(Math.abs(parseFloat(lngLat[0].lng)) - Math.abs(parseFloat(event.lngLat.lng))) < 0.2 && Math.abs(Math.abs(parseFloat(lngLat[0].lat)) - Math.abs(parseFloat(event.lngLat.lat))) < 0.2) {
+      if (lngLat.length > 1 && Math.abs(Math.abs(parseFloat(lngLat[0].lng)) - Math.abs(parseFloat(event.lngLat.lng))) < 0.001 * (0.002 * Math.pow(2, 22 - parseInt(zoom))) && Math.abs(Math.abs(parseFloat(lngLat[0].lat)) - Math.abs(parseFloat(event.lngLat.lat))) < 0.001 * (0.002 * Math.pow(2, 22 - parseInt(zoom)))) {
         lng = lngLat[0].lng;
         lat = lngLat[0].lat;
       }
 
-      if (lngLat.length > 1 && type === '2' && Math.abs(Math.abs(parseFloat(lngLat[lngLat.length - 1].lng)) - Math.abs(parseFloat(event.lngLat.lng))) < 0.2 && Math.abs(Math.abs(parseFloat(lngLat[lngLat.length - 1].lat)) - Math.abs(parseFloat(event.lngLat.lat))) < 0.2) {
+      if (lngLat.length > 1 && type === '2' && Math.abs(Math.abs(parseFloat(lngLat[lngLat.length - 1].lng)) - Math.abs(parseFloat(event.lngLat.lng))) < 0.001 * (0.002 * Math.pow(2, 22 - parseInt(zoom))) && Math.abs(Math.abs(parseFloat(lngLat[lngLat.length - 1].lat)) - Math.abs(parseFloat(event.lngLat.lat))) < 0.001 * (0.002 * Math.pow(2, 22 - parseInt(zoom)))) {
         lng = lngLat[lngLat.length - 1].lng;
         lat = lngLat[lngLat.length - 1].lat;
       }
