@@ -40,7 +40,24 @@ const loadIcon = (key, background, url) => {
   });
 };
 
-const addDot = (id, source, color) => {
+const addLineLayer = (id, source, color) => {
+  const layer = {
+    'id': id,
+    'type': 'line',
+    'source': source,
+    'layout': {
+      'line-join': 'round',
+      'line-cap': 'round'
+    },
+    'paint': {
+      'line-color': color,
+      'line-width': 2
+    }
+  };
+  map.addLayer(layer);
+}
+
+const addDotLayer = (id, source, color) => {
   const layer = {
     'id': id,
     'type': 'circle',
@@ -94,7 +111,7 @@ const addPolygonLayer = (id, source, color) => {
   map.addLayer(layer);
 }
 
-const addLabel = (id, source, text) => {
+const addLabelLayer = (id, source, text) => {
   const layer = {
     'id': id,
     'type': 'symbol',
@@ -205,7 +222,8 @@ export default {
   registerListener,
   addLayer,
   addPolygonLayer,
-  addLabel,
-  addDot,
+  addLabelLayer,
+  addDotLayer,
+  addLineLayer,
   calculateBounds,
 };

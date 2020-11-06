@@ -394,7 +394,7 @@ const MainMap = ({ geozones, areGeozonesVisible }) => {
       'data': labels,
     });
 
-    mapManager.addLabel('geozones-labels', 'geozones-labels', '{name}');
+    mapManager.addLabelLayer('geozones-labels', 'geozones-labels', '{name}');
 
     return () => {
       geozones.map((element, index) => {
