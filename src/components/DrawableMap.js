@@ -6,7 +6,7 @@ import {makeStyles} from '@material-ui/core/styles';
 import t from '../common/localization';
 // import MapboxDraw from "@mapbox/mapbox-gl-draw";
 
-const typesArray = ['circle', 'polygon', 'polyline'];
+const typesArray = ['circle', 'polygon', 'linestring'];
 
 const getDistanceBtwnCoords = (first, second) => {
   const R = 6371e3; // metres
@@ -23,13 +23,39 @@ const getDistanceBtwnCoords = (first, second) => {
   return R * c; // in metres
 }
 
-const DrawableMap = ({ geozoneType: type, color }) => {
+const getGeozoneArea = (type, coordinates, radius) => {
+  let areaString = '';
+  let coordinatesString = '';
+  console.log(coordinates);
+
+  if (type === '0') {
+    coordinatesString = `(${coordinates[1]} ${coordinates[0]}, ${radius})`;
+    areaString = `${typesArray[parseInt(type)].toUpperCase()} ${coordinatesString}`;
+  }
+  if (type === '1') {
+    coordinatesString = '(('
+    coordinates[0].map((element, index) => { coordinatesString += `${index !== 0 ? ' ' : ''}${element[1]} ${element[0]}${index !== coordinates[0].length - 1 ? ',' : ''}` });
+    coordinatesString += '))';
+    areaString = `${typesArray[parseInt(type)].toUpperCase()}${coordinatesString}`;
+  }
+  if (type === '2') {
+    coordinatesString = '('
+    coordinates.map((element, index) => { coordinatesString += `${index !== 0 ? ' ' : ''}${element[1]} ${element[0]}${index !== coordinates.length - 1 ? ',' : ''}` });
+    coordinatesString += ')';
+    areaString = `${typesArray[parseInt(type)].toUpperCase()} ${coordinatesString}`;
+  }
+
+  return areaString;
+}
+
+const DrawableMap = ({ geozoneType: type, color, addGeozoneProperty }) => {
   const containerEl = useRef(null);
   const [mapReady, setMapReady] = useState(false);
 
   // let controls = { [typesArray[type]]: true , trash: true };
   // let draw  = new MapboxDraw({displayControlsDefault: false, controls});
   const [ lngLat, setLngLat ] = useState([]);
+  const [ area, setArea ] = useState('');
 
   const useStyles = makeStyles((theme) => ({
     root: {
@@ -61,6 +87,30 @@ const DrawableMap = ({ geozoneType: type, color }) => {
       if (mapManager.map.getSource('circle')) {
         mapManager.map.removeSource(`circle`);
       }
+      if (mapManager.map.getLayer('dot')) {
+        mapManager.map.removeLayer(`dot`);
+      }
+      if (mapManager.map.getSource('dot')) {
+        mapManager.map.removeSource(`dot`);
+      }
+      if (mapManager.map.getLayer('line')) {
+        mapManager.map.removeLayer(`line`);
+      }
+      if (mapManager.map.getSource('line')) {
+        mapManager.map.removeSource(`line`);
+      }
+      if (mapManager.map.getLayer('polygon')) {
+        mapManager.map.removeLayer(`polygon`);
+      }
+      if (mapManager.map.getSource('polygon')) {
+        mapManager.map.removeSource(`polygon`);
+      }
+      if (mapManager.map.getLayer('polyline')) {
+        mapManager.map.removeLayer(`polyline`);
+      }
+      if (mapManager.map.getSource('polyline')) {
+        mapManager.map.removeSource(`polyline`);
+      }
     }
   }, []);
 
@@ -72,10 +122,43 @@ const DrawableMap = ({ geozoneType: type, color }) => {
   // }, [controls]);
 
   function getLngLat (event) {
-    setLngLat([...lngLat, { lng: event.lngLat.lng, lat: event.lngLat.lat }]);
+    let lng = event.lngLat.lng;
+    let lat = event.lngLat.lat;
+
+    let zoom = mapManager.map.getZoom();
+
+    if (lngLat.length > 0 && Math.abs(Math.abs(parseFloat(lngLat[0].lng)) - Math.abs(parseFloat(event.lngLat.lng))) < 0.001 * (0.002 * Math.pow(2, 22 - parseInt(zoom))) && Math.abs(Math.abs(parseFloat(lngLat[0].lat)) - Math.abs(parseFloat(event.lngLat.lat))) < 0.001 * (0.002 * Math.pow(2, 22 - parseInt(zoom)))) {
+      lng = lngLat[0].lng;
+      lat = lngLat[0].lat;
+    }
+
+    if (lngLat.length > 0 && type === '2' && Math.abs(Math.abs(parseFloat(lngLat[lngLat.length - 1].lng)) - Math.abs(parseFloat(event.lngLat.lng))) < 0.001 * (0.002 * Math.pow(2, 22 - parseInt(zoom))) && Math.abs(Math.abs(parseFloat(lngLat[lngLat.length - 1].lat)) - Math.abs(parseFloat(event.lngLat.lat))) < 0.001 * (0.002 * Math.pow(2, 22 - parseInt(zoom)))) {
+      lng = lngLat[lngLat.length - 1].lng;
+      lat = lngLat[lngLat.length - 1].lat;
+    }
+
+    setLngLat([...lngLat, { lng: lng, lat: lat }]);
+  
+    if(!isViewportDesktop) {
+      if (lngLat.length === 0) {
+        mapManager.map.addSource(`dot`, {
+          'type': 'geojson',
+          'data': { type: 'Feature', geometry: { type: 'Point', coordinates: [event.lngLat.lng, event.lngLat.lat] } }
+        });
+
+        mapManager.addDotLayer(`dot`, `dot`, color);
+      } else {
+        if (mapManager.map.getLayer('dot')) {
+          mapManager.map.removeLayer('dot');
+        }
+        if (mapManager.map.getSource('dot')) {
+          mapManager.map.removeSource('dot');
+        }
+      }
+    }
   }
 
-  function getCurrentPosition (event) {
+  function drawShape (event) {
     if (lngLat.length === 1 && type === '0') {
       
       if (mapManager.map.getSource('circle') && lngLat.length > 1) {
@@ -104,28 +187,198 @@ const DrawableMap = ({ geozoneType: type, color }) => {
         });
         mapManager.addPolygonLayer(`circle`, `circle`, color, '{name}');
       }
+
+      let areaString = getGeozoneArea(type, [lngLat[0].lng, lngLat[0].lat], distance);
+      setArea(areaString);
+    }
+    if (lngLat.length > 0 && (type === '1' || type === '2')) {
+      let coordinates = [];
+      let lng = event.lngLat.lng;
+      let lat = event.lngLat.lat;
+
+      lngLat.map((element) => { coordinates.push([element.lng, element.lat]) });
+      
+      let zoom = mapManager.map.getZoom();
+
+      if (lngLat.length > 1 && Math.abs(Math.abs(parseFloat(lngLat[0].lng)) - Math.abs(parseFloat(event.lngLat.lng))) < 0.001 * (0.002 * Math.pow(2, 22 - parseInt(zoom))) && Math.abs(Math.abs(parseFloat(lngLat[0].lat)) - Math.abs(parseFloat(event.lngLat.lat))) < 0.001 * (0.002 * Math.pow(2, 22 - parseInt(zoom)))) {
+        lng = lngLat[0].lng;
+        lat = lngLat[0].lat;
+      }
+
+      if (lngLat.length > 1 && type === '2' && Math.abs(Math.abs(parseFloat(lngLat[lngLat.length - 1].lng)) - Math.abs(parseFloat(event.lngLat.lng))) < 0.001 * (0.002 * Math.pow(2, 22 - parseInt(zoom))) && Math.abs(Math.abs(parseFloat(lngLat[lngLat.length - 1].lat)) - Math.abs(parseFloat(event.lngLat.lat))) < 0.001 * (0.002 * Math.pow(2, 22 - parseInt(zoom)))) {
+        lng = lngLat[lngLat.length - 1].lng;
+        lat = lngLat[lngLat.length - 1].lat;
+      }
+
+      if (mapManager.map.getLayer('polygon')) {
+        mapManager.map.removeLayer(`polygon`);
+      }
+      if (mapManager.map.getSource('polygon')) {
+        mapManager.map.removeSource(`polygon`);
+      }
+      if (mapManager.map.getLayer('polyline')) {
+        mapManager.map.removeLayer(`polyline`);
+      }
+      if (mapManager.map.getSource('polyline')) {
+        mapManager.map.removeSource(`polyline`);
+      }
+
+      let line = {
+        type: 'Feature',
+        geometry: {
+          type: 'LineString',
+          coordinates: [...coordinates, [lng, lat]]
+        },
+        properties: { name: 'nombre', description: '' },
+      }
+
+      if (mapManager.map.getSource('line')) {
+        mapManager.map.getSource('line').setData(line);
+      } else {
+        mapManager.map.addSource(`line`, {
+          'type': 'geojson',
+          'data': line,
+        });
+        mapManager.addLineLayer(`line`, `line`, color);
+      }
     }
   }
+
+  // useEffect(() => {
+  // }, [area]);
 
   useEffect(() => {
     if (type === '0' && lngLat.length > 1) {
       setLngLat([]);
+
+      addGeozoneProperty('area', area);
+    }
+
+    if (type === '1' && lngLat.length > 1) {
+      let coordinates = [];
+
+      lngLat.map((element) => { coordinates.push([element.lng, element.lat]) });
+    
+      let stringifiedArray = [];
+
+      coordinates.map((element) => { stringifiedArray.push(element.toString()) });
+      
+      if (stringifiedArray.length !== new Set(stringifiedArray).size) {
+        if (mapManager.map.getLayer('line')) {
+          mapManager.map.removeLayer(`line`);
+        }
+        if (mapManager.map.getSource('line')) {
+          mapManager.map.removeSource(`line`);
+        }
+
+        let polygon = {
+          type: 'Feature',
+          geometry: {
+            type: 'Polygon',
+            coordinates: [[...coordinates]]
+          },
+          properties: { name: 'nombre', description: '' },
+        }
+
+        mapManager.map.addSource(`polygon`, {
+          'type': 'geojson',
+          'data': polygon,
+        });
+        mapManager.addPolygonLayer(`polygon`, `polygon`, color, '{name}');
+        setLngLat([]);
+
+        let areaString = getGeozoneArea(type, polygon.geometry.coordinates);
+        addGeozoneProperty('area', areaString);
+      }
+    }
+
+    if (type === '2' && lngLat.length > 1) {
+      let coordinates = [];
+
+      lngLat.map((element) => { coordinates.push([element.lng, element.lat]) });
+    
+      let stringifiedArray = [];
+
+      coordinates.map((element) => { stringifiedArray.push(element.toString()) });
+      
+      if (stringifiedArray.length !== new Set(stringifiedArray).size) {
+        if (mapManager.map.getLayer('line')) {
+          mapManager.map.removeLayer(`line`);
+        }
+        if (mapManager.map.getSource('line')) {
+          mapManager.map.removeSource(`line`);
+        }
+
+        let polyline = {
+          type: 'Feature',
+          geometry: {
+            type: 'LineString',
+            coordinates: [...coordinates]
+          },
+          properties: { name: 'nombre', description: '' },
+        }
+
+        mapManager.map.addSource(`polyline`, {
+          'type': 'geojson',
+          'data': polyline,
+        });
+        mapManager.addLineLayer(`polyline`, `polyline`, color);
+        setLngLat([]);
+        
+        let areaString = getGeozoneArea(type, polyline.geometry.coordinates);
+        addGeozoneProperty('area', areaString);
+      }
     }
   }, [lngLat]);
 
   useEffect(() => {
+    setLngLat([]);
+    if (mapManager.map.getLayer('circle')) {
+      mapManager.map.removeLayer(`circle`);
+    }
+    if (mapManager.map.getSource('circle')) {
+      mapManager.map.removeSource(`circle`);
+    }
+    if (mapManager.map.getLayer('dot')) {
+      mapManager.map.removeLayer(`dot`);
+    }
+    if (mapManager.map.getSource('dot')) {
+      mapManager.map.removeSource(`dot`);
+    }
+    if (mapManager.map.getLayer('line')) {
+      mapManager.map.removeLayer(`line`);
+    }
+    if (mapManager.map.getSource('line')) {
+      mapManager.map.removeSource(`line`);
+    }
+    if (mapManager.map.getLayer('polygon')) {
+      mapManager.map.removeLayer(`polygon`);
+    }
+    if (mapManager.map.getSource('polygon')) {
+      mapManager.map.removeSource(`polygon`);
+    }
+    if (mapManager.map.getLayer('polyline')) {
+      mapManager.map.removeLayer(`polyline`);
+    }
+    if (mapManager.map.getSource('polyline')) {
+      mapManager.map.removeSource(`polyline`);
+    }
+    
+  }, [type]);
+
+  useEffect(() => {
     mapManager.map.on('click', getLngLat);
-    mapManager.map.on('mousemove', getCurrentPosition);
+    mapManager.map.on('mousemove', drawShape);
 
     return () => {
       mapManager.map.off('click', getLngLat);
-      mapManager.map.off('mousemove', getCurrentPosition);
+      mapManager.map.off('mousemove', drawShape);
     }
   }, [mapManager.map, lngLat])
 
   useEffect(() => {
     mapManager.map.easeTo({
-      center: [0, 0]
+      center: [-66, -33]
     });
   }, []);
 
