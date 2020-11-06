@@ -17,8 +17,15 @@ const getGeozonesByUserId = (id) => {
     .then(response => response.json());
 }
 
+const getNotificationsByUserId = (id) => {
+  return fetch(`api/notifications?userId=${id}`,{method: 'GET'})
+    .catch(function (error) { console.log('setNotifications error: ', error)})
+    .then(response => response.json());
+}
+
 export {
   setSession,
   getDeviceByUserId,
   getGeozonesByUserId,
+  getNotificationsByUserId,
 };

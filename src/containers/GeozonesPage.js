@@ -280,7 +280,7 @@ export default function GeozonesPages() {
   const [openModalMap, setOpenModalMap] = useState(false);
   const [geozoneType, setGeozoneType] = useState('0');
   const [color, setColor] = useState('#000000');
-  const [openPer, setOpenPer] = React.useState(false);
+  const [openPer, setOpenPer] = React.useState(true);
 
   const handleDrawerShow = () => {
     setOpenPer(!openPer);
@@ -342,9 +342,9 @@ export default function GeozonesPages() {
         'Accept': 'application/json',
       },
       body: JSON.stringify({
-        name: "c3",
-        description: "d2222",
-        area: "POLYGON((-34.1554644022778 -70.7979463690622, -34.223456939830555 -70.7882760618276, -34.21546066305507 -70.56240531427665, -34.124592571218244 -70.59832359829086, -34.1554644022778 -70.7979463690622))",
+        // name: "c3",
+        // description: "d2222",
+        // area: "POLYGON((-34.1554644022778 -70.7979463690622, -34.223456939830555 -70.7882760618276, -34.21546066305507 -70.56240531427665, -34.124592571218244 -70.59832359829086, -34.1554644022778 -70.7979463690622))",
       })
     }).then(response => {
       if (response.ok) {
@@ -695,6 +695,7 @@ export default function GeozonesPages() {
                       </IconButton>
                     </Toolbar>
                   </AppBar>
+
                   <Drawer
                     className={classes.drawerMap}
                     variant="persistent"
@@ -779,6 +780,7 @@ export default function GeozonesPages() {
                         />
                       </List>
                   </Drawer>
+
                 </div>
               }
 
@@ -789,15 +791,18 @@ export default function GeozonesPages() {
                   }
                 </main>
               :
+                <div style={{display: 'flex',}}>
                 <main
                   className={clsx(classes.contentPer, {
                     [classes.contentShift]: openPer,
                   })}>
-                  <div className={classes.drawerHeader}/>
+                  {/*<div className={classes.drawerHeader}/>*/}
                   {geozoneType &&
                   < DrawableMap geozoneType={geozoneType} color={color}/>
                   }
-                </main>}
+                </main>
+                </div>
+              }
             </div>
           </div>
         </Dialog>
