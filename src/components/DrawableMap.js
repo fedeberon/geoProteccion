@@ -6,7 +6,7 @@ import {makeStyles} from '@material-ui/core/styles';
 import t from '../common/localization';
 // import MapboxDraw from "@mapbox/mapbox-gl-draw";
 
-const typesArray = ['circle', 'polygon', 'line'];
+const typesArray = ['circle', 'polygon', 'linestring'];
 
 const getDistanceBtwnCoords = (first, second) => {
   const R = 6371e3; // metres
@@ -23,13 +23,39 @@ const getDistanceBtwnCoords = (first, second) => {
   return R * c; // in metres
 }
 
-const DrawableMap = ({ geozoneType: type, color }) => {
+const getGeozoneArea = (type, coordinates, radius) => {
+  let areaString = '';
+  let coordinatesString = '';
+  console.log(coordinates);
+
+  if (type === '0') {
+    coordinatesString = `(${coordinates[1]} ${coordinates[0]}, ${radius})`;
+    areaString = `${typesArray[parseInt(type)].toUpperCase()} ${coordinatesString}`;
+  }
+  if (type === '1') {
+    coordinatesString = '(('
+    coordinates[0].map((element, index) => { coordinatesString += `${index !== 0 ? ' ' : ''}${element[1]} ${element[0]}${index !== coordinates[0].length - 1 ? ',' : ''}` });
+    coordinatesString += '))';
+    areaString = `${typesArray[parseInt(type)].toUpperCase()}${coordinatesString}`;
+  }
+  if (type === '2') {
+    coordinatesString = '('
+    coordinates.map((element, index) => { coordinatesString += `${index !== 0 ? ' ' : ''}${element[1]} ${element[0]}${index !== coordinates.length - 1 ? ',' : ''}` });
+    coordinatesString += ')';
+    areaString = `${typesArray[parseInt(type)].toUpperCase()} ${coordinatesString}`;
+  }
+
+  return areaString;
+}
+
+const DrawableMap = ({ geozoneType: type, color, addGeozoneProperty }) => {
   const containerEl = useRef(null);
   const [mapReady, setMapReady] = useState(false);
 
   // let controls = { [typesArray[type]]: true , trash: true };
   // let draw  = new MapboxDraw({displayControlsDefault: false, controls});
   const [ lngLat, setLngLat ] = useState([]);
+  const [ area, setArea ] = useState('');
 
   const useStyles = makeStyles((theme) => ({
     root: {
@@ -161,6 +187,9 @@ const DrawableMap = ({ geozoneType: type, color }) => {
         });
         mapManager.addPolygonLayer(`circle`, `circle`, color, '{name}');
       }
+
+      let areaString = getGeozoneArea(type, [lngLat[0].lng, lngLat[0].lat], distance);
+      setArea(areaString);
     }
     if (lngLat.length > 0 && (type === '1' || type === '2')) {
       let coordinates = [];
@@ -215,9 +244,14 @@ const DrawableMap = ({ geozoneType: type, color }) => {
     }
   }
 
+  // useEffect(() => {
+  // }, [area]);
+
   useEffect(() => {
     if (type === '0' && lngLat.length > 1) {
       setLngLat([]);
+
+      addGeozoneProperty('area', area);
     }
 
     if (type === '1' && lngLat.length > 1) {
@@ -252,6 +286,9 @@ const DrawableMap = ({ geozoneType: type, color }) => {
         });
         mapManager.addPolygonLayer(`polygon`, `polygon`, color, '{name}');
         setLngLat([]);
+
+        let areaString = getGeozoneArea(type, polygon.geometry.coordinates);
+        addGeozoneProperty('area', areaString);
       }
     }
 
@@ -287,6 +324,9 @@ const DrawableMap = ({ geozoneType: type, color }) => {
         });
         mapManager.addLineLayer(`polyline`, `polyline`, color);
         setLngLat([]);
+        
+        let areaString = getGeozoneArea(type, polyline.geometry.coordinates);
+        addGeozoneProperty('area', areaString);
       }
     }
   }, [lngLat]);

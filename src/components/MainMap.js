@@ -201,6 +201,17 @@ const MainMap = ({ geozones, areGeozonesVisible }) => {
     }
   };
 
+  const createPolyline = (geozone) => {
+    return {
+      type: 'Feature',
+      geometry: {
+        type: 'LineString',
+        coordinates: geozone.attributes.coordinates
+      },
+      properties: { ...geozone.properties },
+    }
+  };
+
   const createCircle = (geozone) => {
     return {
       type: 'Feature',
@@ -331,10 +342,13 @@ const MainMap = ({ geozones, areGeozonesVisible }) => {
     let geozoneType = '';
     let geozonesFiltered = [];
 
+    console.log(geozones);
+
     const typeRegEx = /(\w*)[ ]?(?=[(])/;
     const circlePositionRegEx = /(?<=[(])(.*) (.*)(?=[,])/;
     const radiusRegEx = /(?<=[,][ ]).*(?=[)])/;
     const polygonRegEx = /(?<=[(]{2}).*(?=[)]{2})/;
+    const polylineRegEx = /(?<=[(]{1}).*(?=[)]{1})/;
 
     geozones.map((element, index) => {
       geozoneType = element.area.match(typeRegEx)[1];
@@ -382,6 +396,33 @@ const MainMap = ({ geozones, areGeozonesVisible }) => {
 
           attributes.coordinates = [];
           break;
+        case 'LINESTRING':
+          const polylineCoordinates = element.area.match(polylineRegEx)[0].split(', ');
+          polylineCoordinates.map((element) => {
+            const latLng = element.split(' ');
+            attributes.coordinates.push(latLng.reverse());
+          });
+          attributes.color = element.attributes.color ? element.attributes.color : '#' + Math.floor(Math.random() * 2 ** 24).toString(16).padStart(6, "0");
+
+          properties.name = element.name;
+          const polyline = createPolyline({ attributes: {...attributes}, properties: {...properties}});
+
+          console.log(polyline);
+
+          const polylineCenter = calculatePolygonCenter(attributes.coordinates);
+          attributes.lat = polylineCenter.lat;
+          attributes.lng = polylineCenter.lng;
+
+          geozonesFiltered.push({ attributes: {...attributes}, properties: {...properties}});
+
+          mapManager.map.addSource(`polylines-${index}`, {
+            'type': 'geojson',
+            'data': polyline,
+          });
+          mapManager.addLineLayer(`polylines-${index}`, `polylines-${index}`, attributes.color, '{name}');
+
+          attributes.coordinates = [];
+          break;
         default:
           break;
       }
@@ -409,6 +450,10 @@ const MainMap = ({ geozones, areGeozonesVisible }) => {
             mapManager.map.removeLayer(`polygons-${index}`);
             mapManager.map.removeSource(`polygons-${index}`);
             break;
+            case 'LINESTRING':
+            mapManager.map.removeLayer(`polylines-${index}`);
+            mapManager.map.removeSource(`polylines-${index}`);
+            break;
           default:
             break;
         }
@@ -429,6 +474,9 @@ const MainMap = ({ geozones, areGeozonesVisible }) => {
           break;
         case 'POLYGON':
           mapManager.map.setLayoutProperty(`polygons-${index}`, 'visibility', areGeozonesVisible ? 'visible' : 'none');
+          break;
+        case 'LINESTRING':
+          mapManager.map.setLayoutProperty(`polylines-${index}`, 'visibility', areGeozonesVisible ? 'visible' : 'none');
           break;
         default:
           break;

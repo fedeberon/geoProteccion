@@ -282,6 +282,8 @@ export default function GeozonesPages() {
   const [color, setColor] = useState('#000000');
   const [openPer, setOpenPer] = React.useState(false);
 
+  const [geozone, setGeozone] = useState({ name: '', description: '', area: '', attributes: {}})
+
   const handleDrawerShow = () => {
     setOpenPer(!openPer);
   };
@@ -330,10 +332,10 @@ export default function GeozonesPages() {
   }, [userId]);
 
   const handleAdd = () => {
-    const addGeozone = id ? geozones : {};
-    addGeozone.name = name || addGeozone.name;
-    addGeozone.description = description || addGeozone.description;
-    addGeozone.area = area || addGeozone.area
+    // const addGeozone = id ? geozones : {};
+    // addGeozone.name = name || addGeozone.name;
+    // addGeozone.description = description || addGeozone.description;
+    // addGeozone.area = area || addGeozone.area
 
     fetch(`api/geofences`, {
       method: 'POST',
@@ -342,9 +344,10 @@ export default function GeozonesPages() {
         'Accept': 'application/json',
       },
       body: JSON.stringify({
-        name: "c3",
-        description: "d2222",
-        area: "POLYGON((-34.1554644022778 -70.7979463690622, -34.223456939830555 -70.7882760618276, -34.21546066305507 -70.56240531427665, -34.124592571218244 -70.59832359829086, -34.1554644022778 -70.7979463690622))",
+        name: geozone.name,
+        description: geozone.description,
+        area: geozone.area,
+        attributes: geozone.attributes
       })
     }).then(response => {
       if (response.ok) {
@@ -389,6 +392,17 @@ export default function GeozonesPages() {
         }
       })
     }
+  }
+
+  const handleGeozoneProperties = (property, data, attribute = false) => {
+    let geozoneCopy = {...geozone};
+    if (attribute) {
+      geozoneCopy.attributes[property] = data;
+    } else {
+      geozoneCopy[property] = data;
+    }
+    console.log(geozoneCopy);
+    setGeozone(geozoneCopy);
   }
 
   return (
@@ -495,14 +509,24 @@ export default function GeozonesPages() {
             <TextField id="outlined-basic" value={`${geozones.length + 1}`}
                        label="Id" name="id" variant="outlined" disabled
             /><br/>
-            <TextField onChange={(event) => setName(event.target.value)}
-                       id="outlined-basic" value={name}
-                       name="name" label={t('sharedName')}
-                       variant="outlined"/><br/>
-            <TextField onChange={(event) => setDescription(event.target.value)}
-                       id="outline)d-basic" value={description}
-                       name="description" label={t('sharedDescription')}
-                       variant="outlined"/><br/>
+            <TextField 
+              id="outlined-basic"
+              value={geozone.name}
+              name="name"
+              label={t('sharedName')}
+              variant="outlined"
+              onChange={(event) => handleGeozoneProperties('name', event.target.value)}
+            />
+            <br/>
+            <TextField 
+              id="outline)d-basic"
+              value={geozone.description}
+              name="description"
+              label={t('sharedDescription')}
+              variant="outlined"
+              onChange={(event) => handleGeozoneProperties('description', event.target.value)}
+            />
+            <br/>
             <Button variant="outlined" color="default"
                     onClick={handleClickOpenModalMap}>
               {t('sharedArea')}
@@ -510,7 +534,7 @@ export default function GeozonesPages() {
           </form>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleAdd} autoFocus color="primary">
+          <Button onClick={handleAdd} disabled={ geozone.name !== '' && geozone.area !== '' ? false : true } autoFocus color="primary">
             {t('sharedSave')}
           </Button>
         </DialogActions>
@@ -530,18 +554,24 @@ export default function GeozonesPages() {
                        name="id"
                        variant="outlined" disabled
             /><br/>
-            <TextField onChange={(event) => setName(event.target.value)}
-                       id="outlined-basic"
-                       value={name}
-                       name="name"
-                       label={t('sharedName')}
-                       variant="outlined"/><br/>
-            <TextField onChange={(event) => setDescription(event.target.value)}
-                       id="outline)d-basic"
-                       value={description}
-                       name="description"
-                       label={t('sharedDescription')}
-                       variant="outlined"/><br/>
+            <TextField 
+              id="outlined-basic"
+              value={name}
+              name="name"
+              label={t('sharedName')}
+              variant="outlined"
+              onChange={(event) => handleGeozoneProperties('description', event.target.value)}
+            />
+            <br/>
+            <TextField 
+              id="outline)d-basic"
+              value={description}
+              name="description"
+              label={t('sharedDescription')}
+              variant="outlined"
+              onChange={(event) => handleGeozoneProperties('description', event.target.value)}
+            />
+            <br/>
             <Button style={{width: '150px', height: '50px'}}
                     variant="outlined" label="Area" variant="outlined"
             >{t('sharedArea')}</Button><br/>
@@ -633,7 +663,8 @@ export default function GeozonesPages() {
                                 colors={["#000000", "#993300", "#333300", "#003300", "#003366", "#000080", "#333399", "#333333", "#800000", "#FF6600", "#808000", "#008000", "#008080", "#0000FF", "#666699", "#808080", "#FF0000", "#FF9900", "#99CC00", "#339966", "#33CCCC", "#3366FF", "#800080", "#969696", "#FF00FF", "#FFCC00", "#FFFF00", "#00FF00", "#00FFFF", "#00CCFF", "#993366", "#C0C0C0", "#FF99CC", "#FFCC99", "#FFFF99"]}
                                 colorSize={35}
                                 onChangeComplete={(color) => {
-                                  setColor(color.hex)
+                                  setColor(color.hex);
+                                  handleGeozoneProperties('color', color.hex, true);
                                 }}
                               />
                             </MenuItem>
@@ -648,6 +679,7 @@ export default function GeozonesPages() {
                                      shrink: true,
                                    }}
                                    variant="outlined"
+                                   onChange={(event) => handleGeozoneProperties('speedLimit', event.target.value, true)}
                         />
                         <TextField style={{width: '187px'}}
                                    className={classes.formControl}
@@ -657,6 +689,7 @@ export default function GeozonesPages() {
                                    InputLabelProps={{
                                      shrink: true,
                                    }}
+                                   onChange={(event) => handleGeozoneProperties('polylineDistance', event.target.value, true)}
                                    variant="outlined"
                         />
                       </List>
@@ -782,10 +815,10 @@ export default function GeozonesPages() {
                 </div>
               }
 
-              {isViewportDesktop ?
+              { isViewportDesktop ?
                 <main className={classes.contentMap}>
-                  {geozoneType &&
-                  < DrawableMap geozoneType={geozoneType} color={color}/>
+                  { geozoneType &&
+                    < DrawableMap geozoneType={geozoneType} color={color} addGeozoneProperty={handleGeozoneProperties}/>
                   }
                 </main>
               :
@@ -794,10 +827,11 @@ export default function GeozonesPages() {
                     [classes.contentShift]: openPer,
                   })}>
                   <div className={classes.drawerHeader}/>
-                  {geozoneType &&
-                  < DrawableMap geozoneType={geozoneType} color={color}/>
+                  { geozoneType &&
+                    < DrawableMap geozoneType={geozoneType} color={color} addGeozoneProperty={handleGeozoneProperties}/>
                   }
-                </main>}
+                </main>
+                }
             </div>
           </div>
         </Dialog>
