@@ -25,12 +25,12 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import AddIcon from "@material-ui/icons/Add";
-import TextField from "@material-ui/core/TextField";
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import useTheme from "@material-ui/core/styles/useTheme";
-import InputLabel from "@material-ui/core/InputLabel";
 import Switch from '@material-ui/core/Switch';
+import Radio from "@material-ui/core/Radio";
+
 
 const useStyles = makeStyles((theme) => ({
 
@@ -121,30 +121,32 @@ export default function NotificationsPage() {
   const [value, setValue] = React.useState(0);
   const userId = useSelector((state) => state.session.user.id);
   const [notifications, setNotifications] = React.useState([])
-  const theme = useTheme();
-  const [idToRemove, setIdToRemove] = React.useState('');
   const [open, setOpen] = React.useState(false);
   const [type, setType] = React.useState('');
   const [always, setAlways] = useState(false);
-  const [notificators, setNotificators] = useState('')
-  const typesList = [
-    `${t('eventDeviceUnknown')}`,
-    `${t('eventDeviceOnline')}`,
-    `${t('eventTextMessage')}`,
-    `${t('eventDeviceFuelDrop')}`,
-    `${t('eventDeviceOverspeed')}`,
-    `${t('eventGeofenceEnter')}`,
-    `${t('eventGeofenceExit')}`,
-    `${t('eventCommandResult')}`,
-    `${t('eventMaintenance')}`,
-    `${t('eventDriverChanged')}`,
-    `${t('eventDeviceOffline')}`,
-    `${t('eventIgnitionOff')}`,
-    `${t('eventIgnitionOn')}`,
-    `${t('eventDeviceMoving')}`,
-    `${t('eventDeviceStopped')}`,
-    `${t('eventAlarm')}`,
-  ]
+  const [notificators, setNotificators] = useState('');
+  const [availableTypes, setAvailableTypes] = useState([])
+  const [openEdit, setOpenEdit] = useState(false);
+  const [objectNotification, setObjectNotification] = useState('');
+
+  // const typesList = [
+  //   `${t('eventDeviceUnknown')}`,
+  //   `${t('eventDeviceOnline')}`,
+  //   `${t('eventTextMessage')}`,
+  //   `${t('eventDeviceFuelDrop')}`,
+  //   `${t('eventDeviceOverspeed')}`,
+  //   `${t('eventGeofenceEnter')}`,
+  //   `${t('eventGeofenceExit')}`,
+  //   `${t('eventCommandResult')}`,
+  //   `${t('eventMaintenance')}`,
+  //   `${t('eventDriverChanged')}`,
+  //   `${t('eventDeviceOffline')}`,
+  //   `${t('eventIgnitionOff')}`,
+  //   `${t('eventIgnitionOn')}`,
+  //   `${t('eventDeviceMoving')}`,
+  //   `${t('eventDeviceStopped')}`,
+  //   `${t('eventAlarm')}`,
+  // ]
 
   const typesValues = [
     'DeviceUnknown',
@@ -165,10 +167,9 @@ export default function NotificationsPage() {
     'Alarm',
   ]
 
-
-  const handleAlwaysChecked = () => {
+  const handleChangeRadio = () => {
     setAlways(!always);
-  }
+  };
 
   const handleChangeType = (event) => {
     setType(event.target.value);
@@ -176,9 +177,6 @@ export default function NotificationsPage() {
 
   const handleChangeChannel = (event) => {
     setNotificators(event.target.value);
-  }
-
-  const getChannel = () => {
   }
 
   const handleOpenNotification = () => {
@@ -189,6 +187,17 @@ export default function NotificationsPage() {
     setOpen(false);
   };
 
+  const handleOpenEdit = (notification) => {
+    setOpenEdit(true);
+    setObjectNotification(notification);
+  }
+
+  const handleCloseEdit = () => {
+    setOpenEdit(false)
+    setType('');
+    setNotificators('');
+  }
+
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
@@ -198,6 +207,12 @@ export default function NotificationsPage() {
     setNotifications(response);
     getNotifications(userId);
   }
+
+  // const getAvailableTypes = async () => {
+  //   const response = await service.getAvailableTypes();
+  //   setAvailableTypes(response);
+  //   getAvailableTypes();
+  // }
 
   const postNotifications = () => {
       const addNotification = {}
@@ -219,22 +234,37 @@ export default function NotificationsPage() {
     handleCloseNotification();
   }
 
-  // const removeConfirm = () => {
-  //   setConfirm(true);
-  //   if(confirm){
-  //     fetch(`api/notifications/${idToRemove}`, {method: 'DELETE'})
-  //       .then(response => {
-  //         if(response.ok){
-  //           const getNotifications = async (userId) => {
-  //             const response = await service.getNotificationsByUserId(userId);
-  //             setNotifications(response);
-  //           }
-  //           getNotifications(userId);
-  //         }
-  //       })
-  //   }
-  //   handleCloseConfirm()
-  // }
+  const putNotifications = () => {
+    const putNotification = {};
+    putNotification.id = objectNotification.id;
+    putNotification.type = type ? type : objectNotification.type;
+    putNotification.always = always;
+    putNotification.notificators = notificators ? notificators : objectNotification.notificators;
+
+    fetch(`api/notifications/${putNotification.id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify(putNotification)
+      }).then(response => response.json())
+    getNotifications(userId);
+    handleCloseEdit();
+  }
+
+  const removeNotification = (id) => {
+    let option = confirm(`¿Eliminar notificacion n° ${id}?`);
+    if(option){
+      fetch(`api/notifications/${id}`, {method: 'DELETE'})
+        .then(response => {
+          if(response.ok){
+            getNotifications(userId);
+          }
+        })
+        .catch(error => console.log(error))
+    }
+  }
 
 
   return (
@@ -265,6 +295,8 @@ export default function NotificationsPage() {
             <Tab label="By Device ID" {...a11yProps(1)} />
             <Tab label="By Group ID" {...a11yProps(2)} />
             <Tab label="All Notifications" {...a11yProps(3)} />
+            <Tab
+                  label="Available Notification Types" {...a11yProps((4))}/>
           </Tabs>
         </AppBar>
         <TabPanel value={value} index={0}>
@@ -292,8 +324,14 @@ export default function NotificationsPage() {
                       <TableCell
                         align="center">{notification.notificators}</TableCell>
                       <TableCell align="center">
+                        <Button title="Editar Notificacion"
+                                onClick={() => handleOpenEdit(notification)}>
                         <EditTwoToneIcon/>
-                        <DeleteTwoTone/>
+                        </Button>
+                        <Button title="Eliminar Notificacion"
+                                onClick={() => removeNotification(notification.id)}>
+                        <DeleteTwoTone />
+                        </Button>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -304,23 +342,33 @@ export default function NotificationsPage() {
 
         </TabPanel>
         <TabPanel value={value} index={1}>
-          Item Two
+
         </TabPanel>
         <TabPanel value={value} index={2}>
-          Item Three
+
         </TabPanel>
         <TabPanel value={value} index={3}>
-          Item Four
+
         </TabPanel>
         <TabPanel value={value} index={4}>
-          Item Five
+          <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>N°</TableCell>
+                <TableCell>Tipos de Notificaciones disponibles</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+                <TableRow>
+                <TableCell></TableCell>
+                <TableCell></TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+          </TableContainer>
         </TabPanel>
-        <TabPanel value={value} index={5}>
-          Item Six
-        </TabPanel>
-        <TabPanel value={value} index={6}>
-          Item Seven
-        </TabPanel>
+
 
       <div>
         {/*Modal Add New Notification*/}
@@ -357,11 +405,22 @@ export default function NotificationsPage() {
               <TableRow>
                 <TableCell>Aplicar a todos los dispositivos:</TableCell>
                 <TableCell>
-                  <Switch
-                    onChange={handleAlwaysChecked}
-                    name="all"
-                    inputProps={{ 'aria-label': 'primary checkbox' }}
-                  />
+                  <Radio
+                    checked={always === true}
+                    onClick={handleChangeRadio}
+                    color="primary"
+                    value={true}
+                    name="radio-button-demo"
+                    inputProps={{ 'aria-label': 'A' }}
+                  /> Si
+                  <Radio
+                    checked={always === false}
+                    onChange={handleChangeRadio}
+                    color="primary"
+                    value={false}
+                    name="radio-button-demo"
+                    inputProps={{ 'aria-label': 'B' }}
+                  /> No
                 </TableCell>
               </TableRow>
               <TableRow>
@@ -389,6 +448,93 @@ export default function NotificationsPage() {
               {t('sharedCancel')}
             </Button>
             <Button onClick={postNotifications} autoFocus color="primary">
+              {t('sharedSave')}
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </div>
+
+      {/*Modal PUT Notification*/}
+      <div>
+        <Dialog onClose={handleCloseEdit}
+                aria-labelledby="customized-dialog-title"
+                open={openEdit}>
+          <DialogTitle id="customized-dialog-title"
+                       onClose={handleCloseEdit}>
+            {` Modificar Notificacion `}
+            <Button onClick={handleCloseEdit}>X</Button>
+          </DialogTitle>
+          <DialogContent dividers>
+            <form className={classes.rootNotification} noValidate
+                  autoComplete="off">
+              <Table>
+                <TableRow>
+                  <TableCell>Id de Notificación:</TableCell>
+                  <TableCell>{objectNotification.id}</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>Tipo:</TableCell>
+                  <TableCell>
+                    <FormControl variant="outlined" className={classes.formControlType}>
+                      <Select
+                        native
+                        value={type}
+                        onChange={handleChangeType}
+                      >
+                        <option aria-label="None" value="" />
+                        {typesValues.map((types, index) => (
+                          <option key={index} value={types}>{types}</option>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>Aplicar a todos los dispositivos:</TableCell>
+                  <TableCell>
+                    <Radio
+                      checked={always === true}
+                      onClick={handleChangeRadio}
+                      color="primary"
+                      value={true}
+                      name="radio-button-demo"
+                      inputProps={{ 'aria-label': 'A' }}
+                    /> Si
+                    <Radio
+                      checked={always === false}
+                      onChange={handleChangeRadio}
+                      color="primary"
+                      value={false}
+                      name="radio-button-demo"
+                      inputProps={{ 'aria-label': 'B' }}
+                    /> No
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>Canales:</TableCell>
+                  <TableCell>
+                    <FormControl variant="outlined" className={classes.formControlType}>
+                      <Select
+                        native
+                        value={notificators}
+                        onChange={handleChangeChannel}
+                      >
+                        <option aria-label="None" value="" />
+                        <option value='web'>Web</option>
+                        <option value='correo'>Correo</option>
+                        <option value='sms'>Sms</option>
+                      </Select>
+                    </FormControl>
+                  </TableCell>
+                </TableRow>
+              </Table>
+            </form>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseEdit} autoFocus color="primary">
+              {t('sharedCancel')}
+            </Button>
+            <Button onClick={putNotifications} autoFocus color="primary">
               {t('sharedSave')}
             </Button>
           </DialogActions>

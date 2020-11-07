@@ -365,16 +365,16 @@ export default function GeozonesPages() {
     editGeozone.name = name || editGeozone.name;
     editGeozone.description = description || editGeozone.name;
 
-    fetch(`/api/geofences/${id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      },
-      body: JSON.stringify(editGeozone)
-    }).then(response => console.log(response))
-      .then(data => setGeozones(data.json()))
-    handleClose();
+    // fetch(`/api/geofences/${id}`, {
+    //   method: 'PUT',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //     'Accept': 'application/json',
+    //   },
+    //   body: JSON.stringify(editGeozone)
+    // }).then(response => console.log(response))
+    //   .then(data => setGeozones(data.json()))
+    // handleClose();
   }
 
   const handleRemove = (id) => {
@@ -506,7 +506,7 @@ export default function GeozonesPages() {
             <TextField id="outlined-basic" value={`${geozones.length + 1}`}
                        label="Id" name="id" variant="outlined" disabled
             /><br/>
-            <TextField 
+            <TextField
               id="outlined-basic"
               value={geozone.name}
               name="name"
@@ -515,7 +515,7 @@ export default function GeozonesPages() {
               onChange={(event) => handleGeozoneProperties('name', event.target.value)}
             />
             <br/>
-            <TextField 
+            <TextField
               id="outline)d-basic"
               value={geozone.description}
               name="description"
@@ -551,7 +551,7 @@ export default function GeozonesPages() {
                        name="id"
                        variant="outlined" disabled
             /><br/>
-            <TextField 
+            <TextField
               id="outlined-basic"
               value={name}
               name="name"
@@ -560,7 +560,7 @@ export default function GeozonesPages() {
               onChange={(event) => handleGeozoneProperties('description', event.target.value)}
             />
             <br/>
-            <TextField 
+            <TextField
               id="outline)d-basic"
               value={description}
               name="description"
@@ -576,7 +576,7 @@ export default function GeozonesPages() {
         </DialogContent>
         <DialogActions>
           <Button
-            onClick={() => handleEdit()}
+
             autoFocus color="primary">
             {t('sharedEdit')}
           </Button>
