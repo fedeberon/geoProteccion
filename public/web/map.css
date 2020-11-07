@@ -378,6 +378,9 @@ button {
 
 /* ancho de pantalla de menos de 600px* (mobile)*/
 @media only screen and (max-width: 600px) {
+  .MuiTableCell-root {
+    padding: 0 !important;
+  }
   .MuiToolbar-regular {
     min-height: 35px !important;
   }

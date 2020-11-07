@@ -60,11 +60,11 @@ export default function ReportsDialog({showReports, showReportsDialog}) {
         </AppBar>
         <List>
           <ListItem button>
-            <ListItemText primary="Phone ringtone" secondary="Titania" />
+            <ListItemText primary="Default" secondary="Secondary" />
           </ListItem>
           <Divider />
           <ListItem button>
-            <ListItemText primary="Default notification ringtone" secondary="Tethys" />
+            <ListItemText primary="Default" secondary="Primary" />
           </ListItem>
         </List>
       </Dialog>
