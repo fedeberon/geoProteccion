@@ -47,7 +47,29 @@ const getGeozoneArea = (type, coordinates, radius) => {
   return areaString;
 }
 
-const DrawableMap = ({ geozoneType: type, color, addGeozoneProperty }) => {
+const calculatePolygonCenter = (coordinates) => {
+  let north = -90;
+  let west = -180;
+  let south = 90;
+  let east = 180;
+
+  coordinates.map((e) => {
+    let lng = parseFloat(e[0]);
+    let lat = parseFloat(e[1]);
+
+    west = lng > west ? lng : west;
+    east = lng < east ? lng : east;
+    north = lat > north ? lat : north;
+    south = lat < south ? lat : south;
+  });
+
+  return {
+    lng: (west + east) / 2,
+    lat: (north + south) /2
+  }
+}
+
+const DrawableMap = ({ geozoneType: type, color, addGeozoneProperty, geozone }) => {
   const containerEl = useRef(null);
   const [mapReady, setMapReady] = useState(false);
 
@@ -66,6 +88,53 @@ const DrawableMap = ({ geozoneType: type, color, addGeozoneProperty }) => {
 
   const isViewportDesktop = useSelector(state => state.session.deviceAttributes.isViewportDesktop);
 
+  const createLabels = (geozones) => {
+    return {
+      type: 'FeatureCollection',
+      features: geozones.map(geozone => ({
+        type: 'Feature',
+        geometry: {
+          type: 'Point',
+          coordinates: [geozone.attributes.lng, geozone.attributes.lat]
+        },
+        properties: { ...geozone.properties },
+      })),
+    }
+  };
+
+  const createPolygon = (geozone) => {
+    return {
+      type: 'Feature',
+      geometry: {
+        type: 'Polygon',
+        coordinates: [ geozone.attributes.coordinates ]
+      },
+      properties: { ...geozone.properties },
+    }
+  };
+
+  const createPolyline = (geozone) => {
+    return {
+      type: 'Feature',
+      geometry: {
+        type: 'LineString',
+        coordinates: geozone.attributes.coordinates
+      },
+      properties: { ...geozone.properties },
+    }
+  };
+
+  const createCircle = (geozone) => {
+    return {
+      type: 'Feature',
+      geometry: {
+        type: 'Polygon',
+        coordinates: circleToPolygon([geozone.attributes.lng, geozone.attributes.lat], geozone.attributes.radius).coordinates
+      },
+      properties: { ...geozone.properties },
+    }
+  }
+
   useLayoutEffect(() => {
     const currentEl = containerEl.current;
     currentEl.appendChild(mapManager.element);
@@ -76,6 +145,141 @@ const DrawableMap = ({ geozoneType: type, color, addGeozoneProperty }) => {
       currentEl.removeChild(mapManager.element);
     };
   }, [containerEl]);
+
+  useEffect(() => {
+    let attributes = {
+      lat: null,
+      lng: null,
+      radius: null,
+      coordinates: [],
+      color: '',
+    }
+    let properties = {
+      name: '',
+      description: ''
+    }
+    let geozoneType = '';
+    let geozonesFiltered = [];
+
+    const typeRegEx = /(\w*)[ ]?(?=[(])/;
+    const circlePositionRegEx = /(?<=[(])(.*) (.*)(?=[,])/;
+    const radiusRegEx = /(?<=[,][ ]).*(?=[)])/;
+    const polygonRegEx = /(?<=[(]{2}).*(?=[)]{2})/;
+    const polylineRegEx = /(?<=[(]{1}).*(?=[)]{1})/;
+
+    if (geozone && geozone.id) {
+      geozoneType = geozone.area.match(typeRegEx)[1];
+
+      switch (geozoneType) {
+        case 'CIRCLE':
+          attributes.lat = parseFloat(geozone.area.match(circlePositionRegEx)[1]);
+          attributes.lng = parseFloat(geozone.area.match(circlePositionRegEx)[2]);
+          attributes.radius = parseFloat(geozone.area.match(radiusRegEx)[0]);
+          attributes.color = geozone.attributes.color ? geozone.attributes.color : '#' + Math.floor(Math.random() * 2 ** 24).toString(16).padStart(6, "0");
+
+          properties.name = geozone.name;
+          const circle = createCircle({ attributes: {...attributes}, properties: {...properties}});
+
+          geozonesFiltered.push({ attributes: {...attributes}, properties: {...properties}});
+
+          mapManager.map.addSource(`edit-circle`, {
+            'type': 'geojson',
+            'data': circle,
+          });
+          mapManager.addPolygonLayer(`edit-circle`, `edit-circle`, attributes.color, '{name}');
+          break;
+        case 'POLYGON':
+          const coordinates = geozone.area.match(polygonRegEx)[0].split(', ');
+          coordinates.map((element) => {
+            const latLng = element.split(' ');
+            attributes.coordinates.push(latLng.reverse());
+          });
+          attributes.color = geozone.attributes.color ? geozone.attributes.color : '#' + Math.floor(Math.random() * 2 ** 24).toString(16).padStart(6, "0");
+
+          properties.name = geozone.name;
+          const polygon = createPolygon({ attributes: {...attributes}, properties: {...properties}});
+
+          const polygonCenter = calculatePolygonCenter(attributes.coordinates);
+          attributes.lat = polygonCenter.lat;
+          attributes.lng = polygonCenter.lng;
+
+          geozonesFiltered.push({ attributes: {...attributes}, properties: {...properties}});
+
+          mapManager.map.addSource(`edit-polygon`, {
+            'type': 'geojson',
+            'data': polygon,
+          });
+          mapManager.addPolygonLayer(`edit-polygon`, `edit-polygon`, attributes.color, '{name}');
+
+          attributes.coordinates = [];
+          break;
+        case 'LINESTRING':
+          const polylineCoordinates = geozone.area.match(polylineRegEx)[0].split(', ');
+          polylineCoordinates.map((element) => {
+            const latLng = element.split(' ');
+            attributes.coordinates.push(latLng.reverse());
+          });
+          attributes.color = geozone.attributes.color ? geozone.attributes.color : '#' + Math.floor(Math.random() * 2 ** 24).toString(16).padStart(6, "0");
+
+          properties.name = geozone.name;
+          const polyline = createPolyline({ attributes: {...attributes}, properties: {...properties}});
+
+          const polylineCenter = calculatePolygonCenter(attributes.coordinates);
+          attributes.lat = polylineCenter.lat;
+          attributes.lng = polylineCenter.lng;
+
+          geozonesFiltered.push({ attributes: {...attributes}, properties: {...properties}});
+
+          mapManager.map.addSource(`edit-polyline`, {
+            'type': 'geojson',
+            'data': polyline,
+          });
+          mapManager.addLineLayer(`edit-polyline`, `edit-polyline`, attributes.color, '{name}');
+
+          attributes.coordinates = [];
+          break;
+        default:
+          break;
+      }
+
+      const labels = createLabels(geozonesFiltered);
+
+      mapManager.map.addSource('edit-labels', {
+        'type': 'geojson',
+        'data': labels,
+      });
+  
+      mapManager.addLabelLayer('edit-labels', 'edit-labels', '{name}');
+    }
+    return () => {
+      if (geozone && geozone.id) {
+        if (mapManager.map.getLayer('edit-circle')) {
+          mapManager.map.removeLayer(`edit-circle`);
+        }
+        if (mapManager.map.getSource('edit-circle')) {
+          mapManager.map.removeSource(`edit-circle`);
+        }
+        if (mapManager.map.getLayer('edit-polygon')) {
+          mapManager.map.removeLayer(`edit-polygon`);
+        }
+        if (mapManager.map.getSource('edit-polygon')) {
+          mapManager.map.removeSource(`edit-polygon`);
+        }
+        if (mapManager.map.getLayer('edit-polyline')) {
+          mapManager.map.removeLayer(`edit-polyline`);
+        }
+        if (mapManager.map.getSource('edit-polyline')) {
+          mapManager.map.removeSource(`edit-polyline`);
+        }
+        if (mapManager.map.getLayer('edit-labels')) {
+          mapManager.map.removeLayer(`edit-labels`);
+        }
+        if (mapManager.map.getSource('edit-labels')) {
+          mapManager.map.removeSource(`edit-labels`);
+        }
+      }
+    }
+  }, []);
 
   useEffect(() => {
     mapManager.registerListener(() => setMapReady(true));

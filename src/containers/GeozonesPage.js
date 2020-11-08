@@ -282,7 +282,7 @@ export default function GeozonesPages() {
   const [color, setColor] = useState('#000000');
   const [openPer, setOpenPer] = React.useState(true);
 
-  const [geozone, setGeozone] = useState({ name: '', description: '', area: '', attributes: {}})
+  const [geozone, setGeozone] = useState({ id: null, name: '', description: '', area: '', attributes: {}})
 
   const handleDrawerShow = () => {
     setOpenPer(!openPer);
@@ -300,13 +300,6 @@ export default function GeozonesPages() {
     setOpenModalMap(false);
   };
 
-
-  let selectedItem = {
-    id: '',
-    name: '',
-    description: '',
-  }
-
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -316,9 +309,9 @@ export default function GeozonesPages() {
     setOpenEditModal(false)
   };
 
-  const handleClickOpenEditModal = (object) => {
+  const handleClickOpenEditModal = (geozone) => {
     setOpenEditModal(true);
-    selectedItem = object;
+    setGeozone({ id: geozone.id, name: geozone.name, description: geozone.description, area: geozone.area, attributes: geozone.attributes });
   };
 
   useEffect(() => {
@@ -330,11 +323,6 @@ export default function GeozonesPages() {
   }, [userId]);
 
   const handleAdd = () => {
-    // const addGeozone = id ? geozones : {};
-    // addGeozone.name = name || addGeozone.name;
-    // addGeozone.description = description || addGeozone.description;
-    // addGeozone.area = area || addGeozone.area
-
     fetch(`api/geofences`, {
       method: 'POST',
       headers: {
@@ -355,26 +343,35 @@ export default function GeozonesPages() {
           getGeozones(userId);
         }
       }
-    })
+    });
     handleClose();
   }
 
 
   const handleEdit = (id) => {
-    const editGeozone = geozones;
-    editGeozone.name = name || editGeozone.name;
-    editGeozone.description = description || editGeozone.name;
-
-    // fetch(`/api/geofences/${id}`, {
-    //   method: 'PUT',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //     'Accept': 'application/json',
-    //   },
-    //   body: JSON.stringify(editGeozone)
-    // }).then(response => console.log(response))
-    //   .then(data => setGeozones(data.json()))
-    // handleClose();
+    fetch(`/api/geofences/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify({
+        id: geozone.id,
+        name: geozone.name,
+        description: geozone.description,
+        area: geozone.area,
+        attributes: geozone.attributes
+      })
+    }).then(response => {
+      if (response.ok) {
+        const getGeozones = async (userId) => {
+          const response = await service.getGeozonesByUserId(userId);
+          setGeozones(response);
+          getGeozones(userId);
+        }
+      }
+    });
+    handleClose();
   }
 
   const handleRemove = (id) => {
@@ -545,38 +542,33 @@ export default function GeozonesPages() {
         </DialogTitle>
         <DialogContent dividers>
           <form className={classes.rootmodal} noValidate autoComplete="off">
-            <TextField id="outlined-basic"
-                       value={`${selectedItem.id}`}
-                       label={`${selectedItem.id}`}
-                       name="id"
-                       variant="outlined" disabled
-            /><br/>
             <TextField
               id="outlined-basic"
-              value={name}
+              value={geozone.name}
               name="name"
               label={t('sharedName')}
               variant="outlined"
-              onChange={(event) => handleGeozoneProperties('description', event.target.value)}
+              onChange={(event) => handleGeozoneProperties('name', event.target.value)}
             />
             <br/>
             <TextField
               id="outline)d-basic"
-              value={description}
+              value={geozone.description}
               name="description"
               label={t('sharedDescription')}
               variant="outlined"
               onChange={(event) => handleGeozoneProperties('description', event.target.value)}
             />
             <br/>
-            <Button style={{width: '150px', height: '50px'}}
-                    variant="outlined" label="Area" variant="outlined"
-            >{t('sharedArea')}</Button><br/>
+            <Button variant="outlined" color="default"
+                    onClick={handleClickOpenModalMap}>
+              {t('sharedArea')}
+            </Button>
           </form>
         </DialogContent>
         <DialogActions>
           <Button
-
+            onClick={() => handleEdit(geozone.id)}
             autoFocus color="primary">
             {t('sharedEdit')}
           </Button>
@@ -817,7 +809,7 @@ export default function GeozonesPages() {
               { isViewportDesktop ?
                 <main className={classes.contentMap}>
                   { geozoneType &&
-                    < DrawableMap geozoneType={geozoneType} color={color} addGeozoneProperty={handleGeozoneProperties}/>
+                    < DrawableMap geozoneType={geozoneType} color={color} addGeozoneProperty={handleGeozoneProperties} geozone={geozone}/>
                   }
                 </main>
               :
@@ -828,7 +820,7 @@ export default function GeozonesPages() {
                   })}>
                   {/*<div className={classes.drawerHeader}/>*/}
                   {geozoneType &&
-                  < DrawableMap geozoneType={geozoneType} color={color} addGeozoneProperty={handleGeozoneProperties}/>
+                  < DrawableMap geozoneType={geozoneType} color={color} addGeozoneProperty={handleGeozoneProperties} geozone={geozone}/>
                   }
                 </main>
                 </div>
