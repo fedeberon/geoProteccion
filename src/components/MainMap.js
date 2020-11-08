@@ -1,11 +1,8 @@
 import React, {useRef, useLayoutEffect, useEffect, useState} from 'react';
 import {useSelector} from 'react-redux';
 import mapManager from '../utils/mapManager';
-import circleToPolygon from 'circle-to-polygon';
 import {makeStyles} from '@material-ui/core/styles';
-import t from '../common/localization';
-import { EvStation } from '@material-ui/icons';
-import { AttributionControl } from 'mapbox-gl';
+import { calculatePolygonCenter, createFeature, createLabels, createPolygon, createPolyline, createCircle, getGeozoneType, getCircleAttributes, getPolygonAttributes, getPolylineAttributes } from '../utils/mapFunctions';
 
 const MainMap = ({ geozones, areGeozonesVisible }) => {
   const containerEl = useRef(null);
@@ -43,112 +40,7 @@ const MainMap = ({ geozones, areGeozonesVisible }) => {
     },
   }));
 
-  const calculatePolygonCenter = (coordinates) => {
-		let north = -90;
-		let west = -180;
-		let south = 90;
-    let east = 180;
-
-    coordinates.map((e) => {
-      let lng = parseFloat(e[0]);
-      let lat = parseFloat(e[1]);
-
-      west = lng > west ? lng : west;
-      east = lng < east ? lng : east;
-      north = lat > north ? lat : north;
-      south = lat < south ? lat : south;
-    });
-
-    return {
-      lng: (west + east) / 2,
-      lat: (north + south) /2
-    }
-  }
-
   const isViewportDesktop = useSelector(state => state.session.deviceAttributes.isViewportDesktop);
-
-  const createFeature = (state, position) => {
-    const device = state.devices.items[position.deviceId] || null;
-    const name = device.name;
-    const model = device.attributes.model;
-    const carPlate = device.attributes.carPlate;
-    const brand = device.attributes.brand;
-    const year = device.attributes.year;
-    const status = device.status;
-    const lastUpdate = device.lastUpdate;
-    const protocol = position.protocol;
-    const speed = position.speed;
-    const kilometers = position.attributes.totalDistance;
-    const desktopView = isViewportDesktop;
-
-    return {
-      name: device ? `${name} ${speed} Km/h` : '',
-      description: `<div class="${desktopView ? 'popup-map-div' : 'popup-map-div-mobile'}">
-                      <div class="popup-map-header">
-                      <ul class="head-list">
-                        <li><p style="${desktopView ? 'font-size: 16px' : 'font-size: 20px'}"><strong  class="bold">${carPlate + '</strong> - ' + name} </p></li>
-                        <li><p>18:21:32  14/07/2020 <span class="display-flex status-${status}">${status}<span class="${desktopView ? 'status-inactive' : 'status-inactive-mobile'}">&nbsp;2 hours ago</span></span></p></li>
-                        <!--<li><p>${brand + ' ' + model + ' ' + year}</p></li>
-                        <li><p>${protocol}</p></li>-->
-                        <li>
-                        <tr>
-                        <p><strong>${t("currentAddress")+':'}</strong>
-                        199 Los Libertadores, Santa Cruz Región del Libertador General Bernardo O'Higgins, CL</p>
-                        </tr>
-                        </li>
-                        </ul>
-                      </div>
-                      <div>
-                    </div>
-
-                      <div class="popup-map-body">
-                        <i style="${desktopView ? '' : 'color: white'}"class="fas fa-truck-moving vehicule-type"></i>
-                        <table class="body-list">
-                        <tr>
-                        <td><i class="icon-fa fas fa-map-marker-alt"/></td>
-                        <th>${t("deviceContact")}</th>
-                        <td>
-                        <td><p class="${desktopView ? 'status-inactive' : 'status-inactive-mobile'}">Abierto</p></td>
-                        </td>
-                        </tr>
-                        <tr>
-                        <td><i class="icon-fa fas fa-car-alt"/></td>
-                        <th>${t("currentStatus")}</th>
-                        <td>
-                        <td><p class="${desktopView ? 'status-inactive' : 'status-inactive-mobile'}">No</p></td>
-                        </td>
-                        </tr>
-                        <tr>
-                        <td><i class="icon-fa fas fa-tachometer-alt"/></td>
-                        <th>${t("positionSpeed")}</th>
-                        <td>
-                        <td><p class="${desktopView ? 'status-inactive' : 'status-inactive-mobile'}">${speed}</p></td>
-                        </td>
-                        </tr>
-                        <tr>
-                        <td><i class="icon-fa fas fa-road"/></td>
-                        <th>${t("mileage")}</th>
-                        <td>
-                        <td><p class="${desktopView ? 'status-inactive' : 'status-inactive-mobile'}">${kilometers}</p></td>
-                        </td>
-                        </tr>
-                        <tr>
-                        <td><i class="icon-fa fas fa-bolt"/></td>
-                        <th>${t("circuitBreaker")}</th>
-                        <td>
-                        <td><p class="${desktopView ? 'status-inactive' : 'status-inactive-mobile'}">Desactivado</p></td>
-                        </td>
-                        </tr>
-                        </table>
-
-                      </div>
-                      <div class="footer-sp">
-                      <button class="${desktopView ? 'button-black' : 'button-black-mobile'}" href="#/device/${device.id}">
-                      ${t("activateCircuitBreaker")}</button>
-                    </div>
-                    </div>`
-    }
-  };
 
   const positions = useSelector(state => ({
     type: 'FeatureCollection',
@@ -158,70 +50,9 @@ const MainMap = ({ geozones, areGeozonesVisible }) => {
         type: 'Point',
         coordinates: [position.longitude, position.latitude]
       },
-      properties: createFeature(state, position),
+      properties: createFeature(state.devices.items, position, isViewportDesktop),
     })),
   }));
-
-  const createCircles = (geozones) => {
-    return {
-      type: 'FeatureCollection',
-      features: geozones.map(geozone => ({
-        type: 'Feature',
-        geometry: {
-          type: 'Polygon',
-          coordinates: circleToPolygon([geozone.attributes.lng, geozone.attributes.lat], geozone.attributes.radius).coordinates
-        },
-        properties: { ...geozone.properties },
-      })),
-    }
-  };
-
-  const createLabels = (geozones) => {
-    return {
-      type: 'FeatureCollection',
-      features: geozones.map(geozone => ({
-        type: 'Feature',
-        geometry: {
-          type: 'Point',
-          coordinates: [geozone.attributes.lng, geozone.attributes.lat]
-        },
-        properties: { ...geozone.properties },
-      })),
-    }
-  };
-
-  const createPolygon = (geozone) => {
-    return {
-      type: 'Feature',
-      geometry: {
-        type: 'Polygon',
-        coordinates: [ geozone.attributes.coordinates ]
-      },
-      properties: { ...geozone.properties },
-    }
-  };
-
-  const createPolyline = (geozone) => {
-    return {
-      type: 'Feature',
-      geometry: {
-        type: 'LineString',
-        coordinates: geozone.attributes.coordinates
-      },
-      properties: { ...geozone.properties },
-    }
-  };
-
-  const createCircle = (geozone) => {
-    return {
-      type: 'Feature',
-      geometry: {
-        type: 'Polygon',
-        coordinates: circleToPolygon([geozone.attributes.lng, geozone.attributes.lat], geozone.attributes.radius).coordinates
-      },
-      properties: { ...geozone.properties },
-    }
-  }
 
   var markerHeight = 0, markerRadius = 0, linearOffset = 0;
   var popupOffsets = {
@@ -342,21 +173,12 @@ const MainMap = ({ geozones, areGeozonesVisible }) => {
     let geozoneType = '';
     let geozonesFiltered = [];
 
-    const typeRegEx = /(\w*)[ ]?(?=[(])/;
-    const circlePositionRegEx = /(?<=[(])(.*) (.*)(?=[,])/;
-    const radiusRegEx = /(?<=[,][ ]).*(?=[)])/;
-    const polygonRegEx = /(?<=[(]{2}).*(?=[)]{2})/;
-    const polylineRegEx = /(?<=[(]{1}).*(?=[)]{1})/;
-
     geozones.map((element, index) => {
-      geozoneType = element.area.match(typeRegEx)[1];
+      geozoneType = getGeozoneType(element.area);
 
       switch (geozoneType) {
         case 'CIRCLE':
-          attributes.lat = parseFloat(element.area.match(circlePositionRegEx)[1]);
-          attributes.lng = parseFloat(element.area.match(circlePositionRegEx)[2]);
-          attributes.radius = parseFloat(element.area.match(radiusRegEx)[0]);
-          attributes.color = element.attributes.color ? element.attributes.color : '#' + Math.floor(Math.random() * 2 ** 24).toString(16).padStart(6, "0");
+          attributes = getCircleAttributes(element, attributes);
 
           properties.name = element.name;
           const circle = createCircle({ attributes: {...attributes}, properties: {...properties}});
@@ -370,12 +192,7 @@ const MainMap = ({ geozones, areGeozonesVisible }) => {
           mapManager.addPolygonLayer(`circles-${index}`, `circles-${index}`, attributes.color, '{name}');
           break;
         case 'POLYGON':
-          const coordinates = element.area.match(polygonRegEx)[0].split(', ');
-          coordinates.map((element) => {
-            const latLng = element.split(' ');
-            attributes.coordinates.push(latLng.reverse());
-          });
-          attributes.color = element.attributes.color ? element.attributes.color : '#' + Math.floor(Math.random() * 2 ** 24).toString(16).padStart(6, "0");
+          attributes = getPolygonAttributes(element, attributes);
 
           properties.name = element.name;
           const polygon = createPolygon({ attributes: {...attributes}, properties: {...properties}});
@@ -395,12 +212,7 @@ const MainMap = ({ geozones, areGeozonesVisible }) => {
           attributes.coordinates = [];
           break;
         case 'LINESTRING':
-          const polylineCoordinates = element.area.match(polylineRegEx)[0].split(', ');
-          polylineCoordinates.map((element) => {
-            const latLng = element.split(' ');
-            attributes.coordinates.push(latLng.reverse());
-          });
-          attributes.color = element.attributes.color ? element.attributes.color : '#' + Math.floor(Math.random() * 2 ** 24).toString(16).padStart(6, "0");
+          attributes = getPolylineAttributes(element, attributes);
 
           properties.name = element.name;
           const polyline = createPolyline({ attributes: {...attributes}, properties: {...properties}});
@@ -435,7 +247,7 @@ const MainMap = ({ geozones, areGeozonesVisible }) => {
 
     return () => {
       geozones.map((element, index) => {
-        geozoneType = element.area.match(typeRegEx)[1];
+        geozoneType = getGeozoneType(element.area);
 
         switch (geozoneType) {
           case 'CIRCLE':
@@ -460,9 +272,8 @@ const MainMap = ({ geozones, areGeozonesVisible }) => {
   }, [geozones]);
 
   useEffect(() => {
-    const typeRegEx = /(\w*)[ ]?(?=[(])/;
     geozones.map((element, index) => {
-      let geozoneType = element.area.match(typeRegEx)[1];
+      geozoneType = getGeozoneType(element.area);
 
       switch (geozoneType) {
         case 'CIRCLE':
