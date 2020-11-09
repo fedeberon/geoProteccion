@@ -200,17 +200,19 @@ export default function NotificationsPage() {
     setValue(newValue);
   };
 
+  useEffect(() => {
+    getNotifications(userId);
+  })
+
   const getNotifications = async (userId) => {
     const response = await service.getNotificationsByUserId(userId);
     setNotifications(response);
-    getNotifications(userId);
   }
 
-  // const getAvailableTypes = async () => {
-  //   const response = await service.getAvailableTypes();
-  //   setAvailableTypes(response);
-  //   getAvailableTypes();
-  // }
+  const getAvailableTypes = async () => {
+    const response = await service.getAvailableTypes();
+    setAvailableTypes(response);
+  }
 
   const postNotifications = () => {
       const addNotification = {}
@@ -293,7 +295,7 @@ export default function NotificationsPage() {
             <Tab label="By Device ID" {...a11yProps(1)} />
             <Tab label="By Group ID" {...a11yProps(2)} />
             <Tab label="All Notifications" {...a11yProps(3)} />
-            <Tab
+            <Tab onClick={() => getAvailableTypes()}
                   label="Available Notification Types" {...a11yProps((4))}/>
           </Tabs>
         </AppBar>
@@ -358,10 +360,13 @@ export default function NotificationsPage() {
               </TableRow>
             </TableHead>
             <TableBody>
-                <TableRow>
-                <TableCell></TableCell>
-                <TableCell></TableCell>
+              {availableTypes.map((type, index) =>
+
+                <TableRow key={index}>
+                <TableCell>{index}</TableCell>
+                <TableCell>{type.type}</TableCell>
               </TableRow>
+              )}
             </TableBody>
           </Table>
           </TableContainer>
