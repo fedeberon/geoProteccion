@@ -4,34 +4,8 @@ import mapManager from '../utils/mapManager';
 import circleToPolygon from 'circle-to-polygon';
 import {makeStyles} from '@material-ui/core/styles';
 import t from '../common/localization';
-import { calculatePolygonCenter, createCircle, createLabels, createPolygon, createPolyline, getCircleAttributes, getDistanceBtwnCoords, getGeozoneType, getPolygonAttributes, getPolylineAttributes } from '../utils/mapFunctions';
+import { calculatePolygonCenter, createCircle, createLabels, createPolygon, createPolyline, getCircleAttributes, getDistanceBtwnCoords, getGeozoneType, getPolygonAttributes, getPolylineAttributes, getGeozoneArea } from '../utils/mapFunctions';
 // import MapboxDraw from "@mapbox/mapbox-gl-draw";
-
-const typesArray = ['circle', 'polygon', 'linestring'];
-
-const getGeozoneArea = (type, coordinates, radius) => {
-  let areaString = '';
-  let coordinatesString = '';
-
-  if (type === '0') {
-    coordinatesString = `(${coordinates[1]} ${coordinates[0]}, ${radius})`;
-    areaString = `${typesArray[parseInt(type)].toUpperCase()} ${coordinatesString}`;
-  }
-  if (type === '1') {
-    coordinatesString = '(('
-    coordinates[0].map((element, index) => { coordinatesString += `${index !== 0 ? ' ' : ''}${element[1]} ${element[0]}${index !== coordinates[0].length - 1 ? ',' : ''}` });
-    coordinatesString += '))';
-    areaString = `${typesArray[parseInt(type)].toUpperCase()}${coordinatesString}`;
-  }
-  if (type === '2') {
-    coordinatesString = '('
-    coordinates.map((element, index) => { coordinatesString += `${index !== 0 ? ' ' : ''}${element[1]} ${element[0]}${index !== coordinates.length - 1 ? ',' : ''}` });
-    coordinatesString += ')';
-    areaString = `${typesArray[parseInt(type)].toUpperCase()} ${coordinatesString}`;
-  }
-
-  return areaString;
-}
 
 const DrawableMap = ({ geozoneType: type, color, addGeozoneProperty, geozone }) => {
   const containerEl = useRef(null);
@@ -335,9 +309,6 @@ const DrawableMap = ({ geozoneType: type, color, addGeozoneProperty, geozone }) 
       }
     }
   }
-
-  // useEffect(() => {
-  // }, [area]);
 
   useEffect(() => {
     if (type === '0' && lngLat.length > 1) {

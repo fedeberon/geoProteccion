@@ -282,7 +282,7 @@ export default function GeozonesPages() {
   const [color, setColor] = useState('#000000');
   const [openPer, setOpenPer] = React.useState(true);
 
-  const [geozone, setGeozone] = useState({ id: null, name: '', description: '', area: '', attributes: {}})
+  const [geozone, setGeozone] = useState({ id: null, name: '', description: '', area: '', attributes: {} })
 
   const handleDrawerShow = () => {
     setOpenPer(!openPer);
@@ -302,6 +302,7 @@ export default function GeozonesPages() {
 
   const handleClickOpen = () => {
     setOpen(true);
+    setGeozone({ id: null, name: '', description: '', area: '', attributes: {} });
   };
 
   const handleClose = () => {

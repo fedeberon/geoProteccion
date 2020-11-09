@@ -172,7 +172,7 @@ const MainMap = ({ geozones, areGeozonesVisible }) => {
     }
     let geozoneType = '';
     let geozonesFiltered = [];
-
+    
     geozones.map((element, index) => {
       geozoneType = getGeozoneType(element.area);
 
@@ -247,7 +247,7 @@ const MainMap = ({ geozones, areGeozonesVisible }) => {
 
     return () => {
       geozones.map((element, index) => {
-        geozoneType = getGeozoneType(element.area);
+        const geozoneType = getGeozoneType(element.area);
 
         switch (geozoneType) {
           case 'CIRCLE':
@@ -273,7 +273,7 @@ const MainMap = ({ geozones, areGeozonesVisible }) => {
 
   useEffect(() => {
     geozones.map((element, index) => {
-      geozoneType = getGeozoneType(element.area);
+      const geozoneType = getGeozoneType(element.area);
 
       switch (geozoneType) {
         case 'CIRCLE':

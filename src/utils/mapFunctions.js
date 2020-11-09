@@ -6,6 +6,31 @@ const circlePositionRegEx = /(?<=[(])(.*) (.*)(?=[,])/;
 const radiusRegEx = /(?<=[,][ ]).*(?=[)])/;
 const polygonRegEx = /(?<=[(]{2}).*(?=[)]{2})/;
 const polylineRegEx = /(?<=[(]{1}).*(?=[)]{1})/;
+const typesArray = ['circle', 'polygon', 'linestring'];
+
+const getGeozoneArea = (type, coordinates, radius) => {
+  let areaString = '';
+  let coordinatesString = '';
+
+  if (type === '0') {
+    coordinatesString = `(${coordinates[1]} ${coordinates[0]}, ${radius})`;
+    areaString = `${typesArray[parseInt(type)].toUpperCase()} ${coordinatesString}`;
+  }
+  if (type === '1') {
+    coordinatesString = '(('
+    coordinates[0].map((element, index) => { coordinatesString += `${index !== 0 ? ' ' : ''}${element[1]} ${element[0]}${index !== coordinates[0].length - 1 ? ',' : ''}` });
+    coordinatesString += '))';
+    areaString = `${typesArray[parseInt(type)].toUpperCase()}${coordinatesString}`;
+  }
+  if (type === '2') {
+    coordinatesString = '('
+    coordinates.map((element, index) => { coordinatesString += `${index !== 0 ? ' ' : ''}${element[1]} ${element[0]}${index !== coordinates.length - 1 ? ',' : ''}` });
+    coordinatesString += ')';
+    areaString = `${typesArray[parseInt(type)].toUpperCase()} ${coordinatesString}`;
+  }
+
+  return areaString;
+}
 
 const calculatePolygonCenter = (coordinates) => {
     let north = -90;
@@ -240,4 +265,5 @@ export {
     getCircleAttributes,
     getPolygonAttributes,
     getPolylineAttributes,
+    getGeozoneArea,
 }
