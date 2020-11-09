@@ -341,10 +341,10 @@ export default function GeozonesPages() {
         const getGeozones = async (userId) => {
           const response = await service.getGeozonesByUserId(userId);
           setGeozones(response);
-          getGeozones(userId);
         }
+        getGeozones(userId);
       }
-    });
+    })
     handleClose();
   }
 
@@ -368,10 +368,10 @@ export default function GeozonesPages() {
         const getGeozones = async (userId) => {
           const response = await service.getGeozonesByUserId(userId);
           setGeozones(response);
-          getGeozones(userId);
         }
+        getGeozones(userId);
       }
-    });
+    })
     handleClose();
   }
 
