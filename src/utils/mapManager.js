@@ -188,7 +188,7 @@ const map = new mapboxgl.Map({
             'https://d.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png'
         ],
         'tileSize': 256,
-        'attribution': '© <a target="_top" rel="noopener" href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, © <a target="_top" rel="noopener" href="https://carto.com/attribution">CARTO</a>'
+        'attribution': ''
       }
     },
     'glyphs': 'https://cdn.traccar.com/map/fonts/{fontstack}/{range}.pbf',

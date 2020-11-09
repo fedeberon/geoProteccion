@@ -104,19 +104,23 @@ const MainPage = ({ width }) => {
           <DeviceList />
         </Drawer>
 
-        <div className={classes.mapContainer}>
-          <ContainerDimensions>
-            <MainMap geozones={geozones} areGeozonesVisible={areGeozonesVisible}/>
-          </ContainerDimensions>
-        </div>
+        {!showReports &&
+          <div className={classes.mapContainer}>
+            <ContainerDimensions>
+              <MainMap geozones={geozones} areGeozonesVisible={areGeozonesVisible}/>
+            </ContainerDimensions>
+          </div>
+        }
       </div>
 
       <ShortcutsMenu toggleGeozones={handleGeozones} showReportDialog={handleReports}/>
       <Menu />
-
-      <div >
-        <ReportsDialog showReports={showReports} showReportsDialog={handleReports} />
-      </div>
+      
+      {showReports &&
+        <div >
+          <ReportsDialog showReports={showReports} showReportsDialog={handleReports} />
+        </div>
+      }
 
     </div>
   );

@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
@@ -13,6 +13,7 @@ import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
 import t from "../common/localization";
+import ReportsMap from './ReportsMap';
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -22,6 +23,44 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: theme.spacing(2),
     flex: 1,
   },
+  miniature: {
+    width: '25%',
+    height: '30%',
+    position: 'absolute',
+    right: 0,
+    bottom: 0,
+    transition: 'width 0.5s, height 0.5s',
+    zIndex: 10000
+  },
+  fullscreen: {
+    width: '100%',
+    height: '100%',
+    position: 'absolute',
+    right: 0,
+    bottom: 0,
+    transition: 'width 0.5s, height 0.5s',
+    zIndex: 10000
+  },
+  hidden: {
+    height: '30px !important'
+  },
+  fullscreenToggler: {
+    position: 'absolute',
+    left: '10px',
+    top: '10px',
+    zIndex: 1,
+    cursor: 'pointer',
+  },
+  miniatureToggler: {
+    position: 'absolute',
+    right: '10px',
+    top: '10px',
+    zIndex: 1,
+    cursor: 'pointer',
+  },
+  overflowHidden: {
+    overflow: 'hidden'
+  }
 }));
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -31,6 +70,8 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 export default function ReportsDialog({showReports, showReportsDialog}) {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
+  const [ fullscreen, setFullscreen ] = useState(false);
+  const [ hidden, setHidden ] = useState(false);
 
   useEffect(()=> {
       setOpen(showReports)
@@ -41,6 +82,20 @@ export default function ReportsDialog({showReports, showReportsDialog}) {
     setOpen(false);
     showReportsDialog(false);
   };
+
+  const handleFullscreen = () => {
+    if (hidden) {
+      setHidden(false);
+    }
+    setFullscreen(!fullscreen);
+  }
+
+  const handleVisibility = () => {
+    if (!hidden) {
+      setFullscreen(false);
+    }
+    setHidden(!hidden);
+  }
 
   return (
     <div>
@@ -67,6 +122,11 @@ export default function ReportsDialog({showReports, showReportsDialog}) {
             <ListItemText primary="Default" secondary="Primary" />
           </ListItem>
         </List>
+        <div className={`${classes.overflowHidden} ${fullscreen ? classes.fullscreen : classes.miniature} ${hidden ? classes.hidden : classes.visible}`}>
+          <i className={`fas ${fullscreen ? 'fa-compress' : 'fa-expand'} fa-lg ${classes.fullscreenToggler}`} onClick={() => handleFullscreen()}></i>
+          <i className={`fas ${hidden ? 'fa-chevron-up' : 'fa-chevron-down'} fa-lg ${classes.miniatureToggler}`} onClick={() => handleVisibility()}></i>
+          <ReportsMap />
+        </div>
       </Dialog>
     </div>
   );
