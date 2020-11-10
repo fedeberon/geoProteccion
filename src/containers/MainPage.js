@@ -118,7 +118,7 @@ const MainPage = ({ width }) => {
       
       {showReports &&
         <div >
-          <ReportsDialog showReports={showReports} showReportsDialog={handleReports} />
+          <ReportsDialog geozones={geozones} showReports={showReports} showReportsDialog={handleReports} />
         </div>
       }
 

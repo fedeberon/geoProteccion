@@ -107,7 +107,7 @@ function a11yProps(index) {
   };
 }
 
-export default function ReportsDialog({showReports, showReportsDialog}) {
+export default function ReportsDialog({ geozones, showReports, showReportsDialog }) {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
   const [ fullscreen, setFullscreen ] = useState(false);
@@ -209,7 +209,7 @@ export default function ReportsDialog({showReports, showReportsDialog}) {
         <div className={`${classes.overflowHidden} ${fullscreen ? classes.fullscreen : classes.miniature} ${hidden ? classes.hidden : classes.visible}`}>
           <i className={`fas ${fullscreen ? 'fa-compress' : 'fa-expand'} fa-lg ${classes.fullscreenToggler}`} onClick={() => handleFullscreen()}></i>
           <i className={`fas ${hidden ? 'fa-chevron-up' : 'fa-chevron-down'} fa-lg ${classes.miniatureToggler}`} onClick={() => handleVisibility()}></i>
-          <ReportsMap />
+          <ReportsMap geozones={geozones} />
         </div>
       </Dialog>
     </div>

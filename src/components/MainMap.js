@@ -2,7 +2,18 @@ import React, {useRef, useLayoutEffect, useEffect, useState} from 'react';
 import {useSelector} from 'react-redux';
 import mapManager from '../utils/mapManager';
 import {makeStyles} from '@material-ui/core/styles';
-import { calculatePolygonCenter, createFeature, createLabels, createPolygon, createPolyline, createCircle, getGeozoneType, getCircleAttributes, getPolygonAttributes, getPolylineAttributes } from '../utils/mapFunctions';
+import {
+  calculatePolygonCenter,
+  createFeature,
+  createLabels,
+  createPolygon,
+  createPolyline,
+  createCircle,
+  getGeozoneType,
+  getCircleAttributes,
+  getPolygonAttributes,
+  getPolylineAttributes
+} from '../utils/mapFunctions';
 
 const MainMap = ({ geozones, areGeozonesVisible }) => {
   const containerEl = useRef(null);

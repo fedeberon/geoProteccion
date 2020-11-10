@@ -4,7 +4,20 @@ import mapManager from '../utils/mapManager';
 import circleToPolygon from 'circle-to-polygon';
 import {makeStyles} from '@material-ui/core/styles';
 import t from '../common/localization';
-import { calculatePolygonCenter, createCircle, createLabels, createPolygon, createPolyline, getCircleAttributes, getDistanceBtwnCoords, getGeozoneType, getPolygonAttributes, getPolylineAttributes, getGeozoneArea } from '../utils/mapFunctions';
+import {
+  calculatePolygonCenter,
+  createCircle,
+  createLabels,
+  createPolygon,
+  createPolyline,
+  getCircleAttributes,
+  getDistanceBtwnCoords,
+  getGeozoneType,
+  getPolygonAttributes,
+  getPolylineAttributes,
+  getGeozoneArea,
+  calculateFurthestPoints
+} from '../utils/mapFunctions';
 // import MapboxDraw from "@mapbox/mapbox-gl-draw";
 
 const DrawableMap = ({ geozoneType: type, color, addGeozoneProperty, geozone }) => {
@@ -13,6 +26,7 @@ const DrawableMap = ({ geozoneType: type, color, addGeozoneProperty, geozone }) 
 
   const [ lngLat, setLngLat ] = useState([]);
   const [ area, setArea ] = useState('');
+  const [ boundaries, setBoundaries ] = useState([]);
 
   const useStyles = makeStyles((theme) => ({
     root: {
@@ -67,6 +81,7 @@ const DrawableMap = ({ geozoneType: type, color, addGeozoneProperty, geozone }) 
             'data': circle,
           });
           mapManager.addPolygonLayer(`edit-circle`, `edit-circle`, attributes.color, '{name}');
+          setBoundaries(circle.geometry.coordinates[0]);
           break;
         case 'POLYGON':
           attributes = getPolygonAttributes(geozone, attributes);
@@ -85,6 +100,7 @@ const DrawableMap = ({ geozoneType: type, color, addGeozoneProperty, geozone }) 
             'data': polygon,
           });
           mapManager.addPolygonLayer(`edit-polygon`, `edit-polygon`, attributes.color, '{name}');
+          setBoundaries(polygon.geometry.coordinates[0]);
 
           attributes.coordinates = [];
           break;
@@ -105,6 +121,7 @@ const DrawableMap = ({ geozoneType: type, color, addGeozoneProperty, geozone }) 
             'data': polyline,
           });
           mapManager.addLineLayer(`edit-polyline`, `edit-polyline`, attributes.color, '{name}');
+          setBoundaries(polyline.geometry.coordinates);
 
           attributes.coordinates = [];
           break;
@@ -440,10 +457,16 @@ const DrawableMap = ({ geozoneType: type, color, addGeozoneProperty, geozone }) 
   }, [mapManager.map, lngLat])
 
   useEffect(() => {
-    mapManager.map.easeTo({
-      center: [-66, -33]
-    });
-  }, []);
+    if (mapReady && geozone && geozone.id) {
+      const bounds = calculateFurthestPoints(boundaries);
+      if (bounds) {
+        mapManager.map.fitBounds(bounds, {
+          padding: 100,
+          maxZoom: 9
+        });
+      }
+    }
+  }, [mapReady]);
 
   const style = {
     width: '100%',

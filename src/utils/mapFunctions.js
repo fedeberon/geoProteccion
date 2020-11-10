@@ -54,6 +54,27 @@ const calculatePolygonCenter = (coordinates) => {
     }
 }
 
+const calculateFurthestPoints = (coordinates) => {
+    let north = -90;
+    let west = -180;
+    let south = 90;
+    let east = 180;
+
+    console.log(coordinates);
+    coordinates.map((e) => {
+        let lng = parseFloat(e[0]);
+        let lat = parseFloat(e[1]);
+        console.log({lng, lat});
+
+        west = lng > west ? lng : west;
+        east = lng < east ? lng : east;
+        north = lat > north ? lat : north;
+        south = lat < south ? lat : south;
+    });
+
+    return [ [west, south], [east, north] ];
+}
+
 const createFeature = (devices, position, isViewportDesktop) => {
     const device = devices[position.deviceId] || null;
     const name = device.name;
@@ -266,4 +287,5 @@ export {
     getPolygonAttributes,
     getPolylineAttributes,
     getGeozoneArea,
+    calculateFurthestPoints,
 }
