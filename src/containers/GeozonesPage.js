@@ -279,7 +279,7 @@ export default function GeozonesPages() {
   const [area, setArea] = useState('');
   const [openModalMap, setOpenModalMap] = useState(false);
   const [geozoneType, setGeozoneType] = useState('0');
-  const [color, setColor] = useState('#000000');
+  const [color, setColor] = useState('');
   const [openPer, setOpenPer] = React.useState(true);
 
   const [geozone, setGeozone] = useState({ id: null, name: '', description: '', area: '', attributes: {} })
@@ -638,7 +638,7 @@ export default function GeozonesPages() {
                         </ListItem>
                         <FormControl variant="outlined"
                                      className={classes.formControl}>
-                          <InputLabel
+                          <InputLabel style={{top: `${color === '' ? '' : '-11%'}`}}
                             id="demo-simple-select-outlined-label">Color</InputLabel>
                           <Select
                             labelId="demo-simple-select-outlined-label"
@@ -709,7 +709,7 @@ export default function GeozonesPages() {
                       </Typography>
                       <Button autoFocus style={{flex: '1',}} color="inherit"
                               onClick={handleCloseModalMap}>
-                        {t('sharedSave')}
+                        {openPer ? '' : `${t('sharedSave')}`}
                       </Button>
                       <IconButton edge="start" color="inherit"
                                   onClick={handleCloseModalMap}
@@ -760,8 +760,8 @@ export default function GeozonesPages() {
                         </ListItem>
                         <FormControl variant="outlined"
                                      className={classes.formControl}>
-                          <InputLabel
-                            id="demo-simple-select-outlined-label">Color</InputLabel>
+                          <InputLabel style={{top: `${color === '' ? '' : '-11%'}`}}
+                                      id="demo-simple-select-outlined-label">Color</InputLabel>
                           <Select
                             labelId="demo-simple-select-outlined-label"
                             id="demo-simple-select-outlined"

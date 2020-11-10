@@ -339,13 +339,33 @@ export default function NotificationsPage() {
               </Table>
             </TableContainer>
           </div>
-
         </TabPanel>
         <TabPanel value={value} index={1}>
-
+          <div>
+            <TableContainer component={Paper}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>ID</TableCell>
+                    <TableCell></TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {availableTypes.map((type, index) =>
+                    <TableRow key={index}>
+                      <TableCell>{index}</TableCell>
+                      <TableCell>{type.type}</TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </div>
         </TabPanel>
         <TabPanel value={value} index={2}>
+          <div>
 
+          </div>
         </TabPanel>
         <TabPanel value={value} index={3}>
 
@@ -361,7 +381,6 @@ export default function NotificationsPage() {
             </TableHead>
             <TableBody>
               {availableTypes.map((type, index) =>
-
                 <TableRow key={index}>
                 <TableCell>{index}</TableCell>
                 <TableCell>{type.type}</TableCell>

@@ -16,6 +16,7 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Box from '@material-ui/core/Box';
 import {makeStyles} from '@material-ui/core/styles';
+import ReportsEvents from "./ReportsEvents";
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -189,7 +190,7 @@ export default function ReportsDialog({showReports, showReportsDialog}) {
               Item One
             </TabPanel>
             <TabPanel value={value} index={1} dir={theme.direction}>
-              Item Two
+              <ReportsEvents/>
             </TabPanel>
             <TabPanel value={value} index={2} dir={theme.direction}>
               Item Three
