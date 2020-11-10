@@ -60,7 +60,6 @@ const calculateFurthestPoints = (coordinates) => {
     let south = 90;
     let east = 180;
 
-    console.log(coordinates);
     coordinates.map((e) => {
         let lng = parseFloat(e[0]);
         let lat = parseFloat(e[1]);
@@ -155,6 +154,20 @@ const createFeature = (devices, position, isViewportDesktop) => {
                       ${t("activateCircuitBreaker")}</button>
                     </div>
                     </div>`
+    }
+};
+
+const createMarkers = (positions) => {
+    return {
+        type: 'FeatureCollection',
+        features: positions.map(position => ({
+            type: 'Feature',
+            geometry: {
+                type: 'Point',
+                coordinates: [position.attributes.lng, position.attributes.lat]
+            },
+            properties: {...position.properties}
+        })),
     }
 };
 
@@ -276,6 +289,7 @@ const getRandomHex = () => {
 export {
     calculatePolygonCenter,
     createFeature,
+    createMarkers,
     createCircles,
     createLabels,
     createPolygon,

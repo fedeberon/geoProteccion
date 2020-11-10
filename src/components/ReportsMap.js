@@ -1,7 +1,8 @@
 import React, {useRef, useLayoutEffect, useEffect, useState} from 'react';
 import {useSelector} from 'react-redux';
 import mapManager from '../utils/mapManager';
-import { calculatePolygonCenter, createCircle, createFeature, createLabels, createPolygon, createPolyline, getCircleAttributes, getGeozoneType, getPolygonAttributes, getPolylineAttributes } from '../utils/mapFunctions';
+import { calculatePolygonCenter, createCircle, createFeature, createLabels, createMarkers, createPolygon, createPolyline, getCircleAttributes, getGeozoneType, getPolygonAttributes, getPolylineAttributes } from '../utils/mapFunctions';
+import { getRoute } from '../utils/variables';
 
 const ReportsMap = ({ geozones }) => {
   const containerEl = useRef(null);
@@ -249,6 +250,40 @@ const ReportsMap = ({ geozones }) => {
       center: mapCenter
     });
   }, [mapCenter]);
+
+  useEffect(() => {
+    const positions = getRoute();
+    let coordinates = [];
+    let markersOptions = [];
+    let color = '#FF9900';
+
+    positions.map((position) => {
+      coordinates.push([position.longitude, position.latitude]);
+      markersOptions.push({ attributes: { lng: position.longitude, lat: position.latitude },  properties: { course: position.course } });
+    });
+
+    const polyline = createPolyline({ attributes: { coordinates }, properties: {}});
+    const markers = createMarkers(markersOptions);
+
+    mapManager.map.addSource(`route`, {
+      'type': 'geojson',
+      'data': polyline,
+    });
+    mapManager.map.addSource(`markers`, {
+      'type': 'geojson',
+      'data': markers,
+    });
+
+    mapManager.addLineLayer(`route`, `route`, color);
+    mapManager.addMarkerLayer(`markers`, `markers`, 'course');
+
+    return () => {
+      mapManager.map.removeLayer(`route`);
+      mapManager.map.removeSource(`route`);
+      mapManager.map.removeLayer(`markers`);
+      mapManager.map.removeSource(`markers`);
+    }
+  }, []);
 
   const style = {
     width: '100vw',

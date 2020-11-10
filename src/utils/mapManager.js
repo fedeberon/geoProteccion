@@ -139,6 +139,24 @@ const addLabelLayer = (id, source, text) => {
   map.addLayer(layer);
 }
 
+const addMarkerLayer = (id, source, course) => {
+  const layer = {
+    'id': id,
+    'type': 'symbol',
+    'source': source,
+    'layout': {
+      'icon-image': 'triangle',
+      'icon-allow-overlap': true,
+      'icon-size': 0.02,
+      'icon-rotate': {
+        'type': 'identity',
+        'property': course
+      },
+    },
+  };
+  map.addLayer(layer);
+}
+
 const calculateBounds = features => {
   if (features && features.length) {
     const first = features[0].geometry.coordinates;
@@ -209,6 +227,14 @@ const map = new mapboxgl.Map({
 map.addControl(new mapboxgl.NavigationControl(), 'bottom-right');
 
 map.on('load', () => {
+  map.loadImage(
+    'images/icon/triangle.png',
+    function (error, image) {
+    if (error) throw error;
+    map.addImage('triangle', image);
+    }
+  );
+
   loadImage('images/background.svg').then((background) => {
     Promise.all([
       loadIcon('icon-marker', background, 'images/icon/marker.svg')
@@ -230,6 +256,7 @@ export default {
   addLayer,
   addPolygonLayer,
   addLabelLayer,
+  addMarkerLayer,
   addDotLayer,
   addLineLayer,
   calculateBounds,
