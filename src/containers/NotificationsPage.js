@@ -400,7 +400,6 @@ export default function NotificationsPage() {
           <DialogTitle id="customized-dialog-title"
                        onClose={handleCloseNotification}>
             {` Agregar nueva Notificacion `}
-            <Button onClick={handleCloseNotification}>X</Button>
           </DialogTitle>
 
           <DialogContent dividers>
@@ -484,7 +483,6 @@ export default function NotificationsPage() {
           <DialogTitle id="customized-dialog-title"
                        onClose={handleCloseEdit}>
             {` Modificar Notificacion `}
-            <Button onClick={handleCloseEdit}>X</Button>
           </DialogTitle>
           <DialogContent dividers>
             <form className={classes.rootNotification} noValidate
