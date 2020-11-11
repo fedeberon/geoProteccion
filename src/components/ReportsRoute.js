@@ -12,6 +12,8 @@ import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import ReportsConfig from "./ReportsConfig";
+import * as service from "../utils/serviceManager";
+import {devices} from "./ReportsConfig";
 
 const Accordion = withStyles({
   root: {
@@ -75,7 +77,7 @@ const AccordionDetails = withStyles((theme) => ({
 }))(MuiAccordionDetails);
 
 
-export default function ReportsEvents() {
+export default function ReportsRoute({getDevices, devicesArray, typeArray, from, to}) {
 
   const [ expanded, setExpanded ] = React.useState('panel1');
 
@@ -99,6 +101,35 @@ export default function ReportsEvents() {
       {/*<Button onClick={() => getSomething()}>GET</Button>*/}
       <div>
         <ReportsConfig  />
+      </div>
+      <div style={{marginTop: '1%'}}>
+        {devices.map((device, index) => (
+        <Accordion square expanded={expanded === `panel${index+1}`} onChange={handleChange(`panel${index+1}`)}>
+          <AccordionSummary aria-controls={`panel${index+1}d-content`} id={`panel${index+1}d-header`}>
+            <Typography><strong>
+              {/*#{device.id} - {device.name}*/}
+            </strong></Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <Container>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Fecha y Hora</TableCell>
+                    <TableCell>Tipo de Notificación</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  <TableRow>
+                    <TableCell>1</TableCell>
+                    <TableCell>2</TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </Container>
+          </AccordionDetails>
+        </Accordion>
+        ))}
       </div>
     </div>
   );
