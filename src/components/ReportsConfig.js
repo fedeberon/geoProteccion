@@ -59,11 +59,16 @@ export default function ReportsConfig({ handleReportsConfig }) {
   const [ devices, setDevices ] = useState([])
   const [ deviceSelected, setDeviceSelected ] = useState([]);
   const [ typeEventSelected, setTypeEventSelected ] = useState([]);
-  const [ fromDateTime, setFromDateTime ] = useState('2020-11-09T00:30');
-  const [ toDateTime, setToDateTime ] = useState('2020-11-09T00:30');
+  const [ fromDateTime, setFromDateTime ] = useState('');
+  const [ toDateTime, setToDateTime ] = useState('');
   const [ availableTypes, setAvailableTypes ] = useState([]);
-  const [ reportType, setReportType ] = useState('route');
+  const [ reportType, setReportType ] = useState('');
   const [ showMarkers, setShowMarkers ] = useState(false);
+
+  useEffect(() => {
+    handleShowReport()
+  },[reportType, deviceSelected, typeEventSelected,
+          fromDateTime, toDateTime, showMarkers]);
 
   const handleShowReport = () => {
     const configuration = {};
@@ -80,33 +85,26 @@ export default function ReportsConfig({ handleReportsConfig }) {
 
   const onChangeFromDateTime = (event) => {
     setFromDateTime(event.target.value);
-    handleShowReport();
   }
 
   const onChangeToDateTime = (event) => {
     setToDateTime(event.target.value);
-    handleShowReport();
-
   }
 
   const handleChangeDevices = (event) => {
     setDeviceSelected(event.target.value);
-    handleShowReport();
   };
 
   const handleChangeTypeEvent = (event) => {
     setTypeEventSelected(event.target.value);
-    handleShowReport();
   };
 
   const handleChangeReportType = (event) => {
     setReportType(event.target.value);
-    handleShowReport();
   }
 
   const handleChangeRadio = () => {
     setShowMarkers(!showMarkers);
-    handleShowReport();
   };
 
   useEffect(() => {
@@ -142,6 +140,7 @@ export default function ReportsConfig({ handleReportsConfig }) {
                   id: 'age-native-required',
                 }}
               >
+                <option value=''/>
                 <option value='route'>Ruta</option>
                 <option value='events'>Eventos</option>
                 <option value='trips'>Viajes</option>

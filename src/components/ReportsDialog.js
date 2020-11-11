@@ -10,13 +10,12 @@ import Slide from '@material-ui/core/Slide';
 import t from "../common/localization";
 import ReportsMap from './ReportsMap';
 import PropTypes from 'prop-types';
-import SwipeableViews from 'react-swipeable-views';
 import {useTheme} from '@material-ui/core/styles';
 import Box from '@material-ui/core/Box';
 import {makeStyles} from '@material-ui/core/styles';
 import ReportsConfig from "./ReportsConfig";
 import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';;
+import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Divider from "@material-ui/core/Divider";
 import Table from "@material-ui/core/Table";
@@ -27,6 +26,8 @@ import TableBody from "@material-ui/core/TableBody";
 import TableContainer from "@material-ui/core/TableContainer";
 import Paper from "@material-ui/core/Paper";
 import { getRoutesReports } from '../utils/serviceManager';
+import Backdrop from '@material-ui/core/Backdrop';
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -35,6 +36,10 @@ const useStyles = makeStyles((theme) => ({
   title: {
     marginLeft: theme.spacing(2),
     flex: 1,
+  },
+  backdrop: {
+    zIndex: theme.zIndex.drawer + 2000,
+    color: '#fff',
   },
   miniature: {
     width: '25%',
@@ -60,6 +65,9 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     position: 'absolute',
     width: '100%',
+    height: '75%',
+    overflowY: 'auto',
+    paddingBottom: '2.5%',
   },
   fullscreen: {
     width: '100%',
@@ -142,7 +150,7 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
   const [openConfigModal, setOpenConfigModal] = useState(false);
   const [ reportConfiguration, setReportConfiguration ] = useState({});
   const [ route, setRoute ] = useState([]);
-
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(()=> {
       setOpen(showReports)
@@ -188,6 +196,7 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
   }
 
   const handleShowConfig = async () => {
+    setIsLoading(true);
     switch (reportConfiguration.report) {
       case 'route':
         let params = '';
@@ -199,6 +208,7 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
 
         let response = await getRoutesReports(from, to, params);
         setRoute(response);
+        setIsLoading(false);
         break;
       case 'events':
         break;
@@ -218,6 +228,9 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
 
   return (
     <div>
+      <Backdrop className={classes.backdrop} open={isLoading}>
+        <CircularProgress color="inherit" />
+      </Backdrop>
       <Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}>
         <AppBar className={classes.appBar}>
           <Toolbar>
@@ -257,9 +270,9 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
             </DialogActions>
           </Dialog>
         </div>
-        <div className={classes.tableReports}>
+        <div style={{display: `${route.length === 0 ? 'none' : 'block'}`}} className={classes.tableReports}>
           <TableContainer component={Paper}>
-          <Table>
+          <Table >
             <TableHead>
               <TableRow>
                 <TableCell>Nombre de dispositivo</TableCell>
@@ -273,17 +286,18 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
               </TableRow>
             </TableHead>
             <TableBody>
-              <TableRow style={{padding: '3px',
-                fontSize: '13px'}}>
-                <TableCell>RAM</TableCell>
-                <TableCell>Si</TableCell>
-                <TableCell>2020-11-09 00:00:05</TableCell>
-                <TableCell>-32.458484</TableCell>
-                <TableCell>-71.215893</TableCell>
-                <TableCell>0</TableCell>
-                <TableCell>0 Km/h</TableCell>
-                <TableCell>Mostrar Dirección</TableCell>
-              </TableRow>
+              {route.map((object) => (
+                <TableRow key={object.id} style={{padding: '3px', fontSize: '13px'}}>
+                  <TableCell>{object.deviceId}</TableCell>
+                  <TableCell>{`${Boolean(object.valid)}`}</TableCell>
+                  <TableCell>{object.serverTime}</TableCell>
+                  <TableCell>{object.latitude}</TableCell>
+                  <TableCell>{object.longitude}</TableCell>
+                  <TableCell>{object.altitude}</TableCell>
+                  <TableCell>{object.speed}</TableCell>
+                  <TableCell href="">Mostrar Dirección</TableCell>
+                </TableRow>
+              ))}
             </TableBody>
           </Table>
           </TableContainer>
