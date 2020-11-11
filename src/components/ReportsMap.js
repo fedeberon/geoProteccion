@@ -257,6 +257,7 @@ const ReportsMap = ({ geozones, route, showMarkers }) => {
       let coordinates = [];
       let markersOptions = [];
       let color = '#FF9900';
+      let markers = {};
 
       positions.map((position) => {
         coordinates.push([position.longitude, position.latitude]);
@@ -267,7 +268,7 @@ const ReportsMap = ({ geozones, route, showMarkers }) => {
 
       const polyline = createPolyline({ attributes: { coordinates }, properties: {}});
       if (showMarkers) {
-        const markers = createMarkers(markersOptions);
+        markers = createMarkers(markersOptions);
       }
       
       mapManager.map.addSource(`route`, {
