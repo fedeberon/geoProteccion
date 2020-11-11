@@ -52,17 +52,17 @@ const MenuProps = {
   },
 };
 
-export default function ReportsConfig() {
+export default function ReportsConfig({ handleReportsConfig }) {
 
   const userId = useSelector((state) => state.session.user.id)
   const classes = useStyles();
   const [ devices, setDevices ] = useState([])
   const [ deviceSelected, setDeviceSelected ] = useState([]);
   const [ typeEventSelected, setTypeEventSelected ] = useState([]);
-  const [ fromDateTime, setFromDateTime ] = useState('');
-  const [ toDateTime, setToDateTime ] = useState('');
+  const [ fromDateTime, setFromDateTime ] = useState('2020-11-09T00:30');
+  const [ toDateTime, setToDateTime ] = useState('2020-11-09T00:30');
   const [ availableTypes, setAvailableTypes ] = useState([]);
-  const [ reportType, setReportType ] = useState('');
+  const [ reportType, setReportType ] = useState('route');
   const [ showMarkers, setShowMarkers ] = useState(false);
 
   const handleShowReport = () => {
@@ -73,32 +73,40 @@ export default function ReportsConfig() {
       configuration.fromDate = fromDateTime;
       configuration.toDate = toDateTime;
       configuration.report = reportType;
+      configuration.showMarkers = showMarkers;
 
-      console.log(configuration)
+      handleReportsConfig(configuration);
   }
 
   const onChangeFromDateTime = (event) => {
     setFromDateTime(event.target.value);
+    handleShowReport();
   }
 
   const onChangeToDateTime = (event) => {
-    setToDateTime(event.target.value)
+    setToDateTime(event.target.value);
+    handleShowReport();
+
   }
 
   const handleChangeDevices = (event) => {
     setDeviceSelected(event.target.value);
+    handleShowReport();
   };
 
   const handleChangeTypeEvent = (event) => {
     setTypeEventSelected(event.target.value);
+    handleShowReport();
   };
 
   const handleChangeReportType = (event) => {
     setReportType(event.target.value);
+    handleShowReport();
   }
 
   const handleChangeRadio = () => {
     setShowMarkers(!showMarkers);
+    handleShowReport();
   };
 
   useEffect(() => {
@@ -134,7 +142,6 @@ export default function ReportsConfig() {
                   id: 'age-native-required',
                 }}
               >
-                <option aria-label="Selección" value="" />
                 <option value='route'>Ruta</option>
                 <option value='events'>Eventos</option>
                 <option value='trips'>Viajes</option>
@@ -276,9 +283,6 @@ export default function ReportsConfig() {
               inputProps={{ 'aria-label': 'B' }}
             /> No
           </TableCell>
-        </TableRow>
-        <TableRow>
-          <Button onClick={() => handleShowReport()}>Save & Show</Button>
         </TableRow>
       </Table>
     </div>

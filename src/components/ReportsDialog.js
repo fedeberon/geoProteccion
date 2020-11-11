@@ -26,6 +26,7 @@ import TableCell from "@material-ui/core/TableCell";
 import TableBody from "@material-ui/core/TableBody";
 import TableContainer from "@material-ui/core/TableContainer";
 import Paper from "@material-ui/core/Paper";
+import { getRoutesReports } from '../utils/serviceManager';
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -139,6 +140,8 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
   const [ hidden, setHidden ] = useState(false);
   const theme = useTheme();
   const [openConfigModal, setOpenConfigModal] = useState(false);
+  const [ reportConfiguration, setReportConfiguration ] = useState({});
+  const [ route, setRoute ] = useState([]);
 
 
   useEffect(()=> {
@@ -175,6 +178,44 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
     setHidden(!hidden);
   }
 
+  const handleReportsConfig = (configuration) => {
+    setReportConfiguration(configuration);
+  }
+
+  const handleResetConfig = () => {
+    setReportConfiguration({});
+    handleCloseConfigModal();
+  }
+
+  const handleShowConfig = async () => {
+    switch (reportConfiguration.report) {
+      case 'route':
+        let params = '';
+        reportConfiguration.arrayDeviceSelected.map((element, index) => {
+          params = params + 'deviceId=' + element +  '&';
+        });
+        let from = reportConfiguration.fromDate + ':00Z';
+        let to = reportConfiguration.toDate + ':00Z';
+
+        let response = await getRoutesReports(from, to, params);
+        setRoute(response);
+        break;
+      case 'events':
+        break;
+      case 'trips':
+        break;
+      case 'stops':
+        break;
+      case 'summary':
+        break;
+      case 'graphic':
+        break;
+      default:
+        break;
+    }
+    handleCloseConfigModal();
+  }
+
   return (
     <div>
       <Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}>
@@ -204,13 +245,13 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
                          id="alert-dialog-title">{"Reportes"}</DialogTitle>
             <Divider/>
             <DialogContent>
-                  <ReportsConfig />
+                  <ReportsConfig handleReportsConfig={handleReportsConfig} />
             </DialogContent>
             <DialogActions>
-              <Button onClick={handleCloseConfigModal} color="primary">
+              <Button onClick={handleResetConfig} color="primary">
                 Reset
               </Button>
-              <Button onClick={handleCloseConfigModal} color="primary" autoFocus>
+              <Button onClick={handleShowConfig} color="primary" autoFocus>
                 Show
               </Button>
             </DialogActions>
@@ -251,7 +292,7 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
         <div className={`${classes.overflowHidden} ${fullscreen ? classes.fullscreen : classes.miniature} ${hidden ? classes.hidden : classes.visible}`}>
           <i className={`fas ${fullscreen ? 'fa-compress' : 'fa-expand'} fa-lg ${classes.fullscreenToggler}`} onClick={() => handleFullscreen()}></i>
           <i className={`fas ${hidden ? 'fa-chevron-up' : 'fa-chevron-down'} fa-lg ${classes.miniatureToggler}`} onClick={() => handleVisibility()}></i>
-          <ReportsMap geozones={geozones} />
+          <ReportsMap geozones={geozones} route={route} showMarkers={reportConfiguration.showMarkers}/>
         </div>
       </Dialog>
     </div>

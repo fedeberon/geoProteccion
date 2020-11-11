@@ -29,10 +29,17 @@ const getAvailableTypes = () => {
     .then(response => response.json());
 }
 
+const getRoutesReports = (from, to, params = '') => {
+  return fetch(`api/reports/route?` + `${params}from=${from}&to=${to}`, { method: 'GET', headers: {'Content-Type': 'application/json', 'Accept': 'application/json'} })
+    .catch(function (error) { console.log('setNotifications error: ', error)})
+    .then(response => response.json());
+}
+
 export {
   setSession,
   getDeviceByUserId,
   getGeozonesByUserId,
   getNotificationsByUserId,
   getAvailableTypes,
+  getRoutesReports,
 };

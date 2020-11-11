@@ -4,7 +4,7 @@ import mapManager from '../utils/mapManager';
 import { calculatePolygonCenter, createCircle, createFeature, createLabels, createMarkers, createPolygon, createPolyline, getCircleAttributes, getGeozoneType, getPolygonAttributes, getPolylineAttributes } from '../utils/mapFunctions';
 import { getRoute } from '../utils/variables';
 
-const ReportsMap = ({ geozones }) => {
+const ReportsMap = ({ geozones, route, showMarkers }) => {
   const containerEl = useRef(null);
 
   const [mapReady, setMapReady] = useState(false);
@@ -252,38 +252,56 @@ const ReportsMap = ({ geozones }) => {
   }, [mapCenter]);
 
   useEffect(() => {
-    const positions = getRoute();
-    let coordinates = [];
-    let markersOptions = [];
-    let color = '#FF9900';
+    if (route.length > 0) {
+      const positions = route;
+      let coordinates = [];
+      let markersOptions = [];
+      let color = '#FF9900';
 
-    positions.map((position) => {
-      coordinates.push([position.longitude, position.latitude]);
-      markersOptions.push({ attributes: { lng: position.longitude, lat: position.latitude },  properties: { course: position.course } });
-    });
+      positions.map((position) => {
+        coordinates.push([position.longitude, position.latitude]);
+        if (showMarkers) {
+          markersOptions.push({ attributes: { lng: position.longitude, lat: position.latitude },  properties: { course: position.course } });
+        }
+      });
 
-    const polyline = createPolyline({ attributes: { coordinates }, properties: {}});
-    const markers = createMarkers(markersOptions);
+      const polyline = createPolyline({ attributes: { coordinates }, properties: {}});
+      if (showMarkers) {
+        const markers = createMarkers(markersOptions);
+      }
+      
+      mapManager.map.addSource(`route`, {
+        'type': 'geojson',
+        'data': polyline,
+      });
+      if (showMarkers) {
+        mapManager.map.addSource(`markers`, {
+          'type': 'geojson',
+          'data': markers,
+        });
+      }
 
-    mapManager.map.addSource(`route`, {
-      'type': 'geojson',
-      'data': polyline,
-    });
-    mapManager.map.addSource(`markers`, {
-      'type': 'geojson',
-      'data': markers,
-    });
-
-    mapManager.addLineLayer(`route`, `route`, color);
-    mapManager.addMarkerLayer(`markers`, `markers`, 'course');
+      mapManager.addLineLayer(`route`, `route`, color);
+      if (showMarkers) {
+        mapManager.addMarkerLayer(`markers`, `markers`, 'course');
+      }
+    }
 
     return () => {
-      mapManager.map.removeLayer(`route`);
-      mapManager.map.removeSource(`route`);
-      mapManager.map.removeLayer(`markers`);
-      mapManager.map.removeSource(`markers`);
+      if(mapManager.map.getLayer('route')) {
+        mapManager.map.removeLayer(`route`);
+      }
+      if(mapManager.map.getSource('route')) {
+        mapManager.map.removeSource(`route`);
+      }
+      if(mapManager.map.getLayer('markers')) {
+        mapManager.map.removeLayer(`markers`);
+      }
+      if(mapManager.map.getSource('markers')) {
+        mapManager.map.removeSource(`markers`);
+      }
     }
-  }, []);
+  }, [route]);
 
   const style = {
     width: '100vw',
