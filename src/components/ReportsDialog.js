@@ -25,7 +25,7 @@ import TableCell from "@material-ui/core/TableCell";
 import TableBody from "@material-ui/core/TableBody";
 import TableContainer from "@material-ui/core/TableContainer";
 import Paper from "@material-ui/core/Paper";
-import { getRoutesReports } from '../utils/serviceManager';
+import { getRoutesReports, getEventsReports, getPositionsReports } from '../utils/serviceManager';
 import Backdrop from '@material-ui/core/Backdrop';
 import CircularProgress from "@material-ui/core/CircularProgress";
 
@@ -150,6 +150,8 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
   const [openConfigModal, setOpenConfigModal] = useState(false);
   const [ reportConfiguration, setReportConfiguration ] = useState({});
   const [ route, setRoute ] = useState([]);
+  const [ events, setEvents ] = useState([]);
+  const [ positions, setPositions] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(()=> {
@@ -196,12 +198,15 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
   }
 
   const handleShowConfig = async () => {
+    setRoute([]);
+    setEvents([]);
     setIsLoading(true);
+    // let {params, from, to, response, type, ids} = '';
     switch (reportConfiguration.report) {
       case 'route':
         let params = '';
-        reportConfiguration.arrayDeviceSelected.map((element, index) => {
-          params = params + 'deviceId=' + element +  '&';
+        reportConfiguration.arrayDeviceSelected.map((element) => {
+          params = params + 'deviceId=' + element + '&';
         });
         let from = reportConfiguration.fromDate + ':00Z';
         let to = reportConfiguration.toDate + ':00Z';
@@ -211,6 +216,28 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
         setIsLoading(false);
         break;
       case 'events':
+        let paramsDev = '';
+        reportConfiguration.arrayDeviceSelected.map((element) => {
+          paramsDev = paramsDev + 'deviceId=' + element + '&';
+        });
+        let typeDev = '';
+        reportConfiguration.arrayTypeEventSelected.map((element) => {
+          typeDev = typeDev + 'type=' + element + '&';
+        });
+        let fromDev = reportConfiguration.fromDate + ':00Z';
+        let toDev = reportConfiguration.toDate + ':00Z';
+
+        let responseDev = await getEventsReports(fromDev, toDev, typeDev, paramsDev);
+        setEvents(responseDev);
+
+        let ids = '';
+        events.map((element) => {
+          ids = ids + 'id=' + element.positionId;
+        });
+
+        let responseIds = await getPositionsReports(ids);
+        setPositions(responseIds);
+        setIsLoading(false)
         break;
       case 'trips':
         break;
@@ -254,8 +281,14 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
           >
-            <DialogTitle style={{textAlign: 'center', backgroundColor: 'ghostwhite'}}
-                         id="alert-dialog-title">{"Reportes"}</DialogTitle>
+            <Toolbar>
+            <DialogTitle style={{width: '100%', textAlign: 'center', backgroundColor: 'ghostwhite'}}
+                         id="alert-dialog-title">{"Reportes"}
+            </DialogTitle>
+            <IconButton style={{padding: 0}}edge="start" color="inherit" onClick={handleCloseConfigModal} aria-label="close">
+              <CloseIcon />
+            </IconButton>
+            </Toolbar>
             <Divider/>
             <DialogContent>
                   <ReportsConfig handleReportsConfig={handleReportsConfig} />
@@ -270,6 +303,7 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
             </DialogActions>
           </Dialog>
         </div>
+
         <div style={{display: `${route.length === 0 ? 'none' : 'block'}`}} className={classes.tableReports}>
           <TableContainer component={Paper}>
           <Table >
@@ -300,6 +334,33 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
               ))}
             </TableBody>
           </Table>
+          </TableContainer>
+        </div>
+
+        <div style={{display: `${events.length === 0 ? 'none' : 'block'}`}} className={classes.tableReports}>
+          <TableContainer component={Paper}>
+            <Table >
+              <TableHead>
+                <TableRow>
+                  <TableCell>Fecha y hora</TableCell>
+                  <TableCell>Nombre de dispositivo</TableCell>
+                  <TableCell>Tipo</TableCell>
+                  <TableCell>Geocerca</TableCell>
+                  <TableCell>Mantenimiento</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {events.map((object) => (
+                  <TableRow key={object.id} style={{padding: '3px', fontSize: '13px'}}>
+                    <TableCell>{object.serverTime}</TableCell>
+                    <TableCell>{object.deviceId}</TableCell>
+                    <TableCell>{object.type}</TableCell>
+                    <TableCell>{object.geofenceId}</TableCell>
+                    <TableCell>{object.maintenanceId}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </TableContainer>
         </div>
 

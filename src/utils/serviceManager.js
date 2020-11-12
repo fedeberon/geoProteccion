@@ -25,15 +25,28 @@ const getNotificationsByUserId = (id) => {
 
 const getAvailableTypes = () => {
   return fetch(`api/notifications/types`,{method: 'GET'})
-    .catch(function (error) { console.log('setNotifications error: ', error)})
+    .catch(function (error) { console.log('setAvailableTypes error: ', error)})
     .then(response => response.json());
 }
 
 const getRoutesReports = (from, to, params = '') => {
   return fetch(`api/reports/route?` + `${params}from=${from}&to=${to}`, { method: 'GET', headers: {'Content-Type': 'application/json', 'Accept': 'application/json'} })
-    .catch(function (error) { console.log('setNotifications error: ', error)})
+    .catch(function (error) { console.log('setRoutesReports error: ', error)})
     .then(response => response.json());
 }
+
+const getEventsReports = (fromDev, toDev, typeDev, paramsDev = '') => {
+  return fetch(`api/reports/events?` + `${paramsDev}` + `${typeDev}` + `from=${fromDev}&to=${toDev}`, { method: 'GET', headers: {'Content-Type': 'application/json', 'Accept': 'application/json'} })
+    .catch(function (error) { console.log('setEventsReports error: ', error)})
+    .then(response => response.json());
+}
+
+const getPositionsReports = (ids = '') => {
+  return fetch(`api/positions?` + `${ids}`, { method: 'GET', headers: {'Content-Type': 'application/json', 'Accept': 'application/json'} })
+    .catch(function (error) { console.log('setPositions error: ', error)})
+    .then(response => response.json());
+}
+
 
 export {
   setSession,
@@ -42,4 +55,6 @@ export {
   getNotificationsByUserId,
   getAvailableTypes,
   getRoutesReports,
+  getEventsReports,
+  getPositionsReports,
 };

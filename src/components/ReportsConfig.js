@@ -194,7 +194,7 @@ export default function ReportsConfig({ handleReportsConfig }) {
             </FormControl><br/>
           </TableCell>
         </TableRow>
-        <TableRow>
+        <TableRow style={{display: `${reportType === 'events' ? '' : 'none'}`}}>
           <TableCell>
             Seleccionar evento(s):
           </TableCell>
