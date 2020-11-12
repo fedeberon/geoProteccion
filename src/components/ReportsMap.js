@@ -4,7 +4,7 @@ import mapManager from '../utils/mapManager';
 import { calculatePolygonCenter, createCircle, createFeature, createLabels, createMarkers, createPolygon, createPolyline, getCircleAttributes, getGeozoneType, getPolygonAttributes, getPolylineAttributes } from '../utils/mapFunctions';
 import { getRoute } from '../utils/variables';
 
-const ReportsMap = ({ geozones, route, showMarkers }) => {
+const ReportsMap = ({ geozones, route, showMarkers, selectedPosition }) => {
   const containerEl = useRef(null);
 
   const [mapReady, setMapReady] = useState(false);
@@ -303,6 +303,36 @@ const ReportsMap = ({ geozones, route, showMarkers }) => {
       }
     }
   }, [route]);
+
+  useEffect(() => {
+    console.log(selectedPosition);
+    if (selectedPosition.id) {
+      mapManager.map.easeTo({
+        center: [selectedPosition.longitude, selectedPosition.latitude]
+      });
+
+      if(!showMarkers) {
+        let markersOptions = [];
+        markersOptions.push({ attributes: { lng: selectedPosition.longitude, lat: selectedPosition.latitude },  properties: { course: selectedPosition.course } });
+        const markers = createMarkers(markersOptions);
+        
+        mapManager.map.addSource(`markers`, {
+          'type': 'geojson',
+          'data': markers,
+        });
+
+        mapManager.addMarkerLayer(`markers`, `markers`, 'course');
+      }
+    }
+    return () => {
+      if(mapManager.map.getLayer('markers')) {
+        mapManager.map.removeLayer(`markers`);
+      }
+      if(mapManager.map.getSource('markers')) {
+        mapManager.map.removeSource(`markers`);
+      }
+    }
+  }, [selectedPosition]);
 
   const style = {
     width: '100vw',

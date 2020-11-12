@@ -102,6 +102,14 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.background.paper,
     width: 'auto',
   },
+  row: {
+    padding: '3px',
+    fontSize: '13px',
+    '&:hover': {
+      background: '#ccc',
+      cursor: 'pointer',
+    }
+  },
 }));
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -150,6 +158,7 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
   const [openConfigModal, setOpenConfigModal] = useState(false);
   const [ reportConfiguration, setReportConfiguration ] = useState({});
   const [ route, setRoute ] = useState([]);
+  const [ selectedPosition, setSelectedPosition ] = useState({});
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(()=> {
@@ -226,6 +235,10 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
     handleCloseConfigModal();
   }
 
+  const handleSelectedPosition = (position) => {
+    setSelectedPosition(position);
+  }
+
   return (
     <div>
       <Backdrop className={classes.backdrop} open={isLoading}>
@@ -287,7 +300,7 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
             </TableHead>
             <TableBody>
               {route.map((object) => (
-                <TableRow key={object.id} style={{padding: '3px', fontSize: '13px'}}>
+                <TableRow key={object.id} className={classes.row} onClick={() => handleSelectedPosition(object)}>
                   <TableCell>{object.deviceId}</TableCell>
                   <TableCell>{`${Boolean(object.valid)}`}</TableCell>
                   <TableCell>{object.serverTime}</TableCell>
@@ -306,7 +319,7 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
         <div className={`${classes.overflowHidden} ${fullscreen ? classes.fullscreen : classes.miniature} ${hidden ? classes.hidden : classes.visible}`}>
           <i className={`fas ${fullscreen ? 'fa-compress' : 'fa-expand'} fa-lg ${classes.fullscreenToggler}`} onClick={() => handleFullscreen()}></i>
           <i className={`fas ${hidden ? 'fa-chevron-up' : 'fa-chevron-down'} fa-lg ${classes.miniatureToggler}`} onClick={() => handleVisibility()}></i>
-          <ReportsMap geozones={geozones} route={route} showMarkers={reportConfiguration.showMarkers}/>
+          <ReportsMap geozones={geozones} route={route} showMarkers={reportConfiguration.showMarkers} selectedPosition={selectedPosition}/>
         </div>
       </Dialog>
     </div>
