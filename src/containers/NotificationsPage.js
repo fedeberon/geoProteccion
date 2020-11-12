@@ -202,7 +202,7 @@ export default function NotificationsPage() {
 
   useEffect(() => {
     getNotifications(userId);
-  })
+  }, [userId]);
 
   const getNotifications = async (userId) => {
     const response = await service.getNotificationsByUserId(userId);

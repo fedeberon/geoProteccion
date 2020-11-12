@@ -146,15 +146,33 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
   const [open, setOpen] = React.useState(false);
   const [ fullscreen, setFullscreen ] = useState(false);
   const [ hidden, setHidden ] = useState(false);
-  const theme = useTheme();
   const [openConfigModal, setOpenConfigModal] = useState(false);
   const [ reportConfiguration, setReportConfiguration ] = useState({});
   const [ route, setRoute ] = useState([]);
   const [ events, setEvents ] = useState([]);
-  const [ positions, setPositions] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [ positions, setPositions ] = useState([]);
+  const [ isLoading, setIsLoading ] = useState(false);
+  const [ onLoad, setOnLoad ] = useState(15);
+  const [ sliceFirstIndex, setSliceFirstIndex ] = useState(0);
 
-  useEffect(()=> {
+  const handleScroll = event => {
+    const {scrollTop, clientHeight, scrollHeight } = event.currentTarget;
+
+    if (scrollHeight - scrollTop === clientHeight) {
+      setOnLoad((prevValue) => prevValue + 15);
+    }
+    if (onLoad > 45 && onLoad - sliceFirstIndex > 30){
+      setSliceFirstIndex(onLoad - 30);
+    }
+    if (scrollHeight - 3.2 * clientHeight > scrollTop && scrollHeight - clientHeight > clientHeight ){
+      setOnLoad((prevValue) => prevValue - 15);
+      if(sliceFirstIndex > 0) {
+        setSliceFirstIndex((prevValue) => prevValue - 15);
+      }
+    }
+  };
+
+   useEffect(()=> {
       setOpen(showReports)
   },[showReports]
   )
@@ -200,6 +218,7 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
   const handleShowConfig = async () => {
     setRoute([]);
     setEvents([]);
+    setOnLoad(15);
     setIsLoading(true);
     // let {params, from, to, response, type, ids} = '';
     switch (reportConfiguration.report) {
@@ -231,8 +250,8 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
         setEvents(responseDev);
 
         let ids = '';
-        events.map((element) => {
-          ids = ids + 'id=' + element.positionId;
+        events.map((element, index) => {
+          ids = ids + 'id=' + index.positionId + '&';
         });
 
         let responseIds = await getPositionsReports(ids);
@@ -304,12 +323,14 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
           </Dialog>
         </div>
 
-        <div style={{display: `${route.length === 0 ? 'none' : 'block'}`}} className={classes.tableReports}>
+        {/*Table for ROUTE Reports*/}
+        <div onScroll={handleScroll} style={{display: `${route.length === 0 ? 'none' : 'block'}`}} className={classes.tableReports}>
           <TableContainer component={Paper}>
           <Table >
             <TableHead>
               <TableRow>
-                <TableCell>Nombre de dispositivo</TableCell>
+                <TableCell>Index</TableCell>
+                <TableCell>N° Dispos</TableCell>
                 <TableCell>Válida</TableCell>
                 <TableCell>Fecha y hora</TableCell>
                 <TableCell>Latitud</TableCell>
@@ -320,8 +341,9 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
               </TableRow>
             </TableHead>
             <TableBody>
-              {route.map((object) => (
+              {route.slice(sliceFirstIndex,onLoad).map((object, index) => (
                 <TableRow key={object.id} style={{padding: '3px', fontSize: '13px'}}>
+                  <TableCell>{object.id}</TableCell>
                   <TableCell>{object.deviceId}</TableCell>
                   <TableCell>{`${Boolean(object.valid)}`}</TableCell>
                   <TableCell>{object.serverTime}</TableCell>
@@ -337,6 +359,7 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
           </TableContainer>
         </div>
 
+        {/*Table for EVENTS Reports*/}
         <div style={{display: `${events.length === 0 ? 'none' : 'block'}`}} className={classes.tableReports}>
           <TableContainer component={Paper}>
             <Table >
