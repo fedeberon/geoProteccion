@@ -102,6 +102,14 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.background.paper,
     width: 'auto',
   },
+  row: {
+    padding: '3px',
+    fontSize: '13px',
+    '&:hover': {
+      background: '#ccc',
+      cursor: 'pointer',
+    }
+  },
 }));
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -149,6 +157,7 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
   const [openConfigModal, setOpenConfigModal] = useState(false);
   const [ reportConfiguration, setReportConfiguration ] = useState({});
   const [ route, setRoute ] = useState([]);
+  const [ selectedPosition, setSelectedPosition ] = useState({});
   const [ events, setEvents ] = useState([]);
   const [ positions, setPositions ] = useState([]);
   const [ isLoading, setIsLoading ] = useState(false);
@@ -172,7 +181,7 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
     }
   };
 
-   useEffect(()=> {
+  useEffect(()=> {
       setOpen(showReports)
   },[showReports]
   )
@@ -250,8 +259,8 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
         setEvents(responseDev);
 
         let ids = '';
-        events.map((element, index) => {
-          ids = ids + 'id=' + index.positionId + '&';
+        events.map((element) => {
+          ids = ids + 'id=' + element.positionId;
         });
 
         let responseIds = await getPositionsReports(ids);
@@ -270,6 +279,10 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
         break;
     }
     handleCloseConfigModal();
+  }
+
+  const handleSelectedPosition = (position) => {
+    setSelectedPosition(position);
   }
 
   return (
@@ -341,8 +354,8 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
               </TableRow>
             </TableHead>
             <TableBody>
-              {route.slice(sliceFirstIndex,onLoad).map((object, index) => (
-                <TableRow key={object.id} style={{padding: '3px', fontSize: '13px'}}>
+              {route.slice(sliceFirstIndex,onLoad).map((object) => (
+                <TableRow key={object.id} className={classes.row} onClick={() => handleSelectedPosition(object)}>
                   <TableCell>{object.id}</TableCell>
                   <TableCell>{object.deviceId}</TableCell>
                   <TableCell>{`${Boolean(object.valid)}`}</TableCell>
@@ -360,7 +373,7 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
         </div>
 
         {/*Table for EVENTS Reports*/}
-        <div style={{display: `${events.length === 0 ? 'none' : 'block'}`}} className={classes.tableReports}>
+        <div onScroll={handleScroll} style={{display: `${events.length === 0 ? 'none' : 'block'}`}} className={classes.tableReports}>
           <TableContainer component={Paper}>
             <Table >
               <TableHead>
@@ -373,7 +386,7 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
                 </TableRow>
               </TableHead>
               <TableBody>
-                {events.map((object) => (
+                {events.slice(sliceFirstIndex,onLoad).map((object) => (
                   <TableRow key={object.id} style={{padding: '3px', fontSize: '13px'}}>
                     <TableCell>{object.serverTime}</TableCell>
                     <TableCell>{object.deviceId}</TableCell>
@@ -390,7 +403,7 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
         <div className={`${classes.overflowHidden} ${fullscreen ? classes.fullscreen : classes.miniature} ${hidden ? classes.hidden : classes.visible}`}>
           <i className={`fas ${fullscreen ? 'fa-compress' : 'fa-expand'} fa-lg ${classes.fullscreenToggler}`} onClick={() => handleFullscreen()}></i>
           <i className={`fas ${hidden ? 'fa-chevron-up' : 'fa-chevron-down'} fa-lg ${classes.miniatureToggler}`} onClick={() => handleVisibility()}></i>
-          <ReportsMap geozones={geozones} route={route} showMarkers={reportConfiguration.showMarkers}/>
+          <ReportsMap geozones={geozones} route={route} showMarkers={reportConfiguration.showMarkers} selectedPosition={selectedPosition}/>
         </div>
       </Dialog>
     </div>
