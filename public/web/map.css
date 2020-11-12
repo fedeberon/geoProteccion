@@ -381,11 +381,13 @@ button {
   .MuiDialog-paperScrollPaper {
     display: inline-table !important;
   }
+  .MuiDialog-paper {
+    overflow-y: hidden;
+  }
 
   .MuiTableCell-root {
-    padding: 2px 5px !important;
+    padding: 0px 5px !important;
     line-height: 1 !important;
-    text-align: center !important;
   }
   .MuiToolbar-regular {
     min-height: 35px !important;
