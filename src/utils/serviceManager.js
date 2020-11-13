@@ -47,6 +47,23 @@ const getPositionsReports = (ids) => {
     .then(response => response.json());
 }
 
+const getTripsReports = (from, to, params, type) => {
+  return fetch(`api/reports/trips?` + `${params}` + `${type}` + `from=${from}&to=${to}`, { method: 'GET', headers: {'Accept': 'application/json'} })
+    .catch(function (error) { console.log('setTrips error: ', error)})
+    .then(response => response.json());
+}
+
+const getStopsReports = (from, to, params) => {
+  return fetch(`api/reports/stops?` + `${params}` + `from=${from}&to=${to}`, { method: 'GET', headers: {'Accept': 'application/json'} })
+    .catch(function (error) { console.log('setStops error: ', error)})
+    .then(response => response.json());
+}
+
+const getSummaryReports = (from, to, params) => {
+  return fetch(`api/reports/summary?` + `${params}` + `from=${from}&to=${to}`, { method: 'GET', headers: {'Accept': 'application/json'} })
+    .catch(function (error) { console.log('setSummary error: ', error)})
+    .then(response => response.json());
+}
 
 export {
   setSession,
@@ -57,4 +74,7 @@ export {
   getRoutesReports,
   getEventsReports,
   getPositionsReports,
+  getTripsReports,
+  getStopsReports,
+  getSummaryReports,
 };
