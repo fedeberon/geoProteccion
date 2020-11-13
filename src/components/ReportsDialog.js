@@ -229,6 +229,7 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
   const handleShowConfig = async () => {
     setRoute([]);
     setEvents([]);
+    setSliceFirstIndex(0);
     setOnLoad(15);
     setIsLoading(true);
     // let {params, from, to, response, type, ids} = '';
