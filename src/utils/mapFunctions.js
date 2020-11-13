@@ -1,9 +1,9 @@
 import t from '../common/localization';
 import circleToPolygon from 'circle-to-polygon';
 
-const typeRegEx = /(\w*)[ ]?(?=[(])/;
+const typeRegEx = /(\w*)[ ]?[(]/;
 const circlePositionRegEx = /[(](.*) (.*)[,]/;
-const radiusRegEx = /(?<=[,][ ]).*(?=[)])/;
+const radiusRegEx = /[,][ ](.*)[)]/;
 const polygonRegEx = /[(]{2}(.*)[)]{2}/;
 const polylineRegEx = /[(]{1}(.*)[)]{1}/;
 const typesArray = ['circle', 'polygon', 'linestring'];
@@ -255,7 +255,7 @@ const getCircleAttributes = (device, attributes) => {
     let attributesCopy = {...attributes};
     attributesCopy.lat = parseFloat(device.area.match(circlePositionRegEx)[1]);
     attributesCopy.lng = parseFloat(device.area.match(circlePositionRegEx)[2]);
-    attributesCopy.radius = parseFloat(device.area.match(radiusRegEx)[0]);
+    attributesCopy.radius = parseFloat(device.area.match(radiusRegEx)[1]);
     attributesCopy.color = device.attributes.color ? device.attributes.color : getRandomHex();
     return attributesCopy;
 }
