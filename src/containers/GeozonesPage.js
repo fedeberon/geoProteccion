@@ -279,7 +279,7 @@ export default function GeozonesPages() {
   const [area, setArea] = useState('');
   const [openModalMap, setOpenModalMap] = useState(false);
   const [geozoneType, setGeozoneType] = useState('0');
-  const [color, setColor] = useState('');
+  const [color, setColor] = useState('#000000');
   const [openPer, setOpenPer] = React.useState(true);
 
   const [geozone, setGeozone] = useState({ id: null, name: '', description: '', area: '', attributes: {} })
@@ -646,6 +646,7 @@ export default function GeozonesPages() {
                             value={color}
                             style={{backgroundColor: color + '88'}}
                             label="Color"
+                            defaultValue={'#000000'}
                           >
                             <MenuItem>
                               <CirclePicker
@@ -768,6 +769,7 @@ export default function GeozonesPages() {
                             value={color}
                             style={{backgroundColor: color + '88'}}
                             label="Color"
+                            defaultValue={'#000000'}
                           >
                             <MenuItem>
                               <CirclePicker

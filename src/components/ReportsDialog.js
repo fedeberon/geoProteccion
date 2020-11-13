@@ -356,7 +356,7 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
               </TableRow>
             </TableHead>
             <TableBody>
-              {route.slice(sliceFirstIndex,onLoad).map((object) => (
+              {route.slice(sliceFirstIndex, onLoad < route.length ? onLoad : route.length).map((object) => (
                 <TableRow key={object.id} className={classes.row} onClick={() => handleSelectedPosition(object)}>
                   <TableCell>{object.id}</TableCell>
                   <TableCell>{object.deviceId}</TableCell>
@@ -388,7 +388,7 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
                 </TableRow>
               </TableHead>
               <TableBody>
-                {events.slice(sliceFirstIndex,onLoad).map((object) => (
+                {events.slice(sliceFirstIndex, onLoad < events.length ? onLoad : events.length).map((object) => (
                   <TableRow key={object.id} style={{padding: '3px', fontSize: '13px'}}>
                     <TableCell>{object.serverTime}</TableCell>
                     <TableCell>{object.deviceId}</TableCell>

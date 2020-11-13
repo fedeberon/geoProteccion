@@ -3,6 +3,10 @@ html, body, #root {
   overflow: hidden;
 }
 
+.makeStyles-tableReports-39::-webkit-scrollbar {
+  display: none;
+}
+
 li {
   list-style: none;
 }

@@ -62,7 +62,7 @@ export default function ReportsConfig({ handleReportsConfig }) {
   const [ fromDateTime, setFromDateTime ] = useState('');
   const [ toDateTime, setToDateTime ] = useState('');
   const [ availableTypes, setAvailableTypes ] = useState([]);
-  const [ reportType, setReportType ] = useState('');
+  const [ reportType, setReportType ] = useState('route');
   const [ showMarkers, setShowMarkers ] = useState(false);
 
   useEffect(() => {
@@ -140,7 +140,6 @@ export default function ReportsConfig({ handleReportsConfig }) {
                   id: 'age-native-required',
                 }}
               >
-                <option value=''/>
                 <option value='route'>Ruta</option>
                 <option value='events'>Eventos</option>
                 <option value='trips'>Viajes</option>
