@@ -28,6 +28,7 @@ import Paper from "@material-ui/core/Paper";
 import { getRoutesReports, getEventsReports, getPositionsReports } from '../utils/serviceManager';
 import Backdrop from '@material-ui/core/Backdrop';
 import CircularProgress from "@material-ui/core/CircularProgress";
+import {useSelector} from "react-redux";
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -151,6 +152,7 @@ function a11yProps(index) {
 
 export default function ReportsDialog({ geozones, showReports, showReportsDialog }) {
   const classes = useStyles();
+  const isViewportDesktop = useSelector(state => state.session.deviceAttributes.isViewportDesktop);
   const [open, setOpen] = React.useState(false);
   const [ fullscreen, setFullscreen ] = useState(false);
   const [ hidden, setHidden ] = useState(false);
@@ -166,14 +168,14 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
 
   const handleScroll = event => {
     const {scrollTop, clientHeight, scrollHeight } = event.currentTarget;
-
+  
     if (scrollHeight - scrollTop === clientHeight) {
       setOnLoad((prevValue) => prevValue + 15);
     }
     if (onLoad > 45 && onLoad - sliceFirstIndex > 30){
       setSliceFirstIndex(onLoad - 30);
     }
-    if (scrollHeight - 3.2 * clientHeight > scrollTop && scrollHeight - clientHeight > clientHeight ){
+    if (scrollHeight - `${isViewportDesktop ? 3.2 : 2.1}` * clientHeight > scrollTop && scrollHeight - clientHeight > clientHeight ){
       setOnLoad((prevValue) => prevValue - 15);
       if(sliceFirstIndex > 0) {
         setSliceFirstIndex((prevValue) => prevValue - 15);
