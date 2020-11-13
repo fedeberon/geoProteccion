@@ -2,10 +2,10 @@ import t from '../common/localization';
 import circleToPolygon from 'circle-to-polygon';
 
 const typeRegEx = /(\w*)[ ]?(?=[(])/;
-const circlePositionRegEx = /(?<=[(])(.*) (.*)(?=[,])/;
+const circlePositionRegEx = /[(](.*) (.*)[,]/;
 const radiusRegEx = /(?<=[,][ ]).*(?=[)])/;
-const polygonRegEx = /(?<=[(]{2}).*(?=[)]{2})/;
-const polylineRegEx = /(?<=[(]{1}).*(?=[)]{1})/;
+const polygonRegEx = /[(]{2}(.*)[)]{2}/;
+const polylineRegEx = /[(]{1}(.*)[)]{1}/;
 const typesArray = ['circle', 'polygon', 'linestring'];
 
 const getGeozoneArea = (type, coordinates, radius) => {
@@ -262,7 +262,7 @@ const getCircleAttributes = (device, attributes) => {
 
 const getPolygonAttributes = (device, attributes) => {
     let attributesCopy = {...attributes};
-    const coordinates = device.area.match(polygonRegEx)[0].split(', ');
+    const coordinates = device.area.match(polygonRegEx)[1].split(', ');
     coordinates.map((device) => {
         const latLng = device.split(' ');
         attributesCopy.coordinates.push(latLng.reverse());
@@ -273,7 +273,7 @@ const getPolygonAttributes = (device, attributes) => {
 
 const getPolylineAttributes = (device, attributes) => {
     let attributesCopy = {...attributes};
-    const polylineCoordinates = device.area.match(polylineRegEx)[0].split(', ');
+    const polylineCoordinates = device.area.match(polylineRegEx)[1].split(', ');
     polylineCoordinates.map((device) => {
       const latLng = device.split(' ');
       attributesCopy.coordinates.push(latLng.reverse());

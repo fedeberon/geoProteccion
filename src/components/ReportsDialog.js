@@ -28,6 +28,7 @@ import Paper from "@material-ui/core/Paper";
 import { getRoutesReports, getEventsReports, getPositionsReports } from '../utils/serviceManager';
 import Backdrop from '@material-ui/core/Backdrop';
 import CircularProgress from "@material-ui/core/CircularProgress";
+import {useSelector} from "react-redux";
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -151,17 +152,36 @@ function a11yProps(index) {
 
 export default function ReportsDialog({ geozones, showReports, showReportsDialog }) {
   const classes = useStyles();
+  const isViewportDesktop = useSelector(state => state.session.deviceAttributes.isViewportDesktop);
   const [open, setOpen] = React.useState(false);
   const [ fullscreen, setFullscreen ] = useState(false);
   const [ hidden, setHidden ] = useState(false);
-  const theme = useTheme();
   const [openConfigModal, setOpenConfigModal] = useState(false);
   const [ reportConfiguration, setReportConfiguration ] = useState({});
   const [ route, setRoute ] = useState([]);
   const [ selectedPosition, setSelectedPosition ] = useState({});
   const [ events, setEvents ] = useState([]);
-  const [ positions, setPositions] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [ positions, setPositions ] = useState([]);
+  const [ isLoading, setIsLoading ] = useState(false);
+  const [ onLoad, setOnLoad ] = useState(15);
+  const [ sliceFirstIndex, setSliceFirstIndex ] = useState(0);
+
+  const handleScroll = event => {
+    const {scrollTop, clientHeight, scrollHeight } = event.currentTarget;
+
+    if (scrollHeight - scrollTop === clientHeight) {
+      setOnLoad((prevValue) => prevValue + 15);
+    }
+    if (onLoad > 45 && onLoad - sliceFirstIndex > 30){
+      setSliceFirstIndex(onLoad - 30);
+    }
+    if (scrollHeight - `${isViewportDesktop ? 3.2 : 2.1}` * clientHeight > scrollTop && scrollHeight - clientHeight > clientHeight ){
+      setOnLoad((prevValue) => prevValue - 15);
+      if(sliceFirstIndex > 0) {
+        setSliceFirstIndex((prevValue) => prevValue - 15);
+      }
+    }
+  };
 
   useEffect(()=> {
       setOpen(showReports)
@@ -209,6 +229,8 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
   const handleShowConfig = async () => {
     setRoute([]);
     setEvents([]);
+    setSliceFirstIndex(0);
+    setOnLoad(15);
     setIsLoading(true);
     // let {params, from, to, response, type, ids} = '';
     switch (reportConfiguration.report) {
@@ -317,12 +339,14 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
           </Dialog>
         </div>
 
-        <div style={{display: `${route.length === 0 ? 'none' : 'block'}`}} className={classes.tableReports}>
+        {/*Table for ROUTE Reports*/}
+        <div onScroll={handleScroll} style={{display: `${route.length === 0 ? 'none' : 'block'}`}} className={classes.tableReports}>
           <TableContainer component={Paper}>
           <Table >
             <TableHead>
               <TableRow>
-                <TableCell>Nombre de dispositivo</TableCell>
+                <TableCell>Index</TableCell>
+                <TableCell>N° Dispos</TableCell>
                 <TableCell>Válida</TableCell>
                 <TableCell>Fecha y hora</TableCell>
                 <TableCell>Latitud</TableCell>
@@ -333,8 +357,9 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
               </TableRow>
             </TableHead>
             <TableBody>
-              {route.map((object) => (
+              {route.slice(sliceFirstIndex < route.length - 30 ? sliceFirstIndex : route.length - 30, onLoad < route.length ? onLoad : route.length).map((object) => (
                 <TableRow key={object.id} className={classes.row} onClick={() => handleSelectedPosition(object)}>
+                  <TableCell>{object.id}</TableCell>
                   <TableCell>{object.deviceId}</TableCell>
                   <TableCell>{`${Boolean(object.valid)}`}</TableCell>
                   <TableCell>{object.serverTime}</TableCell>
@@ -350,7 +375,8 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
           </TableContainer>
         </div>
 
-        <div style={{display: `${events.length === 0 ? 'none' : 'block'}`}} className={classes.tableReports}>
+        {/*Table for EVENTS Reports*/}
+        <div onScroll={handleScroll} style={{display: `${events.length === 0 ? 'none' : 'block'}`}} className={classes.tableReports}>
           <TableContainer component={Paper}>
             <Table >
               <TableHead>
@@ -363,7 +389,7 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
                 </TableRow>
               </TableHead>
               <TableBody>
-                {events.map((object) => (
+                {events.slice(sliceFirstIndex < route.length - 30 ? sliceFirstIndex : route.length - 30, onLoad < route.length ? onLoad : route.length).map((object) => (
                   <TableRow key={object.id} style={{padding: '3px', fontSize: '13px'}}>
                     <TableCell>{object.serverTime}</TableCell>
                     <TableCell>{object.deviceId}</TableCell>

@@ -305,13 +305,19 @@ const ReportsMap = ({ geozones, route, showMarkers, selectedPosition }) => {
   }, [route]);
 
   useEffect(() => {
-    console.log(selectedPosition);
     if (selectedPosition.id) {
       mapManager.map.easeTo({
         center: [selectedPosition.longitude, selectedPosition.latitude]
       });
 
       if(!showMarkers) {
+        if(mapManager.map.getLayer('markers')) {
+          mapManager.map.removeLayer(`markers`);
+        }
+        if(mapManager.map.getSource('markers')) {
+          mapManager.map.removeSource(`markers`);
+        }
+
         let markersOptions = [];
         markersOptions.push({ attributes: { lng: selectedPosition.longitude, lat: selectedPosition.latitude },  properties: { course: selectedPosition.course } });
         const markers = createMarkers(markersOptions);
@@ -322,14 +328,6 @@ const ReportsMap = ({ geozones, route, showMarkers, selectedPosition }) => {
         });
 
         mapManager.addMarkerLayer(`markers`, `markers`, 'course');
-      }
-    }
-    return () => {
-      if(mapManager.map.getLayer('markers')) {
-        mapManager.map.removeLayer(`markers`);
-      }
-      if(mapManager.map.getSource('markers')) {
-        mapManager.map.removeSource(`markers`);
       }
     }
   }, [selectedPosition]);
