@@ -168,7 +168,7 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
 
   const handleScroll = event => {
     const {scrollTop, clientHeight, scrollHeight } = event.currentTarget;
-  
+
     if (scrollHeight - scrollTop === clientHeight) {
       setOnLoad((prevValue) => prevValue + 15);
     }
