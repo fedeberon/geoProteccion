@@ -63,7 +63,6 @@ const calculateFurthestPoints = (coordinates) => {
     coordinates.map((e) => {
         let lng = parseFloat(e[0]);
         let lat = parseFloat(e[1]);
-        console.log({lng, lat});
 
         west = lng > west ? lng : west;
         east = lng < east ? lng : east;
