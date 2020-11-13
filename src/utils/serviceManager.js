@@ -30,13 +30,13 @@ const getAvailableTypes = () => {
 }
 
 const getRoutesReports = (from, to, params = '') => {
-  return fetch(`api/reports/route?` + `${params}from=${from}&to=${to}`, { method: 'GET', headers: {'Content-Type': 'application/json', 'Accept': 'application/json'} })
+  return fetch(`api/reports/route?` + `${params}from=${from}&to=${to}`, { method: 'GET', headers: {'Accept': 'application/json'} })
     .catch(function (error) { console.log('setRoutesReports error: ', error)})
     .then(response => response.json());
 }
 
 const getEventsReports = (fromDev, toDev, typeDev, paramsDev = '') => {
-  return fetch(`api/reports/events?` + `${paramsDev}` + `${typeDev}` + `from=${fromDev}&to=${toDev}`, { method: 'GET', headers: {'Content-Type': 'application/json', 'Accept': 'application/json'} })
+  return fetch(`api/reports/events?` + `${paramsDev}` + `${typeDev}` + `from=${fromDev}&to=${toDev}`, { method: 'GET', headers: {'Accept': 'application/json'} })
     .catch(function (error) { console.log('setEventsReports error: ', error)})
     .then(response => response.json());
 }

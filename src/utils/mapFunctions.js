@@ -1,11 +1,11 @@
 import t from '../common/localization';
 import circleToPolygon from 'circle-to-polygon';
 
-const typeRegEx = /(\w*)[ ]?(?=[(])/;
-const circlePositionRegEx = /(?<=[(])(.*) (.*)(?=[,])/;
-const radiusRegEx = /(?<=[,][ ]).*(?=[)])/;
-const polygonRegEx = /(?<=[(]{2}).*(?=[)]{2})/;
-const polylineRegEx = /(?<=[(]{1}).*(?=[)]{1})/;
+const typeRegEx = /(\w*)[ ]?[(]/;
+const circlePositionRegEx = /[(](.*) (.*)[,]/;
+const radiusRegEx = /[,][ ](.*)[)]/;
+const polygonRegEx = /[(]{2}(.*)[)]{2}/;
+const polylineRegEx = /[(]{1}(.*)[)]{1}/;
 const typesArray = ['circle', 'polygon', 'linestring'];
 
 const getGeozoneArea = (type, coordinates, radius) => {
@@ -63,7 +63,6 @@ const calculateFurthestPoints = (coordinates) => {
     coordinates.map((e) => {
         let lng = parseFloat(e[0]);
         let lat = parseFloat(e[1]);
-        console.log({lng, lat});
 
         west = lng > west ? lng : west;
         east = lng < east ? lng : east;
@@ -255,14 +254,14 @@ const getCircleAttributes = (device, attributes) => {
     let attributesCopy = {...attributes};
     attributesCopy.lat = parseFloat(device.area.match(circlePositionRegEx)[1]);
     attributesCopy.lng = parseFloat(device.area.match(circlePositionRegEx)[2]);
-    attributesCopy.radius = parseFloat(device.area.match(radiusRegEx)[0]);
+    attributesCopy.radius = parseFloat(device.area.match(radiusRegEx)[1]);
     attributesCopy.color = device.attributes.color ? device.attributes.color : getRandomHex();
     return attributesCopy;
 }
 
 const getPolygonAttributes = (device, attributes) => {
     let attributesCopy = {...attributes};
-    const coordinates = device.area.match(polygonRegEx)[0].split(', ');
+    const coordinates = device.area.match(polygonRegEx)[1].split(', ');
     coordinates.map((device) => {
         const latLng = device.split(' ');
         attributesCopy.coordinates.push(latLng.reverse());
@@ -273,7 +272,7 @@ const getPolygonAttributes = (device, attributes) => {
 
 const getPolylineAttributes = (device, attributes) => {
     let attributesCopy = {...attributes};
-    const polylineCoordinates = device.area.match(polylineRegEx)[0].split(', ');
+    const polylineCoordinates = device.area.match(polylineRegEx)[1].split(', ');
     polylineCoordinates.map((device) => {
       const latLng = device.split(' ');
       attributesCopy.coordinates.push(latLng.reverse());
