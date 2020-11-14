@@ -316,7 +316,6 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
           response = response.filter((pos) => pos.id >= startPositionId && pos.id <= endPositionId);
           tripsRouteArray.push(response);
         }
-        console.log(tripsRouteArray);
 
         setTripsRoutes(tripsRouteArray);
         setIsLoading(false)
@@ -466,7 +465,7 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
               </TableHead>
               <TableBody>
                 {events.slice(sliceFirstIndex < events.length - 30 ? sliceFirstIndex : (events.length - 30) * (events.length > 30), sliceLastIndex < events.length ? sliceLastIndex : events.length).map((object) => (
-                  <TableRow key={object.id} className={classes.row}  onClick={() => handleSelectedPosition(positions.find((element) => element.id === object.positionId))}>
+                  <TableRow key={object.id} className={classes.row} onClick={() => handleSelectedPosition(positions.find((element) => element.id === object.positionId))}>
                     <TableCell>{object.serverTime}</TableCell>
                     <TableCell>{object.deviceId}</TableCell>
                     <TableCell>{object.type}</TableCell>
@@ -541,7 +540,7 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
               </TableHead>
               <TableBody>
                 {stops.slice(sliceFirstIndex < stops.length - 30 ? sliceFirstIndex : (stops.length - 30) * (stops.length > 30), sliceLastIndex < stops.length ? sliceLastIndex : stops.length).map((object) => (
-                  <TableRow key={object.id} style={{padding: '3px', fontSize: '13px'}}>
+                  <TableRow key={object.id} className={classes.row} onClick={() => handleSelectedPosition(positions.find((element) => element.id === object.positionId))}>
                     <TableCell>{object.deviceName}</TableCell>
                     <TableCell>{object.startTime}</TableCell>
                     <TableCell>{object.endTime}</TableCell>
