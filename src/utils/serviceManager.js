@@ -41,8 +41,14 @@ const getEventsReports = (fromDev, toDev, typeDev, paramsDev = '') => {
     .then(response => response.json());
 }
 
+const getPositionsByDeviceId = (id, from, to) => {
+  return fetch(`api/positions?` + `deviceId=${id}&from=${from}&to=${to}`, { method: 'GET', headers: { 'Accept': 'application/json'} })
+    .catch(function (error) { console.log('setPositions error: ', error)})
+    .then(response => response.json());
+}
+
 const getPositionsReports = (ids) => {
-  return fetch(`api/positions?` + `${ids}`, { method: 'GET', headers: {'Content-Type': 'application/json', 'Accept': 'application/json'} })
+  return fetch(`api/positions?` + `${ids}`, { method: 'GET', headers: { 'Accept': 'application/json'} })
     .catch(function (error) { console.log('setPositions error: ', error)})
     .then(response => response.json());
 }
@@ -73,6 +79,7 @@ export {
   getAvailableTypes,
   getRoutesReports,
   getEventsReports,
+  getPositionsByDeviceId,
   getPositionsReports,
   getTripsReports,
   getStopsReports,

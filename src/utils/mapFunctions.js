@@ -301,4 +301,5 @@ export {
     getPolylineAttributes,
     getGeozoneArea,
     calculateFurthestPoints,
+    getRandomHex,
 }

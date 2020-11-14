@@ -1,13 +1,25 @@
 import React, {useRef, useLayoutEffect, useEffect, useState} from 'react';
 import {useSelector} from 'react-redux';
 import mapManager from '../utils/mapManager';
-import { calculatePolygonCenter, createCircle, createFeature, createLabels, createMarkers, createPolygon, createPolyline, getCircleAttributes, getGeozoneType, getPolygonAttributes, getPolylineAttributes } from '../utils/mapFunctions';
-import { getRoute } from '../utils/variables';
+import {
+  calculatePolygonCenter,
+  createCircle,  
+  createFeature,
+  createLabels,
+  createMarkers,
+  createPolygon,
+  createPolyline,
+  getCircleAttributes,
+  getGeozoneType,
+  getPolygonAttributes,
+  getPolylineAttributes,
+  getRandomHex
+} from '../utils/mapFunctions';
 
-const ReportsMap = ({ geozones, route, showMarkers, selectedPosition }) => {
+const ReportsMap = ({ geozones, route, events, trips, showMarkers, selectedPosition }) => {
   const containerEl = useRef(null);
 
-  const [mapReady, setMapReady] = useState(false);
+  const [mapReady, setMapReady] = useState(false); 
 
   const mapCenter = useSelector(state => {
     if (state.devices.selectedId) {
@@ -16,7 +28,7 @@ const ReportsMap = ({ geozones, route, showMarkers, selectedPosition }) => {
         return [position.longitude, position.latitude];
       }
     }
-    return null;
+    return null;  
   });
 
   const isViewportDesktop = useSelector(state => state.session.deviceAttributes.isViewportDesktop);
@@ -305,7 +317,79 @@ const ReportsMap = ({ geozones, route, showMarkers, selectedPosition }) => {
   }, [route]);
 
   useEffect(() => {
-    if (selectedPosition.id) {
+    if (events.length > 0) {
+      const positions = events;
+      let markersOptions = [];
+      let markers = {};
+
+      positions.map((position) => {
+        if (showMarkers) {
+          markersOptions.push({ attributes: { lng: position.longitude, lat: position.latitude },  properties: { course: position.course } });
+        }
+      });
+
+      if (showMarkers) {
+        markers = createMarkers(markersOptions);
+      }
+      
+      if (showMarkers) {
+        mapManager.map.addSource(`markers`, {
+          'type': 'geojson',
+          'data': markers,
+        });
+      }
+
+      if (showMarkers) {
+        mapManager.addMarkerLayer(`markers`, `markers`, 'course');
+      }
+    }
+
+    return () => {
+      if(mapManager.map.getLayer('markers')) {
+        mapManager.map.removeLayer(`markers`);
+      }
+      if(mapManager.map.getSource('markers')) {
+        mapManager.map.removeSource(`markers`);
+      }
+    }
+  }, [events]);
+
+  useEffect(() => {
+    if (trips.length > 0) {
+      trips.map((trip, index) => {
+        const positions = trip;
+        let coordinates = [];
+        let color = getRandomHex();
+  
+        positions.map((position) => {
+          coordinates.push([position.longitude, position.latitude]);
+        });
+  
+        const polyline = createPolyline({ attributes: { coordinates }, properties: {}});
+  
+        mapManager.map.addSource(`route-${index}`, {
+          'type': 'geojson',
+          'data': polyline,
+        });
+  
+        mapManager.addLineLayer(`route-${index}`, `route-${index}`, color);
+      });
+    }
+
+    return () => {
+      trips.map((trip, index) => {
+        if(mapManager.map.getLayer(`route-${index}`)) {
+          mapManager.map.removeLayer(`route-${index}`);
+        }
+        if(mapManager.map.getSource(`route-${index}`)) {
+          mapManager.map.removeSource(`route-${index}`);
+        }
+      });
+    }
+  }, [trips]);
+
+  useEffect(() => {
+    if (selectedPosition && selectedPosition.id) {
       mapManager.map.easeTo({
         center: [selectedPosition.longitude, selectedPosition.latitude]
       });

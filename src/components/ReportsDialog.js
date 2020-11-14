@@ -32,6 +32,7 @@ import {
   getTripsReports,
   getStopsReports,
   getSummaryReports,
+  getPositionsByDeviceId,
 } from '../utils/serviceManager';
 import Backdrop from '@material-ui/core/Backdrop';
 import CircularProgress from "@material-ui/core/CircularProgress";
@@ -169,6 +170,7 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
   const [ selectedPosition, setSelectedPosition ] = useState({});
   const [ events, setEvents ] = useState([]);
   const [ trips, setTrips ] = useState([]);
+  const [ tripsRoutes, setTripsRoutes ] = useState([]);
   const [ stops, setStops ] = useState([]);
   const [ summary, setSummary ] = useState([]);
   const [ positions, setPositions ] = useState([]);
@@ -240,6 +242,7 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
     setRoute([]);
     setEvents([]);
     setTrips([]);
+    setTripsRoutes([]);
     setStops([]);
     setSummary([]);
     setSliceFirstIndex(0);
@@ -299,6 +302,23 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
 
         response = await getTripsReports(from, to, type, params);
         setTrips(response);
+
+        let tripsArray = [...response];
+        let tripsRouteArray = [];
+        
+        for (let i = 0; i < tripsArray.length; i++) {
+          let deviceId = tripsArray[i].deviceId;
+
+          let startPositionId = tripsArray[i].startPositionId;
+          let endPositionId = tripsArray[i].endPositionId;
+
+          response = await getPositionsByDeviceId(deviceId, from, to);
+          response = response.filter((pos) => pos.id >= startPositionId && pos.id <= endPositionId);
+          tripsRouteArray.push(response);
+        }
+        console.log(tripsRouteArray);
+
+        setTripsRoutes(tripsRouteArray);
         setIsLoading(false)
         break;
       case 'stops':
@@ -446,7 +466,7 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
               </TableHead>
               <TableBody>
                 {events.slice(sliceFirstIndex < events.length - 30 ? sliceFirstIndex : (events.length - 30) * (events.length > 30), sliceLastIndex < events.length ? sliceLastIndex : events.length).map((object) => (
-                  <TableRow key={object.id} style={{padding: '3px', fontSize: '13px'}}>
+                  <TableRow key={object.id} className={classes.row}  onClick={() => handleSelectedPosition(positions.find((element) => element.id === object.positionId))}>
                     <TableCell>{object.serverTime}</TableCell>
                     <TableCell>{object.deviceId}</TableCell>
                     <TableCell>{object.type}</TableCell>
@@ -574,7 +594,7 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
         <div className={`${classes.overflowHidden} ${fullscreen ? classes.fullscreen : classes.miniature} ${hidden ? classes.hidden : classes.visible}`}>
           <i className={`fas ${fullscreen ? 'fa-compress' : 'fa-expand'} fa-lg ${classes.fullscreenToggler}`} onClick={() => handleFullscreen()}></i>
           <i className={`fas ${hidden ? 'fa-chevron-up' : 'fa-chevron-down'} fa-lg ${classes.miniatureToggler}`} onClick={() => handleVisibility()}></i>
-          <ReportsMap geozones={geozones} route={route} events={positions} showMarkers={reportConfiguration.showMarkers} selectedPosition={selectedPosition}/>
+          <ReportsMap geozones={geozones} route={route} events={positions} trips={tripsRoutes} showMarkers={reportConfiguration.showMarkers} selectedPosition={selectedPosition}/>
         </div>
       </Dialog>
     </div>
