@@ -37,6 +37,7 @@ import {
 import Backdrop from '@material-ui/core/Backdrop';
 import CircularProgress from "@material-ui/core/CircularProgress";
 import {useSelector} from "react-redux";
+import { downloadCsv } from "../utils/functions";
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -363,6 +364,47 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
     setSelectedPosition(position);
   }
 
+  const handleDownloadExcel = () => {
+    let columns = [];
+    let data = []
+
+    switch (reportConfiguration.report) {
+      case 'route':
+        columns = ['Id', 'N dispositivo', 'Valida', 'Fecha y hora', 'Latitud', 'Longitud', 'Altitud', 'Velocidad'];
+        route.map((e) => {
+          data = [...data, e.id, e.deviceId, e.valid, e.serverTime, e.latitude, e.longitude, e.altitude, e.speed];
+        });
+        break;
+      case 'events':
+        columns = ['Id', 'Fecha y hora', 'Nombre de dispositivo', 'Tipo', 'Geocerca', 'Mantenimiento'];
+        events.map((e) => {
+          data = [...data, e.id, e.serverTime, e.deviceId, e.type, e.geofenceId, e.maintenanceId];
+        });
+        break;
+      case 'trips':
+        columns = ['Id', 'Nombre de dispositivo', 'Hora de Inicio', 'Hora de Fin', 'Odómetro inicial', 'Dirección de inicio', 'Odómetro final', 'Dirección final', 'Distancia', 'Velocidad promedio', 'Velocidad máxima', 'Duración', 'Combustible utilizado', 'Conductor'];
+        trips.map((e) => {
+          data = [...data, e.id, e.deviceName, e.startTime, e.endTime, e.startOdometer, e.startAddress, e.endOdometer, e.endAddress, e.distance, e.averageSpeed, e.maxSpeed, e.duration, e.spentFuel, e.driverName ? e.driverName : 'null'];
+        });
+        break;
+      case 'stops':
+        columns = ['Id', 'Nombre de dispositivo ', 'Hora de inicio', 'Hora de fin', 'Odómetro', 'Dirección', 'Duración', 'Horas motor', 'Combustible utilizado'];
+        stops.map((e) => {
+          data = [...data, e.id, e.deviceName, e.startTime, e.endTime, e.startOdometer, e.Address, e.duration, e.engineHours, e.spentFuel];
+        });
+        break;
+      case 'summary':
+        columns = ['Id', 'Nombre de dispositivo', 'Distancia', 'Odómetro inicial', 'Odómetro final', 'Velocidad promedio', 'Velocidad máxima', 'Horas motor', 'Combustible utilizado'];
+        summary.map((e) => {
+          data = [...data, e.id, e.deviceName, e.startTime, e.endTime, e.startOdometer, e.Address, e.duration, e.engineHours, e.spentFuel];
+        });
+        break;
+      default:
+        break;
+    }
+    downloadCsv(columns, data, reportConfiguration.report);
+  }
+
   return (
     <div>
       <Backdrop className={classes.backdrop} open={isLoading}>
@@ -384,6 +426,9 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
         <div className={classes.positionButton}>
           <Button  variant="outlined" color="primary" onClick={handleOpenConfigModal}>
             Configuracion de reporte
+          </Button>
+          <Button  variant="outlined" color="primary" disabled={reportConfiguration.report === 'graphic' || !reportConfiguration.report} onClick={handleDownloadExcel}>
+            Descargar excel
           </Button>
           <Dialog
             open={openConfigModal}
