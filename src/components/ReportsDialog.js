@@ -433,7 +433,7 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
         {/*Modal Configuration*/}
         <div className={classes.positionButton}>
           <Button  variant="outlined" color="primary" onClick={handleOpenConfigModal}>
-            Configuracion de reporte
+            {t('reportConfigure')}
           </Button>
           <Dialog
             open={openConfigModal}
@@ -459,30 +459,30 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
             </DialogContent>
             <DialogActions>
               <Button onClick={handleResetConfig} color="primary">
-                Reset
+                {t('sharedCancel')}
               </Button>
               <Button onClick={handleShowConfig} color="primary" autoFocus>
-                Show
+                {t('reportShow')}
               </Button>
             </DialogActions>
           </Dialog>
         </div>
 
         {/*Table for ROUTE Reports*/}
-        <div onScroll={handleScroll} style={{display: `${route.length === 0 ? 'none' : 'block'}`}} className={classes.tableReports}>
+        <div onScroll={handleScroll} style={{display: `${route.length === 0 ? 'none' : 'block'}`}} className={`scrollbar ${classes.tableReports}`}>
           <TableContainer component={Paper}>
           <Table >
             <TableHead>
               <TableRow>
-                <TableCell>Index</TableCell>
-                <TableCell>N° Dispos</TableCell>
-                <TableCell>Válida</TableCell>
-                <TableCell>Fecha y hora</TableCell>
-                <TableCell>Latitud</TableCell>
-                <TableCell>Longitud</TableCell>
-                <TableCell>Altitud</TableCell>
-                <TableCell>Velocidad</TableCell>
-                <TableCell>Dirección</TableCell>
+                <TableCell>Index</TableCell> {/*Eliminar*/}
+                <TableCell>{t('reportDeviceName')}</TableCell>
+                <TableCell>{t('positionValid')}</TableCell>
+                <TableCell>{t('positionFixTime')}</TableCell>
+                <TableCell>{t('positionLatitude')}</TableCell>
+                <TableCell>{t('positionLongitude')}</TableCell>
+                <TableCell>{t('positionAltitude')}</TableCell>
+                <TableCell>{t('positionSpeed')}</TableCell>
+                <TableCell>{t('positionAddress')}</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -505,16 +505,16 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
         </div>
 
         {/*Table for EVENTS Reports*/}
-        <div onScroll={handleScroll} style={{display: `${events.length === 0 ? 'none' : 'block'}`}} className={classes.tableReports}>
+        <div onScroll={handleScroll} style={{display: `${events.length === 0 ? 'none' : 'block'}`}} className={`scrollbar ${classes.tableReports}`}>
           <TableContainer component={Paper}>
             <Table >
               <TableHead>
                 <TableRow>
-                  <TableCell>Fecha y hora</TableCell>
-                  <TableCell>Nombre de dispositivo</TableCell>
-                  <TableCell>Tipo</TableCell>
-                  <TableCell>Geocerca</TableCell>
-                  <TableCell>Mantenimiento</TableCell>
+                  <TableCell>{t('positionFixTime')}</TableCell>
+                  <TableCell>{t('reportDeviceName')}</TableCell>
+                  <TableCell>{t('sharedType')}</TableCell>
+                  <TableCell>{t('sharedGeofence')}</TableCell>
+                  <TableCell>{t('sharedMaintenance')}</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -533,24 +533,24 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
         </div>
 
         {/*Table for TRIPS Reports*/}
-        <div onScroll={handleScroll} style={{display: `${trips.length === 0 ? 'none' : 'block'}`}} className={classes.tableReports}>
+        <div onScroll={handleScroll} style={{display: `${trips.length === 0 ? 'none' : 'block'}`}} className={`scrollbar ${classes.tableReports}`}>
           <TableContainer component={Paper}>
             <Table >
               <TableHead>
                 <TableRow>
-                  <TableCell>Nombre de dispositivo</TableCell>
-                  <TableCell>Hora de Inicio</TableCell>
-                  <TableCell>Hora de Fin</TableCell>
-                  <TableCell>Odómetro Inicial</TableCell>
-                  <TableCell>Dirección de Inicio</TableCell>
-                  <TableCell>Odómetro Final</TableCell>
-                  <TableCell>Dirección Final</TableCell>
-                  <TableCell>Distancia</TableCell>
-                  <TableCell>Velocidad Promedio</TableCell>
-                  <TableCell>Velocidad Máxima</TableCell>
-                  <TableCell>Duración</TableCell>
-                  <TableCell>Combustible Utilizado</TableCell>
-                  <TableCell>Conductor</TableCell>
+                  <TableCell>{t('reportDeviceName')}</TableCell>
+                  <TableCell>{t('reportStartTime')}</TableCell>
+                  <TableCell>{t('reportEndTime')}</TableCell>
+                  <TableCell>{t('reportStartOdometer')}</TableCell>
+                  <TableCell>{t('reportStartAddress')}</TableCell>
+                  <TableCell>{t('reportEndOdometer')}</TableCell>
+                  <TableCell>{t('reportEndAddress')}</TableCell>
+                  <TableCell>{t('sharedDistance')}</TableCell>
+                  <TableCell>{t('reportAverageSpeed')}</TableCell>
+                  <TableCell>{t('reportMaximumSpeed')}</TableCell>
+                  <TableCell>{t('reportDuration')}</TableCell>
+                  <TableCell>{t('reportSpentFuel')}</TableCell>
+                  <TableCell>{t('sharedDriver')}</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -577,19 +577,19 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
         </div>
 
         {/*Table for STOPS Reports*/}
-        <div onScroll={handleScroll} style={{display: `${stops.length === 0 ? 'none' : 'block'}`}} className={classes.tableReports}>
+        <div onScroll={handleScroll} style={{display: `${stops.length === 0 ? 'none' : 'block'}`}} className={`scrollbar ${classes.tableReports}`}>
           <TableContainer component={Paper}>
             <Table >
               <TableHead>
                 <TableRow>
-                  <TableCell>Nombre de dispositivo</TableCell>
-                  <TableCell>Hora de Inicio</TableCell>
-                  <TableCell>Hora de Fin</TableCell>
-                  <TableCell>Odómetro</TableCell>
-                  <TableCell>Dirección</TableCell>
-                  <TableCell>Duracion</TableCell>
-                  <TableCell>Horas Motor</TableCell>
-                  <TableCell>Combustible Utilizado</TableCell>
+                  <TableCell>{t('reportDeviceName')}</TableCell>
+                  <TableCell>{t('reportStartTime')}</TableCell>
+                  <TableCell>{t('reportEndTime')}</TableCell>
+                  <TableCell>{t('positionOdometer')}</TableCell>
+                  <TableCell>{t('positionAddress')}</TableCell>
+                  <TableCell>{t('reportDuration')}</TableCell>
+                  <TableCell>{t('reportEngineHours')}</TableCell>
+                  <TableCell>{t('reportSpentFuel')}</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -611,19 +611,19 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
         </div>
 
         {/*Table for SUMMARY Reports*/}
-        <div onScroll={handleScroll} style={{display: `${summary.length === 0 ? 'none' : 'block'}`}} className={classes.tableReports}>
+        <div onScroll={handleScroll} style={{display: `${summary.length === 0 ? 'none' : 'block'}`}} className={`scrollbar ${classes.tableReports}`}>
           <TableContainer component={Paper}>
             <Table >
               <TableHead>
                 <TableRow>
-                  <TableCell>Nombre de dispositivo</TableCell>
-                  <TableCell>Distancia</TableCell>
-                  <TableCell>Odómetro Inicial</TableCell>
-                  <TableCell>Odódetro Final</TableCell>
-                  <TableCell>Velocidad Promedio</TableCell>
-                  <TableCell>Velocidad Máxima</TableCell>
-                  <TableCell>Horas Motor</TableCell>
-                  <TableCell>Combustible Utilizado</TableCell>
+                  <TableCell>{t('reportDeviceName')}</TableCell>
+                  <TableCell>{t('sharedDistance')}</TableCell>
+                  <TableCell>{t('reportStartOdometer')}</TableCell>
+                  <TableCell>{t('reportEndOdometer')}</TableCell>
+                  <TableCell>{t('reportAverageSpeed')}</TableCell>
+                  <TableCell>{t('reportMaximumSpeed')}</TableCell>
+                  <TableCell>{t('reportEngineHours')}</TableCell>
+                  <TableCell>{t('reportSpentFuel')}</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -644,7 +644,7 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
           </TableContainer>
         </div>
 
-        <div className={classes.graphic} style={{width: '70%'}}>
+        <div className={classes.graphic} style={{width: '70%', display: 'none'}}>
           <Line data={chartData} options={{
             responsive: true,
             fill: false,

@@ -3,7 +3,7 @@ html, body, #root {
   overflow: hidden;
 }
 
-.makeStyles-tableReports-39::-webkit-scrollbar {
+.scrollbar::-webkit-scrollbar {
   display: none;
 }
 

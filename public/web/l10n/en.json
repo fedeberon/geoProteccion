@@ -438,5 +438,11 @@
     "geozones": "Geozones",
     "sharedCircle": "Circle",
     "sharedPolygon": "Polygon",
-    "sharedPolyline": "Polyline"
+    "sharedPolyline": "Polyline",
+    "sharedSelectDevice": "Select Device(s)",
+    "sharedSelectGroup": "Select Group",
+    "sharedSelectEvent": "Select Event(s)",
+    "reportYes": "Yes",
+    "reportNo": "No",
+    "reportType": "Report Type"
 }

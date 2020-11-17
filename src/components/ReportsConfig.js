@@ -7,6 +7,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 import Checkbox from "@material-ui/core/Checkbox";
 import ListItemText from "@material-ui/core/ListItemText";
 import TextField from "@material-ui/core/TextField";
+import t from "../common/localization";
 import * as service from "../utils/serviceManager";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import {useSelector} from "react-redux";
@@ -132,11 +133,11 @@ export default function ReportsConfig({ handleReportsConfig }) {
       <Table>
         <TableRow>
           <TableCell>
-            Tipo de reporte:
+            {t('reportType')}:
           </TableCell>
           <TableCell>
             <FormControl required className={classes.formControlReportType}>
-              <InputLabel htmlFor="age-native-required">Reporte</InputLabel>
+              <InputLabel htmlFor="age-native-required">{t('reportTitle')}</InputLabel>
               <Select
                 native
                 value={reportType}
@@ -146,22 +147,22 @@ export default function ReportsConfig({ handleReportsConfig }) {
                   id: 'age-native-required',
                 }}
               >
-                <option value='route'>Ruta</option>
-                <option value='events'>Eventos</option>
-                <option value='trips'>Viajes</option>
-                <option value='stops'>Paradas</option>
-                <option value='summary'>Resumen</option>
-                <option value='graphic'>Gráfico</option>
+                <option value='route'>{t('reportRoute')}</option>
+                <option value='events'>{t('reportEvents')}</option>
+                <option value='trips'>{t('reportTrips')}</option>
+                <option value='stops'>{t('reportStops')}</option>
+                <option value='summary'>{t('reportSummary')}</option>
+                <option value='graphic'>{t('reportChart')}</option>
               </Select>
               <FormHelperText>Required</FormHelperText>
             </FormControl>
           </TableCell>
         </TableRow>
         <TableRow>
-          <TableCell>Seleccionar dispositivo(s):</TableCell>
+          <TableCell>{t('sharedSelectDevice')}:</TableCell>
           <TableCell>
             <FormControl className={classes.formControlDevices}>
-              <InputLabel id="demo-mutiple-checkbox-label">Dispositivos</InputLabel>
+              <InputLabel id="demo-mutiple-checkbox-label">{t('deviceTitle')}</InputLabel>
               <Select
                 labelId="demo-mutiple-checkbox-label"
                 id="demo-mutiple-checkbox"
@@ -183,10 +184,10 @@ export default function ReportsConfig({ handleReportsConfig }) {
           </TableCell>
         </TableRow>
         <TableRow>
-          <TableCell>Seleccionar grupo:</TableCell>
+          <TableCell>{t('sharedSelectGroup')}:</TableCell>
           <TableCell>
             <FormControl className={classes.formControlDevices} disabled>
-              <InputLabel htmlFor="age-native-disabled">Grupo</InputLabel>
+              <InputLabel htmlFor="age-native-disabled">{t('groupDialog')}</InputLabel>
               <Select
                 native
                 value=""
@@ -201,7 +202,7 @@ export default function ReportsConfig({ handleReportsConfig }) {
         </TableRow>
         <TableRow style={{display: `${reportType === 'graphic' ? '' : 'none'}`}}>
           <TableCell>
-            Tipo de gráfica:
+            {t('reportChartType')}:
           </TableCell>
           <TableCell>
             <FormControl required className={classes.formControlDevices}>
@@ -211,36 +212,36 @@ export default function ReportsConfig({ handleReportsConfig }) {
                 onChange={handleChangeGraphicType}
                 name="Graphic Type"
               >
-                <option value='speed'>Velocidad</option>
-                <option value='precition'>Precisión</option>
-                <option value='altitude'>Altitud</option>
-                <option value='index'>Índice</option>
-                <option value='HDOP'>HDOP</option>
-                <option value='VDOP'>VDOP</option>
-                <option value='PDOP'>PDOP</option>
-                <option value='Satélite'>Satélites</option>
-                <option value='Visible Satélite'>Satélites visibles</option>
-                <option value='RSSI'>RSSI</option>
-                <option value='GPS'>GPS</option>
-                <option value='Odómeter'>Odómetro</option>
-                <option value='Odómeter Maintenance'>Odómetro de Mantenimiento</option>
-                <option value='Odómeter Trip'>Odómetro de viaje</option>
-                <option value='Hours'>Horas</option>
-                <option value='Steps'>Pasos</option>
-                <option value='Corriente'>Corriente</option>
-                <option value='Batery'>Batería</option>
-                <option value='Batery Nivel'>Nivel de Batería</option>
-                <option value='Combustible'>Combustible</option>
-                <option value='Consumo de Gasolina'>Consumo de Gasolina</option>
-                <option value='Distance'>Distancia</option>
-                <option value='Total Distance'>Distancia Total</option>
-                <option value='RPM'>RPM</option>
-                <option value='Acelerator'>Acelerador</option>
-                <option value='Armado'>Armado</option>
-                <option value='Aceleración'>Aceleración</option>
-                <option value='Device Temperature'>Temperatura del Dispositivo</option>
-                <option value='OBD Speed'>Velocidad OBD</option>
-                <option value='OBD Odómeter'>Odómetro OBD</option>
+                <option value='speed'>{t('positionSpeed')}</option>
+                <option value='accuracy'>{t('positionAccuracy')}</option>
+                <option value='altitude'>{t('positionAltitude')}</option>
+                <option value='index'>{t('positionIndex')}</option>
+                <option value='hdop'>{t('positionHdop')}</option>
+                <option value='vdop'>{t('positionVdop')}</option>
+                <option value='pdop'>{t('positionPdop')}</option>
+                <option value='sat'>{t('positionSat')}</option>
+                <option value='satVisible'>{t('positionSatVisible')}</option>
+                <option value='rssi'>{t('positionRssi')}</option>
+                <option value='gps'>{t('positionGp')}</option>
+                <option value='odometer'>{t('positionOdometer')}</option>
+                <option value='odometerMaintenance'>{t('positionServiceOdometer')}</option>
+                <option value='odometerTrip'>{t('positionTripOdometer')}</option>
+                <option value='hours'>{t('positionHours')}</option>
+                <option value='steps'>{t('positionSteps')}</option>
+                <option value='power'>{t('positionPower')}</option>
+                <option value='batery'>{t('positionBattery')}</option>
+                <option value='bateryLelel'>{t('positionBatteryLevel')}</option>
+                <option value='fuel'>{t('positionFuel')}</option>
+                <option value='fuelConsumtion'>{t('positionFuelConsumption')}</option>
+                <option value='distance'>{t('sharedDistance')}</option>
+                <option value='totalDistance'>{t('deviceTotalDistance')}</option>
+                <option value='rpm'>{t('positionRpm')}</option>
+                <option value='throttle'>{t('positionThrottle')}</option>
+                <option value='armado'>{t('positionArmed')}</option>
+                <option value='acceleration'>{t('positionAcceleration')}</option>
+                <option value='deviceTemperature'>{t('positionDeviceTemp')}</option>
+                <option value='obdSpeed'>{t('positionObdSpeed')}</option>
+                <option value='obdOdometer'>{t('positionObdOdometer')}</option>
               </Select>
               <FormHelperText>Required</FormHelperText>
             </FormControl>
@@ -248,11 +249,11 @@ export default function ReportsConfig({ handleReportsConfig }) {
         </TableRow>
         <TableRow style={{display: `${reportType === 'events' ? '' : 'none'}`}}>
           <TableCell>
-            Seleccionar evento(s):
+            {t('sharedSelectEvent')}:
           </TableCell>
           <TableCell>
             <FormControl className={classes.formControlDevices}>
-              <InputLabel id="demo-mutiple-checkbox-label">Notificaciones</InputLabel>
+              <InputLabel id="demo-mutiple-checkbox-label">{t('sharedNotifications')}</InputLabel>
               <Select
                 labelId="demo-mutiple-checkbox-label"
                 id="demo-mutiple-checkbox"
@@ -263,7 +264,7 @@ export default function ReportsConfig({ handleReportsConfig }) {
                 renderValue={(selected) => selected.join(', ')}
                 MenuProps={MenuProps}
               >
-                <MenuItem value='allEvents'>Todos los eventos</MenuItem>
+                <MenuItem value='allEvents'>{t('eventAll')}</MenuItem>
                 {availableTypes.map((type) => (
                   <MenuItem key={type.type} value={type.type}>
                     <Checkbox checked={typeEventSelected.indexOf(type.type) > -1} />
@@ -276,7 +277,7 @@ export default function ReportsConfig({ handleReportsConfig }) {
         </TableRow>
         <TableRow>
           <TableCell>
-            Desde:
+            {t('reportFrom')}:
           </TableCell>
           <TableCell>
             <form className={classes.containerDateTime} noValidate>
@@ -295,7 +296,7 @@ export default function ReportsConfig({ handleReportsConfig }) {
           </TableCell>
         </TableRow>
         <TableRow>
-          <TableCell>Hasta:</TableCell>
+          <TableCell>{t('reportTo')}:</TableCell>
           <TableCell>
             <form className={classes.containerDateTime} noValidate>
               <TextField
@@ -314,7 +315,7 @@ export default function ReportsConfig({ handleReportsConfig }) {
         </TableRow>
         <TableRow>
           <TableCell>
-            Mostrar marcadores:
+            {t('reportShowMarkers')}:
           </TableCell>
           <TableCell>
             <Radio
@@ -324,7 +325,7 @@ export default function ReportsConfig({ handleReportsConfig }) {
               value={true}
               name="radio-button-demo"
               inputProps={{ 'aria-label': 'A' }}
-            /> Si
+            /> {t('reportYes')}
             <Radio
               checked={showMarkers === false}
               onChange={handleChangeRadio}
@@ -332,7 +333,7 @@ export default function ReportsConfig({ handleReportsConfig }) {
               value={false}
               name="radio-button-demo"
               inputProps={{ 'aria-label': 'B' }}
-            /> No
+            /> {t('reportNo')}
           </TableCell>
         </TableRow>
       </Table>

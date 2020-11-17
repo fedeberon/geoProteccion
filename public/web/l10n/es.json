@@ -59,6 +59,7 @@
     "sharedCalendars": "Calendarios",
     "sharedFile": "Archivo",
     "sharedSelectFile": "Seleccione archivo",
+    "sharedSelectDevice": "Seleccione Dispositivo(s)",
     "sharedPhone": "Teléfono",
     "sharedRequired": "Obligatorio",
     "sharedPreferences": "Preferencias",
@@ -434,5 +435,10 @@
     "circuitBreaker": "Corta Corriente",
     "mileage": "Kilometraje",
     "activateCircuitBreaker": "Activar Corta Corriente",
-    "geozones": "Geozonas"
+    "geozones": "Geozonas",
+    "sharedSelectGroup": "Seleccione Grupo",
+    "sharedSelectEvent": "Seleccione Evento(s)",
+    "reportYes": "Sí",
+    "reportNo": "No",
+    "reportType": "Tipo de Reporte"
 }
