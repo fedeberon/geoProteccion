@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
   formControlDevices: {
     margin: theme.spacing(1),
     minWidth: 200,
-    maxWidth: 300,
+    maxWidth: 200,
   },
   formControlReportType: {
     margin: '4px',
@@ -63,12 +63,13 @@ export default function ReportsConfig({ handleReportsConfig }) {
   const [ toDateTime, setToDateTime ] = useState('');
   const [ availableTypes, setAvailableTypes ] = useState([]);
   const [ reportType, setReportType ] = useState('route');
+  const [ graphicType, setGraphicType ] = useState('speed');
   const [ showMarkers, setShowMarkers ] = useState(false);
 
   useEffect(() => {
     handleShowReport()
   },[reportType, deviceSelected, typeEventSelected,
-          fromDateTime, toDateTime, showMarkers]);
+          fromDateTime, toDateTime, showMarkers, graphicType]);
 
   const handleShowReport = () => {
     const configuration = {};
@@ -79,17 +80,18 @@ export default function ReportsConfig({ handleReportsConfig }) {
       configuration.toDate = toDateTime;
       configuration.report = reportType;
       configuration.showMarkers = showMarkers;
+      configuration.graphicType = graphicType;
 
       handleReportsConfig(configuration);
-  }
+  };
 
   const onChangeFromDateTime = (event) => {
     setFromDateTime(event.target.value);
-  }
+  };
 
   const onChangeToDateTime = (event) => {
     setToDateTime(event.target.value);
-  }
+  };
 
   const handleChangeDevices = (event) => {
     setDeviceSelected(event.target.value);
@@ -101,7 +103,11 @@ export default function ReportsConfig({ handleReportsConfig }) {
 
   const handleChangeReportType = (event) => {
     setReportType(event.target.value);
-  }
+  };
+
+  const handleChangeGraphicType = (event) => {
+    setGraphicType(event.target.value);
+  };
 
   const handleChangeRadio = () => {
     setShowMarkers(!showMarkers);
@@ -119,7 +125,7 @@ export default function ReportsConfig({ handleReportsConfig }) {
   const getAvailableTypes = async () => {
     const response = await service.getAvailableTypes();
     setAvailableTypes(response);
-  }
+  };
 
   return (
     <div>
@@ -191,6 +197,53 @@ export default function ReportsConfig({ handleReportsConfig }) {
                 <option value={30}>3</option>
               </Select>
             </FormControl><br/>
+          </TableCell>
+        </TableRow>
+        <TableRow style={{display: `${reportType === 'graphic' ? '' : 'none'}`}}>
+          <TableCell>
+            Tipo de gráfica:
+          </TableCell>
+          <TableCell>
+            <FormControl required className={classes.formControlDevices}>
+              <Select
+                native
+                value={graphicType}
+                onChange={handleChangeGraphicType}
+                name="Graphic Type"
+              >
+                <option value='speed'>Velocidad</option>
+                <option value='precition'>Precisión</option>
+                <option value='altitude'>Altitud</option>
+                <option value='index'>Índice</option>
+                <option value='HDOP'>HDOP</option>
+                <option value='VDOP'>VDOP</option>
+                <option value='PDOP'>PDOP</option>
+                <option value='Satélite'>Satélites</option>
+                <option value='Visible Satélite'>Satélites visibles</option>
+                <option value='RSSI'>RSSI</option>
+                <option value='GPS'>GPS</option>
+                <option value='Odómeter'>Odómetro</option>
+                <option value='Odómeter Maintenance'>Odómetro de Mantenimiento</option>
+                <option value='Odómeter Trip'>Odómetro de viaje</option>
+                <option value='Hours'>Horas</option>
+                <option value='Steps'>Pasos</option>
+                <option value='Corriente'>Corriente</option>
+                <option value='Batery'>Batería</option>
+                <option value='Batery Nivel'>Nivel de Batería</option>
+                <option value='Combustible'>Combustible</option>
+                <option value='Consumo de Gasolina'>Consumo de Gasolina</option>
+                <option value='Distance'>Distancia</option>
+                <option value='Total Distance'>Distancia Total</option>
+                <option value='RPM'>RPM</option>
+                <option value='Acelerator'>Acelerador</option>
+                <option value='Armado'>Armado</option>
+                <option value='Aceleración'>Aceleración</option>
+                <option value='Device Temperature'>Temperatura del Dispositivo</option>
+                <option value='OBD Speed'>Velocidad OBD</option>
+                <option value='OBD Odómeter'>Odómetro OBD</option>
+              </Select>
+              <FormHelperText>Required</FormHelperText>
+            </FormControl>
           </TableCell>
         </TableRow>
         <TableRow style={{display: `${reportType === 'events' ? '' : 'none'}`}}>

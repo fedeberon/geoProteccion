@@ -382,6 +382,10 @@ button {
 
 /* ancho de pantalla de menos de 600px* (mobile)*/
 @media only screen and (max-width: 600px) {
+  .close-config-modal {
+    margin-left: -30px !important;
+  }
+
   .MuiDialog-paperScrollPaper {
     display: inline-table !important;
   }
