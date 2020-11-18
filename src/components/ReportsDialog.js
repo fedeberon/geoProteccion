@@ -10,7 +10,7 @@ import Slide from '@material-ui/core/Slide';
 import t from "../common/localization";
 import ReportsMap from './ReportsMap';
 import PropTypes from 'prop-types';
-import {useTheme} from '@material-ui/core/styles';
+import {Line} from 'react-chartjs-2';
 import Box from '@material-ui/core/Box';
 import {makeStyles} from '@material-ui/core/styles';
 import ReportsConfig from "./ReportsConfig";
@@ -33,6 +33,7 @@ import {
   getStopsReports,
   getSummaryReports,
   getPositionsByDeviceId,
+  getGraphicData,
 } from '../utils/serviceManager';
 import Backdrop from '@material-ui/core/Backdrop';
 import CircularProgress from "@material-ui/core/CircularProgress";
@@ -50,6 +51,15 @@ const useStyles = makeStyles((theme) => ({
   backdrop: {
     zIndex: theme.zIndex.drawer + 2000,
     color: '#fff',
+  },
+  graphic: {
+    top: '15%',
+    left: '12%',
+    height: '50%',
+    margin: '3% !important',
+    display: 'flex',
+    padding: '25px',
+    position: 'absolute',
   },
   miniature: {
     width: '25%',
@@ -178,6 +188,10 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
   const [ isLoading, setIsLoading ] = useState(false);
   const [ sliceLastIndex, setSliceLastIndex ] = useState(15);
   const [ sliceFirstIndex, setSliceFirstIndex ] = useState(0);
+  const [ graphicData, setGraphicData ] = useState([]);
+  const [ chartData, setChartData ] = useState({});
+  const auxData = [];
+  const timeData = [];
 
   const handleScroll = event => {
     const {scrollTop, clientHeight, scrollHeight } = event.currentTarget;
@@ -246,6 +260,7 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
     setTripsRoutes([]);
     setStops([]);
     setSummary([]);
+    setChartData({});
     setSliceFirstIndex(0);
     setSliceLastIndex(15);
     setIsLoading(true);
@@ -306,7 +321,7 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
 
         let tripsArray = [...response];
         let tripsRouteArray = [];
-        
+
         for (let i = 0; i < tripsArray.length; i++) {
           let deviceId = tripsArray[i].deviceId;
 
@@ -353,6 +368,41 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
         setIsLoading(false)
         break;
       case 'graphic':
+        reportConfiguration.arrayDeviceSelected.map((element) => {
+          params = params + 'deviceId=' + element + '&';
+        });
+        from = reportConfiguration.fromDate + ':00Z';
+        to = reportConfiguration.toDate + ':00Z';
+
+        response = await getGraphicData(from, to, params);
+        setGraphicData(response);
+
+        // const result = response.filter((el) => el.serverTime.includes());
+
+        response.map((el) => {
+        if ( response.length > 20 && el.speed > 0.1) {
+            const looper = response.length / 20;
+
+            for (let i = looper; i < response.length; i = i + looper) {
+
+            auxData.push(el.speed)
+            timeData.push(el.serverTime.toString())
+          }
+        }})
+        console.log(auxData);
+        console.log(timeData);
+
+        setChartData({
+          labels: timeData,
+          datasets: [
+            {
+              label: `${reportConfiguration.graphicType}`,
+              data: auxData,
+              borderWidth: 4
+            }
+          ],
+        })
+        setIsLoading(false);
         break;
       default:
         break;
@@ -440,7 +490,11 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
             <DialogTitle style={{width: '100%', textAlign: 'center', backgroundColor: 'ghostwhite'}}
                          id="alert-dialog-title">{"Reportes"}
             </DialogTitle>
-            <IconButton style={{padding: 0}}edge="start" color="inherit" onClick={handleCloseConfigModal} aria-label="close">
+            <IconButton className="close-config-modal"
+                        style={{padding: 0}}
+                        edge="start" color="inherit"
+                        onClick={handleCloseConfigModal}
+                        aria-label="close">
               <CloseIcon />
             </IconButton>
             </Toolbar>
@@ -634,6 +688,25 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
             </Table>
           </TableContainer>
         </div>
+
+        <div className={classes.graphic} style={{width: '70%'}}>
+          <Line data={chartData} options={{
+            responsive: true,
+            fill: false,
+            title: {text: 'GRAFICO', display: true},
+            scales: {
+              yAxes: [
+                {
+                  ticks: {
+                    autoSkip: true,
+                    maxTicksLimit: 10,
+                    beginAtZero: true,
+                  },
+                }
+              ]
+            }}}/>
+        </div>
+
 
         <div className={`${classes.overflowHidden} ${fullscreen ? classes.fullscreen : classes.miniature} ${hidden ? classes.hidden : classes.visible}`}>
           <i className={`fas ${fullscreen ? 'fa-compress' : 'fa-expand'} fa-lg ${classes.fullscreenToggler}`} onClick={() => handleFullscreen()}></i>

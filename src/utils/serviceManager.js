@@ -71,6 +71,12 @@ const getSummaryReports = (from, to, params) => {
     .then(response => response.json());
 }
 
+const getGraphicData = (from, to, params) => {
+  return fetch(`api/reports/route?` + `${params}from=${from}&to=${to}`, { method: 'GET', headers: {'Accept': 'application/json'} })
+    .catch(function (error) { console.log('setRoutesReports error: ', error)})
+    .then(response => response.json());
+}
+
 export {
   setSession,
   getDeviceByUserId,
@@ -84,4 +90,5 @@ export {
   getTripsReports,
   getStopsReports,
   getSummaryReports,
+  getGraphicData,
 };
