@@ -24,16 +24,17 @@ const downloadCsv = (columns, data, name) => {
 const convertToCsv = (columns, data) => {
 	let csv = '';
 
-	columns.map(column => {
-		csv += column + ';';
+	columns.map((column, index) => {
+		csv += column + ((columns.length - 1) === index ? '' : ',');
 	});
-	csv += "\n";
+	csv += "\n";	
 
 	for (let i = 0; i < data.length; i++) {
     if (i % columns.length === 0 && i >= columns.length) {
-      csv += "\n";
-    }
-    csv += data[i] + ';';
+		csv = csv.substring(0, csv.length - 1);
+     	csv += "\n";
+	}
+    csv += data[i] + ',';
 	}
 	
 	return csv;

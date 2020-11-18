@@ -428,7 +428,7 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
             Configuracion de reporte
           </Button>
           <Button  variant="outlined" color="primary" disabled={reportConfiguration.report === 'graphic' || !reportConfiguration.report} onClick={handleDownloadExcel}>
-            Descargar excel
+            Descargar csv
           </Button>
           <Dialog
             open={openConfigModal}
