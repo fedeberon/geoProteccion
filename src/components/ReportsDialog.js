@@ -377,18 +377,20 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
         response = await getGraphicData(from, to, params);
         setGraphicData(response);
 
-        // const result = response.filter((el) => el.serverTime.includes());
+        console.log(response);
+        response = response.filter(e => new Date(e.serverTime).getMinutes() > 5 && new Date(e.serverTime).getMinutes() % 5 === 0);
+        console.log(response);
 
-        response.map((el) => {
-        if ( response.length > 20 && el.speed > 0.1) {
-            const looper = response.length / 20;
+        response.map(e => auxData.push(e.speed));
 
-            for (let i = looper; i < response.length; i = i + looper) {
-
-            auxData.push(el.speed)
-            timeData.push(el.serverTime.toString())
+        if ( response.length > 20 ) {
+          const looper = parseInt(response.length / 20);
+          for (let i = looper; i < response.length; i = i + looper) {
+            timeData.push(response[i].serverTime.toString());
           }
-        }})
+        } else {
+          response.map(e => timeData.push(e.serverTime));
+        }
         console.log(auxData);
         console.log(timeData);
 
@@ -689,7 +691,7 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
           </TableContainer>
         </div>
 
-        <div className={classes.graphic} style={{width: '70%'}}>
+        <div className={classes.graphic} style={{width: '70%', display: reportConfiguration.report !== 'graphic' ? 'none' : 'block'}}>
           <Line data={chartData} options={{
             responsive: true,
             fill: false,
