@@ -378,6 +378,9 @@ button {
   .mapboxgl-map {
     font: 12px/18px Helvetica Neue,Arial,Helvetica,sans-serif !important;
   }
+  .MuiToolbar-regular {
+    min-height: 50px !important;
+  }
 }
 
 /* ancho de pantalla de menos de 600px* (mobile)*/

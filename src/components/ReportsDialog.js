@@ -379,28 +379,28 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
         // const result = response.filter((el) => el.serverTime.includes());
 
         response.map((el) => {
-        if ( response.length > 20 && el.speed > 0.1) {
-            const looper = response.length / 20;
-
-            for (let i = looper; i < response.length; i = i + looper) {
+        // if ( response.length > 20 && el.speed > 0.1) {
+        //     const looper = response.length / 20;
+        //
+        //     for (let i = looper; i < response.length; i = i + looper) {
 
             auxData.push(el.speed)
             timeData.push(el.serverTime.toString())
-          }
-        }})
+          })
+        // }})
         console.log(auxData);
         console.log(timeData);
 
-        setChartData({
-          labels: timeData,
-          datasets: [
-            {
-              label: `${reportConfiguration.graphicType}`,
-              data: auxData,
-              borderWidth: 4
-            }
-          ],
-        })
+        // setChartData({
+        //   labels: timeData,
+        //   datasets: [
+        //     {
+        //       label: `${reportConfiguration.graphicType}`,
+        //       data: auxData,
+        //       borderWidth: 4
+        //     }
+        //   ],
+        // })
         setIsLoading(false);
         break;
       default:

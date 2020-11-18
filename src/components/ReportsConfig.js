@@ -222,7 +222,7 @@ export default function ReportsConfig({ handleReportsConfig }) {
                 <option value='sat'>{t('positionSat')}</option>
                 <option value='satVisible'>{t('positionSatVisible')}</option>
                 <option value='rssi'>{t('positionRssi')}</option>
-                <option value='gps'>{t('positionGp')}</option>
+                <option value='gps'>{t('positionGps')}</option>
                 <option value='odometer'>{t('positionOdometer')}</option>
                 <option value='odometerMaintenance'>{t('positionServiceOdometer')}</option>
                 <option value='odometerTrip'>{t('positionTripOdometer')}</option>
