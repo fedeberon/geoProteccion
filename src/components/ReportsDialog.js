@@ -39,6 +39,7 @@ import Backdrop from '@material-ui/core/Backdrop';
 import CircularProgress from "@material-ui/core/CircularProgress";
 import {useSelector} from "react-redux";
 import { downloadCsv } from "../utils/functions";
+import GraphicChart from "./GraphicChart";
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -261,6 +262,7 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
     setStops([]);
     setSummary([]);
     setChartData({});
+    setGraphicData([]);
     setSliceFirstIndex(0);
     setSliceLastIndex(15);
     setIsLoading(true);
@@ -376,34 +378,34 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
 
         response = await getGraphicData(from, to, params);
         setGraphicData(response);
-
-        console.log(response);
-        response = response.filter(e => new Date(e.serverTime).getMinutes() > 5 && new Date(e.serverTime).getMinutes() % 5 === 0);
-        console.log(response);
+        //
+        // console.log(response);
+        // response = response.filter(e => new Date(e.serverTime).getMinutes() > 5 && new Date(e.serverTime).getMinutes() % 5 === 0);
+        // console.log(response);
 
         response.map(e => auxData.push(e.speed));
 
-        if ( response.length > 20 ) {
-          const looper = parseInt(response.length / 20);
-          for (let i = looper; i < response.length; i = i + looper) {
-            timeData.push(response[i].serverTime.toString());
-          }
-        } else {
+        // if ( response.length > 20 ) {
+        //   const looper = parseInt(response.length / 20);
+        //   for (let i = looper; i < response.length; i = i + looper) {
+        //     timeData.push(response[i].serverTime.toString());
+        //   }
+        // } else {
           response.map(e => timeData.push(e.serverTime));
-        }
+        // }
         console.log(auxData);
         console.log(timeData);
 
-        setChartData({
-          labels: timeData,
-          datasets: [
-            {
-              label: `${reportConfiguration.graphicType}`,
-              data: auxData,
-              borderWidth: 4
-            }
-          ],
-        })
+        // setChartData({
+        //   labels: timeData,
+        //   datasets: [
+        //     {
+        //       label: `${reportConfiguration.graphicType}`,
+        //       data: auxData,
+        //       borderWidth: 4
+        //     }
+        //   ],
+        // })
         setIsLoading(false);
         break;
       default:
@@ -691,22 +693,10 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
           </TableContainer>
         </div>
 
-        <div className={classes.graphic} style={{width: '70%', display: reportConfiguration.report !== 'graphic' ? 'none' : 'block'}}>
-          <Line data={chartData} options={{
-            responsive: true,
-            fill: false,
-            title: {text: 'GRAFICO', display: true},
-            scales: {
-              yAxes: [
-                {
-                  ticks: {
-                    autoSkip: true,
-                    maxTicksLimit: 10,
-                    beginAtZero: true,
-                  },
-                }
-              ]
-            }}}/>
+          <div className={classes.graphic} style={{width: '70%', display: graphicData.length === 0 ? 'none' : 'block'}}>
+
+          <GraphicChart />
+
         </div>
 
 
