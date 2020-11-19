@@ -272,28 +272,32 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
     let response = '';
     let type = '';
     let positions = '';
+    let devicesSelected = reportConfiguration.arrayDeviceSelected;
+    let fromDate = reportConfiguration.fromDate;
+    let toDate = reportConfiguration.toDate;
+    let typesSelected = reportConfiguration.arrayTypeEventSelected;
 
     switch (reportConfiguration.report) {
       case 'route':
-        reportConfiguration.arrayDeviceSelected.map((element) => {
+        devicesSelected.map((element) => {
           params = params + 'deviceId=' + element + '&';
         });
-        from = reportConfiguration.fromDate + ':00Z';
-        to = reportConfiguration.toDate + ':00Z';
+        from = fromDate + ':00Z';
+        to = toDate + ':00Z';
 
         response = await getRoutesReports(from, to, params);
         setRoute(response);
         setIsLoading(false);
         break;
       case 'events':
-        reportConfiguration.arrayDeviceSelected.map((element) => {
+        devicesSelected.map((element) => {
           params = params + 'deviceId=' + element + '&';
         });
-        reportConfiguration.arrayTypeEventSelected.map((element) => {
+        typesSelected.map((element) => {
           type = type + 'type=' + element + '&';
         });
-        from = reportConfiguration.fromDate + ':00Z';
-        to = reportConfiguration.toDate + ':00Z';
+        from = fromDate + ':00Z';
+        to = toDate + ':00Z';
 
         response = await getEventsReports(from, to, type, params);
         setEvents(response);
@@ -309,14 +313,14 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
         setIsLoading(false)
         break;
       case 'trips':
-        reportConfiguration.arrayDeviceSelected.map((element) => {
+        devicesSelected.map((element) => {
           params = params + 'deviceId=' + element + '&';
         });
-        reportConfiguration.arrayTypeEventSelected.map((element) => {
+        typesSelected.map((element) => {
           type = type + 'type=' + element + '&';
         });
-        from = reportConfiguration.fromDate + ':00Z';
-        to = reportConfiguration.toDate + ':00Z';
+        from = fromDate + ':00Z';
+        to = toDate + ':00Z';
 
         response = await getTripsReports(from, to, type, params);
         setTrips(response);
@@ -324,14 +328,17 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
         let tripsArray = [...response];
         let tripsRouteArray = [];
 
+        await getPositions(devicesSelected, from, to).then(results => {
+          positions = results;
+        }).catch(e => console.log(e));
+
         for (let i = 0; i < tripsArray.length; i++) {
           let deviceId = tripsArray[i].deviceId;
 
           let startPositionId = tripsArray[i].startPositionId;
           let endPositionId = tripsArray[i].endPositionId;
 
-          response = await getPositionsByDeviceId(deviceId, from, to);
-          response = response.filter((pos) => pos.id >= startPositionId && pos.id <= endPositionId);
+          response = positions[devicesSelected.indexOf(deviceId)].filter((pos) => pos.id >= startPositionId && pos.id <= endPositionId);
           tripsRouteArray.push(response);
         }
 
@@ -339,11 +346,11 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
         setIsLoading(false)
         break;
       case 'stops':
-        reportConfiguration.arrayDeviceSelected.map((element) => {
+        devicesSelected.map((element) => {
           params = params + 'deviceId=' + element + '&';
         });
-        from = reportConfiguration.fromDate + ':00Z';
-        to = reportConfiguration.toDate + ':00Z';
+        from = fromDate + ':00Z';
+        to = toDate + ':00Z';
 
         response = await getStopsReports(from, to, params);
         setStops(response);
@@ -359,22 +366,22 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
         setIsLoading(false)
         break;
       case 'summary':
-        reportConfiguration.arrayDeviceSelected.map((element) => {
+        devicesSelected.map((element) => {
           params = params + 'deviceId=' + element + '&';
         });
-        from = reportConfiguration.fromDate + ':00Z';
-        to = reportConfiguration.toDate + ':00Z';
+        from = fromDate + ':00Z';
+        to = toDate + ':00Z';
 
         response = await getSummaryReports(from, to, params);
         setSummary(response);
         setIsLoading(false)
         break;
       case 'graphic':
-        reportConfiguration.arrayDeviceSelected.map((element) => {
+        devicesSelected.map((element) => {
           params = params + 'deviceId=' + element + '&';
         });
-        from = reportConfiguration.fromDate + ':00Z';
-        to = reportConfiguration.toDate + ':00Z';
+        from = fromDate + ':00Z';
+        to = toDate + ':00Z';
 
         response = await getGraphicData(from, to, params);
         setGraphicData(response);
@@ -412,6 +419,14 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
         break;
     }
     handleCloseConfigModal();
+  }
+
+  const getPositions = (devices, from, to) => {
+    let promises = [];
+    for (let i = 0; i < devices.length; i++) {
+      promises.push(getPositionsByDeviceId(devices[i], from, to));
+    }
+    return Promise.all(promises);
   }
 
   const handleSelectedPosition = (position) => {
