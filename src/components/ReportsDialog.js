@@ -693,9 +693,9 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
           </TableContainer>
         </div>
 
-          <div className={classes.graphic} style={{width: '70%', display: graphicData.length === 0 ? 'none' : 'block'}}>
+        <div className={classes.graphic} style={{width: '70%', display: graphicData.length === 0 ? 'none' : 'block'}}>
 
-          <GraphicChart />
+          <GraphicChart data={auxData} timeLine={timeData}/>
 
         </div>
 
