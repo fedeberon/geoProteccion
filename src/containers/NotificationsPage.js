@@ -292,8 +292,6 @@ export default function NotificationsPage() {
           >
             <Tab onClick={() => getNotifications(userId)}
                  label="By User ID" {...a11yProps(0)} />
-            <Tab label="By Device ID" {...a11yProps(1)} />
-            <Tab label="By Group ID" {...a11yProps(2)} />
             <Tab label="All Notifications" {...a11yProps(3)} />
             <Tab onClick={() => getAvailableTypes()}
                   label="Available Notification Types" {...a11yProps((4))}/>
@@ -340,33 +338,7 @@ export default function NotificationsPage() {
             </TableContainer>
           </div>
         </TabPanel>
-        <TabPanel value={value} index={1}>
-          <div>
-            <TableContainer component={Paper}>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>ID</TableCell>
-                    <TableCell></TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {availableTypes.map((type, index) =>
-                    <TableRow key={index}>
-                      <TableCell>{index}</TableCell>
-                      <TableCell>{type.type}</TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </div>
-        </TabPanel>
-        <TabPanel value={value} index={2}>
-          <div>
 
-          </div>
-        </TabPanel>
         <TabPanel value={value} index={3}>
 
         </TabPanel>

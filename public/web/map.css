@@ -33,6 +33,19 @@ button {
   justify-content: center;
 }
 
+.btn-back-register {
+  margin: 15px 0px !important;
+}
+.btn-back-register:hover {
+  background-color: #878eb7 !important;
+}
+.btn-submit-register {
+  margin-top: 50px !important;
+}
+.btn-submit-register:hover {
+  background-color: #878eb7 !important;
+}
+
 .mapboxgl-popup-close-button {
   top: 87% !important;
   right: 2% !important;

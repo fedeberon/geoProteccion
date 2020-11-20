@@ -5,6 +5,13 @@ const setSession = (email, password) => {
     .then(response => response);
 }
 
+const setUser = (name, email, password) => {
+  return fetch(`api/users`, {
+    method: 'POST', body: new URLSearchParams(`name=${name}&email=${email}&password=${password}`)
+  }).catch(function (error) { console.log('setUser error: ', error)})
+    .then(response => response);
+}
+
 const getDeviceByUserId = (id) => {
   return fetch(`api/devices?userId=${id}`,{ method: 'GET' })
     .catch(function (error) { console.log('setDevices error: ', error)})
@@ -91,4 +98,5 @@ export {
   getStopsReports,
   getSummaryReports,
   getGraphicData,
+  setUser,
 };

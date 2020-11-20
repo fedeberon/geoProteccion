@@ -444,5 +444,6 @@
     "sharedSelectEvent": "Select Event(s)",
     "reportYes": "Yes",
     "reportNo": "No",
-    "reportType": "Report Type"
+    "reportType": "Report Type",
+    "sharedAccept": "Accept"
 }
