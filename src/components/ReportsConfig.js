@@ -239,7 +239,7 @@ export default function ReportsConfig({ handleReportsConfig }) {
                 <option value='throttle'>{t('positionThrottle')}</option>
                 <option value='armado'>{t('positionArmed')}</option>
                 <option value='acceleration'>{t('positionAcceleration')}</option>
-                <option value='deviceTemperature'>{t('positionDeviceTemp')}</option>
+                <option value='deviceTemp'>{t('positionDeviceTemp')}</option>
                 <option value='obdSpeed'>{t('positionObdSpeed')}</option>
                 <option value='obdOdometer'>{t('positionObdOdometer')}</option>
               </Select>

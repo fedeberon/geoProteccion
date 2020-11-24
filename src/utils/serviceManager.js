@@ -84,6 +84,12 @@ const getGraphicData = (from, to, params) => {
     .then(response => response.json());
 }
 
+const getMaintenanceByUserId = (id) => {
+  return fetch(`api/maintenance?userId=${id}`,{method: 'GET'})
+    .catch(function (error) { console.log('setMaintenance error: ', error)})
+    .then(response => response.json());
+}
+
 export {
   setSession,
   getDeviceByUserId,
@@ -99,4 +105,5 @@ export {
   getSummaryReports,
   getGraphicData,
   setUser,
+  getMaintenanceByUserId,
 };

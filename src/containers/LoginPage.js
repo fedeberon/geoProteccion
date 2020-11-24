@@ -106,33 +106,25 @@ const LoginPage = () => {
 
   const handleEmailChange = (event) => {
     setEmail(event.target.value);
-    console.log(email)
   }
 
   const handlePasswordChange = (event) => {
     setPassword(event.target.value);
-    console.log(password)
   }
 
-  const handleSuccessSubmit = () => {
-    setShowDialogSuccess(!showDialogSuccess);
-  }
+  // const handleSuccessSubmit = () => {
+  //   setShowDialogSuccess(!showDialogSuccess);
+  // }
 
-  const handleSubmit = () => {
-
-
-    handleRegister();
-  }
-
-  const handleRegister = () => {
-    // event.preventDefault();
-    // const response = await service.setUser(name, email, password);
-    // if (response.ok) {
-      console.log(`${t('loginCreated')}`)
-    // } else {
-    //   console.log('registro fallo')
-    // }
-  }
+  // const handleRegister = () => {
+  //   // event.preventDefault();
+  //   // const response = await service.setUser(name, email, password);
+  //   // if (response.ok) {
+  //     console.log(`${t('loginCreated')}`)
+  //   // } else {
+  //   //   console.log('registro fallo')
+  //   // }
+  // }
 
   const handleLogin = async (event) => {
     event.preventDefault();
@@ -224,7 +216,7 @@ const LoginPage = () => {
               <h2>{t('serverRegistration')}</h2>
             </div>
 
-            <form className={classes.form} id="formreg" onSubmit={handleRegister}>
+            <form className={classes.form} id="formreg">
               <ListItem style={{padding: 0}}>
                 <TextField
                   required
@@ -298,7 +290,7 @@ const LoginPage = () => {
                        fullWidth
                        variant="contained"
                        color="success"
-                       onClick={() => handleSuccessSubmit()}>
+                       >
                        {t('loginRegister')}
               </Button>
               <Button  className="btn-back-register"
@@ -317,7 +309,7 @@ const LoginPage = () => {
           <div>
             <Dialog
               open={showDialogSuccess}
-              onClose={()=> handleSuccessSubmit()}
+
               aria-labelledby="alert-dialog-title"
               aria-describedby="alert-dialog-description"
             >
@@ -328,7 +320,7 @@ const LoginPage = () => {
                 </DialogContentText>
               </DialogContent>
               <DialogActions>
-                <Button onClick={() => handleSuccessSubmit()} color="primary" autoFocus>
+                <Button  color="primary" autoFocus>
                   {t('sharedAccept')}
                 </Button>
               </DialogActions>
