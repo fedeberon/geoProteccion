@@ -44,6 +44,7 @@ import {CirclePicker} from 'react-color';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import Popover from '@material-ui/core/Popover';
 
 const useStyles = makeStyles((theme) => ({
 
@@ -105,18 +106,22 @@ const useStyles = makeStyles((theme) => ({
       height: 20,
       width: 20,
     },
+    attributesStyles: {
+      fontSize: '11px',
+    },
     details: {
       alignItems: 'center',
     },
     column: {
-      flexBasis: '33.33%',
+      flexBasis: '50.33%',
     },
       [theme.breakpoints.up('md')]: {
       flexBasis: '33.33%',
     },
     helper: {
       borderLeft: `2px solid ${theme.palette.divider}`,
-      padding: theme.spacing(1, 2),
+      padding: '0px 16px',
+      paddingLeft: '2%',
     },
     link: {
       color: theme.palette.primary.main,
@@ -126,7 +131,7 @@ const useStyles = makeStyles((theme) => ({
       },
     },
     extendedIcon: {
-      marginRight: theme.spacing(1),
+      marginRight: '1px',
     },
     rootmodal: {
       '& > *': {
@@ -271,17 +276,10 @@ export default function GeozonesPages() {
   const [open, setOpen] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false)
   const isViewportDesktop = useSelector(state => state.session.deviceAttributes.isViewportDesktop);
-  const history = useHistory();
-  const dispatch = useDispatch();
-  const {id} = useParams();
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
-  const [area, setArea] = useState('');
   const [openModalMap, setOpenModalMap] = useState(false);
   const [geozoneType, setGeozoneType] = useState('0');
   const [color, setColor] = useState('#000000');
   const [openPer, setOpenPer] = React.useState(true);
-
   const [geozone, setGeozone] = useState({ id: null, name: '', description: '', area: '', attributes: {} })
 
   const handleDrawerShow = () => {
@@ -437,32 +435,29 @@ export default function GeozonesPages() {
               </Typography>
             </div>
             <div className={classes.column}>
-              <Typography
-                className={classes.heading}><strong>Attributes</strong></Typography>
             </div>
           </AccordionSummary>
-          <AccordionDetails className={classes.details}>
+          <AccordionDetails>
             <div className={classes.column}>
-              <img className={classes.imgItem}
-                   src="https://spin.atomicobject.com/wp-content/uploads/Screen-Shot-2015-07-11-at-10.06.33-AM.png"/>
-            </div>
-            <div className={classes.column}>
-              {/*<Chip label="Santiago de Chile" onDelete={() => {*/}
-              {/*}}/>*/}
               <Typography
-                className={classes.heading}><strong>{t('sharedArea')}</strong></Typography>
-              <ListItemText
-                className={classes.heading}>{geozone.area}</ListItemText>
+                className={classes.heading}><strong>{t('sharedArea')}</strong>
+              </Typography>
+              <Typography style={{fontSize: '10px'}}
+                className={classes.heading}>{geozone.area}
+              </Typography>
             </div>
             <div className={clsx(classes.column, classes.helper)}>
-              <Typography variant="caption">
+              <Typography
+                className={classes.heading}><strong>{t('sharedAttributes')}</strong>
+              </Typography>
+              <Typography variant="caption" className={classes.heading}>
                 <List component="div" disablePadding>
                   {Object.entries(geozone.attributes).map(([key, value]) =>
-                    <ListItem key={key} className={classes.nested}>
+                    <ListItem key={key} style={{paddingLeft: 0}} className={classes.nested}>
                       <ListItemIcon style={{minWidth: '30px'}}>
                         <StarBorder style={{fontSize: '15px'}}/>
                       </ListItemIcon>
-                      <ListItemText style={{fontSize: '12px'}} primary={key}
+                      <ListItemText disableTypography={true} className={classes.attributesStyles} primary={key}
                                     secondary={value}/>
                     </ListItem>
                   )}
@@ -486,7 +481,7 @@ export default function GeozonesPages() {
                  color="default"
                  aria-label="edit"
                  onClick={() => handleRemove(geozone.id)}>
-              <AddIcon style={{transform: 'rotateZ(45deg)'}}
+              <AddIcon style={{transform: 'rotateZ(45deg)', fontSize: '33px'}}
                        className={classes.extendedIcon}/>{t('sharedRemove')}
             </Fab>
           </AccordionActions>
