@@ -90,6 +90,12 @@ const getMaintenanceByUserId = (id) => {
     .then(response => response.json());
 }
 
+const getCurrentAddress = (lat = -32.882297, lng = -68.815419) => {
+  return fetch(`api/server/geocode?latitude=${lat}&longitude=${lng}`, {method: 'GET'})
+    .catch(function (error) { console.log('setCurrentAddress error: ', error)})
+    .then(response => response.text());
+}
+
 export {
   setSession,
   getDeviceByUserId,
@@ -106,4 +112,5 @@ export {
   getGraphicData,
   setUser,
   getMaintenanceByUserId,
+  getCurrentAddress,
 };

@@ -47,7 +47,7 @@ button {
 }
 
 .mapboxgl-popup-close-button {
-  top: 87% !important;
+  top: 85% !important;
   right: 2% !important;
   padding: 0 5px 0 0;
   border-radius: 10px 2px 35px 0 !important;
@@ -355,6 +355,11 @@ button {
 
 /* ancho de pantalla de mas de 960px (desktop-notebook)*/
 @media only screen and (min-width: 960px){
+  .MuiBadge-anchorOriginTopRightRectangle {
+    top: 3px !important;
+    right: 5px !important;
+    z-index: 1050 !important;
+  }
    .MuiListItem-secondaryAction {
     padding-right: 42px !important;
   }
@@ -398,6 +403,12 @@ button {
 
 /* ancho de pantalla de menos de 600px* (mobile)*/
 @media only screen and (max-width: 600px) {
+  .MuiBadge-anchorOriginTopRightRectangle {
+    top: 20px !important;
+    right: 15px !important;
+    font-size: 15px !important;
+  }
+
   .close-config-modal {
     margin-left: -30px !important;
   }

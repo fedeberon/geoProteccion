@@ -2,15 +2,10 @@ import React, { useState } from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import Backdrop from '@material-ui/core/Backdrop';
 import SpeedDial from '@material-ui/lab/SpeedDial';
-import FileCopyIcon from '@material-ui/icons/FileCopyOutlined';
-import SaveIcon from '@material-ui/icons/Save';
-import PrintIcon from '@material-ui/icons/Print';
-import ShareIcon from '@material-ui/icons/Share';
-import FavoriteIcon from '@material-ui/icons/Favorite';
 import t from '../common/localization';
-
 import {useDispatch, useSelector} from "react-redux";
 import DeviceSearch from './DeviceSearch';
+import Badge from "@material-ui/core/Badge";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -37,6 +32,12 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: '8px',
     opacity: '60%'
   },
+  badge: {
+
+  },
+  [theme.breakpoints.up('md')]: {
+    marginLeft: '8px',
+  },
 }));
 
 export default function ShortcutsMenu({ toggleGeozones, showReportDialog }) {
@@ -53,14 +54,16 @@ export default function ShortcutsMenu({ toggleGeozones, showReportDialog }) {
       { showShortcutMenu &&
         <>
           <Backdrop open={false}/>
-          <SpeedDial
-            ariaLabel="Notifications"
-            title={t("sharedNotifications")}
-            className={classes.speedDial}
-            icon={<i className="fas fa-bell fa-lg"/>}
-            direction={isViewportDesktop ? 'down' : 'up'}
-            open={false}
-          />
+          <Badge badgeContent={4} color="secondary">
+            <SpeedDial
+              ariaLabel="Notifications"
+              title={t("sharedNotifications")}
+              className={classes.speedDial}
+              icon={<i className="fas fa-bell fa-lg"/>}
+              direction={isViewportDesktop ? 'down' : 'up'}
+              open={false}
+            />
+          </Badge>
           <SpeedDial
             ariaLabel="Reports"
             title={t("reportTitle")}
