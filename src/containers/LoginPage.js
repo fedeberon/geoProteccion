@@ -101,12 +101,12 @@ const LoginPage = () => {
   const history = useHistory();
 
   const handleChangeCheckbox = () => {
+    localStorage.checkbox = !isChecked;
     setIsChecked(!isChecked);
   }
 
   const handleNameChange = (event) => {
     let validName = event.target.value
-    console.log(validName)
   }
 
   const handleEmailChange = (event) => {
@@ -142,7 +142,9 @@ const LoginPage = () => {
       if(isChecked) {
         localStorage.username = email;
         localStorage.password = password;
-        localStorage.checkbox = isChecked;
+      } else {
+        localStorage.username = '';
+        localStorage.password = '';
       }
       history.push('/');
     } else {
@@ -152,10 +154,10 @@ const LoginPage = () => {
   }
 
   useLayoutEffect(()=> {
-    if(localStorage.checkbox) {
+    if(localStorage.checkbox === 'true' && localStorage.username !== email && localStorage.password !== password) {
       setEmail(localStorage.username);
       setPassword(localStorage.password);
-      setIsChecked(localStorage.checkbox);
+      setIsChecked(localStorage.checkbox === 'true');
     }
   })
 
@@ -198,7 +200,7 @@ const LoginPage = () => {
 
 
               <FormControlLabel
-                control={<Checkbox onChange={() => handleChangeCheckbox()} checked={isChecked} value="remember" color="primary"/>}
+                control={<Checkbox onChange={() => handleChangeCheckbox()} checked={isChecked} value={isChecked} color="primary"/>}
                 label={t('userRemember')}
               />
 
