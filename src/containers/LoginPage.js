@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useLayoutEffect, useState} from 'react';
 import {useDispatch} from 'react-redux';
 import {useHistory} from 'react-router-dom';
 import {sessionActions} from '../store';
@@ -27,7 +27,7 @@ function Copyright() {
     <Typography variant="body2" color="textSecondary" align="center">
       {'Copyright © '}
       <Link color="inherit" href="https://www.geoproteccion.com/">
-        GeoProtecci&oacute;n
+        Geos
       </Link>{' '}
       {new Date().getFullYear()}
       {'.'}
@@ -91,6 +91,7 @@ const LoginPage = () => {
   const [signUpView, setSignUpView] = useState(false);
   const [passVisible, setPassVisible] = useState(false);
   const [showDialogSuccess, setShowDialogSuccess] = useState(false);
+  const [ isChecked, setIsChecked ] = useState(false);
 
   const nameRegex =  /^[a-zA-Z]{4,12}[ ]?[a-zA-Z]{4,20}$/; //
   const emailRegex = /^\w[a-z0-9_.]+@[a-z]{4,12}.com$/;
@@ -98,6 +99,10 @@ const LoginPage = () => {
 
   const classes = useStyles();
   const history = useHistory();
+
+  const handleChangeCheckbox = () => {
+    setIsChecked(!isChecked);
+  }
 
   const handleNameChange = (event) => {
     let validName = event.target.value
@@ -129,17 +134,30 @@ const LoginPage = () => {
   const handleLogin = async (event) => {
     event.preventDefault();
     const response = await service.setSession(email, password);
-    const user = await response.json();
+    const user = response.status === 200 ? await response.json() : '';
 
     if (response.ok) {
       dispatch(sessionActions.authenticated(true));
       dispatch(sessionActions.setUser(user))
+      if(isChecked) {
+        localStorage.username = email;
+        localStorage.password = password;
+        localStorage.checkbox = isChecked;
+      }
       history.push('/');
     } else {
       setFailed(true);
       setPassword('');
     }
   }
+
+  useLayoutEffect(()=> {
+    if(localStorage.checkbox) {
+      setEmail(localStorage.username);
+      setPassword(localStorage.password);
+      setIsChecked(localStorage.checkbox);
+    }
+  })
 
   return (
 
@@ -149,7 +167,7 @@ const LoginPage = () => {
         <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
           <div className={classes.paper} style={{display: signUpView ? 'none' : 'flex'}}>
             <img alt="logo" loading="lazy" style={{width: 80, margin: 20}}
-                  src={require('../../public/images/LogoGeos.png').default}/>
+                  src={require('../../public/images/logogeos.png').default}/>
 
             <form className={classes.form} noValidate onSubmit={handleLogin}>
 
@@ -180,8 +198,8 @@ const LoginPage = () => {
 
 
               <FormControlLabel
-                control={<Checkbox value="remember" color="primary"/>}
-                label="Recordarme"
+                control={<Checkbox onChange={() => handleChangeCheckbox()} checked={isChecked} value="remember" color="primary"/>}
+                label={t('userRemember')}
               />
 
               <Button
@@ -195,13 +213,6 @@ const LoginPage = () => {
                 {t('loginLogin')}
               </Button>
 
-              <Grid container>
-                <Grid item xs style={{textAlign: 'center'}}>
-                  <Link href="#" variant="body2">
-                    Olvid&oacute; su contrase&ntilde;a ?
-                  </Link>
-                </Grid>
-              </Grid>
               <Box mt={5}>
                 <Copyright/>
               </Box>
