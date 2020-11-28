@@ -386,8 +386,8 @@ button {
     background-image: linear-gradient(25deg, #77F9D3 0%, #5CD2F8 50%, #5A79FF 100%);
   }
   .MuiFab-root {
-    width: 39px !important;
-    height: 39px !important;
+    width: 44px !important;
+    height: 44px !important;
     margin: 0px 2px 15px 2px !important;
   }
   .MuiFab-extended {

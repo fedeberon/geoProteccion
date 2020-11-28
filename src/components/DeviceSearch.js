@@ -10,9 +10,9 @@ const useStyles = makeStyles((theme) => ({
     padding: "4px 4px",
     display: "grid",
     alignItems: "center",
-    width: '76%',
+    width: '75%',
     height: 'auto',
-    margin: '3%',
+    margin: '17px 8px',
     position: 'fixed',
     left: '0px',
     borderRadius: '40px',
@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   iconButton: {
-    padding: 10
+    padding: 8
   },
   div: {
     paddingLeft: '5%',
@@ -33,7 +33,8 @@ const useStyles = makeStyles((theme) => ({
   },
   input: {
     [theme.breakpoints.up('md')]: {
-      width: '460px'
+      width: '460px',
+      height: '37px,'
     }
   },
   listItem: {
@@ -156,7 +157,8 @@ function DeviceSearch() {
           onChange={event => filterDevices( event.target.value )}
         />
       </div>
-      <div style={{display: 'flex', width: '100%', cursor: 'pointer'}} onClick={() => toggleDeviceList()}>
+      <div style={{display: 'flex', width: '100%', cursor: 'pointer',}}
+           onClick={() => toggleDeviceList()}>
         { showDeviceList ?
           <i className="fas fa-angle-up fa-lg" style={{ margin: '0 auto'}}/>
           :

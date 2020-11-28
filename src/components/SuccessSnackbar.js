@@ -19,7 +19,7 @@ export default function SuccessSnackbar() {
   }
 
   return (
-    <Snackbar
+    <Snackbar style={{zIndex: `${successSnackbarOpen ? '1400' : '-1' }`}}
       anchorOrigin={{
         vertical: "bottom",
         horizontal: "right"

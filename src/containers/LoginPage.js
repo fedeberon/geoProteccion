@@ -101,7 +101,6 @@ const LoginPage = () => {
   const history = useHistory();
 
   const handleChangeCheckbox = () => {
-    localStorage.checkbox = !isChecked;
     setIsChecked(!isChecked);
   }
 
@@ -142,9 +141,11 @@ const LoginPage = () => {
       if(isChecked) {
         localStorage.username = email;
         localStorage.password = password;
+        localStorage.checkbox = isChecked;
       } else {
         localStorage.username = '';
         localStorage.password = '';
+        localStorage.checkbox = false;
       }
       history.push('/');
     } else {
