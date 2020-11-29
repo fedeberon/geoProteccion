@@ -99,8 +99,11 @@ const createFeature = (devices, position, isViewportDesktop) => {
                         <li>
                         <tr>
                         <p><strong>${t("currentAddress")+':'}</strong>
-                        199 Los Libertadores, Santa Cruz Región del Libertador General Bernardo O'Higgins, CL</p>
+                        <p id="device-${device.id}">${t("deviceStatusUnknown")}</p></p>
                         </tr>
+                        <li>
+                            <button class="${desktopView ? 'button-black' : 'button-black-mobile'}" onClick="showAddress(${device.id},${position.latitude},${position.longitude})">${t("sharedShowAddress")}</button>
+                        </li>
                         </li>
                         </ul>
                       </div>

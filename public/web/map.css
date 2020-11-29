@@ -47,7 +47,7 @@ button {
 }
 
 .mapboxgl-popup-close-button {
-  top: 85% !important;
+  top: 88% !important;
   right: 2% !important;
   padding: 0 5px 0 0;
   border-radius: 10px 2px 35px 0 !important;
@@ -262,7 +262,7 @@ button {
     display: flex !important;
     top: 48% !important;
     z-index: 2 !important;
-    background-image: linear-gradient(25deg, #77F9D3 0%, #5CD2F8 50%, #5A79FF 100%); !important;
+    background-image: linear-gradient(25deg, #77F9D3 0%, #5CD2F8 50%, #5A79FF 100%) !important;
   }
 
   .MuiSpeedDial-root {
