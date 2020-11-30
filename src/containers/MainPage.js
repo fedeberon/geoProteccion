@@ -12,6 +12,7 @@ import Menu from "../components/Menu";
 import * as service from "../utils/serviceManager";
 import ShortcutsMenu from "../components/ShorcutsMenu";
 import ReportsDialog from "../components/ReportsDialog";
+import NotificationList from '../components/NotificationList';
 
 
 const useStyles = makeStyles(theme => ({
@@ -56,13 +57,14 @@ const useStyles = makeStyles(theme => ({
 
 const MainPage = ({ width }) => {
   const dispatch = useDispatch();
-  const [geozones, setGeozones] = useState([]);
+  const [ geozones, setGeozones ] = useState([]);
   const authenticated = useSelector(state => state.session.authenticated);
   const classes = useStyles();
   const open = useSelector(state => state.modals.items.search);
   const userId = useSelector((state) => state.session.user.id);
   const [ areGeozonesVisible, setAreGeozonesVisible] = useState(true);
-  const [showReports, setShowReports] = useState(false)
+  const [ showReports, setShowReports ] = useState(false);
+  const [ showNotifications, setShowNotifications ] = useState(false);
 
   const handleVisibilityModal = (name) => {
     dispatch(modalsActions.show(name));
@@ -84,6 +86,10 @@ const MainPage = ({ width }) => {
     setShowReports(value);
   }
 
+  const handleNotifications = () => {
+    setShowNotifications(!showNotifications);
+  }
+
   return !authenticated ? (<LinearProgress />) : (
     <div className={classes.root}>
       <SocketController />
@@ -93,11 +99,11 @@ const MainPage = ({ width }) => {
           open={open}
           onClose={e => {
             e.stopPropagation();
-            handleVisibilityModal('search')
+            handleVisibilityModal('search');
           }}
           onClick={e => {
             e.stopPropagation();
-            handleVisibilityModal('search')
+            handleVisibilityModal('search');
           }}
           classes={{ paper: classes.drawerPaper }}
           >
@@ -113,7 +119,7 @@ const MainPage = ({ width }) => {
         }
       </div>
 
-      <ShortcutsMenu toggleGeozones={handleGeozones} showReportDialog={handleReports}/>
+      <ShortcutsMenu toggleGeozones={handleGeozones} showReportDialog={handleReports} showNotificationsDialog={handleNotifications}/>
       <Menu />
       
       {showReports &&
@@ -122,6 +128,11 @@ const MainPage = ({ width }) => {
         </div>
       }
 
+      {showNotifications &&
+        <div>
+          <NotificationList />
+        </div>
+      }
     </div>
   );
 }

@@ -6,6 +6,7 @@ import t from '../common/localization';
 import {useDispatch, useSelector} from "react-redux";
 import DeviceSearch from './DeviceSearch';
 import Badge from "@material-ui/core/Badge";
+import { notificationActions } from '../store';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -40,13 +41,23 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function ShortcutsMenu({ toggleGeozones, showReportDialog }) {
+export default function ShortcutsMenu({ toggleGeozones, showReportDialog, showNotificationsDialog }) {
+  const dispatch = useDispatch();
   const classes = useStyles();
   const isViewportDesktop = useSelector(state => state.session.deviceAttributes.isViewportDesktop);
+  const notifications = useSelector(state => state.notification.items);
   const [ showShortcutMenu, setShowShortcutMenu ] = useState(isViewportDesktop);
+  const [ isNotificationOpen, setIsNotificationOpen ] = useState(false);
 
   const handleShowShortcutMenu = () => {
     setShowShortcutMenu(!showShortcutMenu);
+  }
+  
+  const handleNotifications = () => {
+    setIsNotificationOpen(!isNotificationOpen);
+    if(isNotificationOpen) {
+      dispatch(notificationActions.remove());
+    }
   }
 
   return (
@@ -54,7 +65,19 @@ export default function ShortcutsMenu({ toggleGeozones, showReportDialog }) {
       { showShortcutMenu &&
         <>
           <Backdrop open={false}/>
-          <Badge badgeContent={4} color="secondary">
+          {notifications.length > 0 ?
+            <Badge badgeContent={notifications.length} color="secondary">
+              <SpeedDial
+                ariaLabel="Notifications"
+                title={t("sharedNotifications")}
+                className={classes.speedDial}
+                icon={<i className="fas fa-bell fa-lg"/>}
+                direction={isViewportDesktop ? 'down' : 'up'}
+                open={false}
+                onClick={() => {showNotificationsDialog(); handleNotifications()}}
+              />
+            </Badge>
+            :
             <SpeedDial
               ariaLabel="Notifications"
               title={t("sharedNotifications")}
@@ -62,8 +85,9 @@ export default function ShortcutsMenu({ toggleGeozones, showReportDialog }) {
               icon={<i className="fas fa-bell fa-lg"/>}
               direction={isViewportDesktop ? 'down' : 'up'}
               open={false}
+              onClick={() => showNotificationsDialog()}
             />
-          </Badge>
+          }
           <SpeedDial
             ariaLabel="Reports"
             title={t("reportTitle")}

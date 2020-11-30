@@ -446,5 +446,20 @@
     "reportNo": "No",
     "reportType": "Report Type",
     "sharedAccept": "Accept",
-    "showMore": "Details"
+    "showMore": "Details",
+    "deviceOnline": "Devide online",
+    "deviceOffline": "Device offline",
+    "ignitionOn": "Ignition on",
+    "ignitionOff": "Ignition off",
+    "DeviceOverspeed": "Speed exceeded",
+    "CommandResult": "Command result",
+    "Alarm": "Alarm",
+    "maintenance": "Maintenance",
+    "DeviceOnline": "Device online",
+    "DeviceFuelDrop": "Fuel drop",
+    "Maintenance": "Maintenance",
+    "deviceMoving": "Device moving",
+    "deviceStopped": "Device stopped",
+    "geofenceEnter": "Entering geofence",
+    "geofenceExit": "Leaving geofence"
 }
