@@ -18,6 +18,7 @@ import PrivateRoute from './components/ PrivateRoute';
 import { isWidthUp } from '@material-ui/core';
 import { getBreakpointFromWidth } from './utils/functions';
 import { sessionActions } from './store';
+import DeviceDetail from "./components/DeviceDetail";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -35,7 +36,7 @@ const App = () => {
         <Route exact path='/login' component={LoginPage} />
         <PrivateRoute exact path='/' isAuthenticated={authenticated} component={MainPage} />
         <PrivateRoute exact path='/device/list' isAuthenticated={authenticated} component={DevicePage} />
-        <PrivateRoute exact path='/device/:id?' isAuthenticated={authenticated} component={DevicePage} />
+        <PrivateRoute exact path='/device/:id?' isAuthenticated={authenticated} component={DeviceDetail} />
         <PrivateRoute exact path='/account' isAuthenticated={authenticated} component={UserPage} />
         <PrivateRoute exact path='/groups' isAuthenticated={authenticated} component={GroupsPage} />
         <PrivateRoute exact path='/geozones' isAuthenticated={authenticated} component={GeozonesPage} />

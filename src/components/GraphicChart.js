@@ -1,7 +1,4 @@
 import React, {useLayoutEffect, useRef, useState} from 'react';
-import CanvasJSReact from '../canvasjs.react';
-const CanvasJS = CanvasJSReact.CanvasJS;
-const CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
 class GraphicChart extends React.Component {
 

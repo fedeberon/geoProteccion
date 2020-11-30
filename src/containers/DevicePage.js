@@ -7,7 +7,7 @@ import Button from '@material-ui/core/Button';
 import FormControl from '@material-ui/core/FormControl';
 import * as service from '../utils/serviceManager';
 import t from '../common/localization';
-import {useDispatch, useSelector} from "react-redux";
+import {shallowEqual, useDispatch, useSelector} from "react-redux";
 import clsx from 'clsx';
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
@@ -17,12 +17,8 @@ import CardActions from '@material-ui/core/CardActions';
 import Collapse from '@material-ui/core/Collapse';
 import Avatar from '@material-ui/core/Avatar';
 import IconButton from '@material-ui/core/IconButton';
-import {red} from '@material-ui/core/colors';
-import FavoriteIcon from '@material-ui/icons/Favorite';
-import ShareIcon from '@material-ui/icons/Share';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
-import MapIcon from '@material-ui/icons/Map';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -146,8 +142,7 @@ const DevicePage = () => {
   const [device, setDevice] = useState();
   const [name, setName] = useState('');
   const [uniqueId, setUniqueId] = useState('');
-  const userId = useSelector((state) => state.session.user.id)
-  const [devices, setDevices] = useState([])
+  const devices = useSelector(state => Object.values(state.devices.items), shallowEqual);
 
   const [collapsedIndex, setCollapsedIndex] = useState(-1);
 
@@ -166,14 +161,6 @@ const DevicePage = () => {
   const handleClickListG = () => {
     setOpenG(!openG);
   };
-
-  useEffect(() => {
-    const getDevices = async (userId) => {
-      const response = await service.getDeviceByUserId(userId);
-      setDevices(response);
-    }
-    getDevices(userId);
-  }, [userId]);
 
   const handleLogout = () => {
     fetch('/api/session', { method: 'DELETE' }).then(response => {
@@ -215,7 +202,7 @@ const DevicePage = () => {
   return (
     <>
       <div style={{marginTop: '5%'}} className="title-section">
-        <h2>Información de dispositivos</h2>
+        <h2>{t('deviceTitle')}</h2>
         <Divider/>
       </div>
       <div className={classes.devicesTable}>
@@ -241,12 +228,6 @@ const DevicePage = () => {
                         title={`${device.attributes.carPlate} - ${device.name}`}
                         subheader={device.lastUpdate}/>
              <CardActions disableSpacing>
-              <IconButton aria-label="add to favorites">
-                <FavoriteIcon/>
-              </IconButton>
-              <IconButton aria-label="share">
-                <ShareIcon/>
-              </IconButton>
               <IconButton
                 className={clsx(classes.expand, {
                   [classes.expandOpen]: collapsedIndex === index,

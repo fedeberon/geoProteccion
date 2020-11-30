@@ -4,6 +4,7 @@ import React, { Fragment, useEffect, useState } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { devicesActions } from '../store';
 import t from "../common/localization";
+import {useHistory} from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -109,8 +110,9 @@ const useStyles = makeStyles((theme) => ({
 
 }));
 
-function DeviceSearch() {
+function DeviceSearch(deviceId) {
   const dispatch = useDispatch();
+  const history = useHistory();
   const classes = useStyles();
   const devices = useSelector(state => Object.values(state.devices.items), shallowEqual);
   const positions = useSelector(state => state.positions.items, shallowEqual);
@@ -189,7 +191,11 @@ function DeviceSearch() {
                 </div>
 
                 <ListItemSecondaryAction>
-                  <IconButton>
+                  <IconButton
+                    onClick={e => {
+                    e.stopPropagation();
+                    history.push(`/device/${device.id}`);
+                  }}>
                     <i className="fas fa-info-circle" />
                   </IconButton>
                 </ListItemSecondaryAction>
