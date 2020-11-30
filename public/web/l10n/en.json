@@ -445,5 +445,6 @@
     "reportYes": "Yes",
     "reportNo": "No",
     "reportType": "Report Type",
-    "sharedAccept": "Accept"
+    "sharedAccept": "Accept",
+    "showMore": "Details"
 }
