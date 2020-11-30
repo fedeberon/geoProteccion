@@ -441,5 +441,6 @@
     "sharedSelectEvent": "Seleccione Evento(s)",
     "reportYes": "Sí",
     "reportNo": "No",
-    "reportType": "Tipo de Reporte"
+    "reportType": "Tipo de Reporte",
+    "showMore": "Ver más"
 }

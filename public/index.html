@@ -10,6 +10,35 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="web/app.css">
     <link rel="stylesheet" href="web/map.css">
+
+    <script>
+      async function showAddress(deviceId, latitude, longitude) {
+        let addressElement = document.getElementById("device-" + deviceId);
+        addressElement.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>';
+        
+        let response = await fetch(`api/server/geocode?latitude=${latitude}&longitude=${longitude}`, {method: 'GET'})
+          .catch(function (error) { console.log('setCurrentAddress error: ', error)})
+          .then(response => response.text());
+
+        addressElement.innerHTML = response;
+      }
+
+      function showDetails(deviceId) {
+        let headerElement = document.getElementById("header-" + deviceId);
+        let mainElement = document.getElementById("main-data-" + deviceId);
+        let detailsElement = document.getElementById("details-" + deviceId);
+
+        if (detailsElement.getAttribute('style') === 'display: none;') {
+          headerElement.style = 'display: none;';
+          mainElement.style = 'display: none;';
+          detailsElement.style = '';
+        } else {
+          headerElement.style = '';
+          mainElement.style = '';
+          detailsElement.style = 'display: none;';
+        }
+      }
+    </script>
   </head>
   <body style="margin: 0; padding: 0;">
     <noscript>

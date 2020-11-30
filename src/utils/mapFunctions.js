@@ -1,5 +1,6 @@
 import t from '../common/localization';
 import circleToPolygon from 'circle-to-polygon';
+import { getCourse } from './functions';
 
 const typeRegEx = /(\w*)[ ]?[(]/;
 const circlePositionRegEx = /[(](.*) (.*)[,]/;
@@ -90,68 +91,213 @@ const createFeature = (devices, position, isViewportDesktop) => {
     return {
       name: device ? `${name} ${speed} Km/h` : '',
       description: `<div class="${desktopView ? 'popup-map-div' : 'popup-map-div-mobile'}">
-                      <div class="popup-map-header">
-                      <ul class="head-list">
-                        <li><p style="${desktopView ? 'font-size: 16px' : 'font-size: 20px'}"><strong  class="bold">${carPlate + '</strong> - ' + name} </p></li>
-                        <li><p>18:21:32  14/07/2020 <span class="display-flex status-${status}">${status}<span class="${desktopView ? 'status-inactive' : 'status-inactive-mobile'}">&nbsp;2 hours ago</span></span></p></li>
-                        <!--<li><p>${brand + ' ' + model + ' ' + year}</p></li>
-                        <li><p>${protocol}</p></li>-->
-                        <li>
-                        <tr>
-                        <p><strong>${t("currentAddress")+':'}</strong>
-                        199 Los Libertadores, Santa Cruz Región del Libertador General Bernardo O'Higgins, CL</p>
-                        </tr>
-                        </li>
-                        </ul>
-                      </div>
-                      <div>
-                    </div>
+                        <div class="popup-map-header" id="header-${device.id}">
+                            <ul class="head-list">
+                                <li>
+                                    <p style="${desktopView ? 'font-size: 16px' : 'font-size: 20px'}"><strong  class="bold">${carPlate + '</strong> - ' + name} </p>
+                                </li>
+                                <li>
+                                    <p>18:21:32  14/07/2020 <span class="display-flex status-${status}">${status}<span class="${desktopView ? 'status-inactive' : 'status-inactive-mobile'}">&nbsp;2 hours ago</span></span></p>
+                                </li>
+                                <!--
+                                <li><p>${brand + ' ' + model + ' ' + year}</p></li>
+                                <li><p>${protocol}</p></li>
+                                -->
+                                <li>
+                                    <tr>
+                                        <p><strong>${t("currentAddress")+':'}</strong>
+                                        <p id="device-${device.id}">${t("deviceStatusUnknown")}</p></p>
+                                    </tr>
+                                    <li>
+                                        <button class="${desktopView ? 'button-black' : 'button-black-mobile'}" onClick="showAddress(${device.id},${position.latitude},${position.longitude})">${t("sharedShowAddress")}</button>
+                                    </li>
+                                </li>
+                            </ul>
+                        </div>
 
-                      <div class="popup-map-body">
-                        <i style="${desktopView ? '' : 'color: white'}"class="fas fa-truck-moving vehicule-type"></i>
-                        <table class="body-list">
-                        <tr>
-                        <td><i class="icon-fa fas fa-map-marker-alt"/></td>
-                        <th>${t("deviceContact")}</th>
-                        <td>
-                        <td><p class="${desktopView ? 'status-inactive' : 'status-inactive-mobile'}">Abierto</p></td>
-                        </td>
-                        </tr>
-                        <tr>
-                        <td><i class="icon-fa fas fa-car-alt"/></td>
-                        <th>${t("currentStatus")}</th>
-                        <td>
-                        <td><p class="${desktopView ? 'status-inactive' : 'status-inactive-mobile'}">No</p></td>
-                        </td>
-                        </tr>
-                        <tr>
-                        <td><i class="icon-fa fas fa-tachometer-alt"/></td>
-                        <th>${t("positionSpeed")}</th>
-                        <td>
-                        <td><p class="${desktopView ? 'status-inactive' : 'status-inactive-mobile'}">${speed}</p></td>
-                        </td>
-                        </tr>
-                        <tr>
-                        <td><i class="icon-fa fas fa-road"/></td>
-                        <th>${t("mileage")}</th>
-                        <td>
-                        <td><p class="${desktopView ? 'status-inactive' : 'status-inactive-mobile'}">${kilometers}</p></td>
-                        </td>
-                        </tr>
-                        <tr>
-                        <td><i class="icon-fa fas fa-bolt"/></td>
-                        <th>${t("circuitBreaker")}</th>
-                        <td>
-                        <td><p class="${desktopView ? 'status-inactive' : 'status-inactive-mobile'}">Desactivado</p></td>
-                        </td>
-                        </tr>
-                        </table>
+                        <div id="details-${device.id}" style="display: none;">
+                            <table class="body-list">
+                                <tr>
+                                    <th>
+                                        ${t("sharedHour")}
+                                    </th>
+                                    <td>
+                                        ${position.deviceTime}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>
+                                        ${t("positionLatitude")}
+                                    </th>
+                                    <td>
+                                        ${position.latitude}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>
+                                        ${t("positionLongitude")}
+                                    </th>
+                                    <td>
+                                        ${position.longitude}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>
+                                        ${t("positionValid")}
+                                    </th>
+                                    <td>
+                                        ${position.valid}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>
+                                        ${t("positionAccuracy")}
+                                    </th>
+                                    <td>
+                                        ${position.accuracy}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>
+                                        ${t("positionAltitude")}
+                                    </th>
+                                    <td>
+                                        ${position.altitude}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>
+                                        ${t("positionSpeed")}
+                                    </th>
+                                    <td>
+                                        ${position.speed}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>
+                                        ${t("positionCourse")}
+                                    </th>
+                                    <td>
+                                        ${getCourse(position.course)}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>
+                                        ${t("positionAddress")}
+                                    </th>
+                                    <td>
+                                        ${position.address}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>
+                                        ${t("positionProtocol")}
+                                    </th>
+                                    <td>
+                                        ${position.protocol}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>
+                                        ${t("positionIgnition")}
+                                    </th>
+                                    <td>
+                                        ${position.attributes.ignition}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>
+                                        ${t("positionStatus")}
+                                    </th>
+                                    <td>
+                                        ${status}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>
+                                        ${t("positionDistance")}
+                                    </th>
+                                    <td>
+                                        ${position.attributes.distance}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>
+                                        ${t("deviceTotalDistance")}
+                                    </th>
+                                    <td>
+                                        ${position.attributes.totalDistance}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>
+                                        ${t("positionMotion")}
+                                    </th>
+                                    <td>
+                                        ${position.attributes.motion}
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
 
-                      </div>
-                      <div class="footer-sp">
-                      <button class="${desktopView ? 'button-black' : 'button-black-mobile'}" href="#/device/${device.id}">
-                      ${t("activateCircuitBreaker")}</button>
-                    </div>
+                        <div class="popup-map-body" id="main-data-${device.id}">
+                            <i style="${desktopView ? '' : 'color: white'}"class="fas fa-truck-moving vehicule-type"></i>
+                            <table class="body-list">
+                                <tr>
+                                    <td><i class="icon-fa fas fa-map-marker-alt"/></td>
+                                    <th>${t("deviceContact")}</th>
+                                    <td>
+                                        <td>
+                                            <p class="${desktopView ? 'status-inactive' : 'status-inactive-mobile'}">Abierto</p>
+                                        </td>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><i class="icon-fa fas fa-car-alt"/></td>
+                                    <th>${t("currentStatus")}</th>
+                                    <td>
+                                        <td>
+                                            <p class="${desktopView ? 'status-inactive' : 'status-inactive-mobile'}">No</p>
+                                        </td>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><i class="icon-fa fas fa-tachometer-alt"/></td>
+                                    <th>${t("positionSpeed")}</th>
+                                    <td>
+                                        <td>
+                                            <p class="${desktopView ? 'status-inactive' : 'status-inactive-mobile'}">${speed}</p>
+                                        </td>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><i class="icon-fa fas fa-road"/></td>
+                                    <th>${t("mileage")}</th>
+                                    <td>
+                                        <td>
+                                            <p class="${desktopView ? 'status-inactive' : 'status-inactive-mobile'}">${kilometers}</p>
+                                        </td>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><i class="icon-fa fas fa-bolt"/></td>
+                                    <th>${t("circuitBreaker")}</th>
+                                    <td>
+                                        <td>
+                                            <p class="${desktopView ? 'status-inactive' : 'status-inactive-mobile'}">Desactivado</p>
+                                        </td>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="footer-sp">
+                            <button class="${desktopView ? 'button-black' : 'button-black-mobile'}" href="#/device/${device.id}">
+                                ${t("activateCircuitBreaker")}
+                            </button>
+                            <button class="${desktopView ? 'button-black' : 'button-black-mobile'}" onClick="showDetails(${device.id})">
+                                ${t("showMore")}
+                            </button>
+                        </div>
                     </div>`
     }
 };

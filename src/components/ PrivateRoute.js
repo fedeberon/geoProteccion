@@ -6,7 +6,7 @@ const PrivateRoute = ({ isAuthenticated, component: Component, ...rest}) => {
 
 	return (
     <>
-      { rest.path !== '/' ?
+      { rest.path !== '/' && rest.path !== '/logout' ?
         <MainToolbar/>
         :
         ''

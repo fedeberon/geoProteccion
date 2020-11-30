@@ -30,6 +30,7 @@ button {
 
 .footer-sp {
   display: flex;
+  flex-direction: column;
   justify-content: center;
 }
 
@@ -47,7 +48,7 @@ button {
 }
 
 .mapboxgl-popup-close-button {
-  top: 85% !important;
+  top: 88% !important;
   right: 2% !important;
   padding: 0 5px 0 0;
   border-radius: 10px 2px 35px 0 !important;
@@ -64,7 +65,7 @@ button {
 }
 
 .button-black {
-  width: 75%;
+  width: 80%;
   border-radius: 6px;
   background-color: #1d193e;
   text-transform: uppercase;
@@ -77,7 +78,7 @@ button {
 }
 
 .button-black-mobile {
-  width: 75%;
+  width: 80%;
   border-radius: 6px;
   margin-top: 6px;
   margin-bottom: 6px;
@@ -251,6 +252,17 @@ button {
   animation: pulse-circle 3s infinite;
 }
 
+#Menu-actions {
+  transform: translateY(-280px);
+  padding-bottom: 0px;
+}
+
+.MuiSpeedDialAction-staticTooltipLabel {
+  background-color: unset !important;
+  box-shadow: none !important;
+  font-size: 12px !important;
+}
+
 @media only screen and (max-width: 960px) {
 
   .mapboxgl-popup {
@@ -262,7 +274,7 @@ button {
     display: flex !important;
     top: 48% !important;
     z-index: 2 !important;
-    background-image: linear-gradient(25deg, #77F9D3 0%, #5CD2F8 50%, #5A79FF 100%); !important;
+    background-image: linear-gradient(25deg, #77F9D3 0%, #5CD2F8 50%, #5A79FF 100%) !important;
   }
 
   .MuiSpeedDial-root {
@@ -279,21 +291,20 @@ button {
   }
 
   #Menu-actions {
-    transform: rotate(270deg) translateX(-100px);
+    transform: rotate(270deg) translateX(-110px) translateY(-4px);
     padding-bottom: 0px;
   }
 
   #Menu-action-0 {
-    transform: rotate(90deg) translate(-70px, 92px);
+    transform: rotate(90deg) translate(-84px, 94px);
   }
-
   #Menu-action-0-label {
     transform: translate(-26px, 0px);
     font-weight: bold;
   }
 
   #Menu-action-1 {
-    transform: rotate(90deg) translate(-34px, 50px);
+    transform: rotate(90deg) translate(-46px, 54px);
   }
 
   #Menu-action-1-label {
@@ -302,7 +313,7 @@ button {
   }
 
   #Menu-action-2 {
-    transform: rotate(90deg) translate(-10px, 14px);
+    transform: rotate(90deg) translate(-22px, 20px);
   }
 
   #Menu-action-2-label {
@@ -311,25 +322,25 @@ button {
   }
 
   #Menu-action-3 {
-    transform: rotate(90deg);
+    transform: rotate(90deg) translate(-6px, -4px);
   }
 
   #Menu-action-3-label {
-    transform: translate(-24px, -20px);
+    transform: translate(-10px, -20px);
     font-weight: bold;
   }
 
   #Menu-action-4 {
-    transform: rotate(90deg) translate(10px, 14px);
+    transform: rotate(90deg) translate(6px, -4px);
   }
 
   #Menu-action-4-label {
-    transform: translate(26px, 0px);
+    transform: translate(-30px, -20px);
     font-weight: bold;
   }
 
   #Menu-action-5 {
-    transform: rotate(90deg) translate(34px, 50px);
+    transform: rotate(90deg) translate(22px, 20px);
   }
 
   #Menu-action-5-label {
@@ -338,7 +349,7 @@ button {
   }
 
   #Menu-action-6 {
-    transform: rotate(90deg) translate(70px, 92px);
+    transform: rotate(90deg) translate(46px, 54px);
   }
 
   #Menu-action-6-label {
@@ -346,6 +357,15 @@ button {
     font-weight: bold;
   }
 
+  #Menu-action-7 {
+    transform: rotate(90deg) translate(84px, 94px);
+  }
+
+  #Menu-action-7-label {
+    transform: translate(26px, 0px);
+    font-weight: bold;
+  }
+  
   .MuiSpeedDialAction-staticTooltipLabel {
     background-color: unset !important;
     box-shadow: none !important;
@@ -399,6 +419,47 @@ button {
   .MuiToolbar-regular {
     min-height: 50px !important;
   }
+
+  [aria-describedby="Menu-action-0-label"] {
+    transform: translate(0px, 0px);
+    font-weight: bold;
+  }
+
+  [aria-describedby="Menu-action-1-label"] {
+    transform: translate(40px, 0px);
+    font-weight: bold;
+  }
+
+  [aria-describedby="Menu-action-2-label"] {
+    transform: translate(60px, 0px);
+    font-weight: bold;
+  }
+
+  [aria-describedby="Menu-action-3-label"] {
+    transform: translate(70px, 0px);
+    font-weight: bold;
+  }
+
+  [aria-describedby="Menu-action-4-label"] {
+    transform: translate(70px, 0px);
+    font-weight: bold;
+  }
+
+  [aria-describedby="Menu-action-5-label"] {
+    transform: translate(60px, 0px);
+    font-weight: bold;
+  }
+
+  [aria-describedby="Menu-action-6-label"] {
+    transform: translate(40px, 0px);
+    font-weight: bold;
+  }
+
+  [aria-describedby="Menu-action-7-label"] {
+    transform: translate(0px, 0px);
+    font-weight: bold;
+  }
+
 }
 
 /* ancho de pantalla de menos de 600px* (mobile)*/

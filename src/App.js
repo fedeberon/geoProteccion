@@ -35,6 +35,7 @@ const App = () => {
       <Switch>
         <Route exact path='/login' component={LoginPage} />
         <PrivateRoute exact path='/' isAuthenticated={authenticated} component={MainPage} />
+        <PrivateRoute exact path='/logout' isAuthenticated={authenticated} component={LoginPage} />
         <PrivateRoute exact path='/device/list' isAuthenticated={authenticated} component={DevicePage} />
         <PrivateRoute exact path='/device/:id?' isAuthenticated={authenticated} component={DeviceDetail} />
         <PrivateRoute exact path='/account' isAuthenticated={authenticated} component={UserPage} />

@@ -137,7 +137,7 @@ const LoginPage = () => {
 
     if (response.ok) {
       dispatch(sessionActions.authenticated(true));
-      dispatch(sessionActions.setUser(user))
+      dispatch(sessionActions.setUser(user));
       if(isChecked) {
         localStorage.username = email;
         localStorage.password = password;
@@ -155,6 +155,11 @@ const LoginPage = () => {
   }
 
   useLayoutEffect(()=> {
+    if (history.location === '/logout') {
+      dispatch(sessionActions.authenticated(false));
+      dispatch(sessionActions.setUser({}));
+    }
+
     if(localStorage.checkbox === 'true' && localStorage.username !== email && localStorage.password !== password) {
       setEmail(localStorage.username);
       setPassword(localStorage.password);
