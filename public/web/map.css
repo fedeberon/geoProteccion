@@ -257,46 +257,6 @@ button {
   padding-bottom: 0px;
 }
 
-[aria-describedby="Menu-action-0-label"] {
-  transform: translate(0px, 0px);
-  font-weight: bold;
-}
-
-[aria-describedby="Menu-action-1-label"] {
-  transform: translate(40px, 0px);
-  font-weight: bold;
-}
-
-[aria-describedby="Menu-action-2-label"] {
-  transform: translate(60px, 0px);
-  font-weight: bold;
-}
-
-[aria-describedby="Menu-action-3-label"] {
-  transform: translate(70px, 0px);
-  font-weight: bold;
-}
-
-[aria-describedby="Menu-action-4-label"] {
-  transform: translate(70px, 0px);
-  font-weight: bold;
-}
-
-[aria-describedby="Menu-action-5-label"] {
-  transform: translate(60px, 0px);
-  font-weight: bold;
-}
-
-[aria-describedby="Menu-action-6-label"] {
-  transform: translate(40px, 0px);
-  font-weight: bold;
-}
-
-[aria-describedby="Menu-action-7-label"] {
-  transform: translate(0px, 0px);
-  font-weight: bold;
-}
-
 .MuiSpeedDialAction-staticTooltipLabel {
   background-color: unset !important;
   box-shadow: none !important;
@@ -459,6 +419,47 @@ button {
   .MuiToolbar-regular {
     min-height: 50px !important;
   }
+
+  [aria-describedby="Menu-action-0-label"] {
+    transform: translate(0px, 0px);
+    font-weight: bold;
+  }
+
+  [aria-describedby="Menu-action-1-label"] {
+    transform: translate(40px, 0px);
+    font-weight: bold;
+  }
+
+  [aria-describedby="Menu-action-2-label"] {
+    transform: translate(60px, 0px);
+    font-weight: bold;
+  }
+
+  [aria-describedby="Menu-action-3-label"] {
+    transform: translate(70px, 0px);
+    font-weight: bold;
+  }
+
+  [aria-describedby="Menu-action-4-label"] {
+    transform: translate(70px, 0px);
+    font-weight: bold;
+  }
+
+  [aria-describedby="Menu-action-5-label"] {
+    transform: translate(60px, 0px);
+    font-weight: bold;
+  }
+
+  [aria-describedby="Menu-action-6-label"] {
+    transform: translate(40px, 0px);
+    font-weight: bold;
+  }
+
+  [aria-describedby="Menu-action-7-label"] {
+    transform: translate(0px, 0px);
+    font-weight: bold;
+  }
+
 }
 
 /* ancho de pantalla de menos de 600px* (mobile)*/
