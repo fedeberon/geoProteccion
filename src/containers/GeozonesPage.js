@@ -89,7 +89,7 @@ const useStyles = makeStyles((theme) => ({
     },
     [theme.breakpoints.up('md')]: {
       margin: '15px 0px',
-      width: '65%',
+      width: '50%',
     },
     heading: {
       fontSize: '12px',
@@ -370,6 +370,7 @@ export default function GeozonesPages() {
         getGeozones(userId);
       }
     })
+    handleCloseModalMap();
     handleClose();
   }
 
@@ -402,7 +403,7 @@ export default function GeozonesPages() {
 
     <div className={classes.root}>
       <div className="title-section">
-        <h2>Información de Geozonas</h2>
+        <h2>{t('sharedGeofences')}</h2>
         <Divider/>
       </div>
 
@@ -411,7 +412,7 @@ export default function GeozonesPages() {
                 variant="outlined"
                 onClick={handleClickOpen}>
           <AddIcon color="primary"/>
-          Crear nueva geozona
+          {t('sharedAdd')}
         </Button>
       </Container>
       {geozones.map((geozone, index) => (
@@ -429,7 +430,7 @@ export default function GeozonesPages() {
             </div>
             <div className={classes.column}>
               <Typography
-                className={classes.heading}><strong>Descripcion</strong></Typography>
+                className={classes.heading}><strong>{t('sharedDescription')}</strong></Typography>
               <Typography className={classes.secondaryHeading}>
                 {`${geozone.description ? geozone.description : 'Undefined'}`}
               </Typography>
@@ -438,14 +439,6 @@ export default function GeozonesPages() {
             </div>
           </AccordionSummary>
           <AccordionDetails>
-            <div className={classes.column}>
-              <Typography
-                className={classes.heading}><strong>{t('sharedArea')}</strong>
-              </Typography>
-              <Typography style={{fontSize: '10px'}}
-                className={classes.heading}>{geozone.area}
-              </Typography>
-            </div>
             <div className={clsx(classes.column, classes.helper)}>
               <Typography
                 className={classes.heading}><strong>{t('sharedAttributes')}</strong>
@@ -534,7 +527,7 @@ export default function GeozonesPages() {
       <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title"
               open={openEditModal}>
         <DialogTitle id="customized-dialog-title" onClose={handleClose}>
-          {` Editar Geozona `}
+          {t('sharedEdit')}
         </DialogTitle>
         <DialogContent dividers>
           <form className={classes.rootmodal} noValidate autoComplete="off">
@@ -587,7 +580,7 @@ export default function GeozonesPages() {
                         {t('sharedArea')}
                       </Typography>
                       <Button autoFocus style={{flex: '1'}} color="inherit"
-                              onClick={handleCloseModalMap}>
+                              onClick={() => handleEdit(geozone.id)}>
                         {t('sharedSave')}
                       </Button>
                       <IconButton edge="start" color="inherit"
@@ -634,13 +627,13 @@ export default function GeozonesPages() {
                         <FormControl variant="outlined"
                                      className={classes.formControl}>
                           <InputLabel style={{top: `${color === '' ? '' : '-11%'}`}}
-                            id="demo-simple-select-outlined-label">Color</InputLabel>
+                            id="demo-simple-select-outlined-label">{t('attributeColor')}</InputLabel>
                           <Select
                             labelId="demo-simple-select-outlined-label"
                             id="demo-simple-select-outlined"
                             value={color}
                             style={{backgroundColor: color + '88'}}
-                            label="Color"
+                            label={t('attributeColor')}
                             defaultValue={'#000000'}
                           >
                             <MenuItem>
@@ -659,7 +652,7 @@ export default function GeozonesPages() {
                         <TextField style={{width: '187px'}}
                                    className={classes.formControl}
                                    id="outlined-number"
-                                   label="Speed Limit"
+                                   label={t('attributeSpeedLimit')}
                                    type="number"
                                    InputLabelProps={{
                                      shrink: true,
@@ -670,7 +663,7 @@ export default function GeozonesPages() {
                         <TextField style={{width: '187px'}}
                                    className={classes.formControl}
                                    id="outlined-number"
-                                   label="Polyline Distance"
+                                   label={t('attributePolylineDistance')}
                                    type="number"
                                    InputLabelProps={{
                                      shrink: true,
@@ -763,7 +756,7 @@ export default function GeozonesPages() {
                             id="demo-simple-select-outlined"
                             value={color}
                             style={{backgroundColor: color + '88'}}
-                            label="Color"
+                            label={t('attributeColor')}
                             defaultValue={'#000000'}
                           >
                             <MenuItem>
@@ -781,7 +774,7 @@ export default function GeozonesPages() {
                         <TextField style={{width: '187px'}}
                                    className={classes.formControl}
                                    id="outlined-number"
-                                   label="Speed Limit"
+                                   label={t('attributeSpeedLimit')}
                                    type="number"
                                    InputLabelProps={{
                                      shrink: true,
@@ -791,7 +784,7 @@ export default function GeozonesPages() {
                         <TextField style={{width: '187px'}}
                                    className={classes.formControl}
                                    id="outlined-number"
-                                   label="Polyline Distance"
+                                   label={t('attributePolylineDistance')}
                                    type="number"
                                    InputLabelProps={{
                                      shrink: true,
