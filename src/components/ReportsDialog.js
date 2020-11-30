@@ -490,7 +490,6 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
             </IconButton>
           </Toolbar>
         </AppBar>
-
         {/*Modal Configuration*/}
         <div className={classes.positionButton}>
           <Button  variant="outlined" color="primary" onClick={handleOpenConfigModal}>
@@ -531,7 +530,6 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
             </DialogActions>
           </Dialog>
         </div>
-
         {/*Table for ROUTE Reports*/}
         <div onScroll={handleScroll} style={{display: `${route.length === 0 ? 'none' : 'block'}`}} className={`scrollbar ${classes.tableReports}`}>
           <TableContainer component={Paper}>
@@ -567,7 +565,6 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
           </Table>
           </TableContainer>
         </div>
-
         {/*Table for EVENTS Reports*/}
         <div onScroll={handleScroll} style={{display: `${events.length === 0 ? 'none' : 'block'}`}} className={`scrollbar ${classes.tableReports}`}>
           <TableContainer component={Paper}>
@@ -595,7 +592,6 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
             </Table>
           </TableContainer>
         </div>
-
         {/*Table for TRIPS Reports*/}
         <div onScroll={handleScroll} style={{display: `${trips.length === 0 ? 'none' : 'block'}`}} className={`scrollbar ${classes.tableReports}`}>
           <TableContainer component={Paper}>
@@ -639,7 +635,6 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
             </Table>
           </TableContainer>
         </div>
-
         {/*Table for STOPS Reports*/}
         <div onScroll={handleScroll} style={{display: `${stops.length === 0 ? 'none' : 'block'}`}} className={`scrollbar ${classes.tableReports}`}>
           <TableContainer component={Paper}>
@@ -673,7 +668,6 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
             </Table>
           </TableContainer>
         </div>
-
         {/*Table for SUMMARY Reports*/}
         <div onScroll={handleScroll} style={{display: `${summary.length === 0 ? 'none' : 'block'}`}} className={`scrollbar ${classes.tableReports}`}>
           <TableContainer component={Paper}>
@@ -707,14 +701,9 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
             </Table>
           </TableContainer>
         </div>
-
         <div className={classes.graphic} style={{width: '70%', display: graphicData.length === 0 ? 'none' : 'block'}}>
-
-          <GraphicChart data={auxData} timeLine={timeData}/>
-
+          {/*<GraphicChart data={auxData} timeLine={timeData}/>*/}
         </div>
-
-
         <div className={`${classes.overflowHidden} ${fullscreen ? classes.fullscreen : classes.miniature} ${hidden ? classes.hidden : classes.visible}`}>
           <i className={`fas ${fullscreen ? 'fa-compress' : 'fa-expand'} fa-lg ${classes.fullscreenToggler}`} onClick={() => handleFullscreen()}></i>
           <i className={`fas ${hidden ? 'fa-chevron-up' : 'fa-chevron-down'} fa-lg ${classes.miniatureToggler}`} onClick={() => handleVisibility()}></i>
