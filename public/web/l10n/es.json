@@ -442,5 +442,7 @@
     "reportYes": "Sí",
     "reportNo": "No",
     "reportType": "Tipo de Reporte",
-    "showMore": "Ver más"
+    "showMore": "Ver más",
+    "showLess": "Ver menos",
+    "brand": "Marca"
 }
