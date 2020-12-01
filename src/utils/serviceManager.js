@@ -96,6 +96,12 @@ const getCurrentAddress = (lat = -32.882297, lng = -68.815419) => {
     .then(response => response.text());
 }
 
+const getServer = () => {
+  return fetch(`api/server`, {method: 'GET'})
+    .catch(function (error) { console.log('getServer error: ', error)})
+    .then(response => response.json());
+}
+
 export {
   setSession,
   getDeviceByUserId,
@@ -113,4 +119,5 @@ export {
   setUser,
   getMaintenanceByUserId,
   getCurrentAddress,
+  getServer,
 };

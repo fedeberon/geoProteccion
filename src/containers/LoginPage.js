@@ -132,12 +132,14 @@ const LoginPage = () => {
 
   const handleLogin = async (event) => {
     event.preventDefault();
-    const response = await service.setSession(email, password);
+    let response = await service.setSession(email, password);
     const user = response.status === 200 ? await response.json() : '';
 
     if (response.ok) {
       dispatch(sessionActions.authenticated(true));
       dispatch(sessionActions.setUser(user));
+      response = await service.getServer();
+      dispatch(sessionActions.setServer(response));
       if(isChecked) {
         localStorage.username = email;
         localStorage.password = password;

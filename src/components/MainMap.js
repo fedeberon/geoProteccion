@@ -15,7 +15,7 @@ import {
   getPolylineAttributes
 } from '../utils/mapFunctions';
 
-const MainMap = ({ geozones, areGeozonesVisible }) => {
+const MainMap = ({ geozones, areGeozonesVisible, zoom }) => {
   const containerEl = useRef(null);
 
   const [mapReady, setMapReady] = useState(false);
@@ -104,14 +104,7 @@ const MainMap = ({ geozones, areGeozonesVisible }) => {
         'data': positions,
       });
       mapManager.addLayer('device-icon', 'places', 'icon-marker', '{name}');
-
-      const bounds = mapManager.calculateBounds(positions.features);
-      if (bounds) {
-        mapManager.map.fitBounds(bounds, {
-          padding: 100,
-          maxZoom: 9
-        });
-      }
+      mapManager.map.scrollZoom.setWheelZoomRate(2);
 
       return () => {
         mapManager.map.removeLayer('device-icon');
@@ -122,11 +115,22 @@ const MainMap = ({ geozones, areGeozonesVisible }) => {
 
   useEffect(() => {
     mapManager.map.easeTo({
-      center: mapCenter
+      center: mapCenter,
+      zoom: zoom
     });
   }, [mapCenter]);
 
   useEffect(() => {
+    if (!mapCenter) {
+      const bounds = mapManager.calculateBounds(positions.features);
+      if (bounds) {
+        mapManager.map.fitBounds(bounds, {
+          padding: 100,
+          maxZoom: zoom
+        });
+      }
+    }
+
     const source = mapManager.map.getSource('places');
     if (source) {
       source.setData(positions);
