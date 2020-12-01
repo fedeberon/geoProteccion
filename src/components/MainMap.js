@@ -15,7 +15,7 @@ import {
   getPolylineAttributes
 } from '../utils/mapFunctions';
 
-const MainMap = ({ geozones, areGeozonesVisible, zoom }) => {
+const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource = 'https://mt0.google.com/vt/lyrs=m&hl=en&x={x}&y={y}&z={z}&s=Ga' }) => {
   const containerEl = useRef(null);
 
   const [mapReady, setMapReady] = useState(false);
@@ -105,6 +105,10 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom }) => {
       });
       mapManager.addLayer('device-icon', 'places', 'icon-marker', '{name}');
       mapManager.map.scrollZoom.setWheelZoomRate(2);
+
+      if(mapManager.map.getSource('raster-tiles')) {
+        mapManager.map.getSource('raster-tiles').tiles = [rasterSource];
+      }
 
       return () => {
         mapManager.map.removeLayer('device-icon');

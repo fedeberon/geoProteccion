@@ -7,7 +7,6 @@ import ContainerDimensions from 'react-container-dimensions';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import DeviceList from '../components/DeviceList';
 import MainMap from '../components/MainMap';
-import SocketController from '../components/SocketController';
 import Menu from "../components/Menu";
 import * as service from "../utils/serviceManager";
 import ShortcutsMenu from "../components/ShorcutsMenu";
@@ -95,7 +94,6 @@ const MainPage = ({ width }) => {
 
   return !authenticated ? (<LinearProgress />) : (
     <div className={classes.root}>
-      <SocketController />
       <div className={classes.content}>
         <Drawer
           anchor='right'
