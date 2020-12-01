@@ -102,6 +102,12 @@ const getCommandTypes = (id) => {
     .then(response => response.json());
 }
 
+const getServer = () => {
+  return fetch(`api/server`, {method: 'GET'})
+    .catch(function (error) { console.log('getServer error: ', error)})
+    .then(response => response.json());
+}
+
 export {
   setSession,
   getDeviceByUserId,
@@ -119,5 +125,6 @@ export {
   setUser,
   getMaintenanceByUserId,
   getCurrentAddress,
+  getServer,
   getCommandTypes,
 };

@@ -15,7 +15,7 @@ import {
   getPolylineAttributes
 } from '../utils/mapFunctions';
 
-const MainMap = ({ geozones, areGeozonesVisible }) => {
+const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource = 'https://mt0.google.com/vt/lyrs=m&hl=en&x={x}&y={y}&z={z}&s=Ga' }) => {
   const containerEl = useRef(null);
 
   const [mapReady, setMapReady] = useState(false);
@@ -104,13 +104,10 @@ const MainMap = ({ geozones, areGeozonesVisible }) => {
         'data': positions,
       });
       mapManager.addLayer('device-icon', 'places', 'icon-marker', '{name}');
+      mapManager.map.scrollZoom.setWheelZoomRate(2);
 
-      const bounds = mapManager.calculateBounds(positions.features);
-      if (bounds) {
-        mapManager.map.fitBounds(bounds, {
-          padding: 100,
-          maxZoom: 9
-        });
+      if(mapManager.map.getSource('raster-tiles')) {
+        mapManager.map.getSource('raster-tiles').tiles = [rasterSource];
       }
 
       return () => {
@@ -122,11 +119,22 @@ const MainMap = ({ geozones, areGeozonesVisible }) => {
 
   useEffect(() => {
     mapManager.map.easeTo({
-      center: mapCenter
+      center: mapCenter,
+      zoom: zoom
     });
   }, [mapCenter]);
 
   useEffect(() => {
+    if (!mapCenter) {
+      const bounds = mapManager.calculateBounds(positions.features);
+      if (bounds) {
+        mapManager.map.fitBounds(bounds, {
+          padding: 100,
+          maxZoom: zoom
+        });
+      }
+    }
+
     const source = mapManager.map.getSource('places');
     if (source) {
       source.setData(positions);

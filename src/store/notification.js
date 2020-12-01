@@ -31,7 +31,6 @@ const { reducer, actions } = createSlice({
       }
     },
     remove(state, action) {
-      console.log('something');
       state.items = [];
     }
   }

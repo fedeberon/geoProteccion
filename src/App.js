@@ -19,6 +19,7 @@ import { isWidthUp } from '@material-ui/core';
 import { getBreakpointFromWidth } from './utils/functions';
 import { sessionActions } from './store';
 import DeviceDetail from "./components/DeviceDetail";
+import SocketController from './components/SocketController';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -32,6 +33,9 @@ const App = () => {
     <>
       <CssBaseline />
       <SuccessSnackbar />
+      { authenticated &&
+        <SocketController />
+      }
       <Switch>
         <Route exact path='/login' component={LoginPage} />
         <PrivateRoute exact path='/' isAuthenticated={authenticated} component={MainPage} />

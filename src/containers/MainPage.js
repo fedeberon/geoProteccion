@@ -7,7 +7,6 @@ import ContainerDimensions from 'react-container-dimensions';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import DeviceList from '../components/DeviceList';
 import MainMap from '../components/MainMap';
-import SocketController from '../components/SocketController';
 import Menu from "../components/Menu";
 import * as service from "../utils/serviceManager";
 import ShortcutsMenu from "../components/ShorcutsMenu";
@@ -61,10 +60,12 @@ const MainPage = ({ width }) => {
   const authenticated = useSelector(state => state.session.authenticated);
   const classes = useStyles();
   const open = useSelector(state => state.modals.items.search);
-  const userId = useSelector((state) => state.session.user.id);
+  const user = useSelector((state) => state.session.user);
+  const server = useSelector((state) => state.session.server);
   const [ areGeozonesVisible, setAreGeozonesVisible] = useState(true);
   const [ showReports, setShowReports ] = useState(false);
   const [ showNotifications, setShowNotifications ] = useState(false);
+  const [ mapZoom, setMapZoom ] = useState(0);
 
   const handleVisibilityModal = (name) => {
     dispatch(modalsActions.show(name));
@@ -75,8 +76,9 @@ const MainPage = ({ width }) => {
       const response = await service.getGeozonesByUserId(userId);
       setGeozones(response);
     }
-    getGeozones(userId);
-  }, [userId]);
+    setMapZoom(user.zoom !== 0 ? user.zoom : server.zoom);
+    getGeozones(user.id);
+  }, [user.id]);
 
   const handleGeozones = () => {
     setAreGeozonesVisible(!areGeozonesVisible);
@@ -92,7 +94,6 @@ const MainPage = ({ width }) => {
 
   return !authenticated ? (<LinearProgress />) : (
     <div className={classes.root}>
-      <SocketController />
       <div className={classes.content}>
         <Drawer
           anchor='right'
@@ -113,7 +114,7 @@ const MainPage = ({ width }) => {
         {!showReports &&
           <div className={classes.mapContainer}>
             <ContainerDimensions>
-              <MainMap geozones={geozones} areGeozonesVisible={areGeozonesVisible}/>
+              <MainMap geozones={geozones} areGeozonesVisible={areGeozonesVisible} zoom={mapZoom}/>
             </ContainerDimensions>
           </div>
         }
