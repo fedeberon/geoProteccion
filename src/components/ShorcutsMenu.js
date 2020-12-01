@@ -74,18 +74,17 @@ export default function ShortcutsMenu({ toggleGeozones, showReportDialog, showNo
                 icon={<i className="fas fa-bell fa-lg"/>}
                 direction={isViewportDesktop ? 'down' : 'up'}
                 open={false}
-                onClick={() => {showNotificationsDialog(); handleNotifications()}}
+                onClick={() => { showNotificationsDialog(); handleNotifications()}}
               />
             </Badge>
             :
             <SpeedDial
               ariaLabel="Notifications"
               title={t("sharedNotifications")}
-              className={classes.speedDial}
+              className={classes.speedDialOpen}
               icon={<i className="fas fa-bell fa-lg"/>}
               direction={isViewportDesktop ? 'down' : 'up'}
               open={false}
-              onClick={() => showNotificationsDialog()}
             />
           }
           <SpeedDial

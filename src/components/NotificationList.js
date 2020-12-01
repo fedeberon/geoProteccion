@@ -114,13 +114,12 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function NotificationList() {
-  const dispatch = useDispatch();
   const classes = useStyles();
   const devices = useSelector(state => Object.values(state.devices.items), shallowEqual);
   const notifications = useSelector(state => state.notification.items);
 
   return (
-    <Paper component="form" className={classes.paper}>
+    <Paper component="form" className={classes.paper + ' scrollbar'}>
       <div>
         {notifications && notifications.map((notification, index, list) => (
             <Fragment key={index}>
@@ -139,9 +138,6 @@ function NotificationList() {
               {index < list.length - 1 ? <Divider /> : null}
             </Fragment>
           ))}
-          {notifications.length === 0 &&
-            <p>  </p>
-          }
         </div>
     </Paper>
   );
