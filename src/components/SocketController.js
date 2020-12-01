@@ -22,6 +22,7 @@ const SocketController = () => {
         dispatch(positionsActions.update(data.positions));
       }
       if (data.events) {
+        console.log(data.events);
         dispatch(notificationActions.apply({type: 'SNACKBAR_SUCCESS', message: data.events}));
       }
     };

@@ -7,6 +7,7 @@ const { reducer, actions } = createSlice({
     successSnackbarMessage: '',
     errorSnackbarOpen: false,
     infoSnackbarOpen: false,
+    items: [],
   },
   reducers: {
     apply(state, action) {
@@ -15,7 +16,8 @@ const { reducer, actions } = createSlice({
           return {
             ...state,
             successSnackbarOpen: true,
-            successSnackbarMessage: JSON.stringify(action.payload.message[0])
+            successSnackbarMessage: action.payload.message[0],
+            items: [...state.items, action.payload.message[0]]
           };
         case "SNACKBAR_CLEAR":
           return {
@@ -28,6 +30,10 @@ const { reducer, actions } = createSlice({
           return state;
       }
     },
+    remove(state, action) {
+      console.log('something');
+      state.items = [];
+    }
   }
 });
 
