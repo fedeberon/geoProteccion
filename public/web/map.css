@@ -365,11 +365,11 @@ button {
     transform: translate(26px, 0px);
     font-weight: bold;
   }
-  
+
   .MuiSpeedDialAction-staticTooltipLabel {
     background-color: unset !important;
     box-shadow: none !important;
-    font-size: 12px !important;
+    font-size: 13px !important;
   }
 }
 
@@ -458,6 +458,9 @@ button {
   [aria-describedby="Menu-action-7-label"] {
     transform: translate(0px, 0px);
     font-weight: bold;
+  }
+  .MuiTypography-body1 {
+    font-size: 12px !important;
   }
 
 }

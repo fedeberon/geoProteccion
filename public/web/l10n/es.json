@@ -457,5 +457,7 @@
     "deviceMoving": "Dispositivo en movimiento",
     "deviceStopped": "Dispositivo detenido",
     "geofenceEnter": "Entrando en geozona",
-    "geofenceExit": "Saliendo de geozona"
+    "geofenceExit": "Saliendo de geozona",
+    "showLess": "Ver menos",
+    "brand": "Marca"
 }

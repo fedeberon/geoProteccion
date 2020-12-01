@@ -30,6 +30,7 @@ import ExpandMore from '@material-ui/icons/ExpandMore';
 import StarBorder from '@material-ui/icons/StarBorder';
 import {sessionActions} from "../store";
 import Divider from "@material-ui/core/Divider";
+import { getCourse } from '../utils/functions';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -126,9 +127,10 @@ const useStyles = makeStyles(theme => ({
 
   },
   cardItemText: {
+    color: 'black',
     fontSize: '12px',
     [theme.breakpoints.up('md')]: {
-      fontSize: '14px',
+      fontSize: '13px',
     },
   },
 
@@ -143,6 +145,8 @@ const DevicePage = () => {
   const [name, setName] = useState('');
   const [uniqueId, setUniqueId] = useState('');
   const devices = useSelector(state => Object.values(state.devices.items), shallowEqual);
+  const positions = useSelector(state => state.positions.items, shallowEqual);
+  const [moreInfo, setMoreInfo] = useState(false);
 
   const [collapsedIndex, setCollapsedIndex] = useState(-1);
 
@@ -199,6 +203,10 @@ const DevicePage = () => {
     });
   }
 
+  const showMore = () => {
+    setMoreInfo(!moreInfo);
+  }
+
   return (
     <>
       <div style={{marginTop: '5%'}} className="title-section">
@@ -245,80 +253,28 @@ const DevicePage = () => {
                   component="nav"
                   aria-labelledby="nested-list-subheader"
                   className={classes.list}>
+
                   <ListItem>
                     <ListItemIcon style={{minWidth: '30px'}}>
-                      <SendIcon style={{fontSize: '17px'}}/>
-                    </ListItemIcon>
-                    {/*<ListItemText primary={`UserId:  ${row.id}`}/>*/}
-                    <ListItemText className={classes.cardItemText}>
-                      <strong className={classes.cardItemText}>User Id:</strong>
-                      { ` ${device.id} ` }
-                    </ListItemText>
-                  </ListItem>
-                  <ListItem>
-                    <ListItemIcon style={{minWidth: '30px'}}>
-                      <SendIcon style={{fontSize: '17px'}}/>
+                      <i style={{fontSize: '17px'}} className="fas fa-map-marker-alt"></i>
                     </ListItemIcon>
                     <ListItemText>
-                      <strong  className={classes.cardItemText}>Unique Id:</strong>
-                      { ` ${device.uniqueId} ` }</ListItemText>
+                      <strong  className={classes.cardItemText}>{t('positionLatitude')}:&nbsp;</strong>
+                     {positions && positions[device.id] ? positions[device.id].latitude : 'Undefined'}°</ListItemText>
                   </ListItem>
                   <ListItem>
                     <ListItemIcon style={{minWidth: '30px'}}>
-                      <SendIcon style={{fontSize: '17px'}}/>
+                      <i style={{fontSize: '17px'}} className="fas fa-map-marker-alt"/>
                     </ListItemIcon>
                     <ListItemText>
-                      <strong className={classes.cardItemText}>Status:</strong>
-                      { ` ${device.status} ` }
-                    </ListItemText>
-                  </ListItem>
-                  <ListItem>
-                    <ListItemIcon style={{minWidth: '30px'}}>
-                      <SendIcon style={{fontSize: '17px'}}/>
-                    </ListItemIcon>
-                    <ListItemText><strong className={classes.cardItemText}>Disable:</strong>{ ` ${device.disable} ` }</ListItemText>
-                  </ListItem>
-                  <ListItem>
-                    <ListItemIcon style={{minWidth: '30px'}}>
-                      <SendIcon style={{fontSize: '17px'}}/>
-                    </ListItemIcon>
-                    <ListItemText><strong className={classes.cardItemText}>Position Id:</strong>{ ` ${device.positionId} ` }</ListItemText>
-                  </ListItem>
-                  <ListItem>
-                    <ListItemIcon style={{minWidth: '30px'}}>
-                      <SendIcon style={{fontSize: '17px'}}/>
-                    </ListItemIcon>
-                    <ListItemText><strong className={classes.cardItemText}>Group Id:</strong>{ ` ${device.groupId} ` }</ListItemText>
-                  </ListItem>
-                  <ListItem>
-                    <ListItemIcon style={{minWidth: '30px'}}>
-                      <SendIcon style={{fontSize: '17px'}}/>
-                    </ListItemIcon>
-                    <ListItemText><strong className={classes.cardItemText}>Phone:</strong>{ ` ${device.phone} ` }</ListItemText>
-                  </ListItem>
-                  <ListItem>
-                    <ListItemIcon style={{minWidth: '30px'}}>
-                      <SendIcon style={{fontSize: '17px'}}/>
-                    </ListItemIcon>
-                    <ListItemText><strong className={classes.cardItemText}>Model:</strong>{ ` ${device.model} ` }</ListItemText>
-                  </ListItem>
-                  <ListItem>
-                    <ListItemIcon style={{minWidth: '30px'}}>
-                      <SendIcon style={{fontSize: '17px'}}/>
-                    </ListItemIcon>
-                    <ListItemText><strong className={classes.cardItemText}>Category:</strong>{ ` ${device.category} ` }</ListItemText>
-                  </ListItem>
-                  <ListItem>
-                    <ListItemIcon style={{minWidth: '30px'}}>
-                      <SendIcon style={{fontSize: '17px'}}/>
-                    </ListItemIcon>
-                    <ListItemText><strong className={classes.cardItemText}>Contact:</strong>{ ` ${device.contact} ` }</ListItemText>
+                      <strong  className={classes.cardItemText}>{t('positionLongitude')}:&nbsp;</strong>
+                      {positions && positions[device.id] ? positions[device.id].longitude : 'Undefined'}°</ListItemText>
                   </ListItem>
                   <ListItem button onClick={handleClickListG}>
                     <ListItemIcon style={{minWidth: '30px'}}>
-                      <InboxIcon style={{fontSize: '17px'}}/>
+                      <i style={{fontSize: '17px'}} className="far fa-map"/>
                     </ListItemIcon>
-                    <ListItemText style={{maxWidth: '100%'}}><strong className={classes.cardItemText}>Geofences Ids:</strong></ListItemText>
+                    <ListItemText style={{maxWidth: '100%'}}><strong className={classes.cardItemText}>{t('sharedGeofence')}:</strong></ListItemText>
                     {openG ? <ExpandLess/> : <ExpandMore/>}
                   </ListItem>
                   <Collapse in={openG} timeout="auto" unmountOnExit>
@@ -335,9 +291,9 @@ const DevicePage = () => {
                   </Collapse>
                   <ListItem button onClick={handleClickList}>
                     <ListItemIcon style={{minWidth: '30px'}}>
-                      <InboxIcon style={{fontSize: '17px'}}/>
+                      <i style={{fontSize: '17px'}} className="fas fa-list"></i>
                     </ListItemIcon>
-                    <ListItemText style={{maxWidth: '100%'}}><strong className={classes.cardItemText}>Attributes:</strong></ListItemText>
+                    <ListItemText style={{maxWidth: '100%'}}><strong className={classes.cardItemText}>{t('sharedAttributes')}:</strong></ListItemText>
                     {open ? <ExpandLess/> : <ExpandMore/>}
                   </ListItem>
                   <Collapse in={open} timeout="auto" unmountOnExit>
@@ -352,6 +308,121 @@ const DevicePage = () => {
                       )}
                     </List>
                   </Collapse>
+
+                  <ListItem style={{display: `${moreInfo ? 'flex' : 'none'}`}}>
+                    <ListItemIcon style={{minWidth: '30px'}}>
+                      <i style={{fontSize: '17px'}} className="fas fa-clock"/>
+                    </ListItemIcon>
+                    <ListItemText>
+                      <strong  className={classes.cardItemText}>{t("sharedHour")}:&nbsp;</strong>
+                      {positions && positions[device.id] ? positions[device.id].deviceTime : 'Undefined'}</ListItemText>
+                  </ListItem>
+                  <ListItem style={{display: `${moreInfo ? 'flex' : 'none'}`}}>
+                    <ListItemIcon style={{minWidth: '30px'}}>
+                      <i style={{fontSize: '17px'}} className="fas fa-clipboard-check"></i>
+                    </ListItemIcon>
+                    <ListItemText style={{fontSize: '12px'}}>
+                      <strong  className={classes.cardItemText}>{t("positionValid")}:&nbsp;</strong>
+                      {positions && positions[device.id] ? Boolean(positions[device.id].valid) : 'Undefined'}</ListItemText>
+                  </ListItem>
+                  <ListItem style={{display: `${moreInfo ? 'flex' : 'none'}`}}>
+                    <ListItemIcon style={{minWidth: '30px'}}>
+                      <i style={{fontSize: '17px'}} className="fas fa-map-marker"/>
+                    </ListItemIcon>
+                    <ListItemText>
+                      <strong  className={classes.cardItemText}>{t("positionAccuracy")}:&nbsp;</strong>
+                      {positions && positions[device.id] ? positions[device.id].accuracy : 'Undefined'}</ListItemText>
+                  </ListItem>
+                  <ListItem style={{display: `${moreInfo ? 'flex' : 'none'}`}}>
+                    <ListItemIcon style={{minWidth: '30px'}}>
+                      <i style={{fontSize: '17px'}} className="fas fa-level-up-alt"/>
+                    </ListItemIcon>
+                    <ListItemText>
+                      <strong  className={classes.cardItemText}>{t("positionAltitude")}:&nbsp;</strong>
+                      {positions && positions[device.id] ? positions[device.id].altitude : 'Undefined'}</ListItemText>
+                  </ListItem>
+                  <ListItem style={{display: `${moreInfo ? 'flex' : 'none'}`}}>
+                    <ListItemIcon style={{minWidth: '30px'}}>
+                      <i style={{fontSize: '17px'}} className="fas fa-tachometer-alt"/>
+                    </ListItemIcon>
+                    <ListItemText>
+                      <strong  className={classes.cardItemText}>{t("positionSpeed")}:&nbsp;</strong>
+                      {positions && positions[device.id] ? positions[device.id].speed : 'Undefined'}</ListItemText>
+                  </ListItem>
+                  <ListItem style={{display: `${moreInfo ? 'flex' : 'none'}`}}>
+                    <ListItemIcon style={{minWidth: '30px'}}>
+                      <i style={{fontSize: '17px'}} className="fas fa-arrows-alt"/>
+                    </ListItemIcon>
+                    <ListItemText>
+                      <strong  className={classes.cardItemText}>{t("positionCourse")}:&nbsp;</strong>
+                      {positions && positions[device.id] ? getCourse(positions[device.id].course) : 'Undefined'}</ListItemText>
+                  </ListItem>
+                  <ListItem style={{display: `${moreInfo ? 'flex' : 'none'}`}}>
+                    <ListItemIcon style={{minWidth: '30px'}}>
+                      <i style={{fontSize: '17px'}} className="fas fa-clock"/>
+                    </ListItemIcon>
+                    <ListItemText>
+                      <strong  className={classes.cardItemText}>{t("currentAddress")}:&nbsp;</strong>
+                      Null</ListItemText>
+
+
+
+                  </ListItem>
+                  <ListItem style={{display: `${moreInfo ? 'flex' : 'none'}`}}>
+                    <ListItemIcon style={{minWidth: '30px'}}>
+                      <i style={{fontSize: '17px'}} className="fas fa-map-marked"/>
+                    </ListItemIcon>
+                    <ListItemText>
+                      <strong  className={classes.cardItemText}>{t("positionProtocol")}:&nbsp;</strong>
+                      {positions && positions[device.id] ? positions[device.id].protocol : 'Undefined'}</ListItemText>
+                  </ListItem>
+                  <ListItem style={{display: `${moreInfo ? 'flex' : 'none'}`}}>
+                    <ListItemIcon style={{minWidth: '30px'}}>
+                      <i style={{fontSize: '17px'}} className="fas fa-key"/>
+                    </ListItemIcon>
+                    <ListItemText>
+                      <strong  className={classes.cardItemText}>{t("positionIgnition")}:&nbsp;</strong>
+                      {positions && positions[device.id] ? Boolean(positions[device.id].ignition) : 'Undefined'}</ListItemText>
+                  </ListItem>
+                  <ListItem style={{display: `${moreInfo ? 'flex' : 'none'}`}}>
+                    <ListItemIcon style={{minWidth: '30px'}}>
+                      <i style={{fontSize: '17px'}} className="fas fa-info"/>
+                    </ListItemIcon>
+                    <ListItemText className={`status-${device.status}`}>
+                      <strong  className={classes.cardItemText}>{t("positionStatus")}:&nbsp;</strong>
+                      {device.status}</ListItemText>
+                  </ListItem>
+                  <ListItem style={{display: `${moreInfo ? 'flex' : 'none'}`}}>
+                    <ListItemIcon style={{minWidth: '30px'}}>
+                      <i style={{fontSize: '17px'}} className="fas fa-expand-alt"/>
+                    </ListItemIcon>
+                    <ListItemText>
+                      <strong  className={classes.cardItemText}>{t("positionDistance")}:&nbsp;</strong>
+                      {positions && positions[device.id] ? positions[device.id].attributes.distance : 'Undefined'}</ListItemText>
+                  </ListItem>
+                  <ListItem style={{display: `${moreInfo ? 'flex' : 'none'}`}}>
+                    <ListItemIcon style={{minWidth: '30px'}}>
+                      <i style={{fontSize: '17px'}} className="fas fa-route"/>
+                    </ListItemIcon>
+                    <ListItemText>
+                      <strong  className={classes.cardItemText}>{t("deviceTotalDistance")}:&nbsp;</strong>
+                      {positions && positions[device.id] ? positions[device.id].attributes.totalDistance : 'Undefined'}</ListItemText>
+                  </ListItem>
+                  <ListItem style={{display: `${moreInfo ? 'flex' : 'none'}`}}>
+                    <ListItemIcon style={{minWidth: '30px'}}>
+                      <i style={{fontSize: '17px'}} className="fas fa-location-arrow"/>
+                    </ListItemIcon>
+                    <ListItemText>
+                      <strong  className={classes.cardItemText}>{t("positionMotion")}:&nbsp;</strong>
+                      {positions && positions[device.id] ? Boolean(positions[device.id].attributes.motion) : 'Undefined'}</ListItemText>
+                  </ListItem>
+
+                  <ListItem style={{justifyContent: 'center'}} button onClick={() => showMore()}>
+                    <ListItemText  style={{textAlign: 'center'}}>
+                      <strong  className={classes.cardItemText}>{`${moreInfo ? `${t('showLess')}` : `${t('showMore')}`}`}</strong>
+                    </ListItemText>
+                  </ListItem>
+
                 </List>
               </CardContent>
             </Collapse>

@@ -191,7 +191,8 @@ function DeviceSearch(deviceId) {
                 </div>
 
                 <ListItemSecondaryAction>
-                  <IconButton
+                  <IconButton style={{color: '#1d193e'}}
+                    title={t('sharedInfoTitle')}
                     onClick={e => {
                     e.stopPropagation();
                     history.push(`/device/${device.id}`);

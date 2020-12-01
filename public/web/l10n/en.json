@@ -461,5 +461,7 @@
     "deviceMoving": "Device moving",
     "deviceStopped": "Device stopped",
     "geofenceEnter": "Entering geofence",
-    "geofenceExit": "Leaving geofence"
+    "geofenceExit": "Leaving geofence",
+    "showLess": "Show Less",
+    "brand": "Brand"
 }
