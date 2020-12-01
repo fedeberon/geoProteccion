@@ -180,9 +180,15 @@ const DevicePage = () => {
   const [radioValueCommand, setRadioValueCommand] = useState(false);
   const [availableTypesByDeviceId, setAvailableTypesByDeviceId] = useState([]);
 
-  const handleClickCommand = (id) => {
+  const handleClickCommand = (idDevice) => {
     setOpenModalCommand(!openModalCommand);
-    getCommandTypes(id);
+    getCommandTypes(idDevice);
+    handleCloseMenuMore();
+  }
+
+  const handleCloseModalCommand = () => {
+    setOpenModalCommand(false);
+    setAvailableTypesByDeviceId([]);
   }
 
   const showExtraData = () => {
@@ -244,14 +250,13 @@ const DevicePage = () => {
     })
   }
 
-  const getCommandTypes = async (id) => {
-    console.log('ejecutada')
-    const response = await service.getCommandTypes(id);
+  const getCommandTypes = async (idDevice) => {
+    console.log('ejecutada');
+    const response = await service.getCommandTypes(idDevice);
     if(response.ok){
       setAvailableTypesByDeviceId(response);
     }
-    getCommandTypes(id);
-    console.log(availableTypesByDeviceId);
+    console.log('types:' + availableTypesByDeviceId);
   }
 
   const handleSave = () => {
@@ -282,8 +287,8 @@ const DevicePage = () => {
     });
   }
 
-  const handleRemove = (id) => {
-    let option = confirm('¿Eliminar Device N°' + id + '?');
+  const handleRemove = (idDevice) => {
+    let option = confirm('¿Eliminar Device N°' + idDevice + '?');
     if (option) {
       // fetch(`/api/geofences/${id}`, {method: 'DELETE'}).then(response => {
       //   if (response.ok) {
@@ -321,23 +326,7 @@ const DevicePage = () => {
         </Button>
         <Divider/>
       </Container>
-      <Menu
-        id="simple-menu"
-        anchorEl={anchorEl}
-        keepMounted
-        open={Boolean(anchorEl)}
-        onClose={handleCloseMenuMore}
-      >
-        <MenuItem onClick={handleRemove}>Eliminar Dispositivo</MenuItem>
-        <MenuItem onClick={handleClickEdit}>Modificar Dispositivo</MenuItem>
-        <MenuItem onClick={handleClickCommand}>Comando</MenuItem>
-        <MenuItem onClick={handleCloseMenuMore}>Geozonas</MenuItem>
-        <MenuItem onClick={handleCloseMenuMore}>Notificaciones</MenuItem>
-        <MenuItem onClick={handleCloseMenuMore}>Atributos Calculados</MenuItem>
-        <MenuItem onClick={handleCloseMenuMore}>Comandos Guardados</MenuItem>
-        <MenuItem onClick={handleCloseMenuMore}>Mantenimientos</MenuItem>
-        <MenuItem onClick={handleCloseMenuMore}>Acumulador</MenuItem>
-      </Menu>
+
       <div className={classes.devicesTable}>
         {devices.map((device, index) => (
           <Card key={index} className={classes.root}>
@@ -359,7 +348,25 @@ const DevicePage = () => {
                           </IconButton>
                         }
                         title={`${device.attributes.carPlate} - ${device.name}`}
-                        subheader={device.lastUpdate}/>
+                        subheader={device.lastUpdate}
+            />
+            <Menu
+              id="simple-menu"
+              anchorEl={anchorEl}
+              keepMounted
+              open={Boolean(anchorEl)}
+              onClose={handleCloseMenuMore}
+            >
+              <MenuItem onClick={() => handleRemove(device.id)}>Eliminar Dispositivo</MenuItem>
+              <MenuItem onClick={handleClickEdit}>Modificar Dispositivo</MenuItem>
+              <MenuItem onClick={() => handleClickCommand(device.id)}>Comando</MenuItem>
+              <MenuItem onClick={handleCloseMenuMore}>Geozonas</MenuItem>
+              <MenuItem onClick={handleCloseMenuMore}>Notificaciones</MenuItem>
+              <MenuItem onClick={handleCloseMenuMore}>Atributos Calculados</MenuItem>
+              <MenuItem onClick={handleCloseMenuMore}>Comandos Guardados</MenuItem>
+              <MenuItem onClick={handleCloseMenuMore}>Mantenimientos</MenuItem>
+              <MenuItem onClick={handleCloseMenuMore}>Acumulador</MenuItem>
+            </Menu>
              <CardActions disableSpacing>
               <IconButton
                 className={clsx(classes.expand, {
@@ -783,7 +790,6 @@ const DevicePage = () => {
                 <InputLabel htmlFor="outlined-age-native-simple">{t('deviceCommand')}</InputLabel>
                 <Select
                   native
-                  margin="normal"
                   fullWidth
                   // value={key}
                   // onChange={handleChange}
@@ -824,7 +830,7 @@ const DevicePage = () => {
               </form>
             </DialogContent>
             <DialogActions>
-              <Button onClick={handleClickCommand} color="primary">
+              <Button onClick={handleCloseModalCommand} color="primary">
                 Disagree
               </Button>
               <Button onClick={handleClickCommand} color="primary" autoFocus>
