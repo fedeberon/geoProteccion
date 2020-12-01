@@ -33,7 +33,9 @@ const App = () => {
     <>
       <CssBaseline />
       <SuccessSnackbar />
-      <SocketController />
+      { authenticated &&
+        <SocketController />
+      }
       <Switch>
         <Route exact path='/login' component={LoginPage} />
         <PrivateRoute exact path='/' isAuthenticated={authenticated} component={MainPage} />
