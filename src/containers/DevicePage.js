@@ -5,6 +5,8 @@ import TextField from '@material-ui/core/TextField';
 import Container from '@material-ui/core/Container';
 import Button from '@material-ui/core/Button';
 import FormControl from '@material-ui/core/FormControl';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
 import * as service from '../utils/serviceManager';
 import t from '../common/localization';
 import {shallowEqual, useDispatch, useSelector} from "react-redux";
@@ -23,14 +25,27 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
-import SendIcon from '@material-ui/icons/Send';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import StarBorder from '@material-ui/icons/StarBorder';
 import {sessionActions} from "../store";
 import Divider from "@material-ui/core/Divider";
 import { getCourse } from '../utils/functions';
+import AddIcon from "@material-ui/icons/Add";
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import TableRow from "@material-ui/core/TableRow";
+import TableCell from "@material-ui/core/TableCell";
+import Table from "@material-ui/core/Table";
+import TableHead from "@material-ui/core/TableHead";
+import TableBody from "@material-ui/core/TableBody";
+import InputLabel from "@material-ui/core/InputLabel";
+import Select from "@material-ui/core/Select";
+import {Typography} from "@material-ui/core";
+import Radio from "@material-ui/core/Radio";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -53,6 +68,12 @@ const useStyles = makeStyles(theme => ({
   table: {
     minWidth: 700,
   },
+  tablerow: {
+    height: '20px',
+
+    [theme.breakpoints.up('md')]: {
+    },
+  },
   devicesTable: {
     width: 'auto',
     height: '100%',
@@ -62,9 +83,10 @@ const useStyles = makeStyles(theme => ({
     display: 'inherit',
     flexWrap: 'wrap',
     [theme.breakpoints.up('md')]: {
-      width: '85%',
-      marginLeft: '15%',
-
+      width: '100%',
+      marginLeft: 'auto',
+      marginRight: 'auto',
+      paddingBottom: '20%',
     },
   },
   root: {
@@ -77,7 +99,7 @@ const useStyles = makeStyles(theme => ({
     mozBoxShadow: '0px 0px 10px 1px rgba(102, 97, 102, 0.8)',
     webkitBoxShadow: '0px 0px 10px 1px rgba(102, 97, 102, 0.8)',
     [theme.breakpoints.up('md')]: {
-      width: '28%',
+      width: '29%',
       display: 'inline-grid',
       height: 'auto',
       margin: '2%',
@@ -147,6 +169,53 @@ const DevicePage = () => {
   const devices = useSelector(state => Object.values(state.devices.items), shallowEqual);
   const positions = useSelector(state => state.positions.items, shallowEqual);
   const [moreInfo, setMoreInfo] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(false);
+  const [openModalAdd, setOpenModalAdd] = useState(false);
+  const [openModalEdit, setOpenModalEdit] = useState(false);
+  const [openModalAttributes, setOpenModalAttributes] = useState(false);
+  const [extraData, setExtraData] = useState(false);
+  const [radioValue, setRadioValue] = useState(false);
+  const [deviceId, setDeviceId] = useState('');
+  const [openModalCommand, setOpenModalCommand] = useState(false);
+  const [radioValueCommand, setRadioValueCommand] = useState(false);
+  const [availableTypesByDeviceId, setAvailableTypesByDeviceId] = useState([]);
+
+  const handleClickCommand = (id) => {
+    setOpenModalCommand(!openModalCommand);
+    getCommandTypes(id);
+  }
+
+  const showExtraData = () => {
+    setExtraData(!extraData);
+  }
+
+  const handleChangeRadio = () => {
+    setRadioValue(!radioValue);
+  };
+
+  const handleChangeRadioCommand = () => {
+    setRadioValueCommand(!radioValueCommand);
+  };
+
+  const handleClickAdd = () => {
+    setOpenModalAdd(!openModalAdd);
+  };
+
+  const handleClickEdit = () => {
+    setOpenModalEdit(!openModalEdit);
+  };
+
+  const handleClickAttributes = () => {
+    setOpenModalAttributes(!openModalAttributes);
+  }
+
+  const handleClickMenuMore = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleCloseMenuMore = () => {
+    setAnchorEl(null);
+  };
 
   const [collapsedIndex, setCollapsedIndex] = useState(-1);
 
@@ -158,7 +227,7 @@ const DevicePage = () => {
 
   const handleClickList = () => {
   setOpen(!open);
-};
+  };
 
   const [openG, setOpenG] = React.useState(false);
 
@@ -173,6 +242,16 @@ const DevicePage = () => {
         history.push('/login');
       }
     })
+  }
+
+  const getCommandTypes = async (id) => {
+    console.log('ejecutada')
+    const response = await service.getCommandTypes(id);
+    if(response.ok){
+      setAvailableTypesByDeviceId(response);
+    }
+    getCommandTypes(id);
+    console.log(availableTypesByDeviceId);
   }
 
   const handleSave = () => {
@@ -203,6 +282,25 @@ const DevicePage = () => {
     });
   }
 
+  const handleRemove = (id) => {
+    let option = confirm('¿Eliminar Device N°' + id + '?');
+    if (option) {
+      // fetch(`/api/geofences/${id}`, {method: 'DELETE'}).then(response => {
+      //   if (response.ok) {
+      //     const getGeozones = async (userId) => {
+      //       const response = await service.getGeozonesByUserId(userId);
+      //       setGeozones(response);
+      //     }
+      //     getGeozones(userId);
+      //   }
+      // })
+      console.log('eliminado')
+    } else {
+      console.log('sin eliminar')
+    }
+
+  }
+
   const showMore = () => {
     setMoreInfo(!moreInfo);
   }
@@ -213,6 +311,33 @@ const DevicePage = () => {
         <h2>{t('deviceTitle')}</h2>
         <Divider/>
       </div>
+      <Container>
+        <Button style={{margin: '10px 0px'}} type="button" color="primary"
+                variant="outlined"
+                onClick={handleClickAdd}
+        >
+          <AddIcon color="primary"/>
+          {t('sharedAdd')}
+        </Button>
+        <Divider/>
+      </Container>
+      <Menu
+        id="simple-menu"
+        anchorEl={anchorEl}
+        keepMounted
+        open={Boolean(anchorEl)}
+        onClose={handleCloseMenuMore}
+      >
+        <MenuItem onClick={handleRemove}>Eliminar Dispositivo</MenuItem>
+        <MenuItem onClick={handleClickEdit}>Modificar Dispositivo</MenuItem>
+        <MenuItem onClick={handleClickCommand}>Comando</MenuItem>
+        <MenuItem onClick={handleCloseMenuMore}>Geozonas</MenuItem>
+        <MenuItem onClick={handleCloseMenuMore}>Notificaciones</MenuItem>
+        <MenuItem onClick={handleCloseMenuMore}>Atributos Calculados</MenuItem>
+        <MenuItem onClick={handleCloseMenuMore}>Comandos Guardados</MenuItem>
+        <MenuItem onClick={handleCloseMenuMore}>Mantenimientos</MenuItem>
+        <MenuItem onClick={handleCloseMenuMore}>Acumulador</MenuItem>
+      </Menu>
       <div className={classes.devicesTable}>
         {devices.map((device, index) => (
           <Card key={index} className={classes.root}>
@@ -229,7 +354,7 @@ const DevicePage = () => {
                           </Avatar>
                         }
                         action={
-                          <IconButton aria-label="settings">
+                          <IconButton onClick={handleClickMenuMore} aria-label="settings">
                             <MoreVertIcon/>
                           </IconButton>
                         }
@@ -427,42 +552,287 @@ const DevicePage = () => {
               </CardContent>
             </Collapse>
           </Card>
+
         ))}
 
-        <Container maxWidth='xs' className={classes.container}>
-          <form>
-            {(!id || device) &&
-            <TextField
-              margin="normal"
-              fullWidth
-              defaultValue={device && device.name}
-              onChange={(event) => setName(event.target.value)}
-              label={t('sharedName')}
-              variant="filled"/>
-            }
-            {(!id || device) &&
-            <TextField
-              margin="normal"
-              fullWidth
-              defaultValue={device && device.uniqueId}
-              onChange={(event) => setUniqueId(event.target.value)}
-              label={t('deviceIdentifier')}
-              variant="filled"/>
-            }
-            <FormControl fullWidth margin="normal">
-              <div className={classes.buttons}>
-                <Button type="button" color="primary" variant="outlined"
-                        onClick={() => history.goBack()}>
-                  {t('sharedCancel')}
+        <div>
+          <Dialog
+            open={openModalAdd}
+            onClose={handleClickAdd}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+          >
+            <DialogTitle id="alert-dialog-title">{"Use Google's location service?"}</DialogTitle>
+            <DialogContent>
+              <Container maxWidth='xs' className={classes.container}>
+                <form>
+                  {(!id || device) &&
+                  <TextField
+                    margin="normal"
+                    fullWidth
+                    defaultValue={device && device.name}
+                    onChange={(event) => setName(event.target.value)}
+                    label={t('sharedName')}
+                    variant="outlined"/>
+                  }
+                  {(!id || device) &&
+                  <TextField
+                    margin="normal"
+                    fullWidth
+                    defaultValue={device && device.uniqueId}
+                    onChange={(event) => setUniqueId(event.target.value)}
+                    label={t('deviceIdentifier')}
+                    variant="outlined"/>
+                  }
+                </form>
+                <Button style={{margin: '10px 0px'}} onClick={handleClickAttributes} fullWidth={true} variant="outlined" color="primary">
+                  Atributos
                 </Button>
-                <Button type="button" color="primary" variant="contained"
-                        onClick={handleSave}>
-                  {t('sharedSave')}
+                <Button style={{margin: '10px 0px'}} onClick={showExtraData} fullWidth={true} variant="outlined" color="primary">
+                  Datos extra
                 </Button>
-              </div>
-            </FormControl>
-          </form>
-        </Container>
+                <form style={{display: `${extraData ? 'block' : 'none'}`}}>
+                  <TextField
+                    margin="normal"
+                    fullWidth
+                    // defaultValue={device && device.name}
+                    // onChange={(event) => setName(event.target.value)}
+                    label={t('reportGroup')}
+                    variant="outlined"
+                  />
+                  <TextField
+                    margin="normal"
+                    fullWidth
+                    // defaultValue={device && device.uniqueId}
+                    // onChange={(event) => setUniqueId(event.target.value)}
+                    label={t('sharedPhone')}
+                    variant="outlined"
+                  />
+                  <TextField
+                    margin="normal"
+                    fullWidth
+                    // defaultValue={device && device.name}
+                    // onChange={(event) => setName(event.target.value)}
+                    label={t('deviceModel')}
+                    variant="outlined"
+                  />
+                  <TextField
+                    margin="normal"
+                    fullWidth
+                    // defaultValue={device && device.uniqueId}
+                    // onChange={(event) => setUniqueId(event.target.value)}
+                    label={t('deviceContact')}
+                    variant="outlined"
+                  />
+                  <TextField
+                    margin="normal"
+                    fullWidth
+                    // defaultValue={device && device.uniqueId}
+                    // onChange={(event) => setUniqueId(event.target.value)}
+                    label={t('deviceCategory')}
+                    variant="outlined"
+                  />
+                  <Typography>
+                    Deshabilitado:
+                    <Radio
+                      checked={radioValue === true}
+                      onClick={handleChangeRadio}
+                      color="primary"
+                      value={true}
+                      name="radio-button-demo"
+                      inputProps={{ 'aria-label': 'A' }}
+                    /> Si
+                    <Radio
+                      checked={radioValue === false}
+                      onChange={handleChangeRadio}
+                      color="primary"
+                      value={false}
+                      name="radio-button-demo"
+                      inputProps={{ 'aria-label': 'B' }}
+                    /> No
+                  </Typography>
+                </form>
+
+              </Container>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleClickAdd} color="primary">
+                {t('sharedCancel')}
+              </Button>
+              <Button onClick={handleSave} color="primary" autoFocus>
+                {t('sharedSave')}
+              </Button>
+            </DialogActions>
+          </Dialog>
+        </div>
+        {/*Modal Edit Device*/}
+        <div>
+          <Dialog
+            open={openModalEdit}
+            onClose={handleClickEdit}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+          >
+            <DialogTitle id="alert-dialog-title">{"Use Google's location service?"}</DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-description">
+                Let Google help apps determine location. This means sending anonymous location data to
+                Google, even when no apps are running.
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleClickEdit} color="primary">
+                Disagree
+              </Button>
+              <Button onClick={handleClickEdit} color="primary" autoFocus>
+                Agree
+              </Button>
+            </DialogActions>
+          </Dialog>
+        </div>
+        {/*Modal Add Attributes */}
+        <div>
+          <Dialog
+            open={openModalAttributes}
+            onClose={handleClickAttributes}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+          >
+            <DialogTitle id="alert-dialog-title">{"Use Google's location service?"}</DialogTitle>
+            <DialogContent>
+              <form>
+                <FormControl variant="outlined" fullWidth={true} className={classes.formControl}>
+                  <InputLabel htmlFor="outlined-age-native-simple">{t('sharedName')}</InputLabel>
+                  <Select
+                    native
+                    margin="normal"
+                    fullWidth
+                    // value={key}
+                    // onChange={handleChange}
+                    label="Name"
+                    name="name"
+                    type="text"
+                    variant="outlined"
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
+                  >
+                    <option aria-label="None" value="" />
+                    <option value={10}>Ten</option>
+                    <option value={20}>Twenty</option>
+                    <option value={30}>Thirty</option>
+                  </Select>
+                </FormControl>
+                <TextField
+                  label="Value"
+                  margin="normal"
+                  fullWidth
+                  // value={value}
+                  name="value"
+                  // onChange={handleChangeAttributesValue}
+                  type="text"
+                  variant="outlined"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+              </form>
+              <Table fullWidth style={{border: '1px solid', height: '200px',
+                overflowY: 'scroll',}}>
+                <TableHead>
+                  <TableRow className={classes.tablerow}>
+                    <TableCell style={{padding: '14px',fontSize: '12px'}}>
+                      Nombre
+                    </TableCell>
+                    <TableCell style={{padding: '14px',fontSize: '12px'}}>
+                      Valor
+                    </TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {/*MAPEO DE ATTRIBUTOS*/}
+                  <TableRow>
+                    <TableCell></TableCell>
+                    <TableCell></TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleClickAttributes} color="primary">
+                Agregar
+              </Button>
+              <Button onClick={handleClickAttributes} color="primary" autoFocus>
+                Continuar
+              </Button>
+            </DialogActions>
+          </Dialog>
+        </div>
+        {/*SEND A COMMAND*/}
+        <div>
+          <Dialog
+            open={openModalCommand}
+            onClose={handleClickCommand}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+          >
+            <DialogTitle id="alert-dialog-title">{"Use Google's location service?"}</DialogTitle>
+            <DialogContent>
+              <form>
+              <FormControl variant="outlined" fullWidth={true} className={classes.formControl}>
+                <InputLabel htmlFor="outlined-age-native-simple">{t('deviceCommand')}</InputLabel>
+                <Select
+                  native
+                  margin="normal"
+                  fullWidth
+                  // value={key}
+                  // onChange={handleChange}
+                  label={t('deviceCommand')}
+                  name="name"
+                  type="text"
+                  variant="outlined"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                >
+
+                  <option aria-label="None" value="" />
+                  <option value={10}>Ten</option>
+                  <option value={20}>Twenty</option>
+                  <option value={30}>Thirty</option>
+                </Select>
+              </FormControl>
+                <Typography>
+                  Enviar SMS:
+                  <Radio
+                    checked={radioValueCommand === true}
+                    onClick={handleChangeRadioCommand}
+                    color="primary"
+                    value={true}
+                    name="radio-button-demo"
+                    inputProps={{ 'aria-label': 'A' }}
+                  /> Si
+                  <Radio
+                    checked={radioValueCommand === false}
+                    onChange={handleChangeRadioCommand}
+                    color="primary"
+                    value={false}
+                    name="radio-button-demo"
+                    inputProps={{ 'aria-label': 'B' }}
+                  /> No
+                </Typography>
+              </form>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleClickCommand} color="primary">
+                Disagree
+              </Button>
+              <Button onClick={handleClickCommand} color="primary" autoFocus>
+                Agree
+              </Button>
+            </DialogActions>
+          </Dialog>
+        </div>
       </div>
     </>
   );

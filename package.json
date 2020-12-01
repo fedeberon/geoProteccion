@@ -19,7 +19,7 @@
     "ol-mapbox-style": "^6.1.4",
     "react": "^16.13.0",
     "react-chartjs-2": "^2.11.1",
-    "react-cjolor": "^2.19.3",
+    "react-color": "^2.19.3",
     "react-container-dimensions": "^1.4.1",
     "react-dom": "^16.13.0",
     "react-hot-loader": "^4.13.0",

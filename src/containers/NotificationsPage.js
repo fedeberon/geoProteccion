@@ -28,6 +28,7 @@ import AddIcon from "@material-ui/icons/Add";
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import Radio from "@material-ui/core/Radio";
+import Container from "@material-ui/core/Container";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -273,12 +274,14 @@ export default function NotificationsPage() {
         <h2>{t('sharedNotifications')}</h2>
         <Divider/>
       </div>
-      <Button style={{margin: '10px 0px'}} type="button" color="primary"
-              variant="outlined"
-              onClick={handleOpenNotification}>
-        <AddIcon color="primary"/>
-        Crear nueva notificacion
-      </Button>
+      <Container>
+        <Button style={{margin: '10px 0px'}} type="button" color="primary"
+                variant="outlined"
+                onClick={handleOpenNotification}>
+          <AddIcon color="primary"/>
+          {t('sharedAdd')}
+        </Button>
+      </Container>
 
         <AppBar position="static" color="default">
           <Tabs

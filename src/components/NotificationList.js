@@ -10,22 +10,24 @@ const useStyles = makeStyles((theme) => ({
     padding: "4px 4px",
     display: "grid",
     alignItems: "center",
-    width: '60%',
+    width: '73%',
     height: 'auto',
     margin: '17px 8px',
     position: 'absolute',
-    top: '12%',
-    left: '8%',
+    top: '10%',
+    left: '1%',
     maxHeight: '200px',
     overflowY: 'scroll',
-    borderRadius: '40px',
+    borderRadius: '15px',
     webkitBoxShadow: '0px 0px 20px 1px rgba(102, 97, 102, 0.8)',
     mozBoxShadow: '0px 0px 20px 1px rgba(102, 97, 102, 0.8)',
     boxShadow: '0px 0px 20px 1px rgba(102, 97, 102, 0.8)',
     [theme.breakpoints.up('md')]: {
       position: 'absolute',
       margin: '0px 15px 0px 10px',
-      width: '50%'
+      width: '35%',
+      top: '11%',
+      left: '12%',
     },
   },
   iconButton: {
@@ -42,10 +44,10 @@ const useStyles = makeStyles((theme) => ({
     }
   },
   listItem: {
-    maxHeight: '75px',
+    maxHeight: '45px',
     fontSize: '10px',
     [theme.breakpoints.up('md')]: {
-      maxHeight: '80px',
+      maxHeight: '37px',
     },
   },
   MuiAvatarRoot: {
