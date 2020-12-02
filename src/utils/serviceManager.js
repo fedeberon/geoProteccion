@@ -108,6 +108,18 @@ const getServer = () => {
     .then(response => response.json());
 }
 
+const getComputedAttributes = (deviceId) => {
+  return fetch(`api/attributes/computed?deviceId=${deviceId}`, {method: 'GET'})
+    .catch(function (error) {console.log('setComputedAttributes error: ', error)})
+    .then(response => response.json());
+}
+
+const getCommandsByDeviceId = (deviceId) => {
+  return fetch(`api/commands?deviceId=${deviceId}`, {method: 'GET'})
+    .catch(function (error) {console.log('setCommands error: ', error)})
+    .then(response => response.json());
+}
+
 export {
   setSession,
   getDeviceByUserId,
@@ -127,4 +139,6 @@ export {
   getCurrentAddress,
   getServer,
   getCommandTypes,
+  getComputedAttributes,
+  getCommandsByDeviceId,
 };

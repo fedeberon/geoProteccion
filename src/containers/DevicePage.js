@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {useHistory, useParams} from 'react-router-dom';
 import {makeStyles} from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
@@ -46,6 +46,11 @@ import InputLabel from "@material-ui/core/InputLabel";
 import Select from "@material-ui/core/Select";
 import {Typography} from "@material-ui/core";
 import Radio from "@material-ui/core/Radio";
+import CloseIcon from "@material-ui/icons/Close";
+import AppBar from "@material-ui/core/AppBar";
+import Toolbar from "@material-ui/core/Toolbar";
+import Slide from '@material-ui/core/Slide';
+import DeviceConfigFull from "../components/DeviceConfigFull";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -155,12 +160,23 @@ const useStyles = makeStyles(theme => ({
       fontSize: '13px',
     },
   },
-
+  closeButton: {
+    position: 'absolute',
+    right: theme.spacing(1),
+    top: theme.spacing(1),
+    color: theme.palette.grey[500],
+  },
+  appBar: {
+    position: 'relative',
+  },
+  title: {
+    marginLeft: theme.spacing(2),
+    flex: 1,
+  },
 }));
 
 const DevicePage = () => {
   const classes = useStyles();
-  const history = useHistory();
   const dispatch = useDispatch();
   const {id} = useParams();
   const [name, setName] = useState('');
@@ -178,6 +194,24 @@ const DevicePage = () => {
   const [openModalCommand, setOpenModalCommand] = useState(false);
   const [radioValueCommand, setRadioValueCommand] = useState(false);
   const [availableTypesByDeviceId, setAvailableTypesByDeviceId] = useState([]);
+  const [openFullDialog, setOpenFullDialog] = useState(false);
+  const [type, setType] = useState('');
+  const variable = {}
+    variable.geocerca = 'sharedGeofences';
+    variable.notificacion = 'sharedNotifications';
+    variable.atrCalculados = 'sharedComputedAttributes';
+    variable.comGuardados = 'sharedSavedCommands';
+    variable.mantenimiento = 'sharedMaintenance';
+
+
+  const handleOpenFullDialog = (parametro) => {
+    setOpenFullDialog(true);
+    setType(parametro);
+    handleCloseMenuMore();
+  }
+  const handleCloseFullDialog = () => {
+    setOpenFullDialog(false);
+  }
 
   const handleClickCommand = (idDevice) => {
     console.log('iddevice: ' + idDevice);
@@ -242,15 +276,6 @@ const DevicePage = () => {
     setOpenG(!openG);
   };
 
-  const handleLogout = () => {
-    fetch('/api/session', { method: 'DELETE' }).then(response => {
-      if (response.ok) {
-        dispatch(sessionActions.authenticated(false));
-        history.push('/login');
-      }
-    })
-  }
-
   const getCommandTypes = async (idDevice) => {
     console.log('ejecutada');
     const response = await service.getCommandTypes(idDevice);
@@ -283,7 +308,6 @@ const DevicePage = () => {
   //   request.then(response => {
   //     if (response.ok) {
   //
-  //       history.refresh();
   //     }
   //   });
   // }
@@ -304,7 +328,6 @@ const DevicePage = () => {
     } else {
       console.log('sin eliminar')
     }
-
   }
 
   const showMore = () => {
@@ -330,6 +353,7 @@ const DevicePage = () => {
 
       <div className={classes.devicesTable}>
         {devices.map((device, index) => (
+
           <Card key={index} className={classes.root}>
             <CardMedia
               className={classes.media}
@@ -344,8 +368,8 @@ const DevicePage = () => {
                           </Avatar>
                         }
                         action={
-                          <IconButton onClick={handleClickMenuMore} aria-label="settings">
-                            <MoreVertIcon/>
+                          <IconButton  aria-label="settings">
+                            <MoreVertIcon onClick={handleClickMenuMore}/>
                           </IconButton>
                         }
                         title={`${device.attributes.carPlate} - ${device.name}`}
@@ -353,19 +377,20 @@ const DevicePage = () => {
             />
             <Typography>Device ID: {device.id}</Typography>
             <Menu
+              id={device.id}
               anchorEl={anchorEl}
               open={Boolean(anchorEl)}
               onClose={handleCloseMenuMore}
             >
-              <MenuItem onClick={() => handleRemove(device.id)}>Eliminar Dispositivo</MenuItem>
-              <MenuItem onClick={() => handleClickEdit(device)}>Modificar Dispositivo</MenuItem>
-              <MenuItem onClick={() => handleClickCommand(device.id)}>Comando</MenuItem>
-              <MenuItem onClick={handleCloseMenuMore}>Geozonas</MenuItem>
-              <MenuItem onClick={handleCloseMenuMore}>Notificaciones</MenuItem>
-              <MenuItem onClick={handleCloseMenuMore}>Atributos Calculados</MenuItem>
-              <MenuItem onClick={handleCloseMenuMore}>Comandos Guardados</MenuItem>
-              <MenuItem onClick={handleCloseMenuMore}>Mantenimientos</MenuItem>
-              <MenuItem onClick={handleCloseMenuMore}>Acumulador</MenuItem>
+              <MenuItem onClick={() => handleRemove(device.id)}>{t('sharedRemove')}</MenuItem>
+              <MenuItem onClick={() => handleClickEdit(device)}>{t('sharedEdit')}</MenuItem>
+              <MenuItem onClick={() => handleClickCommand(device.id)}>{t('deviceCommand')}</MenuItem>
+              <MenuItem onClick={() => handleOpenFullDialog(variable.geocerca)}>{t('sharedGeofences')}</MenuItem>
+              <MenuItem onClick={() => handleOpenFullDialog(variable.notificacion)}>{t('sharedNotifications')}</MenuItem>
+              <MenuItem onClick={handleCloseMenuMore}>{t('sharedComputedAttributes')}</MenuItem>
+              <MenuItem onClick={handleCloseMenuMore}>{t('sharedSavedCommands')}</MenuItem>
+              <MenuItem onClick={handleCloseMenuMore}>{t('sharedMaintenance')}</MenuItem>
+              <MenuItem onClick={handleCloseMenuMore}>{t('sharedDeviceAccumulators')}</MenuItem>
             </Menu>
              <CardActions disableSpacing>
               <IconButton
@@ -388,7 +413,7 @@ const DevicePage = () => {
 
                   <ListItem>
                     <ListItemIcon style={{minWidth: '30px'}}>
-                      <i style={{fontSize: '17px'}} className="fas fa-map-marker-alt"></i>
+                      <i style={{fontSize: '17px'}} className="fas fa-map-marker-alt"/>
                     </ListItemIcon>
                     <ListItemText>
                       <strong  className={classes.cardItemText}>{t('positionLatitude')}:&nbsp;</strong>
@@ -423,7 +448,7 @@ const DevicePage = () => {
                   </Collapse>
                   <ListItem button onClick={handleClickList}>
                     <ListItemIcon style={{minWidth: '30px'}}>
-                      <i style={{fontSize: '17px'}} className="fas fa-list"></i>
+                      <i style={{fontSize: '17px'}} className="fas fa-list"/>
                     </ListItemIcon>
                     <ListItemText style={{maxWidth: '100%'}}><strong className={classes.cardItemText}>{t('sharedAttributes')}:</strong></ListItemText>
                     {open ? <ExpandLess/> : <ExpandMore/>}
@@ -451,7 +476,7 @@ const DevicePage = () => {
                   </ListItem>
                   <ListItem style={{display: `${moreInfo ? 'flex' : 'none'}`}}>
                     <ListItemIcon style={{minWidth: '30px'}}>
-                      <i style={{fontSize: '17px'}} className="fas fa-clipboard-check"></i>
+                      <i style={{fontSize: '17px'}} className="fas fa-clipboard-check"/>
                     </ListItemIcon>
                     <ListItemText style={{fontSize: '12px'}}>
                       <strong  className={classes.cardItemText}>{t("positionValid")}:&nbsp;</strong>
@@ -559,17 +584,23 @@ const DevicePage = () => {
               </CardContent>
             </Collapse>
           </Card>
-
         ))}
 
-        <div>
+        {/*MODAL ADD DEVICE*/}
+        <div style={{height: '500px'}}>
           <Dialog
             open={openModalAdd}
             onClose={handleClickAdd}
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
           >
-            <DialogTitle id="alert-dialog-title">{"Use Google's location service?"}</DialogTitle>
+            <DialogTitle id="alert-dialog-title">
+              {t('sharedAdd')}
+              <IconButton aria-label="close" className={classes.closeButton}
+                          onClick={handleClickAdd}>
+                <CloseIcon/>
+              </IconButton>
+            </DialogTitle>
             <DialogContent>
               <Container maxWidth='xs' className={classes.container}>
                 <form>
@@ -756,8 +787,8 @@ const DevicePage = () => {
                 <TableBody>
                   {/*MAPEO DE ATTRIBUTOS*/}
                   <TableRow>
-                    <TableCell></TableCell>
-                    <TableCell></TableCell>
+                    <TableCell/>
+                    <TableCell/>
                   </TableRow>
                 </TableBody>
               </Table>
@@ -835,6 +866,9 @@ const DevicePage = () => {
               </Button>
             </DialogActions>
           </Dialog>
+        </div>
+        <div>
+          <DeviceConfigFull open={openFullDialog} close={handleCloseFullDialog} type={type} deviceId={deviceId}/>
         </div>
       </div>
     </>

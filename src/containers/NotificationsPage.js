@@ -1,10 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 import * as service from "../utils/serviceManager";
-import {makeStyles} from '@material-ui/core/styles';
-import AppBar from '@material-ui/core/AppBar';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
+import {makeStyles, withStyles} from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 import {useSelector} from "react-redux";
@@ -29,6 +26,9 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import Radio from "@material-ui/core/Radio";
 import Container from "@material-ui/core/Container";
+import MuiDialogTitle from "@material-ui/core/DialogTitle";
+import IconButton from "@material-ui/core/IconButton";
+import CloseIcon from "@material-ui/icons/Close";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -66,6 +66,12 @@ const useStyles = makeStyles((theme) => ({
   noLabelTypes: {
     marginTop: theme.spacing(3),
   },
+  closeButton: {
+    position: 'absolute',
+    right: theme.spacing(1),
+    top: theme.spacing(1),
+    color: theme.palette.grey[500],
+  },
 }));
 
 const styles = (theme) => ({
@@ -73,46 +79,7 @@ const styles = (theme) => ({
     margin: 0,
     padding: theme.spacing(2),
   },
-  closeButton: {
-    position: 'absolute',
-    right: theme.spacing(1),
-    top: theme.spacing(1),
-    color: theme.palette.grey[500],
-  },
 });
-
-function TabPanel(props) {
-  const {children, value, index, ...other} = props;
-
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`scrollable-auto-tabpanel-${index}`}
-      aria-labelledby={`scrollable-auto-tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box p={3}>
-          <Typography>{children}</Typography>
-        </Box>
-      )}
-    </div>
-  );
-}
-
-TabPanel.propTypes = {
-  children: PropTypes.node,
-  index: PropTypes.any.isRequired,
-  value: PropTypes.any.isRequired,
-};
-
-function a11yProps(index) {
-  return {
-    id: `scrollable-auto-tab-${index}`,
-    'aria-controls': `scrollable-auto-tabpanel-${index}`,
-  };
-}
 
 export default function NotificationsPage() {
 
@@ -263,7 +230,7 @@ export default function NotificationsPage() {
   }
 
   const removeNotification = (id) => {
-    let option = confirm(`${t('sharedRemoveConfirm')} n° ${id}?`);
+    let option = confirm(`${t('sharedRemoveConfirm')}`);
     if(option){
       fetch(`api/notifications/${id}`, {method: 'DELETE'})
         .then(response => {
@@ -277,245 +244,236 @@ export default function NotificationsPage() {
 
 
   return (
-    <div className={classes.root}>
-      <div style={{marginTop: '5%'}} className="title-section">
-        <h2>{t('sharedNotifications')}</h2>
-        <Divider/>
-      </div>
-      <Container>
-        <Button style={{margin: '10px 0px'}} type="button" color="primary"
-                variant="outlined"
-                onClick={handleOpenNotification}>
-          <AddIcon color="primary"/>
-          {t('sharedAdd')}
-        </Button>
-      </Container>
-        <TabPanel value={value} index={0}>
+    <>
+      <div className={classes.root}>
+        <div style={{marginTop: '5%'}} className="title-section">
+          <h2>{t('sharedNotifications')}</h2>
+          <Divider/>
+        </div>
+        <Container>
+          <Button style={{margin: '10px 0px'}} type="button" color="primary"
+                  variant="outlined"
+                  onClick={handleOpenNotification}>
+            <AddIcon color="primary"/>
+            {t('sharedAdd')}
+          </Button>
+        </Container>
+          {/*<TabPanel value={value} index={0}>*/}
           <div>
-            <TableContainer component={Paper}>
-              <Table className={classes.table} aria-label="simple table">
-                <TableHead>
-                  <TableRow>
-                    <TableCell align="center">{t('notificationType')}</TableCell>
-                    <TableCell align="center">{t('notificationAlways')}</TableCell>
-                    <TableCell align="center">{t('eventAlarm')}</TableCell>
-                    <TableCell align="center">{t('notificationNotificators')}</TableCell>
-                    <TableCell align="center"/>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {notifications.map((notification, index) => (
-                    <TableRow key={index}>
-                      <TableCell align="center">{t(`${notification.type}`)}</TableCell>
-                      <TableCell
-                        align="center">{t(`${Boolean(notification.always)}`)}</TableCell>
+              <TableContainer component={Paper}>
+                <Table className={classes.table} aria-label="simple table">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell align="center">{t('notificationType')}</TableCell>
+                      <TableCell align="center">{t('notificationAlways')}</TableCell>
+                      <TableCell align="center">{t('eventAlarm')}</TableCell>
+                      <TableCell align="center">{t('notificationNotificators')}</TableCell>
                       <TableCell align="center"/>
-                      <TableCell
-                        align="center">{notification.notificators}</TableCell>
-                      <TableCell align="center">
-                        <Button title={t('sharedEdit')}
-                                onClick={() => handleOpenEdit(notification)}>
-                        <EditTwoToneIcon/>
-                        </Button>
-                        <Button title={t('sharedRemove')}
-                                onClick={() => removeNotification(notification.id)}>
-                        <DeleteTwoTone />
-                        </Button>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {notifications.map((notification, index) => (
+                      <TableRow key={index}>
+                        <TableCell align="center">{t(`${notification.type}`)}</TableCell>
+                        <TableCell
+                          align="center">{t(`${Boolean(notification.always)}`)}</TableCell>
+                        <TableCell align="center"/>
+                        <TableCell
+                          align="center">{notification.notificators}</TableCell>
+                        <TableCell align="center">
+                          <Button title={t('sharedEdit')}
+                                  onClick={() => handleOpenEdit(notification)}>
+                          <EditTwoToneIcon/>
+                          </Button>
+                          <Button title={t('sharedRemove')}
+                                  onClick={() => removeNotification(notification.id)}>
+                          <DeleteTwoTone />
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+          </div>
+
+        {/*Modal Add New Notification*/}
+        <div>
+          <Dialog onClose={handleCloseNotification}
+                  aria-labelledby="customized-dialog-title"
+                  open={open}>
+            <DialogTitle id="customized-dialog-title"
+                         onClose={handleCloseNotification}>
+              {t('sharedAdd')}
+              <IconButton aria-label="close" className={classes.closeButton}
+                          onClick={handleCloseNotification}>
+                <CloseIcon/>
+              </IconButton>
+            </DialogTitle>
+
+            <DialogContent dividers>
+              <form className={classes.rootNotification} noValidate
+                    autoComplete="off">
+                <Table>
+                  <TableBody>
+                    <TableRow>
+                      <TableCell>{t('sharedType')}:</TableCell>
+                      <TableCell>
+                        <FormControl variant="outlined" className={classes.formControlType}>
+                          <Select
+                            native
+                            value={type}
+                            onChange={handleChangeType}
+                          >
+                            <option aria-label="None" value="" />
+                            {typesValues.map((types, index) => (
+                              <option key={index} value={types}>{t(`${types}`)}</option>
+                              ))}
+                          </Select>
+                        </FormControl>
                       </TableCell>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </div>
-        </TabPanel>
+                  <TableRow>
+                    <TableCell>{t('notificationAlways')}:</TableCell>
+                    <TableCell>
+                      <Radio
+                        checked={always === true}
+                        onClick={handleChangeRadio}
+                        color="primary"
+                        value={true}
+                        name="radio-button-demo"
+                        inputProps={{ 'aria-label': 'A' }}
+                      /> {t('reportYes')}
+                      <Radio
+                        checked={always === false}
+                        onChange={handleChangeRadio}
+                        color="primary"
+                        value={false}
+                        name="radio-button-demo"
+                        inputProps={{ 'aria-label': 'B' }}
+                      /> {t('reportNo')}
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>{t('notificationNotificators')}:</TableCell>
+                    <TableCell>
+                      <FormControl variant="outlined" className={classes.formControlType}>
+                        <Select
+                          native
+                          value={notificators}
+                          onChange={handleChangeChannel}
+                        >
+                          <option aria-label="None" value="" />
+                          <option value='web'>{t('notificatorWeb')}</option>
+                          <option value='correo'>{t('notificatorMail')}</option>
+                          <option value='sms'>{t('notificatorSms')}</option>
+                        </Select>
+                      </FormControl>
+                    </TableCell>
+                  </TableRow>
+                  </TableBody>
+                </Table>
+              </form>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleCloseNotification} autoFocus color="primary">
+                {t('sharedCancel')}
+              </Button>
+              <Button onClick={postNotifications} autoFocus color="primary">
+                {t('sharedSave')}
+              </Button>
+            </DialogActions>
+          </Dialog>
+        </div>
 
-        <TabPanel value={value} index={4}>
-          <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>N°</TableCell>
-                <TableCell>Tipos de Notificaciones disponibles</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {availableTypes.map((type, index) =>
-                <TableRow key={index}>
-                <TableCell>{index}</TableCell>
-                <TableCell>{type.type}</TableCell>
-              </TableRow>
-              )}
-            </TableBody>
-          </Table>
-          </TableContainer>
-        </TabPanel>
-
-
-      <div>
-        {/*Modal Add New Notification*/}
-        <Dialog onClose={handleCloseNotification}
-                aria-labelledby="customized-dialog-title"
-                open={open}>
-          <DialogTitle id="customized-dialog-title"
-                       onClose={handleCloseNotification}>
-            {t('sharedAdd')}
-          </DialogTitle>
-
-          <DialogContent dividers>
-            <form className={classes.rootNotification} noValidate
-                  autoComplete="off">
-              <Table>
-                <TableRow>
-                  <TableCell>{t('sharedType')}:</TableCell>
-                  <TableCell>
-                    <FormControl variant="outlined" className={classes.formControlType}>
-                      <Select
-                        native
-                        value={type}
-                        onChange={handleChangeType}
-                      >
-                        <option aria-label="None" value="" />
-                        {typesValues.map((types, index) => (
-                          <option key={index} value={types}>{t(`${types}`)}</option>
-                          ))}
-                      </Select>
-                    </FormControl>
-                  </TableCell>
-                </TableRow>
-              <TableRow>
-                <TableCell>{t('notificationAlways')}:</TableCell>
-                <TableCell>
-                  <Radio
-                    checked={always === true}
-                    onClick={handleChangeRadio}
-                    color="primary"
-                    value={true}
-                    name="radio-button-demo"
-                    inputProps={{ 'aria-label': 'A' }}
-                  /> {t('reportYes')}
-                  <Radio
-                    checked={always === false}
-                    onChange={handleChangeRadio}
-                    color="primary"
-                    value={false}
-                    name="radio-button-demo"
-                    inputProps={{ 'aria-label': 'B' }}
-                  /> {t('reportNo')}
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>{t('notificationNotificators')}:</TableCell>
-                <TableCell>
-                  <FormControl variant="outlined" className={classes.formControlType}>
-                    <Select
-                      native
-                      value={notificators}
-                      onChange={handleChangeChannel}
-                    >
-                      <option aria-label="None" value="" />
-                      <option value='web'>{t('notificatorWeb')}</option>
-                      <option value='correo'>{t('notificatorMail')}</option>
-                      <option value='sms'>{t('notificatorSms')}</option>
-                    </Select>
-                  </FormControl>
-                </TableCell>
-              </TableRow>
-              </Table>
-            </form>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleCloseNotification} autoFocus color="primary">
-              {t('sharedCancel')}
-            </Button>
-            <Button onClick={postNotifications} autoFocus color="primary">
-              {t('sharedSave')}
-            </Button>
-          </DialogActions>
-        </Dialog>
+        {/*Modal PUT Notification*/}
+        <div>
+          <Dialog onClose={handleCloseEdit}
+                  aria-labelledby="customized-dialog-title"
+                  open={openEdit}>
+            <DialogTitle id="customized-dialog-title"
+                         onClose={handleCloseEdit}>
+              {t('sharedEdit')}
+              <IconButton aria-label="close" className={classes.closeButton}
+                          onClick={handleCloseEdit}>
+                <CloseIcon/>
+              </IconButton>
+            </DialogTitle>
+            <DialogContent dividers>
+              <form className={classes.rootNotification} noValidate
+                    autoComplete="off">
+                <Table>
+                  <TableBody>
+                    <TableRow>
+                      <TableCell>{t('sharedType')}:</TableCell>
+                      <TableCell>
+                        <FormControl variant="outlined" className={classes.formControlType}>
+                          <Select
+                            native
+                            value={type}
+                            onChange={handleChangeType}
+                          >
+                            <option aria-label="None" value="" />
+                            {typesValues.map((types, index) => (
+                              <option key={index} value={types}>{t(`${types}`)}</option>
+                            ))}
+                          </Select>
+                        </FormControl>
+                      </TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>{t('notificationAlways')}:</TableCell>
+                      <TableCell>
+                        <Radio
+                          checked={always === true}
+                          onClick={handleChangeRadio}
+                          color="primary"
+                          value={true}
+                          name="radio-button-demo"
+                          inputProps={{ 'aria-label': 'A' }}
+                        /> Si
+                        <Radio
+                          checked={always === false}
+                          onChange={handleChangeRadio}
+                          color="primary"
+                          value={false}
+                          name="radio-button-demo"
+                          inputProps={{ 'aria-label': 'B' }}
+                        /> No
+                      </TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>{t('notificationNotificators')}:</TableCell>
+                      <TableCell>
+                        <FormControl variant="outlined" className={classes.formControlType}>
+                          <Select
+                            native
+                            value={notificators}
+                            onChange={handleChangeChannel}
+                          >
+                            <option aria-label="None" value="" />
+                            <option value='web'>{t('notificatorWeb')}</option>
+                            <option value='correo'>{t('notificatorMail')}</option>
+                            <option value='sms'>{t('notificatorSms')}</option>
+                          </Select>
+                        </FormControl>
+                      </TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </form>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleCloseEdit} autoFocus color="primary">
+                {t('sharedCancel')}
+              </Button>
+              <Button onClick={putNotifications} autoFocus color="primary">
+                {t('sharedSave')}
+              </Button>
+            </DialogActions>
+          </Dialog>
+        </div>
       </div>
-
-      {/*Modal PUT Notification*/}
-      <div>
-        <Dialog onClose={handleCloseEdit}
-                aria-labelledby="customized-dialog-title"
-                open={openEdit}>
-          <DialogTitle id="customized-dialog-title"
-                       onClose={handleCloseEdit}>
-            {t('sharedEdit')}
-          </DialogTitle>
-          <DialogContent dividers>
-            <form className={classes.rootNotification} noValidate
-                  autoComplete="off">
-              <Table>
-                <TableRow>
-                  <TableCell>{t('sharedType')}:</TableCell>
-                  <TableCell>
-                    <FormControl variant="outlined" className={classes.formControlType}>
-                      <Select
-                        native
-                        value={type}
-                        onChange={handleChangeType}
-                      >
-                        <option aria-label="None" value="" />
-                        {typesValues.map((types, index) => (
-                          <option key={index} value={types}>{t(`${types}`)}</option>
-                        ))}
-                      </Select>
-                    </FormControl>
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>{t('notificationAlways')}:</TableCell>
-                  <TableCell>
-                    <Radio
-                      checked={always === true}
-                      onClick={handleChangeRadio}
-                      color="primary"
-                      value={true}
-                      name="radio-button-demo"
-                      inputProps={{ 'aria-label': 'A' }}
-                    /> Si
-                    <Radio
-                      checked={always === false}
-                      onChange={handleChangeRadio}
-                      color="primary"
-                      value={false}
-                      name="radio-button-demo"
-                      inputProps={{ 'aria-label': 'B' }}
-                    /> No
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>{t('notificationNotificators')}:</TableCell>
-                  <TableCell>
-                    <FormControl variant="outlined" className={classes.formControlType}>
-                      <Select
-                        native
-                        value={notificators}
-                        onChange={handleChangeChannel}
-                      >
-                        <option aria-label="None" value="" />
-                        <option value='web'>{t('notificatorWeb')}</option>
-                        <option value='correo'>{t('notificatorMail')}</option>
-                        <option value='sms'>{t('notificatorSms')}</option>
-                      </Select>
-                    </FormControl>
-                  </TableCell>
-                </TableRow>
-              </Table>
-            </form>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleCloseEdit} autoFocus color="primary">
-              {t('sharedCancel')}
-            </Button>
-            <Button onClick={putNotifications} autoFocus color="primary">
-              {t('sharedSave')}
-            </Button>
-          </DialogActions>
-        </Dialog>
-      </div>
-    </div>
+      </>
   );
 }
