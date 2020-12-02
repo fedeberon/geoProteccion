@@ -148,22 +148,22 @@ export default function NotificationsPage() {
   // ]
 
   const typesValues = [
-    'DeviceUnknown',
-    'DeviceOnline',
-    'TextMessage',
-    'DeviceFuelDrop',
-    'DeviceOverspeed',
-    'GeofenceEnter',
-    'GeofenceExit',
-    'CommandResult',
-    'Maintenance',
-    'DriverChanged',
-    'DeviceOffline',
-    'IgnitionOff',
-    'IgnitionOn',
-    'DeviceMoving',
-    'DeviceStopped',
-    'Alarm',
+    'deviceUnknown',
+    'deviceOnline',
+    'textMessage',
+    'deviceFuelDrop',
+    'deviceOverspeed',
+    'geofenceEnter',
+    'geofenceExit',
+    'commandResult',
+    'maintenance',
+    'driverChanged',
+    'deviceOffline',
+    'ignitionOff',
+    'ignitionOn',
+    'deviceMoving',
+    'deviceStopped',
+    'alarm',
   ]
 
   const handleChangeRadio = () => {
@@ -203,7 +203,7 @@ export default function NotificationsPage() {
 
   useEffect(() => {
     getNotifications(userId);
-  }, [userId]);
+  },[]);
 
   const getNotifications = async (userId) => {
     const response = await service.getNotificationsByUserId(userId);
@@ -249,13 +249,21 @@ export default function NotificationsPage() {
         'Accept': 'application/json',
       },
       body: JSON.stringify(putNotification)
-      }).then(response => response.json())
-    getNotifications(userId);
+      })
+      .then(response => {
+        if (response.ok) {
+          const getNotifications = async (userId) => {
+            const response = await service.getNotificationsByUserId(userId);
+            setNotifications(response);
+          }
+          getNotifications(userId);
+        }
+      })
     handleCloseEdit();
   }
 
   const removeNotification = (id) => {
-    let option = confirm(`¿Eliminar notificacion n° ${id}?`);
+    let option = confirm(`${t('sharedRemoveConfirm')} n° ${id}?`);
     if(option){
       fetch(`api/notifications/${id}`, {method: 'DELETE'})
         .then(response => {
@@ -282,54 +290,34 @@ export default function NotificationsPage() {
           {t('sharedAdd')}
         </Button>
       </Container>
-
-        <AppBar position="static" color="default">
-          <Tabs
-            value={value}
-            onChange={handleChange}
-            indicatorColor="primary"
-            textColor="primary"
-            variant="scrollable"
-            scrollButtons="auto"
-            aria-label="scrollable auto tabs example"
-          >
-            <Tab onClick={() => getNotifications(userId)}
-                 label="By User ID" {...a11yProps(0)} />
-            <Tab label="All Notifications" {...a11yProps(3)} />
-            <Tab onClick={() => getAvailableTypes()}
-                  label="Available Notification Types" {...a11yProps((4))}/>
-          </Tabs>
-        </AppBar>
         <TabPanel value={value} index={0}>
           <div>
             <TableContainer component={Paper}>
               <Table className={classes.table} aria-label="simple table">
                 <TableHead>
                   <TableRow>
-                    <TableCell align="center">ID</TableCell>
-                    <TableCell align="center">Tipo de notificacion</TableCell>
-                    <TableCell align="center">Todos los dispositivos</TableCell>
-                    <TableCell align="center">Alarma</TableCell>
-                    <TableCell align="center">Canales</TableCell>
+                    <TableCell align="center">{t('notificationType')}</TableCell>
+                    <TableCell align="center">{t('notificationAlways')}</TableCell>
+                    <TableCell align="center">{t('eventAlarm')}</TableCell>
+                    <TableCell align="center">{t('notificationNotificators')}</TableCell>
                     <TableCell align="center"/>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {notifications.map((notification, index) => (
                     <TableRow key={index}>
-                      <TableCell align="center">{notification.id}</TableCell>
-                      <TableCell align="center">{notification.type}</TableCell>
+                      <TableCell align="center">{t(`${notification.type}`)}</TableCell>
                       <TableCell
-                        align="center">{`${Boolean(notification.always)}`}</TableCell>
-                      <TableCell align="center">Undefined</TableCell>
+                        align="center">{t(`${Boolean(notification.always)}`)}</TableCell>
+                      <TableCell align="center"/>
                       <TableCell
                         align="center">{notification.notificators}</TableCell>
                       <TableCell align="center">
-                        <Button title="Editar Notificacion"
+                        <Button title={t('sharedEdit')}
                                 onClick={() => handleOpenEdit(notification)}>
                         <EditTwoToneIcon/>
                         </Button>
-                        <Button title="Eliminar Notificacion"
+                        <Button title={t('sharedRemove')}
                                 onClick={() => removeNotification(notification.id)}>
                         <DeleteTwoTone />
                         </Button>
@@ -342,9 +330,6 @@ export default function NotificationsPage() {
           </div>
         </TabPanel>
 
-        <TabPanel value={value} index={3}>
-
-        </TabPanel>
         <TabPanel value={value} index={4}>
           <TableContainer component={Paper}>
           <Table>
@@ -374,7 +359,7 @@ export default function NotificationsPage() {
                 open={open}>
           <DialogTitle id="customized-dialog-title"
                        onClose={handleCloseNotification}>
-            {` Agregar nueva Notificacion `}
+            {t('sharedAdd')}
           </DialogTitle>
 
           <DialogContent dividers>
@@ -382,7 +367,7 @@ export default function NotificationsPage() {
                   autoComplete="off">
               <Table>
                 <TableRow>
-                  <TableCell>Tipo:</TableCell>
+                  <TableCell>{t('sharedType')}:</TableCell>
                   <TableCell>
                     <FormControl variant="outlined" className={classes.formControlType}>
                       <Select
@@ -392,14 +377,14 @@ export default function NotificationsPage() {
                       >
                         <option aria-label="None" value="" />
                         {typesValues.map((types, index) => (
-                          <option key={index} value={types}>{types}</option>
+                          <option key={index} value={types}>{t(`${types}`)}</option>
                           ))}
                       </Select>
                     </FormControl>
                   </TableCell>
                 </TableRow>
               <TableRow>
-                <TableCell>Aplicar a todos los dispositivos:</TableCell>
+                <TableCell>{t('notificationAlways')}:</TableCell>
                 <TableCell>
                   <Radio
                     checked={always === true}
@@ -408,7 +393,7 @@ export default function NotificationsPage() {
                     value={true}
                     name="radio-button-demo"
                     inputProps={{ 'aria-label': 'A' }}
-                  /> Si
+                  /> {t('reportYes')}
                   <Radio
                     checked={always === false}
                     onChange={handleChangeRadio}
@@ -416,11 +401,11 @@ export default function NotificationsPage() {
                     value={false}
                     name="radio-button-demo"
                     inputProps={{ 'aria-label': 'B' }}
-                  /> No
+                  /> {t('reportNo')}
                 </TableCell>
               </TableRow>
               <TableRow>
-                <TableCell>Canales:</TableCell>
+                <TableCell>{t('notificationNotificators')}:</TableCell>
                 <TableCell>
                   <FormControl variant="outlined" className={classes.formControlType}>
                     <Select
@@ -429,9 +414,9 @@ export default function NotificationsPage() {
                       onChange={handleChangeChannel}
                     >
                       <option aria-label="None" value="" />
-                      <option value='web'>Web</option>
-                      <option value='correo'>Correo</option>
-                      <option value='sms'>Sms</option>
+                      <option value='web'>{t('notificatorWeb')}</option>
+                      <option value='correo'>{t('notificatorMail')}</option>
+                      <option value='sms'>{t('notificatorSms')}</option>
                     </Select>
                   </FormControl>
                 </TableCell>
@@ -457,18 +442,14 @@ export default function NotificationsPage() {
                 open={openEdit}>
           <DialogTitle id="customized-dialog-title"
                        onClose={handleCloseEdit}>
-            {` Modificar Notificacion `}
+            {t('sharedEdit')}
           </DialogTitle>
           <DialogContent dividers>
             <form className={classes.rootNotification} noValidate
                   autoComplete="off">
               <Table>
                 <TableRow>
-                  <TableCell>Id de Notificación:</TableCell>
-                  <TableCell>{objectNotification.id}</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>Tipo:</TableCell>
+                  <TableCell>{t('sharedType')}:</TableCell>
                   <TableCell>
                     <FormControl variant="outlined" className={classes.formControlType}>
                       <Select
@@ -478,14 +459,14 @@ export default function NotificationsPage() {
                       >
                         <option aria-label="None" value="" />
                         {typesValues.map((types, index) => (
-                          <option key={index} value={types}>{types}</option>
+                          <option key={index} value={types}>{t(`${types}`)}</option>
                         ))}
                       </Select>
                     </FormControl>
                   </TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell>Aplicar a todos los dispositivos:</TableCell>
+                  <TableCell>{t('notificationAlways')}:</TableCell>
                   <TableCell>
                     <Radio
                       checked={always === true}
@@ -506,7 +487,7 @@ export default function NotificationsPage() {
                   </TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell>Canales:</TableCell>
+                  <TableCell>{t('notificationNotificators')}:</TableCell>
                   <TableCell>
                     <FormControl variant="outlined" className={classes.formControlType}>
                       <Select
@@ -515,9 +496,9 @@ export default function NotificationsPage() {
                         onChange={handleChangeChannel}
                       >
                         <option aria-label="None" value="" />
-                        <option value='web'>Web</option>
-                        <option value='correo'>Correo</option>
-                        <option value='sms'>Sms</option>
+                        <option value='web'>{t('notificatorWeb')}</option>
+                        <option value='correo'>{t('notificatorMail')}</option>
+                        <option value='sms'>{t('notificatorSms')}</option>
                       </Select>
                     </FormControl>
                   </TableCell>

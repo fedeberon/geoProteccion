@@ -163,7 +163,6 @@ const DevicePage = () => {
   const history = useHistory();
   const dispatch = useDispatch();
   const {id} = useParams();
-  const [device, setDevice] = useState();
   const [name, setName] = useState('');
   const [uniqueId, setUniqueId] = useState('');
   const devices = useSelector(state => Object.values(state.devices.items), shallowEqual);
@@ -181,7 +180,9 @@ const DevicePage = () => {
   const [availableTypesByDeviceId, setAvailableTypesByDeviceId] = useState([]);
 
   const handleClickCommand = (idDevice) => {
+    console.log('iddevice: ' + idDevice);
     setOpenModalCommand(!openModalCommand);
+    setDeviceId(idDevice);
     getCommandTypes(idDevice);
     handleCloseMenuMore();
   }
@@ -259,36 +260,36 @@ const DevicePage = () => {
     console.log('types:' + availableTypesByDeviceId);
   }
 
-  const handleSave = () => {
-    const updatedDevice = id ? device : {};
-    updatedDevice.name = name || updatedDevice.name;
-    updatedDevice.uniqueId = uniqueId || updatedDevice.uniqueId;
+  // const handleSave = () => {
+  //   const updatedDevice = id ? device : {};
+  //   updatedDevice.name = name || updatedDevice.name;
+  //   updatedDevice.uniqueId = uniqueId || updatedDevice.uniqueId;
+  //
+  //   let request;
+  //   if (id) {
+  //     request = fetch(`/api/devices/${id}`, {
+  //       method: 'PUT',
+  //       headers: {'Content-Type': 'application/json'},
+  //       body: JSON.stringify(updatedDevice),
+  //     });
+  //   } else {
+  //     request = fetch('/api/devices', {
+  //       method: 'POST',
+  //       headers: {'Content-Type': 'application/json'},
+  //       body: JSON.stringify(updatedDevice),
+  //     });
+  //   }
+  //
+  //   request.then(response => {
+  //     if (response.ok) {
+  //
+  //       history.refresh();
+  //     }
+  //   });
+  // }
 
-    let request;
-    if (id) {
-      request = fetch(`/api/devices/${id}`, {
-        method: 'PUT',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(updatedDevice),
-      });
-    } else {
-      request = fetch('/api/devices', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(updatedDevice),
-      });
-    }
-
-    request.then(response => {
-      if (response.ok) {
-
-        history.refresh();
-      }
-    });
-  }
-
-  const handleRemove = (idDevice) => {
-    let option = confirm('¿Eliminar Device N°' + idDevice + '?');
+  const handleRemove = (deviceId) => {
+    let option = confirm('¿Eliminar Device N°' + deviceId + '?');
     if (option) {
       // fetch(`/api/geofences/${id}`, {method: 'DELETE'}).then(response => {
       //   if (response.ok) {
@@ -350,15 +351,14 @@ const DevicePage = () => {
                         title={`${device.attributes.carPlate} - ${device.name}`}
                         subheader={device.lastUpdate}
             />
+            <Typography>Device ID: {device.id}</Typography>
             <Menu
-              id="simple-menu"
               anchorEl={anchorEl}
-              keepMounted
               open={Boolean(anchorEl)}
               onClose={handleCloseMenuMore}
             >
               <MenuItem onClick={() => handleRemove(device.id)}>Eliminar Dispositivo</MenuItem>
-              <MenuItem onClick={handleClickEdit}>Modificar Dispositivo</MenuItem>
+              <MenuItem onClick={() => handleClickEdit(device)}>Modificar Dispositivo</MenuItem>
               <MenuItem onClick={() => handleClickCommand(device.id)}>Comando</MenuItem>
               <MenuItem onClick={handleCloseMenuMore}>Geozonas</MenuItem>
               <MenuItem onClick={handleCloseMenuMore}>Notificaciones</MenuItem>
@@ -573,24 +573,21 @@ const DevicePage = () => {
             <DialogContent>
               <Container maxWidth='xs' className={classes.container}>
                 <form>
-                  {(!id || device) &&
                   <TextField
                     margin="normal"
                     fullWidth
-                    defaultValue={device && device.name}
                     onChange={(event) => setName(event.target.value)}
                     label={t('sharedName')}
-                    variant="outlined"/>
-                  }
-                  {(!id || device) &&
+                    variant="outlined"
+                  />
                   <TextField
                     margin="normal"
                     fullWidth
-                    defaultValue={device && device.uniqueId}
+
                     onChange={(event) => setUniqueId(event.target.value)}
                     label={t('deviceIdentifier')}
-                    variant="outlined"/>
-                  }
+                    variant="outlined"
+                  />
                 </form>
                 <Button style={{margin: '10px 0px'}} onClick={handleClickAttributes} fullWidth={true} variant="outlined" color="primary">
                   Atributos
@@ -666,7 +663,7 @@ const DevicePage = () => {
               <Button onClick={handleClickAdd} color="primary">
                 {t('sharedCancel')}
               </Button>
-              <Button onClick={handleSave} color="primary" autoFocus>
+              <Button color="primary" autoFocus>
                 {t('sharedSave')}
               </Button>
             </DialogActions>
