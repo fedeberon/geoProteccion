@@ -28,7 +28,6 @@ import ListItemText from '@material-ui/core/ListItemText';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import StarBorder from '@material-ui/icons/StarBorder';
-import {sessionActions} from "../store";
 import Divider from "@material-ui/core/Divider";
 import { getCourse } from '../utils/functions';
 import AddIcon from "@material-ui/icons/Add";
@@ -47,9 +46,6 @@ import Select from "@material-ui/core/Select";
 import {Typography} from "@material-ui/core";
 import Radio from "@material-ui/core/Radio";
 import CloseIcon from "@material-ui/icons/Close";
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
-import Slide from '@material-ui/core/Slide';
 import DeviceConfigFull from "../components/DeviceConfigFull";
 
 const useStyles = makeStyles(theme => ({
@@ -179,42 +175,45 @@ const DevicePage = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const {id} = useParams();
-  const [name, setName] = useState('');
-  const [uniqueId, setUniqueId] = useState('');
+  const [ name, setName ] = useState('');
+  const [ uniqueId, setUniqueId ] = useState('');
   const devices = useSelector(state => Object.values(state.devices.items), shallowEqual);
   const positions = useSelector(state => state.positions.items, shallowEqual);
-  const [moreInfo, setMoreInfo] = useState(false);
-  const [anchorEl, setAnchorEl] = useState(false);
-  const [openModalAdd, setOpenModalAdd] = useState(false);
-  const [openModalEdit, setOpenModalEdit] = useState(false);
-  const [openModalAttributes, setOpenModalAttributes] = useState(false);
-  const [extraData, setExtraData] = useState(false);
-  const [radioValue, setRadioValue] = useState(false);
-  const [deviceId, setDeviceId] = useState('');
-  const [openModalCommand, setOpenModalCommand] = useState(false);
-  const [radioValueCommand, setRadioValueCommand] = useState(false);
-  const [availableTypesByDeviceId, setAvailableTypesByDeviceId] = useState([]);
-  const [openFullDialog, setOpenFullDialog] = useState(false);
-  const [type, setType] = useState('');
-  const variable = {}
-    variable.geocerca = 'sharedGeofences';
-    variable.notificacion = 'sharedNotifications';
-    variable.atrCalculados = 'sharedComputedAttributes';
-    variable.comGuardados = 'sharedSavedCommands';
-    variable.mantenimiento = 'sharedMaintenance';
-
+  const [ moreInfo, setMoreInfo ] = useState(false);
+  const [ anchorEl, setAnchorEl ] = useState(false);
+  const [ openedMenu, setOpenedMenu ] = useState(null);
+  const [ openModalAdd, setOpenModalAdd ] = useState(false);
+  const [ openModalEdit, setOpenModalEdit ] = useState(false);
+  const [ openModalAttributes, setOpenModalAttributes ] = useState(false);
+  const [ extraData, setExtraData ] = useState(false);
+  const [ radioValue, setRadioValue ] = useState(false);
+  const [ deviceId, setDeviceId ] = useState('');
+  const [ openModalCommand, setOpenModalCommand ] = useState(false);
+  const [ radioValueCommand, setRadioValueCommand ] = useState(false);
+  const [ availableTypesByDeviceId, setAvailableTypesByDeviceId ] = useState([]);
+  const [ openFullDialog, setOpenFullDialog ] = useState(false);
+  const [ type, setType ] = useState('');
+  const [ newDevice, setNewDevice ] = useState({ id: null, name: '', uniqueId: '', status: '', disabled: true, lastUpdate: null, positionId: null, groupId: null, phone: '', model: '', contact: '', category: '', geofenceIds: [], attributes: {}});
+  const [ newAttributes, setNewAttributes ] = useState({});
+  const variable = {
+    geocerca: 'sharedGeofences',
+    notification: 'sharedNotifications',
+    atrCalculados: 'sharedComputeAttributes',
+    comGuardados: 'sharedSavedCommands',
+    mantenimiento: 'sharedMaintenance'
+  };
 
   const handleOpenFullDialog = (parametro) => {
     setOpenFullDialog(true);
     setType(parametro);
     handleCloseMenuMore();
   }
+
   const handleCloseFullDialog = () => {
     setOpenFullDialog(false);
   }
 
   const handleClickCommand = (idDevice) => {
-    console.log('iddevice: ' + idDevice);
     setOpenModalCommand(!openModalCommand);
     setDeviceId(idDevice);
     getCommandTypes(idDevice);
@@ -252,10 +251,12 @@ const DevicePage = () => {
 
   const handleClickMenuMore = (event) => {
     setAnchorEl(event.currentTarget);
+    setOpenedMenu(event.currentTarget.value);
   };
 
   const handleCloseMenuMore = () => {
     setAnchorEl(null);
+    setOpenedMenu(null);
   };
 
   const [collapsedIndex, setCollapsedIndex] = useState(-1);
@@ -277,40 +278,35 @@ const DevicePage = () => {
   };
 
   const getCommandTypes = async (idDevice) => {
-    console.log('ejecutada');
     const response = await service.getCommandTypes(idDevice);
     if(response.ok){
       setAvailableTypesByDeviceId(response);
     }
-    console.log('types:' + availableTypesByDeviceId);
   }
 
-  // const handleSave = () => {
-  //   const updatedDevice = id ? device : {};
-  //   updatedDevice.name = name || updatedDevice.name;
-  //   updatedDevice.uniqueId = uniqueId || updatedDevice.uniqueId;
-  //
-  //   let request;
-  //   if (id) {
-  //     request = fetch(`/api/devices/${id}`, {
-  //       method: 'PUT',
-  //       headers: {'Content-Type': 'application/json'},
-  //       body: JSON.stringify(updatedDevice),
-  //     });
-  //   } else {
-  //     request = fetch('/api/devices', {
-  //       method: 'POST',
-  //       headers: {'Content-Type': 'application/json'},
-  //       body: JSON.stringify(updatedDevice),
-  //     });
-  //   }
-  //
-  //   request.then(response => {
-  //     if (response.ok) {
-  //
-  //     }
-  //   });
-  // }
+   const handleSave = () => {
+ 
+     let request;
+     if (id) {
+       request = fetch(`/api/devices/${id}`, {
+         method: 'PUT',
+         headers: {'Content-Type': 'application/json'},
+         body: JSON.stringify(updatedDevice),
+       });
+     } else {
+       request = fetch('/api/devices', {
+         method: 'POST',
+         headers: {'Content-Type': 'application/json'},
+         body: JSON.stringify(updatedDevice),
+       });
+     }
+  
+     request.then(response => {
+       if (response.ok) {
+  
+       }
+     });
+   }
 
   const handleRemove = (deviceId) => {
     let option = confirm('¿Eliminar Device N°' + deviceId + '?');
@@ -341,9 +337,12 @@ const DevicePage = () => {
         <Divider/>
       </div>
       <Container>
-        <Button style={{margin: '10px 0px'}} type="button" color="primary"
-                variant="outlined"
-                onClick={handleClickAdd}
+        <Button
+          style={{margin: '10px 0px'}}
+          type="button"
+          color="primary"
+          variant="outlined"
+          onClick={handleClickAdd}
         >
           <AddIcon color="primary"/>
           {t('sharedAdd')}
@@ -368,18 +367,17 @@ const DevicePage = () => {
                           </Avatar>
                         }
                         action={
-                          <IconButton  aria-label="settings">
-                            <MoreVertIcon onClick={handleClickMenuMore}/>
+                          <IconButton value={device.id} aria-label="settings" onClick={handleClickMenuMore}>
+                            <MoreVertIcon/>
                           </IconButton>
                         }
                         title={`${device.attributes.carPlate} - ${device.name}`}
                         subheader={device.lastUpdate}
             />
-            <Typography>Device ID: {device.id}</Typography>
             <Menu
               id={device.id}
               anchorEl={anchorEl}
-              open={Boolean(anchorEl)}
+              open={parseInt(openedMenu) === device.id}
               onClose={handleCloseMenuMore}
             >
               <MenuItem onClick={() => handleRemove(device.id)}>{t('sharedRemove')}</MenuItem>
@@ -480,7 +478,7 @@ const DevicePage = () => {
                     </ListItemIcon>
                     <ListItemText style={{fontSize: '12px'}}>
                       <strong  className={classes.cardItemText}>{t("positionValid")}:&nbsp;</strong>
-                      {positions && positions[device.id] ? Boolean(positions[device.id].valid) : 'Undefined'}</ListItemText>
+                      {positions && positions[device.id] ? Boolean(positions[device.id].valid).toString() : 'Undefined'}</ListItemText>
                   </ListItem>
                   <ListItem style={{display: `${moreInfo ? 'flex' : 'none'}`}}>
                     <ListItemIcon style={{minWidth: '30px'}}>
@@ -520,7 +518,7 @@ const DevicePage = () => {
                     </ListItemIcon>
                     <ListItemText>
                       <strong  className={classes.cardItemText}>{t("currentAddress")}:&nbsp;</strong>
-                      Null</ListItemText>
+                      Unknown</ListItemText>
 
 
 
@@ -539,7 +537,7 @@ const DevicePage = () => {
                     </ListItemIcon>
                     <ListItemText>
                       <strong  className={classes.cardItemText}>{t("positionIgnition")}:&nbsp;</strong>
-                      {positions && positions[device.id] ? Boolean(positions[device.id].ignition) : 'Undefined'}</ListItemText>
+                      {positions && positions[device.id] ? Boolean(positions[device.id].ignition).toString() : 'Undefined'}</ListItemText>
                   </ListItem>
                   <ListItem style={{display: `${moreInfo ? 'flex' : 'none'}`}}>
                     <ListItemIcon style={{minWidth: '30px'}}>
@@ -571,7 +569,7 @@ const DevicePage = () => {
                     </ListItemIcon>
                     <ListItemText>
                       <strong  className={classes.cardItemText}>{t("positionMotion")}:&nbsp;</strong>
-                      {positions && positions[device.id] ? Boolean(positions[device.id].attributes.motion) : 'Undefined'}</ListItemText>
+                      {positions && positions[device.id] ? Boolean(positions[device.id].attributes.motion).toString() : 'Undefined'}</ListItemText>
                   </ListItem>
 
                   <ListItem style={{justifyContent: 'center'}} button onClick={() => showMore()}>
@@ -607,15 +605,16 @@ const DevicePage = () => {
                   <TextField
                     margin="normal"
                     fullWidth
-                    onChange={(event) => setName(event.target.value)}
+                    value={newDevice.name}
+                    onChange={(event) => setNewDevice({...newDevice, name: event.target.value})}
                     label={t('sharedName')}
                     variant="outlined"
                   />
                   <TextField
                     margin="normal"
                     fullWidth
-
-                    onChange={(event) => setUniqueId(event.target.value)}
+                    value={newDevice.uniqueId}
+                    onChange={(event) => setNewDevice({...newDevice, uniqueId: event.target.value})}
                     label={t('deviceIdentifier')}
                     variant="outlined"
                   />
@@ -694,12 +693,13 @@ const DevicePage = () => {
               <Button onClick={handleClickAdd} color="primary">
                 {t('sharedCancel')}
               </Button>
-              <Button color="primary" autoFocus>
+              <Button onClick={handleSave} color="primary" autoFocus>
                 {t('sharedSave')}
               </Button>
             </DialogActions>
           </Dialog>
         </div>
+        
         {/*Modal Edit Device*/}
         <div>
           <Dialog
@@ -725,6 +725,7 @@ const DevicePage = () => {
             </DialogActions>
           </Dialog>
         </div>
+        
         {/*Modal Add Attributes */}
         <div>
           <Dialog
