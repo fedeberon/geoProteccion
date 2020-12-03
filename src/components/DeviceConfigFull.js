@@ -145,7 +145,7 @@ const DeviceConfigFull = ({open, close, type}) => {
 
   // useEffect(()=> {
   //   const getComputedAttributes = async (deviceId) => {
-  //     const response = await service.getComputedAttributes(deviceId);
+  //     const response = await service.getComputedAttributesById(deviceId);
   //     setComputedAttributes(response)
   //   }
   //   getComputedAttributes(deviceId);

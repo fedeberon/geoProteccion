@@ -108,15 +108,27 @@ const getServer = () => {
     .then(response => response.json());
 }
 
-const getComputedAttributes = (deviceId) => {
+const getComputedAttributesById = (deviceId) => {
   return fetch(`api/attributes/computed?deviceId=${deviceId}`, {method: 'GET'})
-    .catch(function (error) {console.log('setComputedAttributes error: ', error)})
+    .catch(function (error) {console.log('getComputedAttributesById error: ', error)})
+    .then(response => response.json());
+}
+
+const getComputedAttributes = () => {
+  return fetch(`api/attributes/computed`, {method: 'GET'})
+    .catch(function (error) {console.log('getComputedAttributes error: ', error)})
     .then(response => response.json());
 }
 
 const getCommandsByDeviceId = (deviceId) => {
   return fetch(`api/commands?deviceId=${deviceId}`, {method: 'GET'})
     .catch(function (error) {console.log('setCommands error: ', error)})
+    .then(response => response.json());
+}
+
+const getGroups = () => {
+  return fetch(`api/groups`, {method: 'GET'})
+    .catch(function (error) {console.log('getGroups error: ', error)})
     .then(response => response.json());
 }
 
@@ -139,6 +151,7 @@ export {
   getCurrentAddress,
   getServer,
   getCommandTypes,
-  getComputedAttributes,
+  getComputedAttributesById,
   getCommandsByDeviceId,
+  getGroups,
 };
