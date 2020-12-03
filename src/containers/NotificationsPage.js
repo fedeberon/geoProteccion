@@ -156,12 +156,17 @@ export default function NotificationsPage() {
   const handleOpenEdit = (notification) => {
     setOpenEdit(true);
     setObjectNotification(notification);
+    setType(notification.type);
+    setAlways(notification.always);
+    setNotificators(notification.notificators)
   }
 
   const handleCloseEdit = () => {
     setOpenEdit(false)
     setType('');
+    setAlways(false);
     setNotificators('');
+    setObjectNotification('');
   }
 
   const handleChange = (event, newValue) => {
@@ -197,8 +202,11 @@ export default function NotificationsPage() {
             'Accept': 'application/json',
           },
           body: JSON.stringify(addNotification)
-        }).then(response => console.log(response))
-    getNotifications(userId);
+        }).then(response => {
+          if(response.ok){
+            getNotifications(userId);
+          }
+        })
     handleCloseNotification();
   }
 
@@ -219,10 +227,6 @@ export default function NotificationsPage() {
       })
       .then(response => {
         if (response.ok) {
-          const getNotifications = async (userId) => {
-            const response = await service.getNotificationsByUserId(userId);
-            setNotifications(response);
-          }
           getNotifications(userId);
         }
       })
@@ -241,7 +245,6 @@ export default function NotificationsPage() {
         .catch(error => console.log(error))
     }
   }
-
 
   return (
     <>

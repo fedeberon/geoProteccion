@@ -37,6 +37,7 @@ import IconButton from "@material-ui/core/IconButton";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import EditTwoToneIcon from "@material-ui/icons/EditTwoTone";
 import {DeleteTwoTone} from "@material-ui/icons";
+import CloseIcon from "@material-ui/icons/Close";
 
 
 
@@ -58,6 +59,12 @@ const useStyles = makeStyles((theme) => ({
     width: '229px',
     minWidth: 120,
   },
+  closeButton: {
+    position: 'absolute',
+    right: theme.spacing(1),
+    top: theme.spacing(1),
+    color: theme.palette.grey[500],
+  },
   selectEmpty: {
     marginTop: theme.spacing(2),
   },
@@ -77,12 +84,14 @@ const MaintenancePage = () => {
   const classes = useStyles();
   const [ maintenance, setMaintenance ] = useState([]);
   const userId = useSelector((state) => state.session.user.id);
-  const [ showPost, setShowPost ] = useState(false);
+  const [ showModal, setShowModal ] = useState(false);
+  const [ elem, setElem ] = useState(false);
   const [ key, setKey ] = useState('');
   const [ value, setValue ] = useState('');
   const [ attributesList, setAttributesList ] = useState([]);
   const [ attributes, setAttributes] = useState({});
   const [state, setState] = useState({
+    id: '',
     name: '',
     type: '',
     start: '',
@@ -90,20 +99,25 @@ const MaintenancePage = () => {
     attributes: {},
   });
   const [openAttributes, setOpenAttributes] = useState(false);
+  const [expanded, setExpanded] = useState('');
+
 
   const handleShowAttributes = () => {
     setOpenAttributes(!openAttributes);
   };
 
-  const [expanded, setExpanded] = useState('');
+
   const handleChange = (panel) => (event, newExpanded) => {
     setExpanded(newExpanded ? panel : false);
   };
 
+  useEffect(() =>{
+    getMaintenance(userId);
+  },[])
+
   const getMaintenance = async (userId) => {
     const response = await service.getMaintenanceByUserId(userId);
     setMaintenance(response);
-    console.log(response)
   }
 
   const handleSaveAttributes = () => {
@@ -129,8 +143,25 @@ const MaintenancePage = () => {
     });
   };
 
-  const handleShowPost = () => {
-    setShowPost(!showPost);
+  const handleShowModal = (elemento) => {
+    setShowModal(!showModal);
+    if(elemento){
+      setElem(true);
+      setState({
+        id: elemento.id,
+        name: elemento.name,
+        type: elemento.type,
+        start: elemento.start,
+        period: elemento.period,
+        attributes: elemento.attributes,
+      });
+    }
+  }
+
+  const handleCancelEdit = () => {
+    setState({});
+    setElem(false);
+    setShowModal(!showModal)
   }
 
   const handlePost = () => {
@@ -144,16 +175,51 @@ const MaintenancePage = () => {
 
       console.log(JSON.stringify(addMaintenance))
 
-      // fetch(`api/maintenance`, {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //     'Accept': 'application/json',
-      //   },
-      //   body: JSON.stringify(addMaintenance)
-      // }).then(response => console.log(response))
-      // getMaintenance(userId);
-      handleShowPost();
+      fetch(`api/maintenance`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify(addMaintenance)
+      }).then(response => {
+        if (response.ok) {
+          getMaintenance(userId);
+        }
+      })
+    handleShowModal();
+  }
+
+  const handleEdit = (state) => {
+
+    fetch(`api/maintenance/${state.id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify(state)
+    }).then(response => {
+      if(response.ok){
+        setState({});
+        setElem(false);
+        getMaintenance(userId);
+      }
+    })
+    setShowModal(!showModal);
+  }
+
+  const handleRemove = (id) => {
+    let option = confirm(`Del n° ${id}`);
+    if(option){
+      fetch(`api/maintenance/${id}`, {method: 'DELETE'})
+        .then(response => {
+          if(response.ok){
+            getMaintenance(userId);
+          }
+        })
+        .catch(error => console.log(error))
+    }
   }
 
   return (
@@ -162,20 +228,10 @@ const MaintenancePage = () => {
         <h2>{t('sharedMaintenance')}</h2>
         <Divider/>
       </div>
-      <div style={{width: '100%', display: 'flex', justifyContent: 'center'}}>
-      <Button onClick={() => getMaintenance(userId)}
-        style={{marginRight: '10px'}} variant="outlined" color="primary">
-        GET
-      </Button>
-      <Button onClick={() => handleShowPost(true)}
-        style={{marginRight: '10px'}} variant="outlined" color="primary">
-        POST
-      </Button>
-      <Button style={{marginRight: '10px'}} variant="outlined" color="primary">
-        PUT
-      </Button>
-      <Button style={{marginRight: '10px'}} variant="outlined" color="primary">
-        DEL
+      <div>
+      <Button onClick={() => handleShowModal()}
+        style={{margin: '15px'}} variant="outlined" color="primary">
+        {t('sharedAdd')}
       </Button>
       </div>
       <TableContainer component={Paper}>
@@ -215,147 +271,185 @@ const MaintenancePage = () => {
                   </Accordion>
                 </TableCell>
                 <TableCell align="center">
-                  <Button title="Editar Mantenimiento"
+                  <Button onClick={() => handleShowModal(el)}title="Editar Mantenimiento"
                   >
                     <EditTwoToneIcon/>
                   </Button>
-                  <Button title="Eliminar Mantenimiento"
+                  <Button onClick={() => handleRemove(el.id)} title="Eliminar Mantenimiento"
                   >
                     <DeleteTwoTone />
                   </Button>
                 </TableCell>
               </TableRow>
             ))}
-
-
-
           </TableBody>
         </Table>
       </TableContainer>
 
-      {/*Modal Post Maintenance*/}
+      {/*Modal Post & Edit Maintenance*/}
       <div>
-
         <Dialog
-          open={showPost}
-          onClose={handleShowPost}
+          open={showModal}
+          onClose={handleShowModal}
           aria-labelledby="alert-dialog-title"
           aria-describedby="alert-dialog-description"
         >
-          <DialogTitle id="alert-dialog-title">{'Agregar nuevo Mantenimiento'}</DialogTitle>
+          <DialogTitle id="customized-dialog-title"
+                       onClose={handleCancelEdit}>
+            {t('sharedAdd')}
+            <IconButton aria-label="close" className={classes.closeButton}
+                        onClick={handleCancelEdit}>
+              <CloseIcon/>
+            </IconButton>
+          </DialogTitle>
           <DialogContent>
-            <Table>
-              <TableRow>
-                <TableCell>Nombre:</TableCell>
-                <TableCell><TextField
-                  id="outlined-basic"
-                  value={state.name}
-                  name="name"
-                  label={t('sharedName')}
-                  variant="outlined"
-                  inputProps={{
-                    name: 'name',
-                    shrink: true,
-                  }}
-                  onChange={handleChangeSelects}
-                /></TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>Type:</TableCell>
-                <TableCell><FormControl variant="outlined" className={classes.formControl}>
-                  <InputLabel htmlFor="outlined-age-native-simple">Type</InputLabel>
-                  <Select
-                    native
-                    value={state.type}
-                    onChange={handleChangeSelects}
-                    label="Type"
-                    inputProps={{
-                      name: 'type',
-                    }}
-                  >
-                    <option value='index'>{t('positionIndex')}</option>
-                    <option value='hdop'>{t('positionHdop')}</option>
-                    <option value='vdop'>{t('positionVdop')}</option>
-                    <option value='pdop'>{t('positionPdop')}</option>
-                    <option value='sat'>{t('positionSat')}</option>
-                    <option value='satVisible'>{t('positionSatVisible')}</option>
-                    <option value='rssi'>{t('positionRssi')}</option>
-                    <option value='gps'>{t('positionGps')}</option>
-                    <option value='odometer'>{t('positionOdometer')}</option>
-                    <option value='odometerMaintenance'>{t('positionServiceOdometer')}</option>
-                    <option value='odometerTrip'>{t('positionTripOdometer')}</option>
-                    <option value='hours'>{t('positionHours')}</option>
-                    <option value='steps'>{t('positionSteps')}</option>
-                    <option value='power'>{t('positionPower')}</option>
-                    <option value='batery'>{t('positionBattery')}</option>
-                    <option value='bateryLevel'>{t('positionBatteryLevel')}</option>
-                    <option value='fuel'>{t('positionFuel')}</option>
-                    <option value='fuelConsumtion'>{t('positionFuelConsumption')}</option>
-                    <option value='distance'>{t('sharedDistance')}</option>
-                    <option value='totalDistance'>{t('deviceTotalDistance')}</option>
-                    <option value='rpm'>{t('positionRpm')}</option>
-                    <option value='throttle'>{t('positionThrottle')}</option>
-                    <option value='armado'>{t('positionArmed')}</option>
-                    <option value='acceleration'>{t('positionAcceleration')}</option>
-                    <option value='deviceTemp'>{t('positionDeviceTemp')}</option>
-                    <option value='obdSpeed'>{t('positionObdSpeed')}</option>
-                    <option value='obdOdometer'>{t('positionObdOdometer')}</option>
-                  </Select>
-                </FormControl></TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>Start:</TableCell>
-                <TableCell><TextField
-                  id="outlined-basic"
-                  value={state.start}
-                  name="start"
-                  label="Start"
-                  type="number"
-                  variant="outlined"
-                  inputProps={{
-                    name: 'start',
-                    shrink: true,
-                  }}
-                  onChange={handleChangeSelects}
-                /></TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>Period</TableCell>
-                <TableCell><TextField
-                  id="outlined-basic"
-                  value={state.period}
-                  name="period"
-                  label="Period"
-                  type="number"
-                  variant="outlined"
-                  inputProps={{
-                    name: 'period',
-                    shrink: true,
-                  }}
-                  onChange={handleChangeSelects}
-                /></TableCell>
-              </TableRow>
-            </Table>
 
+              <Table>
+                <TableRow>
+                  <TableCell>Nombre:</TableCell>
+                  <TableCell><TextField
+                    id="outlined-basic"
+                    value={state.name}
+                    name="name"
+                    label={`${t('sharedName')}`}
+                    variant="outlined"
+                    inputProps={{
+                      name: 'name',
+                      shrink: true,
+                    }}
+                    onChange={handleChangeSelects}
+                  /></TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>Type:</TableCell>
+                  <TableCell><FormControl variant="outlined"
+                                          className={classes.formControl}>
+                    <InputLabel
+                      htmlFor="outlined-age-native-simple">Type</InputLabel>
+                    <Select
+                      native
+                      value={state.type}
+                      onChange={handleChangeSelects}
+                      label="Type"
+                      inputProps={{
+                        name: 'type',
+                      }}
+                    >
+                      <option value='index'>{t('positionIndex')}</option>
+                      <option value='hdop'>{t('positionHdop')}</option>
+                      <option value='vdop'>{t('positionVdop')}</option>
+                      <option value='pdop'>{t('positionPdop')}</option>
+                      <option value='sat'>{t('positionSat')}</option>
+                      <option
+                        value='satVisible'>{t('positionSatVisible')}</option>
+                      <option value='rssi'>{t('positionRssi')}</option>
+                      <option value='gps'>{t('positionGps')}</option>
+                      <option value='odometer'>{t('positionOdometer')}</option>
+                      <option
+                        value='odometerMaintenance'>{t('positionServiceOdometer')}</option>
+                      <option
+                        value='odometerTrip'>{t('positionTripOdometer')}</option>
+                      <option value='hours'>{t('positionHours')}</option>
+                      <option value='steps'>{t('positionSteps')}</option>
+                      <option value='power'>{t('positionPower')}</option>
+                      <option value='batery'>{t('positionBattery')}</option>
+                      <option
+                        value='bateryLevel'>{t('positionBatteryLevel')}</option>
+                      <option value='fuel'>{t('positionFuel')}</option>
+                      <option
+                        value='fuelConsumtion'>{t('positionFuelConsumption')}</option>
+                      <option value='distance'>{t('sharedDistance')}</option>
+                      <option
+                        value='totalDistance'>{t('deviceTotalDistance')}</option>
+                      <option value='rpm'>{t('positionRpm')}</option>
+                      <option value='throttle'>{t('positionThrottle')}</option>
+                      <option value='armado'>{t('positionArmed')}</option>
+                      <option
+                        value='acceleration'>{t('positionAcceleration')}</option>
+                      <option
+                        value='deviceTemp'>{t('positionDeviceTemp')}</option>
+                      <option value='obdSpeed'>{t('positionObdSpeed')}</option>
+                      <option
+                        value='obdOdometer'>{t('positionObdOdometer')}</option>
+                    </Select>
+                  </FormControl></TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>Start:</TableCell>
+                  <TableCell><TextField
+                    id="outlined-basic"
+                    value={state.start}
+                    name="start"
+                    label="Start"
+                    type="number"
+                    variant="outlined"
+                    inputProps={{
+                      name: 'start',
+                      shrink: true,
+                    }}
+                    onChange={handleChangeSelects}
+                  /></TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>Period</TableCell>
+                  <TableCell><TextField
+                    id="outlined-basic"
+                    value={state.period}
+                    name="period"
+                    label="Period"
+                    type="number"
+                    variant="outlined"
+                    inputProps={{
+                      name: 'period',
+                      shrink: true,
+                    }}
+                    onChange={handleChangeSelects}
+                  /></TableCell>
+                </TableRow>
+              </Table>
           </DialogContent><br/>
           <Typography>
             Atributos agregados: {attributesList.length} {/*Eliminar linea*/}
           </Typography>
-          <DialogActions>
-            <Button style={{display: 'flex',
-              position: 'absolute',
-              left: '7%',
-              bottom: '2%'}}
-              onClick={()=> handleShowAttributes()} variant="outlined" color="primary">
-              ATTRIBUTES
-            </Button>
-            <Button onClick={handleShowPost} color="primary">
-              Cancelar
-            </Button>
-            <Button onClick={handlePost} color="primary" autoFocus>
-              Guardar
-            </Button>
-          </DialogActions>
+          {!elem ?
+            <DialogActions>
+              <Button style={{
+                display: 'flex',
+                position: 'absolute',
+                left: '7%',
+                bottom: '2%'
+              }}
+                      onClick={() => handleShowAttributes()} variant="outlined"
+                      color="primary">
+                ATTRIBUTES
+              </Button>
+              <Button onClick={handleShowModal} color="primary">
+                Cancelar
+              </Button>
+              <Button onClick={handlePost} color="primary" autoFocus>
+                Guardar
+              </Button>
+            </DialogActions>
+            :
+            <DialogActions>
+              <Button style={{
+                display: 'flex',
+                position: 'absolute',
+                left: '7%',
+                bottom: '2%'
+              }}
+                      onClick={() => handleShowAttributes()} variant="outlined"
+                      color="primary">
+                ATTRIBUTES
+              </Button>
+              <Button onClick={handleCancelEdit} color="primary">
+                Cancelar
+              </Button>
+              <Button onClick={() => handleEdit(state)} color="primary" autoFocus>
+                Editar
+              </Button>
+            </DialogActions>
+          }
         </Dialog>
       </div>
       <div>
