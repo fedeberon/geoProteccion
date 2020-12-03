@@ -24,6 +24,12 @@ import FormControl from "@material-ui/core/FormControl";
 import TextField from "@material-ui/core/TextField";
 import Checkbox from '@material-ui/core/Checkbox';
 import ButtonGroup from "@material-ui/core/ButtonGroup";
+import Dialog from "@material-ui/core/Dialog";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import DialogContent from "@material-ui/core/DialogContent";
+import InputLabel from "@material-ui/core/InputLabel";
+import Radio from "@material-ui/core/Radio";
+import DialogActions from "@material-ui/core/DialogActions";
 
 const styles = theme => ({});
 
@@ -34,6 +40,10 @@ const useStyles = makeStyles(theme => ({
     height: '100%',
     paddingTop: '5%',
     overflowY: 'auto',
+  },
+  formControl: {
+    margin: '13px 0px',
+    // minWidth: '90%',
   },
   rootTab: {
     flexGrow: 1,
@@ -62,6 +72,15 @@ const useStyles = makeStyles(theme => ({
     '& > *': {
       margin: theme.spacing(1),
     },
+  },
+  containerDateTime: {
+    display: 'flex',
+    flexWrap: 'wrap',
+  },
+  textFieldDateTime: {
+    marginLeft: theme.spacing(1),
+    marginRight: theme.spacing(1),
+    width: 200,
   },
 }));
 
@@ -111,6 +130,18 @@ const UserPage = () => {
   const [showAdministration, setShowAdministration] = useState(false);
   const [capsMap, setCapsMap] = useState([]);
   const [checked, setChecked] = React.useState(true);
+  const [ fromDateTime, setFromDateTime ] = useState('');
+  const [ toDateTime, setToDateTime ] = useState('');
+  const [radioValueCommand, setRadioValueCommand] = useState(false);
+  const [openModalCommand, setOpenModalCommand] = useState(false);
+
+  const onChangeFromDateTime = (event) => {
+    setFromDateTime(event.target.value);
+  };
+
+  const onChangeToDateTime = (event) => {
+    setToDateTime(event.target.value);
+  };
 
   const handleChangeCheckBox = (event) => {
     setChecked(event.target.checked);
@@ -120,12 +151,25 @@ const UserPage = () => {
     setValue(newValue);
   };
 
+  const handleCloseModalCommand = () => {
+    setOpenModalCommand(false);
+    // setAvailableTypesByDeviceId([]);
+  }
+
   const showMenuAdmin = () => {
     setShowAdministration(!showAdministration);
   }
 
+  const handleOpenCommandModal = () => {
+    setOpenModalCommand(!openModalCommand);
+  }
+
   const handleChangeType = (event) => {
     setCapsMap(event.target.value);
+  };
+
+  const handleChangeRadioCommand = () => {
+    setRadioValueCommand(!radioValueCommand);
   };
 
   useEffect(() => {
@@ -358,13 +402,149 @@ const UserPage = () => {
 
         </TabPanel>
         <TabPanel value={value} index={1}>
-          Item Two
+          <div>
+            <form>
+              <TableBody>
+              <TableRow>
+                <TableCell>
+                  {t('reportFrom')}:
+                </TableCell>
+                <TableCell>
+                  <form className={classes.containerDateTime} noValidate>
+                    <TextField
+                      label=' '
+                      value={fromDateTime}
+                      onChange={onChangeFromDateTime}
+                      type="datetime-local"
+                      defaultValue="2020-11-09T00:30"
+                      className={classes.textFieldDateTime}
+                      InputLabelProps={{
+                        shrink: true,
+                      }}
+                    />
+                  </form>
+                </TableCell>
+                <TableCell>{t('reportTo')}:</TableCell>
+                <TableCell>
+                  <form className={classes.containerDateTime} noValidate>
+                    <TextField
+                      label=' '
+                      value={toDateTime}
+                      onChange={onChangeToDateTime}
+                      type="datetime-local"
+                      defaultValue="2020-11-09T00:30"
+                      className={classes.textFieldDateTime}
+                      InputLabelProps={{
+                        shrink: true,
+                      }}
+                    />
+                  </form>
+                </TableCell>
+                <TableCell>
+                  <Button button variant="outlined" color="default">Mostrar</Button>
+                </TableCell>
+              </TableRow>
+              </TableBody>
+            </form>
+          </div>
+          <div>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Tiempo de Captura</TableCell>
+                  <TableCell>Usuarios Activos</TableCell>
+                  <TableCell>Dispositivos Activos</TableCell>
+                  <TableCell>Peticiones</TableCell>
+                  <TableCell>Mensajes Recibidos</TableCell>
+                  <TableCell>Mensajes Almacenados</TableCell>
+                  <TableCell>Correo</TableCell>
+                  <TableCell>SMS</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {/*FUNCION DE MAPEO*/}
+                <TableRow key="key">
+                  <TableCell>1</TableCell>
+                  <TableCell>2</TableCell>
+                  <TableCell>3</TableCell>
+                  <TableCell>4</TableCell>
+                  <TableCell>5</TableCell>
+                  <TableCell>6</TableCell>
+                  <TableCell>7</TableCell>
+                  <TableCell>8</TableCell>
+                </TableRow>
+              </TableBody>
+
+            </Table>
+          </div>
         </TabPanel>
         <TabPanel value={value} index={2}>
-          Item Three
+          <div>
+            <form>
+              <div className={classes.buttonGroup}>
+                <ButtonGroup variant="text" color="default" aria-label="text primary button group">
+                  <Button><i className="fas fa-plus"/>&nbsp;Agregar</Button>
+                  <Button><i className="fas fa-edit"/>&nbsp;Editar</Button>
+                  <Button><i className="fas fa-trash-alt"/>&nbsp;Eliminar</Button>
+                </ButtonGroup>
+              </div>
+            </form>
+          </div>
+          <div>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Descripcion</TableCell>
+                  <TableCell>Atributo</TableCell>
+                  <TableCell>Expresion</TableCell>
+                  <TableCell>Tipo</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {/*FUNCION DE MAPEO*/}
+                <TableRow key="key">
+                  <TableCell>1</TableCell>
+                  <TableCell>2</TableCell>
+                  <TableCell>3</TableCell>
+                  <TableCell>4</TableCell>
+                </TableRow>
+              </TableBody>
+
+            </Table>
+          </div>
         </TabPanel>
         <TabPanel value={value} index={3}>
-          Item Three
+          <div>
+            <form>
+              <div className={classes.buttonGroup}>
+                <ButtonGroup variant="text" color="default" aria-label="text primary button group">
+                  <Button onClick={handleOpenCommandModal}><i className="fas fa-plus"/>&nbsp;Agregar</Button>
+                  <Button><i className="fas fa-edit"/>&nbsp;Editar</Button>
+                  <Button><i className="fas fa-trash-alt"/>&nbsp;Eliminar</Button>
+                </ButtonGroup>
+              </div>
+            </form>
+          </div>
+          <div>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Descripcion</TableCell>
+                  <TableCell>Tipo</TableCell>
+                  <TableCell>Enviar SMS</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {/*FUNCION DE MAPEO*/}
+                <TableRow key="key">
+                  <TableCell>1</TableCell>
+                  <TableCell>2</TableCell>
+                  <TableCell>3</TableCell>
+                </TableRow>
+              </TableBody>
+
+            </Table>
+          </div>
         </TabPanel>
       </div>
       <div className={classes.UserPageSize} style={{display: `${showAdministration ? 'none' : 'block'}`}}>
@@ -386,6 +566,73 @@ const UserPage = () => {
             </TableBody>
           </Table>
         </TableContainer>
+      </div>
+
+      {/*SEND A COMMAND*/}
+      <div>
+        <Dialog
+          open={openModalCommand}
+          onClose={handleCloseModalCommand}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">{"Comando Guardado"}</DialogTitle>
+          <DialogContent>
+            <form>
+              <TextField fullWidth id="outlined-basic" label="Descripcion" variant="outlined"
+              />
+              <FormControl variant="outlined" fullWidth={true} className={classes.formControl}>
+                <InputLabel htmlFor="outlined-age-native-simple">{t('deviceCommand')}</InputLabel>
+                <Select
+                  native
+                  fullWidth
+                  // value={key}
+                  // onChange={handleChange}
+                  label={t('deviceCommand')}
+                  name="name"
+                  type="text"
+                  variant="outlined"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                >
+
+                  <option aria-label="None" value="" />
+                  <option value={10}>Ten</option>
+                  <option value={20}>Twenty</option>
+                  <option value={30}>Thirty</option>
+                </Select>
+              </FormControl>
+              <Typography>
+                Enviar SMS:
+                <Radio
+                  checked={radioValueCommand === true}
+                  onClick={handleChangeRadioCommand}
+                  color="primary"
+                  value={true}
+                  name="radio-button-demo"
+                  inputProps={{ 'aria-label': 'A' }}
+                /> Si
+                <Radio
+                  checked={radioValueCommand === false}
+                  onChange={handleChangeRadioCommand}
+                  color="primary"
+                  value={false}
+                  name="radio-button-demo"
+                  inputProps={{ 'aria-label': 'B' }}
+                /> No
+              </Typography>
+            </form>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseModalCommand} color="primary">
+              Disagree
+            </Button>
+            <Button  color="primary" autoFocus>
+              Agree
+            </Button>
+          </DialogActions>
+        </Dialog>
       </div>
     </div>
   );
