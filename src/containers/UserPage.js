@@ -30,6 +30,7 @@ import DialogContent from "@material-ui/core/DialogContent";
 import InputLabel from "@material-ui/core/InputLabel";
 import Radio from "@material-ui/core/Radio";
 import DialogActions from "@material-ui/core/DialogActions";
+import * as service from '../utils/serviceManager';
 
 const styles = theme => ({});
 
@@ -125,15 +126,17 @@ function createData(field, userData) {
 const UserPage = () => {
   const classes = useStyles();
   const user = useSelector(state => state.session.user);
-  const [rows, setRows] = useState([]);
-  const [value, setValue] = React.useState(0);
-  const [showAdministration, setShowAdministration] = useState(false);
-  const [capsMap, setCapsMap] = useState([]);
-  const [checked, setChecked] = React.useState(true);
+  const storeServer = useSelector(state => state.session.server);
+  const [ rows, setRows ] = useState([]);
+  const [ value, setValue ] = React.useState(0);
+  const [ showAdministration, setShowAdministration ] = useState(false);
+  const [ capsMap, setCapsMap ] = useState([]);
+  const [ checked, setChecked ] = React.useState(true);
   const [ fromDateTime, setFromDateTime ] = useState('');
   const [ toDateTime, setToDateTime ] = useState('');
-  const [radioValueCommand, setRadioValueCommand] = useState(false);
-  const [openModalCommand, setOpenModalCommand] = useState(false);
+  const [ radioValueCommand, setRadioValueCommand ] = useState(false);
+  const [ openModalCommand, setOpenModalCommand ] = useState(false);
+  const [ server, setServer ] = useState({});
 
   const onChangeFromDateTime = (event) => {
     setFromDateTime(event.target.value);
@@ -186,8 +189,11 @@ const UserPage = () => {
     setRows([ name, email, phone, map, latitude, longitude, zoom, attributes, twelveHourFormat, coordinatesFormat ]);
   },[user]);
 
-  return (
+  useEffect(() => {
+    setServer({...storeServer, mapUrl: storeServer.mapUrl.replace(/&amp;/g, '&')});
+  }, [storeServer]);
 
+  return (
     <div className={classes.root}>
       <div className="title-section" style={{justifyContent: 'space-between', display: 'flex'}}>
         <h2>Información de Usuario</h2>
@@ -231,30 +237,30 @@ const UserPage = () => {
                       <option aria-label="None" value="" />
                       {/*{typesValues.map((types, index) => (*/}
                         <option key={1} value="custom">CUSTOM(X,Y,Z)</option>
-                        <option key={2} value="custom">BING MAPS</option>
-                      ))}
                     </Select>
                   </FormControl>
                 </TableCell>
               </TableRow>
               <TableRow>
-                <TableCell>Bing Maps Key:</TableCell>
+                <TableCell>{t('mapCustomLabel')}:</TableCell>
                 <TableCell>
-                  <TextField fullWidth id="outlined-basic" label="Outlined" variant="outlined" />
+                  <TextField
+                    id="outlined-basic"
+                    label={t('mapCustomLabel')}
+                    value={server.mapUrl}
+                    onChange={(e) => setServer({...server, mapUrl: e.target.value})}
+                    variant="outlined"
+                  />
                 </TableCell>
               </TableRow>
               <TableRow>
-                <TableCell>Mapa Personalizado:</TableCell>
-                <TableCell>
-                  <TextField id="outlined-basic" label="Outlined" variant="outlined" />
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>Latitud:</TableCell>
+                <TableCell>{t('positionLatitude')}:</TableCell>
                 <TableCell>
                   <TextField
                     id="outlined-number"
                     label="Number"
+                    value={server.latitude}
+                    onChange={(e) => setServer({...server, latitude: e.target.value})}
                     type="number"
                     InputLabelProps={{
                       shrink: true,
@@ -264,11 +270,13 @@ const UserPage = () => {
                 </TableCell>
               </TableRow>
               <TableRow>
-                <TableCell>Longitud:</TableCell>
+                <TableCell>{t('positionLongitude')}:</TableCell>
                 <TableCell>
                   <TextField
                     id="outlined-number"
                     label="Number"
+                    value={server.longitude}
+                    onChange={(e) => setServer({...server, longitude: e.target.value})}
                     type="number"
                     InputLabelProps={{
                       shrink: true,
@@ -278,11 +286,13 @@ const UserPage = () => {
                 </TableCell>
               </TableRow>
               <TableRow>
-                <TableCell>Zoom:</TableCell>
+                <TableCell>{t('serverZoom')}:</TableCell>
                 <TableCell>
                   <TextField
                     id="outlined-number"
                     label="Number"
+                    value={server.zoom}
+                    onChange={(e) => setServer({...server, zoom: e.target.value})}
                     type="number"
                     InputLabelProps={{
                       shrink: true,
@@ -292,24 +302,22 @@ const UserPage = () => {
                 </TableCell>
               </TableRow>
               <TableRow>
-                <TableCell>Formato 12 Horas:</TableCell>
+                <TableCell>{t('settingsTwelveHourFormat')}:</TableCell>
                 <TableCell>
                   <Checkbox
-                    defaultChecked
-                    checked={checked}
-                    onChange={handleChangeCheckBox}
+                    checked={server.twelveHourFormat}
+                    onChange={() => setServer({...server, twelveHourFormat: !server.twelveHourFormat})}
                     color="primary"
                     inputProps={{ 'aria-label': 'secondary checkbox' }}
                   />
                 </TableCell>
               </TableRow>
               <TableRow>
-                <TableCell>Forzar Valores:</TableCell>
+                <TableCell>{t('serverForceSettings')}:</TableCell>
                 <TableCell>
                   <Checkbox
-                    defaultChecked
-                    checked={checked}
-                    onChange={handleChangeCheckBox}
+                    checked={server.forceSettings}
+                    onChange={() => setServer({...server, forceSettings: !server.forceSettings})}
                     color="primary"
                     inputProps={{ 'aria-label': 'secondary checkbox' }}
                   />
@@ -321,22 +329,24 @@ const UserPage = () => {
                   <FormControl style={{width: '229px'}} variant="outlined" className={classes.formControlType}>
                     <Select
                       native
-                      value="custom"
-                      onChange={handleChangeType}
+                      value={server.coordinateFormat}
+                      onChange={(e) => setServer({...server, coordinateFormat: e.target.value})}
                     >
-                      <option aria-label="None" value="" />
                       {/*{typesValues.map((types, index) => (*/}
-                      <option key={1} value="custom">Grados</option>
-                      <option key={2} value="custom">Minutos</option>
-                      ))}
+                      <option key={'dd'} value="dd">{t('sharedDecimalDegrees')}</option>
+                      <option key={'ddm'} value="ddm">{t('sharedDegreesDecimalMinutes')}</option>
+                      <option key={'dms'} value="dms">{t('sharedDegreesMinutesSeconds')}</option>
                     </Select>
                   </FormControl>
                 </TableCell>
               </TableRow>
               <TableRow>
-              <TableCell>Capa POI:</TableCell>
+              <TableCell>{t('mapPoiLayer')}:</TableCell>
               <TableCell>
-                <TextField id="outlined-basic" label="Outlined" variant="outlined" />
+                <TextField
+                id="outlined-basic"
+                label={t('mapPoiLayer')}
+                variant="outlined" />
               </TableCell>
             </TableRow>
             </TableBody>
@@ -352,7 +362,6 @@ const UserPage = () => {
                   <TableCell>Registro</TableCell>
                   <TableCell>
                     <Checkbox
-                      defaultChecked
                       checked={checked}
                       onChange={handleChangeCheckBox}
                       color="primary"
@@ -364,7 +373,6 @@ const UserPage = () => {
                   <TableCell>Sólo lectura:</TableCell>
                   <TableCell>
                     <Checkbox
-                      defaultChecked
                       checked={checked}
                       onChange={handleChangeCheckBox}
                       color="primary"
@@ -376,7 +384,6 @@ const UserPage = () => {
                   <TableCell>Dispositivo de sólo lectura:</TableCell>
                   <TableCell>
                     <Checkbox
-                      defaultChecked
                       checked={checked}
                       onChange={handleChangeCheckBox}
                       color="primary"
@@ -388,7 +395,6 @@ const UserPage = () => {
                   <TableCell>Limitar Comandos:</TableCell>
                   <TableCell>
                     <Checkbox
-                      defaultChecked
                       checked={checked}
                       onChange={handleChangeCheckBox}
                       color="primary"
