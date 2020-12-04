@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useHistory, useParams} from 'react-router-dom';
 import {makeStyles} from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
@@ -28,9 +28,8 @@ import ListItemText from '@material-ui/core/ListItemText';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import StarBorder from '@material-ui/icons/StarBorder';
-import {sessionActions} from "../store";
 import Divider from "@material-ui/core/Divider";
-import { getCourse } from '../utils/functions';
+import { getCourse, getOriginalAttributes } from '../utils/functions';
 import AddIcon from "@material-ui/icons/Add";
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -47,9 +46,6 @@ import Select from "@material-ui/core/Select";
 import {Typography} from "@material-ui/core";
 import Radio from "@material-ui/core/Radio";
 import CloseIcon from "@material-ui/icons/Close";
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
-import Slide from '@material-ui/core/Slide';
 import DeviceConfigFull from "../components/DeviceConfigFull";
 
 const useStyles = makeStyles(theme => ({
@@ -179,42 +175,70 @@ const DevicePage = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const {id} = useParams();
-  const [name, setName] = useState('');
-  const [uniqueId, setUniqueId] = useState('');
   const devices = useSelector(state => Object.values(state.devices.items), shallowEqual);
   const positions = useSelector(state => state.positions.items, shallowEqual);
-  const [moreInfo, setMoreInfo] = useState(false);
-  const [anchorEl, setAnchorEl] = useState(false);
-  const [openModalAdd, setOpenModalAdd] = useState(false);
-  const [openModalEdit, setOpenModalEdit] = useState(false);
-  const [openModalAttributes, setOpenModalAttributes] = useState(false);
-  const [extraData, setExtraData] = useState(false);
-  const [radioValue, setRadioValue] = useState(false);
-  const [deviceId, setDeviceId] = useState('');
-  const [openModalCommand, setOpenModalCommand] = useState(false);
-  const [radioValueCommand, setRadioValueCommand] = useState(false);
-  const [availableTypesByDeviceId, setAvailableTypesByDeviceId] = useState([]);
-  const [openFullDialog, setOpenFullDialog] = useState(false);
-  const [type, setType] = useState('');
-  const variable = {}
-    variable.geocerca = 'sharedGeofences';
-    variable.notificacion = 'sharedNotifications';
-    variable.atrCalculados = 'sharedComputedAttributes';
-    variable.comGuardados = 'sharedSavedCommands';
-    variable.mantenimiento = 'sharedMaintenance';
-
+  const [ moreInfo, setMoreInfo ] = useState(false);
+  const [ anchorEl, setAnchorEl ] = useState(false);
+  const [ openedMenu, setOpenedMenu ] = useState(null);
+  const [ openModalAdd, setOpenModalAdd ] = useState(false);
+  const [ openModalEdit, setOpenModalEdit ] = useState(false);
+  const [ openModalAttributes, setOpenModalAttributes ] = useState(false);
+  const [ extraData, setExtraData ] = useState(false);
+  const [ radioValue, setRadioValue ] = useState(false);
+  const [ deviceId, setDeviceId ] = useState('');
+  const [ openModalCommand, setOpenModalCommand ] = useState(false);
+  const [ radioValueCommand, setRadioValueCommand ] = useState(false);
+  const [ availableTypesByDeviceId, setAvailableTypesByDeviceId ] = useState([]);
+  const [ openFullDialog, setOpenFullDialog ] = useState(false);
+  const [ type, setType ] = useState('');
+  const [ newDevice, setNewDevice ] = useState({ id: null, name: '', uniqueId: '', status: '', disabled: true, lastUpdate: null, positionId: null, groupId: null, phone: '', model: '', contact: '', category: '', geofenceIds: [], attributes: {}});
+  const [ attributes, setAttributes ] = useState({});
+  const [ newAttribute, setNewAttribute ] = useState({ name: null, value: null });
+  const [ groups, setGroups ] = useState([]);
+  const [ selectedDevice, setSelectedDevice ] = useState({});
+  const [ categories, setCategories ] = useState([
+    'Arrow',
+    'Default',
+    'Animal',
+    'Bicycle',
+    'Boat',
+    'Bus',
+    'Car',
+    'Crane',
+    'Helicopter',
+    'Motorcycle',
+    'Offroad',
+    'Person',
+    'Pickup',
+    'Plane',
+    'Ship',
+    'Tractor',
+    'Train',
+    'Tram',
+    'Trolleybus',
+    'Truck',
+    'Van',
+    'Scooter'
+  ]);
+  const variable = {
+    geocerca: 'sharedGeofences',
+    notification: 'sharedNotifications',
+    atrCalculados: 'sharedComputeAttributes',
+    comGuardados: 'sharedSavedCommands',
+    mantenimiento: 'sharedMaintenance'
+  };
 
   const handleOpenFullDialog = (parametro) => {
     setOpenFullDialog(true);
     setType(parametro);
     handleCloseMenuMore();
   }
+
   const handleCloseFullDialog = () => {
     setOpenFullDialog(false);
   }
 
   const handleClickCommand = (idDevice) => {
-    console.log('iddevice: ' + idDevice);
     setOpenModalCommand(!openModalCommand);
     setDeviceId(idDevice);
     getCommandTypes(idDevice);
@@ -242,20 +266,27 @@ const DevicePage = () => {
     setOpenModalAdd(!openModalAdd);
   };
 
-  const handleClickEdit = () => {
+  const handleClickEdit = (device) => {
     setOpenModalEdit(!openModalEdit);
+    setSelectedDevice(device);
   };
 
   const handleClickAttributes = () => {
     setOpenModalAttributes(!openModalAttributes);
+    setSelectedDevice({...selectedDevice, attributes: attributes});
+    setNewDevice({...newDevice, attributes: attributes});
+    let originalAttributes = getOriginalAttributes(selectedDevice.attributes);
+    setAttributes(originalAttributes);
   }
 
   const handleClickMenuMore = (event) => {
     setAnchorEl(event.currentTarget);
+    setOpenedMenu(event.currentTarget.value);
   };
 
   const handleCloseMenuMore = () => {
     setAnchorEl(null);
+    setOpenedMenu(null);
   };
 
   const [collapsedIndex, setCollapsedIndex] = useState(-1);
@@ -277,62 +308,60 @@ const DevicePage = () => {
   };
 
   const getCommandTypes = async (idDevice) => {
-    console.log('ejecutada');
     const response = await service.getCommandTypes(idDevice);
     if(response.ok){
       setAvailableTypesByDeviceId(response);
     }
-    console.log('types:' + availableTypesByDeviceId);
   }
 
-  // const handleSave = () => {
-  //   const updatedDevice = id ? device : {};
-  //   updatedDevice.name = name || updatedDevice.name;
-  //   updatedDevice.uniqueId = uniqueId || updatedDevice.uniqueId;
-  //
-  //   let request;
-  //   if (id) {
-  //     request = fetch(`/api/devices/${id}`, {
-  //       method: 'PUT',
-  //       headers: {'Content-Type': 'application/json'},
-  //       body: JSON.stringify(updatedDevice),
-  //     });
-  //   } else {
-  //     request = fetch('/api/devices', {
-  //       method: 'POST',
-  //       headers: {'Content-Type': 'application/json'},
-  //       body: JSON.stringify(updatedDevice),
-  //     });
-  //   }
-  //
-  //   request.then(response => {
-  //     if (response.ok) {
-  //
-  //     }
-  //   });
-  // }
+   const handleSave = (id = null) => {
+     let device = id ? {...selectedDevice} : {...newDevice};
+     device.lastUpdate = new Date();
+     let request;
+
+     if (id) {
+       request = fetch(`/api/devices/${id}`, {
+         method: 'PUT',
+         headers: {'Content-Type': 'application/json'},
+         body: JSON.stringify(device),
+       });
+     } else {
+       request = fetch('/api/devices', {
+         method: 'POST',
+         headers: {'Content-Type': 'application/json'},
+         body: JSON.stringify(device),
+       });
+     }
+  
+     request.then(response => {
+       if (response.ok) {
+        console.log(response);
+       }
+     });
+   }
 
   const handleRemove = (deviceId) => {
     let option = confirm('¿Eliminar Device N°' + deviceId + '?');
     if (option) {
-      // fetch(`/api/geofences/${id}`, {method: 'DELETE'}).then(response => {
-      //   if (response.ok) {
-      //     const getGeozones = async (userId) => {
-      //       const response = await service.getGeozonesByUserId(userId);
-      //       setGeozones(response);
-      //     }
-      //     getGeozones(userId);
-      //   }
-      // })
-      console.log('eliminado')
-    } else {
-      console.log('sin eliminar')
+      fetch(`/api/devices/${deviceId}`, {method: 'DELETE'}).then(response => {
+        if (response.ok) {
+          console.log(response);
+        }
+      });
     }
   }
 
   const showMore = () => {
     setMoreInfo(!moreInfo);
   }
+  
+  useEffect(() => {
+    const getGroups = async () => {
+      let response = await service.getGroups();
+      setGroups(response);
+    }
+    getGroups();
+  }, [])
 
   return (
     <>
@@ -341,9 +370,12 @@ const DevicePage = () => {
         <Divider/>
       </div>
       <Container>
-        <Button style={{margin: '10px 0px'}} type="button" color="primary"
-                variant="outlined"
-                onClick={handleClickAdd}
+        <Button
+          style={{margin: '10px 0px'}}
+          type="button"
+          color="primary"
+          variant="outlined"
+          onClick={handleClickAdd}
         >
           <AddIcon color="primary"/>
           {t('sharedAdd')}
@@ -368,18 +400,29 @@ const DevicePage = () => {
                           </Avatar>
                         }
                         action={
-                          <IconButton  aria-label="settings">
-                            <MoreVertIcon onClick={handleClickMenuMore}/>
-                          </IconButton>
+                          <div>
+                            <IconButton
+                              className={clsx(classes.expand, {
+                                [classes.expandOpen]: collapsedIndex === index,
+                              })}
+                              onClick={() => {handleExpandClick(index)}}
+                              aria-expanded={collapsedIndex === index}
+                              aria-label="show more"
+                            >
+                              <ExpandMoreIcon/>
+                            </IconButton>
+                            <IconButton value={device.id} aria-label="settings" onClick={handleClickMenuMore}>
+                              <MoreVertIcon/>
+                            </IconButton>
+                          </div>
                         }
                         title={`${device.attributes.carPlate} - ${device.name}`}
                         subheader={device.lastUpdate}
             />
-            <Typography>Device ID: {device.id}</Typography>
             <Menu
               id={device.id}
               anchorEl={anchorEl}
-              open={Boolean(anchorEl)}
+              open={parseInt(openedMenu) === device.id}
               onClose={handleCloseMenuMore}
             >
               <MenuItem onClick={() => handleRemove(device.id)}>{t('sharedRemove')}</MenuItem>
@@ -392,18 +435,6 @@ const DevicePage = () => {
               <MenuItem onClick={handleCloseMenuMore}>{t('sharedMaintenance')}</MenuItem>
               <MenuItem onClick={handleCloseMenuMore}>{t('sharedDeviceAccumulators')}</MenuItem>
             </Menu>
-             <CardActions disableSpacing>
-              <IconButton
-                className={clsx(classes.expand, {
-                  [classes.expandOpen]: collapsedIndex === index,
-                })}
-                onClick={() => {handleExpandClick(index)}}
-                aria-expanded={collapsedIndex === index}
-                aria-label="show more"
-              >
-                <ExpandMoreIcon/>
-              </IconButton>
-            </CardActions>
             <Collapse in={collapsedIndex === index} timeout="auto" unmountOnExit>
               <CardContent className={classes.MuiContentRoot}>
                 <List
@@ -480,7 +511,7 @@ const DevicePage = () => {
                     </ListItemIcon>
                     <ListItemText style={{fontSize: '12px'}}>
                       <strong  className={classes.cardItemText}>{t("positionValid")}:&nbsp;</strong>
-                      {positions && positions[device.id] ? Boolean(positions[device.id].valid) : 'Undefined'}</ListItemText>
+                      {positions && positions[device.id] ? Boolean(positions[device.id].valid).toString() : 'Undefined'}</ListItemText>
                   </ListItem>
                   <ListItem style={{display: `${moreInfo ? 'flex' : 'none'}`}}>
                     <ListItemIcon style={{minWidth: '30px'}}>
@@ -520,7 +551,7 @@ const DevicePage = () => {
                     </ListItemIcon>
                     <ListItemText>
                       <strong  className={classes.cardItemText}>{t("currentAddress")}:&nbsp;</strong>
-                      Null</ListItemText>
+                      Unknown</ListItemText>
 
 
 
@@ -539,7 +570,7 @@ const DevicePage = () => {
                     </ListItemIcon>
                     <ListItemText>
                       <strong  className={classes.cardItemText}>{t("positionIgnition")}:&nbsp;</strong>
-                      {positions && positions[device.id] ? Boolean(positions[device.id].ignition) : 'Undefined'}</ListItemText>
+                      {positions && positions[device.id] ? Boolean(positions[device.id].ignition).toString() : 'Undefined'}</ListItemText>
                   </ListItem>
                   <ListItem style={{display: `${moreInfo ? 'flex' : 'none'}`}}>
                     <ListItemIcon style={{minWidth: '30px'}}>
@@ -571,7 +602,7 @@ const DevicePage = () => {
                     </ListItemIcon>
                     <ListItemText>
                       <strong  className={classes.cardItemText}>{t("positionMotion")}:&nbsp;</strong>
-                      {positions && positions[device.id] ? Boolean(positions[device.id].attributes.motion) : 'Undefined'}</ListItemText>
+                      {positions && positions[device.id] ? Boolean(positions[device.id].attributes.motion).toString() : 'Undefined'}</ListItemText>
                   </ListItem>
 
                   <ListItem style={{justifyContent: 'center'}} button onClick={() => showMore()}>
@@ -607,15 +638,16 @@ const DevicePage = () => {
                   <TextField
                     margin="normal"
                     fullWidth
-                    onChange={(event) => setName(event.target.value)}
+                    value={newDevice.name}
+                    onChange={(event) => setNewDevice({...newDevice, name: event.target.value})}
                     label={t('sharedName')}
                     variant="outlined"
                   />
                   <TextField
                     margin="normal"
                     fullWidth
-
-                    onChange={(event) => setUniqueId(event.target.value)}
+                    value={newDevice.uniqueId}
+                    onChange={(event) => setNewDevice({...newDevice, uniqueId: event.target.value})}
                     label={t('deviceIdentifier')}
                     variant="outlined"
                   />
@@ -627,46 +659,66 @@ const DevicePage = () => {
                   Datos extra
                 </Button>
                 <form style={{display: `${extraData ? 'block' : 'none'}`}}>
-                  <TextField
-                    margin="normal"
+                  <Select
+                    native
                     fullWidth
-                    // defaultValue={device && device.name}
-                    // onChange={(event) => setName(event.target.value)}
-                    label={t('reportGroup')}
+                    value={newDevice.groupId}
+                    onChange={(event) => setNewDevice({...newDevice, groupId: event.target.value})}
+                    label={t('groupDialog')}
+                    name="name"
+                    type="text"
                     variant="outlined"
-                  />
+                    inputlabelprops={{
+                      shrink: true,
+                    }}
+                  >
+                    <option aria-label="none" value="0" />
+                    {groups.map((group, index) => 
+                      <option key={index} value={group.id}>{group.name}</option>
+                    )}
+                  </Select>
                   <TextField
                     margin="normal"
                     fullWidth
-                    // defaultValue={device && device.uniqueId}
-                    // onChange={(event) => setUniqueId(event.target.value)}
+                    value={newDevice.phone}
+                    onChange={(event) => setNewDevice({...newDevice, phone: event.target.value})}
                     label={t('sharedPhone')}
                     variant="outlined"
                   />
                   <TextField
                     margin="normal"
                     fullWidth
-                    // defaultValue={device && device.name}
-                    // onChange={(event) => setName(event.target.value)}
+                    value={newDevice.model}
+                    onChange={(event) => setNewDevice({...newDevice, model: event.target.value})}
                     label={t('deviceModel')}
                     variant="outlined"
                   />
                   <TextField
                     margin="normal"
                     fullWidth
-                    // defaultValue={device && device.uniqueId}
-                    // onChange={(event) => setUniqueId(event.target.value)}
+                    value={newDevice.contact}
+                    onChange={(event) => setNewDevice({...newDevice, contact: event.target.value})}
                     label={t('deviceContact')}
                     variant="outlined"
                   />
-                  <TextField
-                    margin="normal"
+                  <Select
+                    native
                     fullWidth
-                    // defaultValue={device && device.uniqueId}
-                    // onChange={(event) => setUniqueId(event.target.value)}
-                    label={t('deviceCategory')}
+                    value={newDevice.category}
+                    onChange={(event) => setNewDevice({...newDevice, category: event.target.value})}
+                    label={t('groupCategory')}
+                    name="name"
+                    type="text"
                     variant="outlined"
-                  />
+                    inputlabelprops={{
+                      shrink: true,
+                    }}
+                  >
+                    <option aria-label="none" value="0" />
+                    {categories.map((category, index) => 
+                      <option key={index} value={category}>{category}</option>
+                    )}
+                  </Select>
                   <Typography>
                     Deshabilitado:
                     <Radio
@@ -694,12 +746,13 @@ const DevicePage = () => {
               <Button onClick={handleClickAdd} color="primary">
                 {t('sharedCancel')}
               </Button>
-              <Button color="primary" autoFocus>
+              <Button onClick={() => handleSave()} color="primary" autoFocus>
                 {t('sharedSave')}
               </Button>
             </DialogActions>
           </Dialog>
         </div>
+        
         {/*Modal Edit Device*/}
         <div>
           <Dialog
@@ -708,24 +761,135 @@ const DevicePage = () => {
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
           >
-            <DialogTitle id="alert-dialog-title">{"Use Google's location service?"}</DialogTitle>
+            <DialogTitle id="alert-dialog-title">
+              {t('sharedEdit')}
+              <IconButton aria-label="close" className={classes.closeButton}
+                          onClick={handleClickEdit}>
+                <CloseIcon/>
+              </IconButton>
+            </DialogTitle>
             <DialogContent>
-              <DialogContentText id="alert-dialog-description">
-                Let Google help apps determine location. This means sending anonymous location data to
-                Google, even when no apps are running.
-              </DialogContentText>
+              <Container maxWidth='xs' className={classes.container}>
+                <form>
+                  <TextField
+                    margin="normal"
+                    fullWidth
+                    value={selectedDevice.name}
+                    onChange={(event) => setSelectedDevice({...selectedDevice, name: event.target.value})}
+                    label={t('sharedName')}
+                    variant="outlined"
+                  />
+                  <TextField
+                    margin="normal"
+                    fullWidth
+                    value={selectedDevice.uniqueId}
+                    onChange={(event) => setSelectedDevice({...selectedDevice, uniqueId: event.target.value})}
+                    label={t('deviceIdentifier')}
+                    variant="outlined"
+                  />
+                </form>
+                <Button style={{margin: '10px 0px'}} onClick={handleClickAttributes} fullWidth={true} variant="outlined" color="primary">
+                  Atributos
+                </Button>
+                <Button style={{margin: '10px 0px'}} onClick={showExtraData} fullWidth={true} variant="outlined" color="primary">
+                  Datos extra
+                </Button>
+                <form style={{display: `${extraData ? 'block' : 'none'}`}}>
+                  <Select
+                    native
+                    fullWidth
+                    value={selectedDevice.groupId}
+                    onChange={(event) => setSelectedDevice({...selectedDevice, groupId: event.target.value})}
+                    label={t('groupDialog')}
+                    name="name"
+                    type="text"
+                    variant="outlined"
+                    inputlabelprops={{
+                      shrink: true,
+                    }}
+                  >
+                    <option aria-label="none" value="0" />
+                    {groups.map((group, index) => 
+                      <option key={index} value={group.id}>{group.name}</option>
+                    )}
+                  </Select>
+                  <TextField
+                    margin="normal"
+                    fullWidth
+                    value={selectedDevice.phone}
+                    onChange={(event) => setSelectedDevice({...selectedDevice, phone: event.target.value})}
+                    label={t('sharedPhone')}
+                    variant="outlined"
+                  />
+                  <TextField
+                    margin="normal"
+                    fullWidth
+                    value={selectedDevice.model}
+                    onChange={(event) => setSelectedDevice({...selectedDevice, model: event.target.value})}
+                    label={t('deviceModel')}
+                    variant="outlined"
+                  />
+                  <TextField
+                    margin="normal"
+                    fullWidth
+                    value={selectedDevice.contact}
+                    onChange={(event) => setSelectedDevice({...selectedDevice, contact: event.target.value})}
+                    label={t('deviceContact')}
+                    variant="outlined"
+                  />
+                  <Select
+                    native
+                    fullWidth
+                    value={selectedDevice.category}
+                    onChange={(event) => setSelectedDevice({...selectedDevice, category: event.target.value})}
+                    label={t('groupCategory')}
+                    name="name"
+                    type="text"
+                    variant="outlined"
+                    inputlabelprops={{
+                      shrink: true,
+                    }}
+                  >
+                    <option aria-label="none" value="0" />
+                    {categories.map((category, index) => 
+                      <option key={index} value={category}>{category}</option>
+                    )}
+                  </Select>
+                  <Typography>
+                    Deshabilitado:
+                    <Radio
+                      checked={radioValue === true}
+                      onClick={handleChangeRadio}
+                      color="primary"
+                      value={true}
+                      name="radio-button-demo"
+                      inputProps={{ 'aria-label': 'A' }}
+                    /> Si
+                    <Radio
+                      checked={radioValue === false}
+                      onChange={handleChangeRadio}
+                      color="primary"
+                      value={false}
+                      name="radio-button-demo"
+                      inputProps={{ 'aria-label': 'B' }}
+                    /> No
+                  </Typography>
+                </form>
+
+              </Container>
             </DialogContent>
             <DialogActions>
               <Button onClick={handleClickEdit} color="primary">
-                Disagree
+                {t('sharedCancel')}
               </Button>
-              <Button onClick={handleClickEdit} color="primary" autoFocus>
-                Agree
+              <Button onClick={() => handleSave(selectedDevice.id)} color="primary" autoFocus>
+                {t('sharedSave')}
               </Button>
             </DialogActions>
           </Dialog>
         </div>
-        {/*Modal Add Attributes */}
+
+        {/*Modal Attributes*/}
         <div>
           <Dialog
             open={openModalAttributes}
@@ -733,38 +897,31 @@ const DevicePage = () => {
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
           >
-            <DialogTitle id="alert-dialog-title">{"Use Google's location service?"}</DialogTitle>
+            <DialogTitle id="alert-dialog-title">{t("sharedAttributes")}</DialogTitle>
             <DialogContent>
               <form>
                 <FormControl variant="outlined" fullWidth={true} className={classes.formControl}>
-                  <InputLabel htmlFor="outlined-age-native-simple">{t('sharedName')}</InputLabel>
-                  <Select
-                    native
+                  <TextField
+                    label="Name"
                     margin="normal"
                     fullWidth
-                    // value={key}
-                    // onChange={handleChange}
-                    label="Name"
+                    value={newAttribute.name}
                     name="name"
+                    onChange={(e) => setNewAttribute({...newAttribute, name: e.target.value})}
                     type="text"
                     variant="outlined"
                     InputLabelProps={{
                       shrink: true,
                     }}
-                  >
-                    <option aria-label="None" value="" />
-                    <option value={10}>Ten</option>
-                    <option value={20}>Twenty</option>
-                    <option value={30}>Thirty</option>
-                  </Select>
+                  />
                 </FormControl>
                 <TextField
                   label="Value"
                   margin="normal"
                   fullWidth
-                  // value={value}
+                  value={newAttribute.value}
                   name="value"
-                  // onChange={handleChangeAttributesValue}
+                  onChange={(e) => setNewAttribute({...newAttribute, value: e.target.value})}
                   type="text"
                   variant="outlined"
                   InputLabelProps={{
@@ -785,16 +942,45 @@ const DevicePage = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {/*MAPEO DE ATTRIBUTOS*/}
-                  <TableRow>
-                    <TableCell/>
-                    <TableCell/>
-                  </TableRow>
+                  {Object.entries(attributes).map((attribute, index) =>
+                    <TableRow>
+                      <TableCell>
+                        <TextField
+                          label="Value"
+                          margin="normal"
+                          fullWidth
+                          name="key"
+                          placeholder={attribute[0]}
+                          onBlur={(e) => { if (e.target.value !== '') { let { [attribute[0]]: value, ...rest } = attributes; setAttributes({...rest, [e.target.value]: attribute[1]}) }; e.target.value = '' }}
+                          type="text"
+                          variant="outlined"
+                          InputLabelProps={{
+                            shrink: true,
+                          }}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <TextField
+                          label="Value"
+                          margin="normal"
+                          fullWidth
+                          value={attribute[1]}
+                          name="value"
+                          onChange={(e) => setAttributes({...attributes, [attribute[0]]: e.target.value})}
+                          type="text"
+                          variant="outlined"
+                          InputLabelProps={{
+                            shrink: true,
+                          }}
+                        />
+                      </TableCell>
+                    </TableRow>
+                  )}
                 </TableBody>
               </Table>
             </DialogContent>
             <DialogActions>
-              <Button onClick={handleClickAttributes} color="primary">
+              <Button onClick={() => setAttributes({...attributes, [newAttribute.name]: newAttribute.value})} color="primary">
                 Agregar
               </Button>
               <Button onClick={handleClickAttributes} color="primary" autoFocus>
@@ -803,6 +989,7 @@ const DevicePage = () => {
             </DialogActions>
           </Dialog>
         </div>
+
         {/*SEND A COMMAND*/}
         <div>
           <Dialog
@@ -825,7 +1012,7 @@ const DevicePage = () => {
                   name="name"
                   type="text"
                   variant="outlined"
-                  InputLabelProps={{
+                  inputlabelprops={{
                     shrink: true,
                   }}
                 >
@@ -876,3 +1063,4 @@ const DevicePage = () => {
 }
 
 export default DevicePage;
+
