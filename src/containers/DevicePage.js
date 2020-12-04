@@ -332,7 +332,7 @@ const DevicePage = () => {
          body: JSON.stringify(device),
        });
      }
-  
+
      request.then(response => {
        if (response.ok) {
         console.log(response);
@@ -354,7 +354,7 @@ const DevicePage = () => {
   const showMore = () => {
     setMoreInfo(!moreInfo);
   }
-  
+
   useEffect(() => {
     const getGroups = async () => {
       let response = await service.getGroups();
@@ -511,7 +511,7 @@ const DevicePage = () => {
                     </ListItemIcon>
                     <ListItemText style={{fontSize: '12px'}}>
                       <strong  className={classes.cardItemText}>{t("positionValid")}:&nbsp;</strong>
-                      {positions && positions[device.id] ? Boolean(positions[device.id].valid).toString() : 'Undefined'}</ListItemText>
+                      {positions && positions[device.id] ? `${t(`${Boolean(positions[device.id].valid).toString()}`)}` : 'Undefined'}</ListItemText>
                   </ListItem>
                   <ListItem style={{display: `${moreInfo ? 'flex' : 'none'}`}}>
                     <ListItemIcon style={{minWidth: '30px'}}>
@@ -553,8 +553,6 @@ const DevicePage = () => {
                       <strong  className={classes.cardItemText}>{t("currentAddress")}:&nbsp;</strong>
                       Unknown</ListItemText>
 
-
-
                   </ListItem>
                   <ListItem style={{display: `${moreInfo ? 'flex' : 'none'}`}}>
                     <ListItemIcon style={{minWidth: '30px'}}>
@@ -570,7 +568,7 @@ const DevicePage = () => {
                     </ListItemIcon>
                     <ListItemText>
                       <strong  className={classes.cardItemText}>{t("positionIgnition")}:&nbsp;</strong>
-                      {positions && positions[device.id] ? Boolean(positions[device.id].ignition).toString() : 'Undefined'}</ListItemText>
+                      {positions && positions[device.id] ? `${t(`${Boolean(positions[device.id].ignition).toString()}`)}` : 'Undefined'}</ListItemText>
                   </ListItem>
                   <ListItem style={{display: `${moreInfo ? 'flex' : 'none'}`}}>
                     <ListItemIcon style={{minWidth: '30px'}}>
@@ -602,7 +600,7 @@ const DevicePage = () => {
                     </ListItemIcon>
                     <ListItemText>
                       <strong  className={classes.cardItemText}>{t("positionMotion")}:&nbsp;</strong>
-                      {positions && positions[device.id] ? Boolean(positions[device.id].attributes.motion).toString() : 'Undefined'}</ListItemText>
+                      {positions && positions[device.id] ? `${t(`${Boolean(positions[device.id].attributes.motion).toString()}`)}` : 'Undefined'}</ListItemText>
                   </ListItem>
 
                   <ListItem style={{justifyContent: 'center'}} button onClick={() => showMore()}>
@@ -673,7 +671,7 @@ const DevicePage = () => {
                     }}
                   >
                     <option aria-label="none" value="0" />
-                    {groups.map((group, index) => 
+                    {groups.map((group, index) =>
                       <option key={index} value={group.id}>{group.name}</option>
                     )}
                   </Select>
@@ -715,7 +713,7 @@ const DevicePage = () => {
                     }}
                   >
                     <option aria-label="none" value="0" />
-                    {categories.map((category, index) => 
+                    {categories.map((category, index) =>
                       <option key={index} value={category}>{category}</option>
                     )}
                   </Select>
@@ -752,7 +750,7 @@ const DevicePage = () => {
             </DialogActions>
           </Dialog>
         </div>
-        
+
         {/*Modal Edit Device*/}
         <div>
           <Dialog
@@ -809,7 +807,7 @@ const DevicePage = () => {
                     }}
                   >
                     <option aria-label="none" value="0" />
-                    {groups.map((group, index) => 
+                    {groups.map((group, index) =>
                       <option key={index} value={group.id}>{group.name}</option>
                     )}
                   </Select>
@@ -851,7 +849,7 @@ const DevicePage = () => {
                     }}
                   >
                     <option aria-label="none" value="0" />
-                    {categories.map((category, index) => 
+                    {categories.map((category, index) =>
                       <option key={index} value={category}>{category}</option>
                     )}
                   </Select>

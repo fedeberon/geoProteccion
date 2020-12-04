@@ -126,15 +126,15 @@ const getCommandsByDeviceId = (deviceId) => {
     .then(response => response.json());
 }
 
-const getCalendarsByUserId = (userId) => {
-  return fetch(`api/calendars?userId=${userId}`, {method: 'GET'})
-    .catch(function (error) {console.log('setCalendars error: ', error)})
-    .then(response => response.json());
-}
-
 const getGroups = () => {
   return fetch(`api/groups`, {method: 'GET'})
     .catch(function (error) {console.log('getGroups error: ', error)})
+    .then(response => response.json());
+}
+
+const getCalendarsByUserId = (userId) => {
+  return fetch(`api/calendars?userId=${userId}`, {method: 'GET'})
+    .catch(function (error) {console.log('setCalendars error: ', error)})
     .then(response => response.json());
 }
 

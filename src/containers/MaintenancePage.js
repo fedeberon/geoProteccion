@@ -113,10 +113,13 @@ const MaintenancePage = () => {
 
   const handleSaveAttributes = () => {
     attributesList.push({
-      [`${key}`]:`${value}`
+      [key]: value
     })
     setKey('');
     setValue('');
+    attributesList.map((attribute) => {
+      setAttributes({...attributes, ...attribute});
+    });
   }
 
   const handleChangeAttributesKey = (event) => {

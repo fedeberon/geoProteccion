@@ -179,10 +179,11 @@ function a11yProps(index) {
 export default function ReportsDialog({ geozones, showReports, showReportsDialog }) {
   const classes = useStyles();
   const isViewportDesktop = useSelector(state => state.session.deviceAttributes.isViewportDesktop);
-  const [open, setOpen] = React.useState(false);
+  const devices = useSelector(state => state.devices.items);
+  const [ open, setOpen ] = React.useState(false);
   const [ fullscreen, setFullscreen ] = useState(false);
   const [ hidden, setHidden ] = useState(false);
-  const [openConfigModal, setOpenConfigModal] = useState(false);
+  const [ openConfigModal, setOpenConfigModal ] = useState(false);
   const [ reportConfiguration, setReportConfiguration ] = useState({});
   const [ route, setRoute ] = useState([]);
   const [ selectedPosition, setSelectedPosition ] = useState({});
@@ -585,7 +586,7 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
                 {events.slice(sliceFirstIndex < events.length - 30 ? sliceFirstIndex : (events.length - 30) * (events.length > 30), sliceLastIndex < events.length ? sliceLastIndex : events.length).map((object) => (
                   <TableRow key={object.id} className={classes.row} onClick={() => handleSelectedPosition(positions.find((element) => element.id === object.positionId))}>
                     <TableCell>{object.serverTime}</TableCell>
-                    <TableCell>{object.deviceId}</TableCell>
+                    <TableCell>{devices[object.deviceId].name}</TableCell>
                     <TableCell>{t(`${object.type}`)}</TableCell>
                     <TableCell>{object.geofenceId}</TableCell>
                     <TableCell>{object.maintenanceId}</TableCell>

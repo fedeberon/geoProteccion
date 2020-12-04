@@ -60,8 +60,8 @@ const MainPage = ({ width }) => {
   const authenticated = useSelector(state => state.session.authenticated);
   const classes = useStyles();
   const open = useSelector(state => state.modals.items.search);
-  const user = useSelector((state) => state.session.user);
-  const server = useSelector((state) => state.session.server);
+  const user = useSelector(state => state.session.user);
+  const server = useSelector(state => state.session.server);
   const [ areGeozonesVisible, setAreGeozonesVisible] = useState(true);
   const [ showReports, setShowReports ] = useState(false);
   const [ showNotifications, setShowNotifications ] = useState(false);
@@ -111,10 +111,10 @@ const MainPage = ({ width }) => {
           <DeviceList />
         </Drawer>
 
-        {!showReports &&
+        {!showReports && server &&
           <div className={classes.mapContainer}>
             <ContainerDimensions>
-              <MainMap geozones={geozones} areGeozonesVisible={areGeozonesVisible} zoom={mapZoom}/>
+              <MainMap geozones={geozones} areGeozonesVisible={areGeozonesVisible} zoom={mapZoom} rasterSource={server.mapUrl.replace(/&amp;/g, '&')}/>
             </ContainerDimensions>
           </div>
         }
