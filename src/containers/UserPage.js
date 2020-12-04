@@ -140,19 +140,19 @@ const UserPage = () => {
 
   const onChangeFromDateTime = (event) => {
     setFromDateTime(event.target.value);
-  };
+  }
 
   const onChangeToDateTime = (event) => {
     setToDateTime(event.target.value);
-  };
+  }
 
   const handleChangeCheckBox = (event) => {
     setChecked(event.target.checked);
-  };
+  }
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
-  };
+  }
 
   const handleCloseModalCommand = () => {
     setOpenModalCommand(false);
@@ -169,11 +169,19 @@ const UserPage = () => {
 
   const handleChangeType = (event) => {
     setCapsMap(event.target.value);
-  };
+  }
 
   const handleChangeRadioCommand = () => {
     setRadioValueCommand(!radioValueCommand);
-  };
+  }
+
+  const handleSaveServer = () => {
+    const saveServer = async () => {
+      let response = await service.updateServer(server);
+      console.log(response);
+    }
+    saveServer();
+  }
 
   useEffect(() => {
     let name = createData(t('sharedName'), user.name);
@@ -220,6 +228,7 @@ const UserPage = () => {
             <ButtonGroup variant="text" color="default" aria-label="text primary button group">
               <Button>Atributos</Button>
               <Button><i className="fas fa-map-marker-alt"/>&nbsp;Obtener estado del mapa</Button>
+              <Button onClick={() => handleSaveServer()}>Save</Button>
             </ButtonGroup>
           </div>
           <form>

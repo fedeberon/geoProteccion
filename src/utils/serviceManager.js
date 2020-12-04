@@ -138,6 +138,12 @@ const getCalendarsByUserId = (userId) => {
     .then(response => response.json());
 }
 
+const updateServer = (server) => {
+  return fetch(`api/server`, {method: 'PUT', headers: {'Content-Type': 'application/json', 'Accept': 'application/json'}, body: JSON.stringify(server)})
+    .catch(function (error) {console.log('setCalendars error: ', error)})
+    .then(response => response.json());
+}
+
 export {
   setSession,
   getDeviceByUserId,
@@ -161,4 +167,5 @@ export {
   getCommandsByDeviceId,
   getGroups,
   getCalendarsByUserId,
+  updateServer,
 };
