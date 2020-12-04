@@ -47,6 +47,7 @@ import {Typography} from "@material-ui/core";
 import Radio from "@material-ui/core/Radio";
 import CloseIcon from "@material-ui/icons/Close";
 import DeviceConfigFull from "../components/DeviceConfigFull";
+import {devicesActions} from "../store";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -177,6 +178,7 @@ const DevicePage = () => {
   const {id} = useParams();
   const devices = useSelector(state => Object.values(state.devices.items), shallowEqual);
   const positions = useSelector(state => state.positions.items, shallowEqual);
+  const userId = useSelector((state) => state.session.user.id);
   const [ moreInfo, setMoreInfo ] = useState(false);
   const [ anchorEl, setAnchorEl ] = useState(false);
   const [ openedMenu, setOpenedMenu ] = useState(null);
@@ -269,6 +271,7 @@ const DevicePage = () => {
   const handleClickEdit = (device) => {
     setOpenModalEdit(!openModalEdit);
     setSelectedDevice(device);
+    handleCloseMenuMore();
   };
 
   const handleClickAttributes = () => {
@@ -332,20 +335,34 @@ const DevicePage = () => {
          body: JSON.stringify(device),
        });
      }
-
      request.then(response => {
        if (response.ok) {
-        console.log(response);
+
+         const getDevices = async (userId) => {
+           let response = await service.getDeviceByUserId(userId);
+           dispatch(devicesActions.update(response));
+         }
+        getDevices(userId);
        }
      });
+     if(openModalEdit){
+     handleClickEdit();
+     } else if(openModalAdd){
+       handleClickAdd();
+     }
    }
 
   const handleRemove = (deviceId) => {
+    handleCloseMenuMore();
     let option = confirm('¿Eliminar Device N°' + deviceId + '?');
     if (option) {
       fetch(`/api/devices/${deviceId}`, {method: 'DELETE'}).then(response => {
         if (response.ok) {
-          console.log(response);
+          const getDevices = async (userId) => {
+            let response = await service.getDeviceByUserId(userId);
+            dispatch(devicesActions.update(response));
+          }
+          getDevices(userId);
         }
       });
     }
@@ -429,7 +446,7 @@ const DevicePage = () => {
               <MenuItem onClick={() => handleClickEdit(device)}>{t('sharedEdit')}</MenuItem>
               <MenuItem onClick={() => handleClickCommand(device.id)}>{t('deviceCommand')}</MenuItem>
               <MenuItem onClick={() => handleOpenFullDialog(variable.geocerca)}>{t('sharedGeofences')}</MenuItem>
-              <MenuItem onClick={() => handleOpenFullDialog(variable.notificacion)}>{t('sharedNotifications')}</MenuItem>
+              <MenuItem onClick={() => handleOpenFullDialog(variable.notification)}>{t('sharedNotifications')}</MenuItem>
               <MenuItem onClick={handleCloseMenuMore}>{t('sharedComputedAttributes')}</MenuItem>
               <MenuItem onClick={handleCloseMenuMore}>{t('sharedSavedCommands')}</MenuItem>
               <MenuItem onClick={handleCloseMenuMore}>{t('sharedMaintenance')}</MenuItem>
@@ -651,10 +668,10 @@ const DevicePage = () => {
                   />
                 </form>
                 <Button style={{margin: '10px 0px'}} onClick={handleClickAttributes} fullWidth={true} variant="outlined" color="primary">
-                  Atributos
+                  {t('sharedAttributes')}
                 </Button>
                 <Button style={{margin: '10px 0px'}} onClick={showExtraData} fullWidth={true} variant="outlined" color="primary">
-                  Datos extra
+                  {t('sharedExtra')}
                 </Button>
                 <form style={{display: `${extraData ? 'block' : 'none'}`}}>
                   <Select
@@ -718,7 +735,7 @@ const DevicePage = () => {
                     )}
                   </Select>
                   <Typography>
-                    Deshabilitado:
+                    {t('sharedDisabled')}:
                     <Radio
                       checked={radioValue === true}
                       onClick={handleChangeRadio}
@@ -726,7 +743,7 @@ const DevicePage = () => {
                       value={true}
                       name="radio-button-demo"
                       inputProps={{ 'aria-label': 'A' }}
-                    /> Si
+                    /> {t('reportYes')}
                     <Radio
                       checked={radioValue === false}
                       onChange={handleChangeRadio}
@@ -734,7 +751,7 @@ const DevicePage = () => {
                       value={false}
                       name="radio-button-demo"
                       inputProps={{ 'aria-label': 'B' }}
-                    /> No
+                    /> {t('reportNo')}
                   </Typography>
                 </form>
 
@@ -787,10 +804,10 @@ const DevicePage = () => {
                   />
                 </form>
                 <Button style={{margin: '10px 0px'}} onClick={handleClickAttributes} fullWidth={true} variant="outlined" color="primary">
-                  Atributos
+                  {t('sharedAttributes')}
                 </Button>
                 <Button style={{margin: '10px 0px'}} onClick={showExtraData} fullWidth={true} variant="outlined" color="primary">
-                  Datos extra
+                  {t('sharedExtra')}
                 </Button>
                 <form style={{display: `${extraData ? 'block' : 'none'}`}}>
                   <Select
@@ -854,7 +871,7 @@ const DevicePage = () => {
                     )}
                   </Select>
                   <Typography>
-                    Deshabilitado:
+                    {t('sharedDisabled')}:
                     <Radio
                       checked={radioValue === true}
                       onClick={handleChangeRadio}
@@ -862,7 +879,7 @@ const DevicePage = () => {
                       value={true}
                       name="radio-button-demo"
                       inputProps={{ 'aria-label': 'A' }}
-                    /> Si
+                    /> {t('reportYes')}
                     <Radio
                       checked={radioValue === false}
                       onChange={handleChangeRadio}
@@ -870,7 +887,7 @@ const DevicePage = () => {
                       value={false}
                       name="radio-button-demo"
                       inputProps={{ 'aria-label': 'B' }}
-                    /> No
+                    /> {t('reportNo')}
                   </Typography>
                 </form>
 
@@ -895,7 +912,12 @@ const DevicePage = () => {
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
           >
-            <DialogTitle id="alert-dialog-title">{t("sharedAttributes")}</DialogTitle>
+            <DialogTitle id="alert-dialog-title">{t("sharedAttributes")}
+              <IconButton aria-label="close" className={classes.closeButton}
+                          onClick={handleClickAttributes}>
+                <CloseIcon/>
+              </IconButton>
+            </DialogTitle>
             <DialogContent>
               <form>
                 <FormControl variant="outlined" fullWidth={true} className={classes.formControl}>
@@ -932,10 +954,10 @@ const DevicePage = () => {
                 <TableHead>
                   <TableRow className={classes.tablerow}>
                     <TableCell style={{padding: '14px',fontSize: '12px'}}>
-                      Nombre
+                      {t('sharedName')}
                     </TableCell>
                     <TableCell style={{padding: '14px',fontSize: '12px'}}>
-                      Valor
+                      {t('stateValue')}
                     </TableCell>
                   </TableRow>
                 </TableHead>

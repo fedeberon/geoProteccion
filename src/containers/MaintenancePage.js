@@ -5,7 +5,6 @@ import TableRow from "@material-ui/core/TableRow";
 import TableHead from "@material-ui/core/TableHead";
 import TableCell from "@material-ui/core/TableCell";
 import TableBody from "@material-ui/core/TableBody";
-import Paper from "@material-ui/core/Paper";
 import {makeStyles} from "@material-ui/core/styles";
 import t from "../common/localization";
 import Divider from "@material-ui/core/Divider";
@@ -29,8 +28,7 @@ import IconButton from "@material-ui/core/IconButton";
 import EditTwoToneIcon from "@material-ui/icons/EditTwoTone";
 import {DeleteTwoTone} from "@material-ui/icons";
 import CloseIcon from "@material-ui/icons/Close";
-
-
+import Paper from '@material-ui/core/Paper';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -50,6 +48,12 @@ const useStyles = makeStyles((theme) => ({
     width: '229px',
     minWidth: 120,
   },
+  rowAtri: {
+    width: '40px',
+    padding: '1px',
+    textAlign: 'center',
+    paddingRight: '1px !important',
+  },
   closeButton: {
     position: 'absolute',
     right: theme.spacing(1),
@@ -66,7 +70,9 @@ const useStyles = makeStyles((theme) => ({
   demoGrid: {
     backgroundColor: theme.palette.background.paper,
   },
-
+  table: {
+    minWidth: 350,
+  },
 }))
 
 
@@ -81,22 +87,54 @@ const MaintenancePage = () => {
   const [ value, setValue ] = useState('');
   const [ attributesList, setAttributesList ] = useState([]);
   const [ attributes, setAttributes] = useState({});
+  const [openAttributes, setOpenAttributes] = useState(false);
+  const [expanded, setExpanded] = useState('');
   const [state, setState] = useState({
     id: '',
     name: '',
-    type: '',
+    type: 'index',
     start: '',
     period: '',
     attributes: {},
   });
-  const [openAttributes, setOpenAttributes] = useState(false);
-  const [expanded, setExpanded] = useState('');
 
-
-  const handleShowAttributes = () => {
+  const handleShowAttributes = (attributesData) => {
     setOpenAttributes(!openAttributes);
+    if(attributesData) {
+      setAttributes({
+        ...attributes,
+        ...attributesData,
+      });
+      Object.entries(attributes).map(([key,value]) =>{
+        attributesList.push({
+          [key]: value
+        })})
+    }
   };
 
+  const handleCloseAttributes = () => {
+    setOpenAttributes(false);
+    setAttributes({});
+  }
+
+  const handleSetAttributes = (object) => {
+    setState({
+      ...state,
+      attributes: object,
+    })
+    setOpenAttributes(false);
+  }
+
+  const handleSaveAttributes = () => {
+    attributesList.push({
+      [key]: value
+    })
+    setKey('');
+    setValue('');
+    attributesList.map((attribute) => {
+      setAttributes({...attributes, ...attribute});
+    });
+  }
 
   const handleChange = (panel) => (event, newExpanded) => {
     setExpanded(newExpanded ? panel : false);
@@ -109,17 +147,6 @@ const MaintenancePage = () => {
   const getMaintenance = async (userId) => {
     const response = await service.getMaintenanceByUserId(userId);
     setMaintenance(response);
-  }
-
-  const handleSaveAttributes = () => {
-    attributesList.push({
-      [key]: value
-    })
-    setKey('');
-    setValue('');
-    attributesList.map((attribute) => {
-      setAttributes({...attributes, ...attribute});
-    });
   }
 
   const handleChangeAttributesKey = (event) => {
@@ -152,8 +179,14 @@ const MaintenancePage = () => {
     }
   }
 
+  const handleCancelModal = () => {
+    setShowModal(!showModal);
+    setState({id:'',name:'',type:'index',start:'',period:'',attributes:{},});
+    setAttributes({});
+  }
+
   const handleCancelEdit = () => {
-    setState({});
+    setState({id:'',name:'',type:'index',start:'',period:'',attributes:{},});
     setElem(false);
     setShowModal(!showModal)
   }
@@ -195,8 +228,9 @@ const MaintenancePage = () => {
       body: JSON.stringify(state)
     }).then(response => {
       if(response.ok){
-        setState({});
+        setState({id:'',name:'',type:'index',start:'',period:'',attributes:{},});
         setElem(false);
+        setAttributes({});
         getMaintenance(userId);
       }
     })
@@ -216,6 +250,15 @@ const MaintenancePage = () => {
     }
   }
 
+  const removeAttribute = (index) => {
+    // attributesList.splice(index,1);
+    // attributesList.map((attribute) => {
+    //   setAttributes({...attributes, ...attribute});
+    // });
+    // console.log(attributesList);
+  }
+
+
   return (
     <div className={classes.root}>
       <div style={{marginTop: '5%'}} className="title-section">
@@ -229,22 +272,20 @@ const MaintenancePage = () => {
       </Button>
       </div>
       <TableContainer component={Paper}>
-        <Table>
+        <Table >
           <TableHead>
           <TableRow>
-            <TableCell>ID</TableCell>
-            <TableCell>Nombre</TableCell>
-            <TableCell>Tipo</TableCell>
-            <TableCell>Iniciar</TableCell>
-            <TableCell>Periodo</TableCell>
-            <TableCell>Attributes</TableCell>
+            <TableCell>{t('sharedName')}</TableCell>
+            <TableCell>{t('sharedType')}</TableCell>
+            <TableCell>{t('maintenanceStart')}</TableCell>
+            <TableCell>{t('maintenancePeriod')}</TableCell>
+            <TableCell>{t('sharedAttributes')}</TableCell>
             <TableCell align="center"/>
           </TableRow>
           </TableHead>
           <TableBody>
             {maintenance.map((el, index)=>(
               <TableRow key={el.id}>
-                <TableCell>{el.id}</TableCell>
                 <TableCell>{el.name}</TableCell>
                 <TableCell>{el.type}</TableCell>
                 <TableCell>{el.start}</TableCell>
@@ -252,7 +293,7 @@ const MaintenancePage = () => {
                 <TableCell>
                   <Accordion key={el.id} square expanded={expanded === `panel${el.id}`} onChange={handleChange(`panel${el.id}`)}>
                     <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
-                      Attributes
+                      {t('sharedAttributes')}
                     </AccordionSummary>
                     <AccordionDetails>
                       {Object.entries(el.attributes).map(([key, value]) =>
@@ -265,11 +306,11 @@ const MaintenancePage = () => {
                   </Accordion>
                 </TableCell>
                 <TableCell align="center">
-                  <Button onClick={() => handleShowModal(el)}title="Editar Mantenimiento"
+                  <Button onClick={() => handleShowModal(el)}title={t('sharedEdit')}
                   >
                     <EditTwoToneIcon/>
                   </Button>
-                  <Button onClick={() => handleRemove(el.id)} title="Eliminar Mantenimiento"
+                  <Button onClick={() => handleRemove(el.id)} title={t('sharedRemove')}
                   >
                     <DeleteTwoTone />
                   </Button>
@@ -300,7 +341,7 @@ const MaintenancePage = () => {
 
               <Table>
                 <TableRow>
-                  <TableCell>Nombre:</TableCell>
+                  <TableCell>{t('sharedName')}:</TableCell>
                   <TableCell><TextField
                     id="outlined-basic"
                     value={state.name}
@@ -315,7 +356,7 @@ const MaintenancePage = () => {
                   /></TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell>Type:</TableCell>
+                  <TableCell>{t('sharedType')}:</TableCell>
                   <TableCell><FormControl variant="outlined"
                                           className={classes.formControl}>
                     <InputLabel
@@ -369,12 +410,12 @@ const MaintenancePage = () => {
                   </FormControl></TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell>Start:</TableCell>
+                  <TableCell>{t('maintenanceStart')}:</TableCell>
                   <TableCell><TextField
                     id="outlined-basic"
                     value={state.start}
                     name="start"
-                    label="Start"
+                    label={t('maintenanceStart')}
                     type="number"
                     variant="outlined"
                     inputProps={{
@@ -385,12 +426,12 @@ const MaintenancePage = () => {
                   /></TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell>Period</TableCell>
+                  <TableCell>{t('maintenancePeriod')}:</TableCell>
                   <TableCell><TextField
                     id="outlined-basic"
                     value={state.period}
                     name="period"
-                    label="Period"
+                    label={t('maintenancePeriod')}
                     type="number"
                     variant="outlined"
                     inputProps={{
@@ -402,26 +443,22 @@ const MaintenancePage = () => {
                 </TableRow>
               </Table>
           </DialogContent><br/>
-          <Typography>
-            Atributos agregados: {attributesList.length} {/*Eliminar linea*/}
-          </Typography>
           {!elem ?
             <DialogActions>
               <Button style={{
                 display: 'flex',
                 position: 'absolute',
                 left: '7%',
-                bottom: '2%'
-              }}
+                bottom: '2%'}}
                       onClick={() => handleShowAttributes()} variant="outlined"
                       color="primary">
-                ATTRIBUTES
+                {t('sharedAttributes')}
               </Button>
-              <Button onClick={handleShowModal} color="primary">
-                Cancelar
+              <Button onClick={() => handleCancelModal()} color="primary">
+                {t('sharedCancel')}
               </Button>
               <Button onClick={handlePost} color="primary" autoFocus>
-                Guardar
+                {t('sharedSave')}
               </Button>
             </DialogActions>
             :
@@ -432,34 +469,44 @@ const MaintenancePage = () => {
                 left: '7%',
                 bottom: '2%'
               }}
-                      onClick={() => handleShowAttributes()} variant="outlined"
+                      onClick={() => handleShowAttributes(state.attributes)} variant="outlined"
                       color="primary">
-                ATTRIBUTES
+                {t('sharedAttributes')}
               </Button>
               <Button onClick={handleCancelEdit} color="primary">
-                Cancelar
+                {t('sharedCancel')}
               </Button>
               <Button onClick={() => handleEdit(state)} color="primary" autoFocus>
-                Editar
+                {t('sharedEdit')}
               </Button>
             </DialogActions>
           }
         </Dialog>
       </div>
+
+      {/*MODAL ATTRIBUTES*/}
       <div>
         <Dialog
           open={openAttributes}
-          onClose={handleShowAttributes}
+          onClose={handleCloseAttributes}
           aria-labelledby="alert-dialog-title"
           aria-describedby="alert-dialog-description"
         >
+          <DialogTitle id="customized-dialog-title"
+                       onClose={handleCloseAttributes}>
+            {t('sharedAttributes')}
+            <IconButton aria-label="close" className={classes.closeButton}
+                        onClick={handleCloseAttributes}>
+              <CloseIcon/>
+            </IconButton>
+          </DialogTitle>
           <DialogContent>
             <DialogContentText id="alert-dialog-description2">
               <TableRow>
-                <TableCell>Nombre:</TableCell>
+                <TableCell>{t('sharedName')}:</TableCell>
                 <TableCell>
                   <TextField
-                    label="Name"
+                    label={t('sharedName')}
                     value={key}
                     name="name"
                     onChange={handleChangeAttributesKey}
@@ -472,9 +519,9 @@ const MaintenancePage = () => {
                 </TableCell>
               </TableRow>
               <TableRow>
-                <TableCell>Valor:</TableCell>
+                <TableCell>{t('stateValue')}:</TableCell>
               <TableCell> <TextField
-                label="Value"
+                label={t('stateValue')}
                 value={value}
                 name="value"
                 onChange={handleChangeAttributesValue}
@@ -487,32 +534,45 @@ const MaintenancePage = () => {
               </TableRow>
             </DialogContentText>
 
-            {/*<Grid item xs={12} md={6}>*/}
-            {/*  <Typography variant="h6" >*/}
-            {/*    Atributos*/}
-            {/*  </Typography>*/}
-            {/*  <div className={classes.demoGrid}>*/}
-            {/*    <List dense={dense}>*/}
-            {/*      {attributesList.map((index,key, value) => (*/}
-            {/*        <TableRow key={index}>*/}
-            {/*          <TableCell>{key}</TableCell>*/}
-            {/*          <TableCell>{value}</TableCell>*/}
-            {/*        </TableRow>*/}
-            {/*      ))}*/}
-            {/*    </List>*/}
-            {/*  </div>*/}
-            {/*</Grid>*/}
+          <TableContainer component={Paper} style={{height: '150px'}}>
+            <Table size="small" className={classes.table}>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Key</TableCell>
+                  <TableCell>Value</TableCell>
+                  <TableCell align="center"/>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {Object.entries(attributes).map(([key, value], index) =>
+                  <TableRow key={index} >
+                    <TableCell>{key}</TableCell>
+                    <TableCell>{value}</TableCell>
+                    <TableCell className={classes.rowAtri}>
+                      <IconButton style={{fontSize: '15px', padding: 0}}>
+                        <i onClick={() => removeAttribute(index)}
+                           style={{color: 'red'}}
+                           title="eliminar"
+                           className="far fa-trash-alt"
+                        />
+                      </IconButton>
+                      </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
           </DialogContent>
           <DialogActions>
-            <Button style={{backgroundColor: `${attributesList.length > 0 ? 'green' : 'transparent'}`}}
+            <Button disabled={ !(key !== '' && value !== '') }
               onClick={handleSaveAttributes} color="success" variant="outlined">
-              Agregar
+              {t('sharedAdd')}
             </Button>
-            <Button onClick={handleShowAttributes} color="primary">
-              Cancelar
+            <Button onClick={handleCloseAttributes} color="primary">
+              {t('sharedCancel')}
             </Button>
-            <Button onClick={handleShowAttributes} color="primary" autoFocus>
-              Continuar
+            <Button onClick={()=> handleSetAttributes(attributes)} color="primary" autoFocus>
+              {t('sharedSave')}
             </Button>
           </DialogActions>
         </Dialog>
