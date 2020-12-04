@@ -132,6 +132,12 @@ const getGroups = () => {
     .then(response => response.json());
 }
 
+const getCalendarsByUserId = (userId) => {
+  return fetch(`api/calendars?userId=${userId}`, {method: 'GET'})
+    .catch(function (error) {console.log('setCalendars error: ', error)})
+    .then(response => response.json());
+}
+
 export {
   setSession,
   getDeviceByUserId,
@@ -154,4 +160,5 @@ export {
   getComputedAttributesById,
   getCommandsByDeviceId,
   getGroups,
+  getCalendarsByUserId,
 };
