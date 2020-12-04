@@ -1,13 +1,19 @@
-import React, {useEffect} from 'react';
-import {connect, useDispatch} from 'react-redux';
-import {devicesActions, notificationActions, positionsActions} from '../store';
+import React, { useEffect } from "react";
+import { connect, useDispatch } from "react-redux";
+import {
+  devicesActions,
+  notificationActions,
+  positionsActions,
+} from "../store";
 
 const SocketController = () => {
   const dispatch = useDispatch();
 
   const connectSocket = () => {
-    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const socket = new WebSocket(protocol + '//' + window.location.host + '/api/socket');
+    const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+    const socket = new WebSocket(
+      protocol + "//" + window.location.host + "/api/socket"
+    );
 
     socket.onclose = () => {
       setTimeout(() => connectSocket(), 60 * 1000);
@@ -22,15 +28,20 @@ const SocketController = () => {
         dispatch(positionsActions.update(data.positions));
       }
       if (data.events) {
-        dispatch(notificationActions.apply({type: 'SNACKBAR_SUCCESS', message: data.events}));
+        dispatch(
+          notificationActions.apply({
+            type: "SNACKBAR_SUCCESS",
+            message: data.events,
+          })
+        );
       }
     };
-  }
+  };
 
   useEffect(() => {
-    fetch('/api/devices').then(response => {
+    fetch("/api/devices").then((response) => {
       if (response.ok) {
-        response.json().then(devices => {
+        response.json().then((devices) => {
           dispatch(devicesActions.update(devices));
         });
       }
@@ -39,6 +50,6 @@ const SocketController = () => {
   }, []);
 
   return null;
-}
+};
 
 export default connect()(SocketController);

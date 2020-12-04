@@ -1,22 +1,21 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 
 const { reducer, actions } = createSlice({
-  name: 'modals',
+  name: "modals",
   initialState: {
     items: {
       search: false,
       menu: false,
-
-    }
+    },
   },
   reducers: {
     show(state, action) {
-      state.items[action.payload] = true
+      state.items[action.payload] = true;
     },
     hide(state, action) {
-      state.items[action.payload] = false
+      state.items[action.payload] = false;
     },
-  }
+  },
 });
 
 export { actions as modalsActions };

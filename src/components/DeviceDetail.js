@@ -1,33 +1,33 @@
-import React, {useEffect, useLayoutEffect, useState} from 'react';
-import {shallowEqual, useSelector} from "react-redux";
+import React, { useEffect, useLayoutEffect, useState } from "react";
+import { shallowEqual, useSelector } from "react-redux";
 import * as service from "../utils/serviceManager";
 import t from "../common/localization";
 import Divider from "@material-ui/core/Divider";
-import { makeStyles } from '@material-ui/core/styles';
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
-import Button from '@material-ui/core/Button';
-import Typography from '@material-ui/core/Typography';
+import { makeStyles } from "@material-ui/core/styles";
+import Card from "@material-ui/core/Card";
+import CardContent from "@material-ui/core/CardContent";
+import Button from "@material-ui/core/Button";
+import Typography from "@material-ui/core/Typography";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Container from "@material-ui/core/Container";
 import IconButton from "@material-ui/core/IconButton";
-import {useParams} from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   root: {
     minWidth: 150,
-    borderRadius: '20px',
-    border: '1px solid',
-    borderColor: 'gainsboro',
-    margin: '2px 8px',
-    [theme.breakpoints.up('md')]: {
+    borderRadius: "20px",
+    border: "1px solid",
+    borderColor: "gainsboro",
+    margin: "2px 8px",
+    [theme.breakpoints.up("md")]: {
       minWidth: 275,
     },
   },
   bullet: {
-    display: 'inline-block',
-    margin: '0 2px',
-    transform: 'scale(0.8)',
+    display: "inline-block",
+    margin: "0 2px",
+    transform: "scale(0.8)",
   },
   title: {
     fontSize: 14,
@@ -36,88 +36,120 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: 1,
   },
   container: {
-
-    [theme.breakpoints.up('md')]: {
-      display: 'flex',
-      justifyContent: 'center',
-      overflowY: 'auto',
+    [theme.breakpoints.up("md")]: {
+      display: "flex",
+      justifyContent: "center",
+      overflowY: "auto",
     },
   },
   dashImg: {
-    height: '100px',
-    margin: '17px 37px',
-    [theme.breakpoints.up('md')]: {
-      height: '170px',
-      margin: '10px 61px',
+    height: "100px",
+    margin: "17px 37px",
+    [theme.breakpoints.up("md")]: {
+      height: "170px",
+      margin: "10px 61px",
     },
-  }
+  },
 }));
 
 const DeviceDetail = (props) => {
-  let {id} = useParams();
-  const devices = useSelector(state => Object.values(state.devices.items), shallowEqual);
-  const positions = useSelector(state => state.positions.items, shallowEqual);
+  let { id } = useParams();
+  const devices = useSelector(
+    (state) => Object.values(state.devices.items),
+    shallowEqual
+  );
+  const positions = useSelector((state) => state.positions.items, shallowEqual);
   const classes = useStyles();
-  const [deviceFound, setDeviceFound ] = useState({});
+  const [deviceFound, setDeviceFound] = useState({});
 
-   useEffect(()=> {
-    const result = devices.find(el => el.id === parseInt(id));
+  useEffect(() => {
+    const result = devices.find((el) => el.id === parseInt(id));
     setDeviceFound(result);
-  },[devices]);
+  }, [devices]);
 
-  return(
+  return (
     <>
       <React.Fragment>
         <CssBaseline />
-        <Container maxWidth="sm" style={{top: '10%', position: 'relative'}}>
+        <Container maxWidth="sm" style={{ top: "10%", position: "relative" }}>
           <div className="title-section">
-            <h2>{t('sharedDevice')}</h2>
-            <Divider/>
+            <h2>{t("sharedDevice")}</h2>
+            <Divider />
           </div>
           <div>
-            <img className={classes.dashImg}
-                 alt=""
-                 src="https://i.pinimg.com/originals/ef/f2/91/eff29127abbf0d8e5e99cda29401fa7f.png"/>
+            <img
+              className={classes.dashImg}
+              alt=""
+              src="https://i.pinimg.com/originals/ef/f2/91/eff29127abbf0d8e5e99cda29401fa7f.png"
+            />
           </div>
-          <div style={{display: 'flex', justifyContent: 'space-between'}}>
-            <p  style={{fontSize: '14px', color: 'darkgray'}}>
-              {t('deviceStatus')}: <span className={`status-${deviceFound.status}`}>{deviceFound.status}</span>
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <p style={{ fontSize: "14px", color: "darkgray" }}>
+              {t("deviceStatus")}:{" "}
+              <span className={`status-${deviceFound.status}`}>
+                {deviceFound.status}
+              </span>
             </p>
-            <p  style={{fontSize: '14px', color: 'darkgray'}}>
-                Car Type:
-              <span style={{color: 'Black'}} className={classes.pos}>
+            <p style={{ fontSize: "14px", color: "darkgray" }}>
+              Car Type:
+              <span style={{ color: "Black" }} className={classes.pos}>
                 &nbsp;{deviceFound.name}
               </span>
             </p>
           </div>
-          <div style={{display: 'flex', justifyContent: 'space-between'}}>
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
             <h3>Car Informations</h3>
-            <Button >View All</Button>
+            <Button>View All</Button>
           </div>
-          <div style={{display: 'flex'}}>
-            <Card className={classes.root} variant="outlined" style={{backgroundColor: '#5f85ca'}}>
+          <div style={{ display: "flex" }}>
+            <Card
+              className={classes.root}
+              variant="outlined"
+              style={{ backgroundColor: "#5f85ca" }}
+            >
               <CardContent>
-                <IconButton style={{backgroundColor: 'cornflowerblue'}}>
-                  <i style={{color: 'whitesmoke'}} className="fas fa-car-battery"/>
+                <IconButton style={{ backgroundColor: "cornflowerblue" }}>
+                  <i
+                    style={{ color: "whitesmoke" }}
+                    className="fas fa-car-battery"
+                  />
                 </IconButton>
-                <Typography style={{marginTop: '20px', color: 'white'}} variant="h5" component="h2">
-                  219 {t('sharedVoltAbbreviation')}
+                <Typography
+                  style={{ marginTop: "20px", color: "white" }}
+                  variant="h5"
+                  component="h2"
+                >
+                  219 {t("sharedVoltAbbreviation")}
                 </Typography>
-                <Typography style={{color: 'white'}} className={classes.pos} color="textSecondary">
+                <Typography
+                  style={{ color: "white" }}
+                  className={classes.pos}
+                  color="textSecondary"
+                >
                   Voltaje
                 </Typography>
               </CardContent>
             </Card>
             <Card className={classes.root} variant="outlined">
               <CardContent>
-                <IconButton style={{backgroundColor: 'cornflowerblue'}} >
-                  <i style={{color: 'whitesmoke'}} className="fas fa-tachometer-alt"/>
+                <IconButton style={{ backgroundColor: "cornflowerblue" }}>
+                  <i
+                    style={{ color: "whitesmoke" }}
+                    className="fas fa-tachometer-alt"
+                  />
                 </IconButton>
-                <Typography style={{marginTop: '20px'}} variant="h5" component="h2">
-                  {positions && positions[deviceFound.id] ? positions[deviceFound.id].speed.toFixed(0) : '0'} Km/h
+                <Typography
+                  style={{ marginTop: "20px" }}
+                  variant="h5"
+                  component="h2"
+                >
+                  {positions && positions[deviceFound.id]
+                    ? positions[deviceFound.id].speed.toFixed(0)
+                    : "0"}{" "}
+                  Km/h
                 </Typography>
                 <Typography className={classes.pos} color="textSecondary">
-                  {t('positionSpeed')}
+                  {t("positionSpeed")}
                 </Typography>
               </CardContent>
             </Card>
@@ -126,5 +158,5 @@ const DeviceDetail = (props) => {
       </React.Fragment>
     </>
   );
-}
+};
 export default DeviceDetail;

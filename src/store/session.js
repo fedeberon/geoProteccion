@@ -1,14 +1,14 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 
 const { reducer, actions } = createSlice({
-  name: 'session',
+  name: "session",
   initialState: {
     authenticated: false,
     user: {},
     server: {},
     deviceAttributes: {
       isViewportDesktop: true,
-    }
+    },
   },
   reducers: {
     authenticated(state, action) {
@@ -22,8 +22,8 @@ const { reducer, actions } = createSlice({
     },
     setDeviceAttribute(state, action) {
       state.deviceAttributes[action.payload.attribute] = action.payload.value;
-    }
-  }
+    },
+  },
 });
 
 export { actions as sessionActions };
