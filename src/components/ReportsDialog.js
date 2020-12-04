@@ -53,6 +53,12 @@ const useStyles = makeStyles((theme) => ({
     zIndex: theme.zIndex.drawer + 2000,
     color: '#fff',
   },
+  closeButton: {
+    position: 'absolute',
+    right: theme.spacing(1),
+    top: 0,
+    color: theme.palette.grey[500],
+  },
   graphic: {
     top: '15%',
     left: '12%',
@@ -506,15 +512,12 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
           >
             <Toolbar>
             <DialogTitle style={{width: '100%', textAlign: 'center', backgroundColor: 'ghostwhite'}}
-                         id="alert-dialog-title">{"Reportes"}
+                         id="alert-dialog-title">{t('reportTitle')}
+              <IconButton aria-label="close" className={classes.closeButton}
+                          onClick={handleCloseConfigModal}>
+                <CloseIcon/>
+              </IconButton>
             </DialogTitle>
-            <IconButton className="close-config-modal"
-                        style={{padding: 0}}
-                        edge="start" color="inherit"
-                        onClick={handleCloseConfigModal}
-                        aria-label="close">
-              <CloseIcon />
-            </IconButton>
             </Toolbar>
             <Divider/>
             <DialogContent>
@@ -583,7 +586,7 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
                   <TableRow key={object.id} className={classes.row} onClick={() => handleSelectedPosition(positions.find((element) => element.id === object.positionId))}>
                     <TableCell>{object.serverTime}</TableCell>
                     <TableCell>{object.deviceId}</TableCell>
-                    <TableCell>{object.type}</TableCell>
+                    <TableCell>{t(`${object.type}`)}</TableCell>
                     <TableCell>{object.geofenceId}</TableCell>
                     <TableCell>{object.maintenanceId}</TableCell>
                   </TableRow>
