@@ -276,7 +276,6 @@ const DevicePage = () => {
     setSelectedDevice({...selectedDevice, attributes: attributes});
     setNewDevice({...newDevice, attributes: attributes});
     let originalAttributes = getOriginalAttributes(selectedDevice.attributes);
-    console.log(originalAttributes);
     setAttributes(originalAttributes);
   }
 
@@ -747,7 +746,7 @@ const DevicePage = () => {
               <Button onClick={handleClickAdd} color="primary">
                 {t('sharedCancel')}
               </Button>
-              <Button onClick={handleSave} color="primary" autoFocus>
+              <Button onClick={() => handleSave()} color="primary" autoFocus>
                 {t('sharedSave')}
               </Button>
             </DialogActions>
@@ -890,6 +889,7 @@ const DevicePage = () => {
           </Dialog>
         </div>
 
+        {/*Modal Attributes*/}
         <div>
           <Dialog
             open={openModalAttributes}
@@ -945,10 +945,34 @@ const DevicePage = () => {
                   {Object.entries(attributes).map((attribute, index) =>
                     <TableRow>
                       <TableCell>
-                        {attribute[0]}
+                        <TextField
+                          label="Value"
+                          margin="normal"
+                          fullWidth
+                          name="key"
+                          placeholder={attribute[0]}
+                          onBlur={(e) => { if (e.target.value !== '') { let { [attribute[0]]: value, ...rest } = attributes; setAttributes({...rest, [e.target.value]: attribute[1]}) }; e.target.value = '' }}
+                          type="text"
+                          variant="outlined"
+                          InputLabelProps={{
+                            shrink: true,
+                          }}
+                        />
                       </TableCell>
                       <TableCell>
-                        {attribute[1]}
+                        <TextField
+                          label="Value"
+                          margin="normal"
+                          fullWidth
+                          value={attribute[1]}
+                          name="value"
+                          onChange={(e) => setAttributes({...attributes, [attribute[0]]: e.target.value})}
+                          type="text"
+                          variant="outlined"
+                          InputLabelProps={{
+                            shrink: true,
+                          }}
+                        />
                       </TableCell>
                     </TableRow>
                   )}
