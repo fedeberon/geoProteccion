@@ -3,7 +3,6 @@ import { shallowEqual, useSelector } from "react-redux";
 import * as service from "../utils/serviceManager";
 import t from "../common/localization";
 import Divider from "@material-ui/core/Divider";
-import { makeStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import Button from "@material-ui/core/Button";
@@ -12,45 +11,9 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import Container from "@material-ui/core/Container";
 import IconButton from "@material-ui/core/IconButton";
 import { useParams } from "react-router-dom";
+import deviceDetailStyles from "./styles/DeviceDetailStyles";
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    minWidth: 150,
-    borderRadius: "20px",
-    border: "1px solid",
-    borderColor: "gainsboro",
-    margin: "2px 8px",
-    [theme.breakpoints.up("md")]: {
-      minWidth: 275,
-    },
-  },
-  bullet: {
-    display: "inline-block",
-    margin: "0 2px",
-    transform: "scale(0.8)",
-  },
-  title: {
-    fontSize: 14,
-  },
-  pos: {
-    marginBottom: 1,
-  },
-  container: {
-    [theme.breakpoints.up("md")]: {
-      display: "flex",
-      justifyContent: "center",
-      overflowY: "auto",
-    },
-  },
-  dashImg: {
-    height: "100px",
-    margin: "17px 37px",
-    [theme.breakpoints.up("md")]: {
-      height: "170px",
-      margin: "10px 61px",
-    },
-  },
-}));
+const useStyles = deviceDetailStyles;
 
 const DeviceDetail = (props) => {
   let { id } = useParams();

@@ -177,13 +177,15 @@ const UserPage = () => {
       >
         <h2>Información de Usuario</h2>
         <Typography>
-          <Button
-            onClick={() => showMenuAdmin()}
-            button
-            style={{ textTransform: "capitalize" }}
-          >
-            Administrador
-          </Button>
+          {user.administrator && (
+            <Button
+              onClick={() => showMenuAdmin()}
+              button
+              style={{ textTransform: "capitalize" }}
+            >
+              Administrador
+            </Button>
+          )}
         </Typography>
       </div>
       <div

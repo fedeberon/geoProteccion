@@ -1,35 +1,17 @@
 import React from "react";
-import { makeStyles } from "@material-ui/core/styles";
 import Backdrop from "@material-ui/core/Backdrop";
 import SpeedDial from "@material-ui/lab/SpeedDial";
 import SpeedDialIcon from "@material-ui/lab/SpeedDialIcon";
 import SpeedDialAction from "@material-ui/lab/SpeedDialAction";
-import FileCopyIcon from "@material-ui/icons/FileCopyOutlined";
-import SaveIcon from "@material-ui/icons/Save";
-import PrintIcon from "@material-ui/icons/Print";
-import ShareIcon from "@material-ui/icons/Share";
-import FavoriteIcon from "@material-ui/icons/Favorite";
 import MenuIcon from "@material-ui/icons/Menu";
 import CloseIcon from "@material-ui/icons/Close";
 import t from "../common/localization";
 
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
+import menuStyles from "./styles/MenuStyles";
 
-const useStyles = makeStyles((theme) => ({
-  speedDial: {
-    position: "absolute",
-    bottom: "1%",
-    left: "50vw",
-    right: "50vw",
-    [theme.breakpoints.up("md")]: {
-      top: "47%",
-      left: "1%",
-      right: "auto",
-      bottom: "auto",
-    },
-  },
-}));
+const useStyles = menuStyles;
 
 export default function Menu({ layout }) {
   const history = useHistory();

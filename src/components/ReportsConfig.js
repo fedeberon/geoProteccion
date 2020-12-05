@@ -9,7 +9,6 @@ import ListItemText from "@material-ui/core/ListItemText";
 import TextField from "@material-ui/core/TextField";
 import t from "../common/localization";
 import * as service from "../utils/serviceManager";
-import makeStyles from "@material-ui/core/styles/makeStyles";
 import { useSelector } from "react-redux";
 import TableCell from "@material-ui/core/TableCell";
 import TableRow from "@material-ui/core/TableRow";
@@ -17,30 +16,9 @@ import Table from "@material-ui/core/Table";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import Radio from "@material-ui/core/Radio";
 import Button from "@material-ui/core/Button";
+import reportsConfigStyles from "./styles/ReportsConfigStyles";
 
-const useStyles = makeStyles((theme) => ({
-  formControlDevices: {
-    margin: theme.spacing(1),
-    minWidth: 200,
-    maxWidth: 200,
-  },
-  formControlReportType: {
-    margin: "4px",
-    minWidth: 200,
-  },
-  noLabel: {
-    marginTop: theme.spacing(3),
-  },
-  containerDateTime: {
-    display: "flex",
-    flexWrap: "wrap",
-  },
-  textFieldDateTime: {
-    marginLeft: theme.spacing(1),
-    marginRight: theme.spacing(1),
-    width: 200,
-  },
-}));
+const useStyles = reportsConfigStyles;
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;

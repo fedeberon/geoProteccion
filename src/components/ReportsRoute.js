@@ -10,10 +10,10 @@ import TableHead from "@material-ui/core/TableHead";
 import TableBody from "@material-ui/core/TableBody";
 import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
-import makeStyles from "@material-ui/core/styles/makeStyles";
 import ReportsConfig from "./ReportsConfig";
 import * as service from "../utils/serviceManager";
 import { devices } from "./ReportsConfig";
+import reportsRouteStyles from "./styles/ReportsRouteStyles";
 
 const Accordion = withStyles({
   root: {
@@ -32,25 +32,7 @@ const Accordion = withStyles({
   expanded: {},
 })(MuiAccordion);
 
-const useStyles = makeStyles((theme) => ({
-  formControlDevices: {
-    margin: theme.spacing(1),
-    minWidth: 120,
-    maxWidth: 300,
-  },
-  noLabel: {
-    marginTop: theme.spacing(3),
-  },
-  containerDateTime: {
-    display: "flex",
-    flexWrap: "wrap",
-  },
-  textFieldDateTime: {
-    marginLeft: theme.spacing(1),
-    marginRight: theme.spacing(1),
-    width: 200,
-  },
-}));
+const useStyles = reportsRouteStyles;
 
 const AccordionSummary = withStyles({
   root: {

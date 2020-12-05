@@ -1,6 +1,5 @@
 import React, { Fragment, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { makeStyles } from "@material-ui/core/styles";
 import { useHistory } from "react-router-dom";
 import Avatar from "@material-ui/core/Avatar";
 import Divider from "@material-ui/core/Divider";
@@ -25,37 +24,9 @@ import { devicesActions, modalsActions } from "../store";
 import t from "../common/localization";
 import RemoveDialog from "./RemoveDialog";
 import ListSubheader from "@material-ui/core/ListSubheader";
+import deviceListStyles from "./styles/DeviceListStyles";
 
-const useStyles = makeStyles((theme) => ({
-  list: {
-    maxHeight: "100%",
-    overflow: "auto",
-  },
-  fab: {
-    position: "absolute",
-    bottom: theme.spacing(2),
-    right: theme.spacing(2),
-  },
-  fab_close: {
-    position: "absolute",
-    bottom: theme.spacing(2),
-    right: theme.spacing(10),
-  },
-  root: {
-    padding: "4px 4px",
-    display: "flex",
-    alignItems: "center",
-    width: "94%",
-    marginLeft: "3%",
-  },
-  input: {
-    marginLeft: theme.spacing(1),
-    flex: 1,
-  },
-  iconButton: {
-    padding: 10,
-  },
-}));
+const useStyles = deviceListStyles;
 
 const DeviceList = () => {
   const [menuDeviceId, setMenuDeviceId] = useState(null);
