@@ -18,6 +18,12 @@ const getDeviceByUserId = (id) => {
     .then(response => response.json());
 }
 
+const getStatistics = (from, to) => {
+  return fetch(`api/statistics?from=${from}T00%3A00%3A00.000Z&to=${to}T00%3A00%3A00.000Z`,{ method: 'GET' })
+    .catch(function (error) { console.log('setStatistics error: ', error)})
+    .then(response => response.json());
+}
+
 const getGeozonesByUserId = (id) => {
   return fetch(`api/geofences?userId=${id}`,{method: 'GET'})
     .catch(function (error) { console.log('setGeofences error: ', error)})
@@ -161,4 +167,5 @@ export {
   getCommandsByDeviceId,
   getGroups,
   getCalendarsByUserId,
+  getStatistics,
 };

@@ -137,6 +137,20 @@ const UserPage = () => {
   const [ radioValueCommand, setRadioValueCommand ] = useState(false);
   const [ openModalCommand, setOpenModalCommand ] = useState(false);
   const [ server, setServer ] = useState({});
+  const [ statistics, setStatistics ] = useState([]);
+  let to = '';
+  let from = '';
+
+  useEffect(()=>{
+    setDate();
+    console.log(to);
+    console.log(from);
+  },[fromDateTime,toDateTime])
+
+  const setDate = () => {
+    to = toDateTime.toString();
+    from = fromDateTime.toString();
+  }
 
   const onChangeFromDateTime = (event) => {
     setFromDateTime(event.target.value);
@@ -145,6 +159,11 @@ const UserPage = () => {
   const onChangeToDateTime = (event) => {
     setToDateTime(event.target.value);
   };
+
+  const showStatics = async(from,to) => {
+    const response = await service.getStatistics(from,to);
+    setStatistics(response);
+  }
 
   const handleChangeCheckBox = (event) => {
     setChecked(event.target.checked);
@@ -407,6 +426,9 @@ const UserPage = () => {
           </div>
 
         </TabPanel>
+
+
+        {/*ADMIN STATICS*/}
         <TabPanel value={value} index={1}>
           <div>
             <form>
@@ -418,10 +440,10 @@ const UserPage = () => {
                 <TableCell>
                   <form className={classes.containerDateTime} noValidate>
                     <TextField
-                      label=' '
-                      value={fromDateTime}
+                      label={t('reportFrom')}
+                      value={fromDateTime.toString()}
                       onChange={onChangeFromDateTime}
-                      type="datetime-local"
+                      type="date"
                       defaultValue="2020-11-09T00:30"
                       className={classes.textFieldDateTime}
                       InputLabelProps={{
@@ -434,11 +456,11 @@ const UserPage = () => {
                 <TableCell>
                   <form className={classes.containerDateTime} noValidate>
                     <TextField
-                      label=' '
-                      value={toDateTime}
+                      label={t('reportTo')}
+                      value={toDateTime.toString()}
                       onChange={onChangeToDateTime}
-                      type="datetime-local"
-                      defaultValue="2020-11-09T00:30"
+                      type="date"
+                      defaultValue={new Date()}
                       className={classes.textFieldDateTime}
                       InputLabelProps={{
                         shrink: true,
@@ -447,7 +469,7 @@ const UserPage = () => {
                   </form>
                 </TableCell>
                 <TableCell>
-                  <Button button variant="outlined" color="default">Mostrar</Button>
+                  <Button button onClick={() => showStatics(fromDateTime, toDateTime)} variant="outlined" color="default">{t('reportShow')}</Button>
                 </TableCell>
               </TableRow>
               </TableBody>
@@ -468,19 +490,19 @@ const UserPage = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {/*FUNCION DE MAPEO*/}
-                <TableRow key="key">
-                  <TableCell>1</TableCell>
-                  <TableCell>2</TableCell>
-                  <TableCell>3</TableCell>
-                  <TableCell>4</TableCell>
-                  <TableCell>5</TableCell>
-                  <TableCell>6</TableCell>
-                  <TableCell>7</TableCell>
-                  <TableCell>8</TableCell>
-                </TableRow>
+                {statistics.map((el) => (
+                  <TableRow key={el.id}>
+                    <TableCell>{el.captureTime}</TableCell>
+                    <TableCell>{el.activeUsers}</TableCell>
+                    <TableCell>{el.activeDevices}</TableCell>
+                    <TableCell>{el.requests}</TableCell>
+                    <TableCell>{el.messagesReceived}</TableCell>
+                    <TableCell>{el.messagesStored}</TableCell>
+                    <TableCell>{el.mailSent}</TableCell>
+                    <TableCell>{el.smsSent}</TableCell>
+                  </TableRow>
+                ))}
               </TableBody>
-
             </Table>
           </div>
         </TabPanel>
