@@ -5,6 +5,7 @@ import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { devicesActions } from '../store';
 import t from "../common/localization";
 import {useHistory} from "react-router-dom";
+import { getDateTime } from '../utils/functions';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -179,7 +180,7 @@ function DeviceSearch(deviceId) {
                 <ListItemText>
                   <div className={classes.devsearchSt}>
                     <p className={classes.devsearchStP}><strong> {device.attributes.carPlate} </strong>- {device.name}</p>
-                    <div className={classes.devsearchSd}>{device.lastUpdate}
+                    <div className={classes.devsearchSd}>{getDateTime(device.lastUpdate)}
                     <p className={`status-${device.status} ${classes.devsearchSdP}`}> {device.status} </p></div>
                   </div>
                 </ListItemText>

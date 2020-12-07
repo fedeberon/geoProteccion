@@ -540,7 +540,6 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
           <Table >
             <TableHead>
               <TableRow>
-                <TableCell>Index</TableCell> {/*Eliminar*/}
                 <TableCell>{t('reportDeviceName')}</TableCell>
                 <TableCell>{t('positionValid')}</TableCell>
                 <TableCell>{t('positionFixTime')}</TableCell>
@@ -553,10 +552,10 @@ export default function ReportsDialog({ geozones, showReports, showReportsDialog
             </TableHead>
             <TableBody>
               {route.slice(sliceFirstIndex < route.length - 30 ? sliceFirstIndex : (route.length - 30) * (route.length > 30), sliceLastIndex < route.length ? sliceLastIndex : route.length).map((object) => (
-                <TableRow key={object.id} className={classes.row} onClick={() => handleSelectedPosition(object)}>
-                  <TableCell>{object.id}</TableCell>
-                  <TableCell>{object.deviceId}</TableCell>
-                  <TableCell>{`${Boolean(object.valid)}`}</TableCell>
+                <TableRow key={object.id} className={classes.row} onClick={() => handleSelectedPosition(object)}>  
+                  <TableCell>{devices[object.deviceId].name}</TableCell>
+              
+                  {/* <TableCell>{t(`${{Boolean(object.valid)}}`)}</TableCell> */}
                   <TableCell>{object.serverTime}</TableCell>
                   <TableCell>{object.latitude}</TableCell>
                   <TableCell>{object.longitude}</TableCell>

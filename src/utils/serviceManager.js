@@ -164,6 +164,7 @@ export {
   getServer,
   getCommandTypes,
   getComputedAttributesById,
+  getComputedAttributes,
   getCommandsByDeviceId,
   getGroups,
   getCalendarsByUserId,

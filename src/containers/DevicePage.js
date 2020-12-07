@@ -29,12 +29,11 @@ import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import StarBorder from '@material-ui/icons/StarBorder';
 import Divider from "@material-ui/core/Divider";
-import { getCourse, getOriginalAttributes } from '../utils/functions';
+import { getCourse, getOriginalAttributes, getDateTime } from '../utils/functions';
 import AddIcon from "@material-ui/icons/Add";
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
@@ -434,7 +433,7 @@ const DevicePage = () => {
                           </div>
                         }
                         title={`${device.attributes.carPlate} - ${device.name}`}
-                        subheader={device.lastUpdate}
+                        subheader={getDateTime(device.lastUpdate)}
             />
             <Menu
               id={device.id}
@@ -520,7 +519,7 @@ const DevicePage = () => {
                     </ListItemIcon>
                     <ListItemText>
                       <strong  className={classes.cardItemText}>{t("sharedHour")}:&nbsp;</strong>
-                      {positions && positions[device.id] ? positions[device.id].deviceTime : 'Undefined'}</ListItemText>
+                      {positions && positions[device.id] ? getDateTime(positions[device.id].deviceTime) : 'Undefined'}</ListItemText>
                   </ListItem>
                   <ListItem style={{display: `${moreInfo ? 'flex' : 'none'}`}}>
                     <ListItemIcon style={{minWidth: '30px'}}>
@@ -1001,10 +1000,10 @@ const DevicePage = () => {
             </DialogContent>
             <DialogActions>
               <Button onClick={() => setAttributes({...attributes, [newAttribute.name]: newAttribute.value})} color="primary">
-                Agregar
+                {t('sharedAdd')}
               </Button>
               <Button onClick={handleClickAttributes} color="primary" autoFocus>
-                Continuar
+                {t('sharedSave')}
               </Button>
             </DialogActions>
           </Dialog>
@@ -1044,7 +1043,7 @@ const DevicePage = () => {
                 </Select>
               </FormControl>
                 <Typography>
-                  Enviar SMS:
+                  {t('commandSendSms')}:
                   <Radio
                     checked={radioValueCommand === true}
                     onClick={handleChangeRadioCommand}
@@ -1052,7 +1051,7 @@ const DevicePage = () => {
                     value={true}
                     name="radio-button-demo"
                     inputProps={{ 'aria-label': 'A' }}
-                  /> Si
+                  /> {t('reportYes')}
                   <Radio
                     checked={radioValueCommand === false}
                     onChange={handleChangeRadioCommand}
@@ -1060,7 +1059,7 @@ const DevicePage = () => {
                     value={false}
                     name="radio-button-demo"
                     inputProps={{ 'aria-label': 'B' }}
-                  /> No
+                  /> {t('reportNo')}
                 </Typography>
               </form>
             </DialogContent>

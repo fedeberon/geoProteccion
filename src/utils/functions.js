@@ -58,10 +58,31 @@ const getOriginalAttributes = (attr) => {
 	return originalAttributes;
 }
 
+const getDate = (dateTime) => {
+	
+    let newdate = new Date(dateTime);
+    return newdate = `${newdate.getMonth()+1}-0${newdate.getDate()}-${newdate.getFullYear()}`
+}
+
+const getDateTime = (dateTime) => {
+
+    let newdate = new Date(dateTime);
+	
+	return newdate = 
+		`${newdate.getFullYear()}-${(newdate.getMonth()+1) < 10 ? `0${newdate.getMonth()+1}` : 
+		newdate.getMonth()}-${newdate.getDate() < 10 ? `0${newdate.getDate()}` : newdate.getDate()}
+		${newdate.getHours() < 10 ? `0${newdate.getHours()}` : 
+		newdate.getHours()}:${newdate.getMinutes() < 10 ? `0${newdate.getMinutes()}` : 
+		newdate.getMinutes()}:${newdate.getSeconds() < 10 ? `0${newdate.getSeconds()}` : newdate.getSeconds()}
+		`
+}
+
 export {
   getBreakpointFromWidth,
   downloadCsv,
   convertToCsv,
   getCourse,
   getOriginalAttributes,
+  getDate,
+  getDateTime,
 }

@@ -10,14 +10,12 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import PropTypes from 'prop-types';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
-import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 import t from '../common/localization';
 import { useSelector } from 'react-redux';
-import Divider from "@material-ui/core/Divider";
 import Button from "@material-ui/core/Button";
 import Select from "@material-ui/core/Select";
 import FormControl from "@material-ui/core/FormControl";
@@ -31,6 +29,11 @@ import InputLabel from "@material-ui/core/InputLabel";
 import Radio from "@material-ui/core/Radio";
 import DialogActions from "@material-ui/core/DialogActions";
 import * as service from '../utils/serviceManager';
+import { getDate } from '../utils/functions';
+import {DeleteTwoTone, Label} from "@material-ui/icons";
+import EditTwoToneIcon from '@material-ui/icons/EditTwoTone';
+import CloseIcon from "@material-ui/icons/Close";
+import IconButton from "@material-ui/core/IconButton";
 
 const styles = theme => ({});
 
@@ -82,6 +85,12 @@ const useStyles = makeStyles(theme => ({
     marginLeft: theme.spacing(1),
     marginRight: theme.spacing(1),
     width: 200,
+  },
+  closeButton: {
+    position: 'absolute',
+    right: theme.spacing(1),
+    top: theme.spacing(1),
+    color: theme.palette.grey[500],
   },
 }));
 
@@ -138,6 +147,15 @@ const UserPage = () => {
   const [ openModalCommand, setOpenModalCommand ] = useState(false);
   const [ server, setServer ] = useState({});
   const [ statistics, setStatistics ] = useState([]);
+  const [ computedAttributes, setComputedAttributes ] = useState([]);
+  const [ openModalComputedAttribute, setOpenModalComputedAttribute ] = useState(false);
+  const [ objectComputedAttribute, setObjectComputedAttribute ] = useState({
+    description: '',
+    attribute: 'raw',
+    expression: '',
+    type: '',
+  })
+
   let to = '';
   let from = '';
 
@@ -163,6 +181,24 @@ const UserPage = () => {
   const showStatics = async(from,to) => {
     const response = await service.getStatistics(from,to);
     setStatistics(response);
+  }
+
+  const showComputedAttributes = async() => {
+    const response = await service.getComputedAttributes();
+    setComputedAttributes(response);
+    console.log(computedAttributes);
+  }
+
+  const handleShowComputedAttribute = (object) => {
+    setOpenModalComputedAttribute(!openModalComputedAttribute);
+    if(object){
+      setObjectComputedAttribute({
+        description: object.description,
+        attribute: object.attribute,
+        expression: object.expression,
+        type: object.type,
+      })
+    }
   }
 
   const handleChangeCheckBox = (event) => {
@@ -225,10 +261,10 @@ const UserPage = () => {
       <div className={classes.rootTab} style={{display: `${showAdministration ? 'block' : 'none'}`}}>
 
           <Tabs value={value} onChange={handleChange} aria-label="simple tabs example" centered>
-            <Tab label="Servidor" {...a11yProps(0)} />
-            <Tab label="Estadísticas" {...a11yProps(1)} />
-            <Tab label="Atributos Calculados" {...a11yProps(2)} />
-            <Tab label="Comandos Guardados" {...a11yProps(3)} />
+            <Tab label={t('commandServer')} {...a11yProps(0)} />
+            <Tab label={t('statisticsTitle')} {...a11yProps(1)} />
+            <Tab onClick={showComputedAttributes} label={t('sharedComputedAttributes')} {...a11yProps(2)} />
+            <Tab label={t('sharedSavedCommands')} {...a11yProps(3)} />
           </Tabs>
 
         <TabPanel value={value} index={0} style={{paddingBottom: '10%'}}>
@@ -428,7 +464,7 @@ const UserPage = () => {
         </TabPanel>
 
 
-        {/*ADMIN STATICS*/}
+        {/*ADMIN STATISTICS*/}
         <TabPanel value={value} index={1}>
           <div>
             <form>
@@ -479,20 +515,20 @@ const UserPage = () => {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell>Tiempo de Captura</TableCell>
-                  <TableCell>Usuarios Activos</TableCell>
-                  <TableCell>Dispositivos Activos</TableCell>
-                  <TableCell>Peticiones</TableCell>
-                  <TableCell>Mensajes Recibidos</TableCell>
-                  <TableCell>Mensajes Almacenados</TableCell>
-                  <TableCell>Correo</TableCell>
-                  <TableCell>SMS</TableCell>
+                  <TableCell>{t('statisticsCaptureTime')}</TableCell>
+                  <TableCell>{t('statisticsActiveUsers')}</TableCell>
+                  <TableCell>{t('statisticsActiveDevices')}</TableCell>
+                  <TableCell>{t('statisticsRequests')}</TableCell>
+                  <TableCell>{t('statisticsMessagesReceived')}</TableCell>
+                  <TableCell>{t('statisticsMessagesStored')}</TableCell>
+                  <TableCell>{t('notificatorMail')}</TableCell>
+                  <TableCell>{t('notificatorSms')}</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {statistics.map((el) => (
                   <TableRow key={el.id}>
-                    <TableCell>{el.captureTime}</TableCell>
+                    <TableCell>{getDate(el.captureTime)}</TableCell>
                     <TableCell>{el.activeUsers}</TableCell>
                     <TableCell>{el.activeDevices}</TableCell>
                     <TableCell>{el.requests}</TableCell>
@@ -506,14 +542,16 @@ const UserPage = () => {
             </Table>
           </div>
         </TabPanel>
+
+        {/*ADMIN COMPUTED ATTRIBUTES*/}
         <TabPanel value={value} index={2}>
           <div>
             <form>
               <div className={classes.buttonGroup}>
                 <ButtonGroup variant="text" color="default" aria-label="text primary button group">
-                  <Button><i className="fas fa-plus"/>&nbsp;Agregar</Button>
-                  <Button><i className="fas fa-edit"/>&nbsp;Editar</Button>
-                  <Button><i className="fas fa-trash-alt"/>&nbsp;Eliminar</Button>
+                  <Button onClick={handleShowComputedAttribute}><i className="fas fa-plus"/>&nbsp;{t('sharedAdd')}</Button>
+                  <Button><i className="fas fa-edit"/>&nbsp;{t('sharedEdit')}</Button>
+                  <Button><i className="fas fa-trash-alt"/>&nbsp;{t('sharedRemove')}</Button>
                 </ButtonGroup>
               </div>
             </form>
@@ -522,20 +560,34 @@ const UserPage = () => {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell>Descripcion</TableCell>
-                  <TableCell>Atributo</TableCell>
-                  <TableCell>Expresion</TableCell>
-                  <TableCell>Tipo</TableCell>
+                  <TableCell>{t('sharedDescription')}</TableCell>
+                  <TableCell>{t('sharedAttribute')}</TableCell>
+                  <TableCell>{t('sharedExpression')}</TableCell>
+                  <TableCell>{t('sharedType')}</TableCell>
+                  <TableCell align="center"/>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {/*FUNCION DE MAPEO*/}
-                <TableRow key="key">
-                  <TableCell>1</TableCell>
-                  <TableCell>2</TableCell>
-                  <TableCell>3</TableCell>
-                  <TableCell>4</TableCell>
+                {computedAttributes.map((el) => (
+                  <TableRow key={el.id}>
+                  <TableCell>{el.description}</TableCell>
+                  <TableCell>{el.attribute}</TableCell>
+                  <TableCell>{el.expression}</TableCell>
+                  <TableCell>{el.type}</TableCell>
+                  <TableCell align="center">
+                          <Button title={t('sharedEdit')}
+                                  // onClick={() => handleOpenComputedAttribute(el)}
+                                  >
+                          <EditTwoToneIcon/>
+                          </Button>
+                          <Button title={t('sharedRemove')}
+                                  // onClick={() => removeComputedAttribute(el.id)}
+                                  >
+                          <DeleteTwoTone />
+                          </Button>
+                        </TableCell>
                 </TableRow>
+                ))}
               </TableBody>
 
             </Table>
@@ -650,6 +702,113 @@ const UserPage = () => {
                   inputProps={{ 'aria-label': 'B' }}
                 /> No
               </Typography>
+            </form>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseModalCommand} color="primary">
+              Disagree
+            </Button>
+            <Button  color="primary" autoFocus>
+              Agree
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </div>
+
+      {/*MODAL ADD COMPUTEDATTRIBUTE*/}
+      <div>
+        <Dialog
+          open={openModalComputedAttribute}
+          onClose={handleShowComputedAttribute}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="customized-dialog-title"
+                      //  onClose={handleCancelEdit}
+                       >
+            {t('sharedAdd')}
+            <IconButton aria-label="close" className={classes.closeButton}
+                        onClick={handleShowComputedAttribute}
+                        >
+              <CloseIcon/>
+            </IconButton>
+          </DialogTitle>
+          <DialogContent>
+            <form>
+              <TextField 
+              fullWidth 
+              id="outlined-basic" 
+              label={t('sharedDescription')} 
+              variant="outlined"
+              value={objectComputedAttribute.description}
+              onChange={(e) => setObjectComputedAttribute({
+                description: e.target.value
+              })}
+              />
+              <FormControl variant="outlined" fullWidth={true} className={classes.formControl}>
+                <InputLabel htmlFor="outlined-age-native-simple">{t('deviceCommand')}</InputLabel>
+                <Select
+                  native                
+                  value={objectComputedAttribute.attribute}
+                  onChange={(e) => setObjectComputedAttribute({
+                    attribute: e.target.value
+                  })}
+                  label={t('sharedAttribute')}
+                  name="attribute"
+                  type="text"
+                  variant="outlined"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                >
+                      <option value='raw'>{t('positionRaw')}</option>
+                      <option value='index'>{t('positionIndex')}</option>
+                      <option value='hdop'>{t('positionHdop')}</option>
+                      <option value='vdop'>{t('positionVdop')}</option>
+                      <option value='pdop'>{t('positionPdop')}</option>
+                      <option value='sat'>{t('positionSat')}</option>
+                      <option
+                        value='satVisible'>{t('positionSatVisible')}</option>
+                      <option value='rssi'>{t('positionRssi')}</option>
+                      <option value='gps'>{t('positionGps')}</option>
+                      <option value='odometer'>{t('positionOdometer')}</option>
+                      <option
+                        value='odometerMaintenance'>{t('positionServiceOdometer')}</option>
+                      <option
+                        value='odometerTrip'>{t('positionTripOdometer')}</option>
+                      <option value='hours'>{t('positionHours')}</option>
+                      <option value='steps'>{t('positionSteps')}</option>
+                      <option value='power'>{t('positionPower')}</option>
+                      <option value='batery'>{t('positionBattery')}</option>
+                      <option
+                        value='bateryLevel'>{t('positionBatteryLevel')}</option>
+                      <option value='fuel'>{t('positionFuel')}</option>
+                      <option
+                        value='fuelConsumtion'>{t('positionFuelConsumption')}</option>
+                      <option value='distance'>{t('sharedDistance')}</option>
+                      <option
+                        value='totalDistance'>{t('deviceTotalDistance')}</option>
+                      <option value='rpm'>{t('positionRpm')}</option>
+                      <option value='throttle'>{t('positionThrottle')}</option>
+                      <option value='armado'>{t('positionArmed')}</option>
+                      <option
+                        value='acceleration'>{t('positionAcceleration')}</option>
+                      <option
+                        value='deviceTemp'>{t('positionDeviceTemp')}</option>
+                      <option value='obdSpeed'>{t('positionObdSpeed')}</option>
+                      <option
+                        value='obdOdometer'>{t('positionObdOdometer')}</option>
+                </Select>
+              </FormControl>
+              <TextField style={{minWidth: 'min-width: -webkit-fill-available !important'}}
+                id="outlined-multiline-static"
+                label={t('sharedExpression')}
+                multiline
+                rows={4}
+                value={objectComputedAttribute.expression}
+                placeholder={t('sharedExpression')}
+                variant="outlined"
+              />
             </form>
           </DialogContent>
           <DialogActions>

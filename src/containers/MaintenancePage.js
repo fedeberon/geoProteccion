@@ -538,8 +538,8 @@ const MaintenancePage = () => {
             <Table size="small" className={classes.table}>
               <TableHead>
                 <TableRow>
-                  <TableCell>Key</TableCell>
-                  <TableCell>Value</TableCell>
+                  <TableCell>{t('sharedName')}</TableCell>
+                  <TableCell>{t('stateValue')}</TableCell>
                   <TableCell align="center"/>
                 </TableRow>
               </TableHead>
@@ -552,7 +552,7 @@ const MaintenancePage = () => {
                       <IconButton style={{fontSize: '15px', padding: 0}}>
                         <i onClick={() => removeAttribute(index)}
                            style={{color: 'red'}}
-                           title="eliminar"
+                           title={t('sharedRemove')}
                            className="far fa-trash-alt"
                         />
                       </IconButton>

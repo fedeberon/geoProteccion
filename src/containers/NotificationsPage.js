@@ -434,7 +434,7 @@ export default function NotificationsPage() {
                           value={true}
                           name="radio-button-demo"
                           inputProps={{ 'aria-label': 'A' }}
-                        /> Si
+                            /> {t('reportYes')}
                         <Radio
                           checked={always === false}
                           onChange={handleChangeRadio}
@@ -442,7 +442,7 @@ export default function NotificationsPage() {
                           value={false}
                           name="radio-button-demo"
                           inputProps={{ 'aria-label': 'B' }}
-                        /> No
+                            /> {t('reportNo')}
                       </TableCell>
                     </TableRow>
                     <TableRow>
