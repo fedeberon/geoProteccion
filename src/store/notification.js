@@ -1,10 +1,10 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 
 const { reducer, actions } = createSlice({
-  name: 'notification',
+  name: "notification",
   initialState: {
     successSnackbarOpen: false,
-    successSnackbarMessage: '',
+    successSnackbarMessage: "",
     errorSnackbarOpen: false,
     infoSnackbarOpen: false,
     items: [],
@@ -17,14 +17,14 @@ const { reducer, actions } = createSlice({
             ...state,
             successSnackbarOpen: true,
             successSnackbarMessage: action.payload.message[0],
-            items: [...state.items, action.payload.message[0]]
+            items: [...state.items, action.payload.message[0]],
           };
         case "SNACKBAR_CLEAR":
           return {
             ...state,
             successSnackbarOpen: false,
             errorSnackbarOpen: false,
-            infoSnackbarOpen: false
+            infoSnackbarOpen: false,
           };
         default:
           return state;
@@ -32,8 +32,8 @@ const { reducer, actions } = createSlice({
     },
     remove(state, action) {
       state.items = [];
-    }
-  }
+    },
+  },
 });
 
 export { actions as notificationActions };

@@ -1,7 +1,7 @@
-import {createSlice} from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 
-const {reducer, actions} = createSlice({
-  name: 'geofences',
+const { reducer, actions } = createSlice({
+  name: "geofences",
   initialState: {
     items: [],
   },
@@ -18,8 +18,8 @@ const {reducer, actions} = createSlice({
     remove(state, action) {
       delete state.items[action.payload];
     },
-  }
+  },
 });
 
-export {actions as geofencesActions};
-export {reducer as geofencesReducer};
+export { actions as geofencesActions };
+export { reducer as geofencesReducer };

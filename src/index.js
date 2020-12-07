@@ -1,19 +1,20 @@
-import 'typeface-roboto'
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { HashRouter } from 'react-router-dom'
-import { Provider } from 'react-redux';
+import "typeface-roboto";
+import React from "react";
+import ReactDOM from "react-dom";
+import { HashRouter } from "react-router-dom";
+import { Provider } from "react-redux";
 
-import App from './App';
-import * as serviceWorker from './utils/serviceWorker';
-import store from './store';
+import App from "./App";
+import * as serviceWorker from "./utils/serviceWorker";
+import store from "./store";
 
-ReactDOM.render((
+ReactDOM.render(
   <Provider store={store}>
     <HashRouter>
       <App />
     </HashRouter>
-  </Provider>
-), document.getElementById('root'));
+  </Provider>,
+  document.getElementById("root")
+);
 
 serviceWorker.register();

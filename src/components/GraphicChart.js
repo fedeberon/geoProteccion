@@ -1,7 +1,6 @@
-import React, {useLayoutEffect, useRef, useState} from 'react';
+import React, { useLayoutEffect, useRef, useState } from "react";
 
 class GraphicChart extends React.Component {
-
   render() {
     const limit = 50000;
     let y = 100;
@@ -13,7 +12,7 @@ class GraphicChart extends React.Component {
       y += Math.round(Math.random() * 10 - 5);
       dataPoints.push({
         x: i,
-        y: y
+        y: y,
       });
     }
     dataSeries.dataPoints = dataPoints;
@@ -23,16 +22,14 @@ class GraphicChart extends React.Component {
       zoomEnabled: true,
       animationEnabled: true,
       title: {
-        text: "Velocidad"
+        text: "Velocidad",
       },
-      data: data  // random data
-    }
+      data: data, // random data
+    };
 
     return (
       <div>
-        <CanvasJSChart options = {options}
-                       onRef={ref => this.chart = ref}
-        />
+        <CanvasJSChart options={options} onRef={(ref) => (this.chart = ref)} />
       </div>
     );
   }
@@ -48,7 +45,6 @@ class GraphicChart extends React.Component {
 //   const [ dataPoints, setDataPoints ] = useState([]);
 //
 //   useLayoutEffect(() => {
-//     console.log("hola")
 //     let dp = [];
 //     for (let i = 0; i < limit; i += 1) {
 //       y += Math.round(Math.random() * 10 - 5);
@@ -80,4 +76,4 @@ class GraphicChart extends React.Component {
 //   );
 // }
 
-export default GraphicChart
+export default GraphicChart;

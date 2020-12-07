@@ -1,78 +1,95 @@
-import t from '../common/localization';
-import circleToPolygon from 'circle-to-polygon';
-import { getCourse } from './functions';
+import t from "../common/localization";
+import circleToPolygon from "circle-to-polygon";
+import { getCourse } from "./functions";
 
 const typeRegEx = /(\w*)[ ]?[(]/;
 const circlePositionRegEx = /[(](.*) (.*)[,]/;
 const radiusRegEx = /[,][ ](.*)[)]/;
 const polygonRegEx = /[(]{2}(.*)[)]{2}/;
 const polylineRegEx = /[(]{1}(.*)[)]{1}/;
-const typesArray = ['circle', 'polygon', 'linestring'];
+const typesArray = ["circle", "polygon", "linestring"];
 
 const getGeozoneArea = (type, coordinates, radius) => {
-  let areaString = '';
-  let coordinatesString = '';
+  let areaString = "";
+  let coordinatesString = "";
 
-  if (type === '0') {
+  if (type === "0") {
     coordinatesString = `(${coordinates[1]} ${coordinates[0]}, ${radius})`;
-    areaString = `${typesArray[parseInt(type)].toUpperCase()} ${coordinatesString}`;
+    areaString = `${typesArray[
+      parseInt(type)
+    ].toUpperCase()} ${coordinatesString}`;
   }
-  if (type === '1') {
-    coordinatesString = '(('
-    coordinates[0].map((element, index) => { coordinatesString += `${index !== 0 ? ' ' : ''}${element[1]} ${element[0]}${index !== coordinates[0].length - 1 ? ',' : ''}` });
-    coordinatesString += '))';
-    areaString = `${typesArray[parseInt(type)].toUpperCase()}${coordinatesString}`;
+  if (type === "1") {
+    coordinatesString = "((";
+    coordinates[0].map((element, index) => {
+      coordinatesString += `${index !== 0 ? " " : ""}${element[1]} ${
+        element[0]
+      }${index !== coordinates[0].length - 1 ? "," : ""}`;
+    });
+    coordinatesString += "))";
+    areaString = `${typesArray[
+      parseInt(type)
+    ].toUpperCase()}${coordinatesString}`;
   }
-  if (type === '2') {
-    coordinatesString = '('
-    coordinates.map((element, index) => { coordinatesString += `${index !== 0 ? ' ' : ''}${element[1]} ${element[0]}${index !== coordinates.length - 1 ? ',' : ''}` });
-    coordinatesString += ')';
-    areaString = `${typesArray[parseInt(type)].toUpperCase()} ${coordinatesString}`;
+  if (type === "2") {
+    coordinatesString = "(";
+    coordinates.map((element, index) => {
+      coordinatesString += `${index !== 0 ? " " : ""}${element[1]} ${
+        element[0]
+      }${index !== coordinates.length - 1 ? "," : ""}`;
+    });
+    coordinatesString += ")";
+    areaString = `${typesArray[
+      parseInt(type)
+    ].toUpperCase()} ${coordinatesString}`;
   }
 
   return areaString;
-}
+};
 
 const calculatePolygonCenter = (coordinates) => {
-    let north = -90;
-    let west = -180;
-    let south = 90;
-    let east = 180;
+  let north = -90;
+  let west = -180;
+  let south = 90;
+  let east = 180;
 
-    coordinates.map((e) => {
-        let lng = parseFloat(e[0]);
-        let lat = parseFloat(e[1]);
+  coordinates.map((e) => {
+    let lng = parseFloat(e[0]);
+    let lat = parseFloat(e[1]);
 
-        west = lng > west ? lng : west;
-        east = lng < east ? lng : east;
-        north = lat > north ? lat : north;
-        south = lat < south ? lat : south;
-    });
+    west = lng > west ? lng : west;
+    east = lng < east ? lng : east;
+    north = lat > north ? lat : north;
+    south = lat < south ? lat : south;
+  });
 
-    return {
-        lng: (west + east) / 2,
-        lat: (north + south) /2
-    }
-}
+  return {
+    lng: (west + east) / 2,
+    lat: (north + south) / 2,
+  };
+};
 
 const calculateFurthestPoints = (coordinates) => {
-    let north = -90;
-    let west = -180;
-    let south = 90;
-    let east = 180;
+  let north = -90;
+  let west = -180;
+  let south = 90;
+  let east = 180;
 
-    coordinates.map((e) => {
-        let lng = parseFloat(e[0]);
-        let lat = parseFloat(e[1]);
+  coordinates.map((e) => {
+    let lng = parseFloat(e[0]);
+    let lat = parseFloat(e[1]);
 
-        west = lng > west ? lng : west;
-        east = lng < east ? lng : east;
-        north = lat > north ? lat : north;
-        south = lat < south ? lat : south;
-    });
+    west = lng > west ? lng : west;
+    east = lng < east ? lng : east;
+    north = lat > north ? lat : north;
+    south = lat < south ? lat : south;
+  });
 
-    return [ [west, south], [east, north] ];
-}
+  return [
+    [west, south],
+    [east, north],
+  ];
+};
 
 const createFeature = (devices, position, isViewportDesktop) => {
     const device = devices[position.deviceId] || null;
@@ -303,149 +320,166 @@ const createFeature = (devices, position, isViewportDesktop) => {
 };
 
 const createMarkers = (positions) => {
-    return {
-        type: 'FeatureCollection',
-        features: positions.map(position => ({
-            type: 'Feature',
-            geometry: {
-                type: 'Point',
-                coordinates: [position.attributes.lng, position.attributes.lat]
-            },
-            properties: {...position.properties}
-        })),
-    }
+  return {
+    type: "FeatureCollection",
+    features: positions.map((position) => ({
+      type: "Feature",
+      geometry: {
+        type: "Point",
+        coordinates: [position.attributes.lng, position.attributes.lat],
+      },
+      properties: { ...position.properties },
+    })),
+  };
 };
 
 const createCircles = (geozones) => {
-    return {
-        type: 'FeatureCollection',
-        features: geozones.map(geozone => ({
-            type: 'Feature',
-            geometry: {
-                type: 'Polygon',
-                coordinates: circleToPolygon([geozone.attributes.lng, geozone.attributes.lat], geozone.attributes.radius).coordinates
-            },
-            properties: { ...geozone.properties },
-        })),
-    }
+  return {
+    type: "FeatureCollection",
+    features: geozones.map((geozone) => ({
+      type: "Feature",
+      geometry: {
+        type: "Polygon",
+        coordinates: circleToPolygon(
+          [geozone.attributes.lng, geozone.attributes.lat],
+          geozone.attributes.radius
+        ).coordinates,
+      },
+      properties: { ...geozone.properties },
+    })),
+  };
 };
 
 const createLabels = (geozones) => {
-    return {
-        type: 'FeatureCollection',
-        features: geozones.map(geozone => ({
-            type: 'Feature',
-            geometry: {
-                type: 'Point',
-                coordinates: [geozone.attributes.lng, geozone.attributes.lat]
-            },
-            properties: { ...geozone.properties },
-        })),
-    }
+  return {
+    type: "FeatureCollection",
+    features: geozones.map((geozone) => ({
+      type: "Feature",
+      geometry: {
+        type: "Point",
+        coordinates: [geozone.attributes.lng, geozone.attributes.lat],
+      },
+      properties: { ...geozone.properties },
+    })),
+  };
 };
 
 const createPolygon = (geozone) => {
-    return {
-        type: 'Feature',
-        geometry: {
-            type: 'Polygon',
-            coordinates: [ geozone.attributes.coordinates ]
-        },
-        properties: { ...geozone.properties },
-    }
+  return {
+    type: "Feature",
+    geometry: {
+      type: "Polygon",
+      coordinates: [geozone.attributes.coordinates],
+    },
+    properties: { ...geozone.properties },
+  };
 };
 
 const createPolyline = (geozone) => {
-    return {
-        type: 'Feature',
-        geometry: {
-            type: 'LineString',
-            coordinates: geozone.attributes.coordinates
-        },
-        properties: { ...geozone.properties },
-    }
+  return {
+    type: "Feature",
+    geometry: {
+      type: "LineString",
+      coordinates: geozone.attributes.coordinates,
+    },
+    properties: { ...geozone.properties },
+  };
 };
 
 const createCircle = (geozone) => {
-    return {
-        type: 'Feature',
-        geometry: {
-            type: 'Polygon',
-            coordinates: circleToPolygon([geozone.attributes.lng, geozone.attributes.lat], geozone.attributes.radius).coordinates
-        },
-        properties: { ...geozone.properties },
-    }
-}
+  return {
+    type: "Feature",
+    geometry: {
+      type: "Polygon",
+      coordinates: circleToPolygon(
+        [geozone.attributes.lng, geozone.attributes.lat],
+        geozone.attributes.radius
+      ).coordinates,
+    },
+    properties: { ...geozone.properties },
+  };
+};
 
 const getDistanceBtwnCoords = (first, second) => {
-    const R = 6371e3; // metres
-    const φ1 = first.lat * Math.PI/180; // φ, λ in radians
-    const φ2 = second.lat  * Math.PI/180;
-    const Δφ = (second.lat - first.lat) * Math.PI/180;
-    const Δλ = (second.lng - first.lng) * Math.PI/180;
+  const R = 6371e3; // metres
+  const φ1 = (first.lat * Math.PI) / 180; // φ, λ in radians
+  const φ2 = (second.lat * Math.PI) / 180;
+  const Δφ = ((second.lat - first.lat) * Math.PI) / 180;
+  const Δλ = ((second.lng - first.lng) * Math.PI) / 180;
 
-    const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
-                Math.cos(φ1) * Math.cos(φ2) *
-                Math.sin(Δλ/2) * Math.sin(Δλ/2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  const a =
+    Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+    Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
-    return R * c; // in metres
-}
+  return R * c; // in metres
+};
 
 const getGeozoneType = (area) => {
-    return area.match(typeRegEx)[1];
-}
+  return area.match(typeRegEx)[1];
+};
 
 const getCircleAttributes = (device, attributes) => {
-    let attributesCopy = {...attributes};
-    attributesCopy.lat = parseFloat(device.area.match(circlePositionRegEx)[1]);
-    attributesCopy.lng = parseFloat(device.area.match(circlePositionRegEx)[2]);
-    attributesCopy.radius = parseFloat(device.area.match(radiusRegEx)[1]);
-    attributesCopy.color = device.attributes.color ? device.attributes.color : getRandomHex();
-    return attributesCopy;
-}
+  let attributesCopy = { ...attributes };
+  attributesCopy.lat = parseFloat(device.area.match(circlePositionRegEx)[1]);
+  attributesCopy.lng = parseFloat(device.area.match(circlePositionRegEx)[2]);
+  attributesCopy.radius = parseFloat(device.area.match(radiusRegEx)[1]);
+  attributesCopy.color = device.attributes.color
+    ? device.attributes.color
+    : getRandomHex();
+  return attributesCopy;
+};
 
 const getPolygonAttributes = (device, attributes) => {
-    let attributesCopy = {...attributes};
-    const coordinates = device.area.match(polygonRegEx)[1].split(', ');
-    coordinates.map((device) => {
-        const latLng = device.split(' ');
-        attributesCopy.coordinates.push(latLng.reverse());
-    });
-    attributesCopy.color = device.attributes.color ? device.attributes.color : getRandomHex();
-    return attributesCopy;
-}
+  let attributesCopy = { ...attributes };
+  const coordinates = device.area.match(polygonRegEx)[1].split(", ");
+  coordinates.map((device) => {
+    const latLng = device.split(" ");
+    attributesCopy.coordinates.push(latLng.reverse());
+  });
+  attributesCopy.color = device.attributes.color
+    ? device.attributes.color
+    : getRandomHex();
+  return attributesCopy;
+};
 
 const getPolylineAttributes = (device, attributes) => {
-    let attributesCopy = {...attributes};
-    const polylineCoordinates = device.area.match(polylineRegEx)[1].split(', ');
-    polylineCoordinates.map((device) => {
-      const latLng = device.split(' ');
-      attributesCopy.coordinates.push(latLng.reverse());
-    });
-    attributesCopy.color = device.attributes.color ? device.attributes.color : getRandomHex();
-    return attributesCopy;
-}
+  let attributesCopy = { ...attributes };
+  const polylineCoordinates = device.area.match(polylineRegEx)[1].split(", ");
+  polylineCoordinates.map((device) => {
+    const latLng = device.split(" ");
+    attributesCopy.coordinates.push(latLng.reverse());
+  });
+  attributesCopy.color = device.attributes.color
+    ? device.attributes.color
+    : getRandomHex();
+  return attributesCopy;
+};
 
 const getRandomHex = () => {
-    return '#' + Math.floor(Math.random() * 2 ** 24).toString(16).padStart(6, "0");
-}
+  return (
+    "#" +
+    Math.floor(Math.random() * 2 ** 24)
+      .toString(16)
+      .padStart(6, "0")
+  );
+};
 
 export {
-    calculatePolygonCenter,
-    createFeature,
-    createMarkers,
-    createCircles,
-    createLabels,
-    createPolygon,
-    createPolyline,
-    createCircle,
-    getDistanceBtwnCoords,
-    getGeozoneType,
-    getCircleAttributes,
-    getPolygonAttributes,
-    getPolylineAttributes,
-    getGeozoneArea,
-    calculateFurthestPoints,
-    getRandomHex,
-}
+  calculatePolygonCenter,
+  createFeature,
+  createMarkers,
+  createCircles,
+  createLabels,
+  createPolygon,
+  createPolyline,
+  createCircle,
+  getDistanceBtwnCoords,
+  getGeozoneType,
+  getCircleAttributes,
+  getPolygonAttributes,
+  getPolylineAttributes,
+  getGeozoneArea,
+  calculateFurthestPoints,
+  getRandomHex,
+};
