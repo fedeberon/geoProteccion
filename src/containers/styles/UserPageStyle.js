@@ -11,6 +11,12 @@ const userPageStyle = makeStyles((theme) => ({
     margin: "13px 0px",
     // minWidth: '90%',
   },
+  closeButton: {
+    position: "absolute",
+    right: theme.spacing(1),
+    top: theme.spacing(1),
+    color: theme.palette.grey[500],
+  },
   rootTab: {
     flexGrow: 1,
     backgroundColor: "white",

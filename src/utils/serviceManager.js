@@ -239,6 +239,14 @@ const updateServer = (server) => {
     .then((response) => response.json());
 };
 
+const getCommands = () => {
+  return fetch(`api/commands`, { method: "GET" })
+    .catch(function (error) {
+      console.log("setCommands error: ", error);
+    })
+    .then((response) => response.json());
+};
+
 export {
   setSession,
   getDeviceByUserId,
@@ -265,4 +273,5 @@ export {
   getCalendarsByUserId,
   getStatistics,
   updateServer,
+  getCommands,
 };

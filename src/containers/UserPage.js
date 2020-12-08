@@ -34,6 +34,7 @@ import {DeleteTwoTone, Label} from "@material-ui/icons";
 import EditTwoToneIcon from "@material-ui/icons/EditTwoTone";
 import CloseIcon from "@material-ui/icons/Close";
 import IconButton from "@material-ui/core/IconButton";
+import SavedCommands from '../components/SavedCommands';
 
 const styles = (theme) => ({});
 
@@ -88,11 +89,11 @@ const UserPage = () => {
   const [ checked, setChecked ] = React.useState(true);
   const [ fromDateTime, setFromDateTime ] = useState("");
   const [ toDateTime, setToDateTime ] = useState("");
-  const [ radioValueCommand, setRadioValueCommand ] = useState(false);
   const [ openModalCommand, setOpenModalCommand ] = useState(false);
   const [ server, setServer ] = useState({});
   const [ statistics, setStatistics ] = useState([]);
   const [ computedAttributes, setComputedAttributes ] = useState([]);
+  const [ savedCommands, setSavedCommands ] = useState([]);
   const [ openModalComputedAttribute, setOpenModalComputedAttribute ] = useState(false);
   const [ objectComputedAttribute, setObjectComputedAttribute ] = useState({
     description: '',
@@ -106,8 +107,6 @@ const UserPage = () => {
 
   useEffect(()=>{
     setDate();
-    console.log(to);
-    console.log(from);
   },[fromDateTime,toDateTime])
 
   const setDate = () => {
@@ -156,7 +155,6 @@ const UserPage = () => {
 
   const handleCloseModalCommand = () => {
     setOpenModalCommand(false);
-    // setAvailableTypesByDeviceId([]);
   };
 
   const showMenuAdmin = () => {
@@ -164,16 +162,14 @@ const UserPage = () => {
   };
 
   const handleOpenCommandModal = () => {
-    setOpenModalCommand(!openModalCommand);
+    setOpenModalCommand(true);
   };
 
   const handleChangeType = (event) => {
     setCapsMap(event.target.value);
   };
 
-  const handleChangeRadioCommand = () => {
-    setRadioValueCommand(!radioValueCommand);
-  };
+
 
   const handleSaveServer = () => {
     const saveServer = async () => {
@@ -181,6 +177,10 @@ const UserPage = () => {
     };
     saveServer();
   };
+
+  const handleCloseModalCommands = () => {
+    setOpenModalCommand(false);
+  }
 
   useEffect(() => {
     let name = createData(t("sharedName"), user.name);
@@ -220,6 +220,11 @@ const UserPage = () => {
     });
   }, [storeServer]);
 
+  const getSavedCommands = async () => {
+    const response = await service.getCommands();
+    setSavedCommands(response);
+  }
+
   return (
     <div className={classes.root}>
       <div
@@ -252,7 +257,7 @@ const UserPage = () => {
           <Tab label={t('commandServer')} {...a11yProps(0)} />
           <Tab label={t('statisticsTitle')} {...a11yProps(1)} />
           <Tab onClick={showComputedAttributes} label={t('sharedComputedAttributes')} {...a11yProps(2)} />
-          <Tab label={t('sharedSavedCommands')} {...a11yProps(3)} />
+          <Tab onClick={getSavedCommands} label={t('sharedSavedCommands')} {...a11yProps(3)} />
         </Tabs>
 
         <TabPanel value={value} index={0} style={{ paddingBottom: "10%" }}>
@@ -582,7 +587,7 @@ const UserPage = () => {
 
         {/*ADMIN COMPUTED ATTRIBUTES*/}
         <TabPanel value={value} index={2}>
-          <div>
+          <div style={{padding: '20px 0px !important'}}>
             <form>
               <div className={classes.buttonGroup}>
                 <ButtonGroup
@@ -642,6 +647,8 @@ const UserPage = () => {
             </Table>
           </div>
         </TabPanel>
+
+         {/*ADMIN SAVED COMMANDS*/}
         <TabPanel value={value} index={3}>
           <div>
             <form>
@@ -671,18 +678,19 @@ const UserPage = () => {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell>Descripcion</TableCell>
-                  <TableCell>Tipo</TableCell>
-                  <TableCell>Enviar SMS</TableCell>
+                <TableCell>{t("sharedDescription")}</TableCell>
+                <TableCell>{t("sharedType")}</TableCell>
+                <TableCell>{t("commandSendSms")}</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {/*FUNCION DE MAPEO*/}
+               {savedCommands.map((object) => (
                 <TableRow key="key">
-                  <TableCell>1</TableCell>
-                  <TableCell>2</TableCell>
-                  <TableCell>3</TableCell>
+                  <TableCell>{object.description}</TableCell>
+                  <TableCell>{object.type}</TableCell>
+                  <TableCell>{t(`${object.textChannel}`)}</TableCell>
                 </TableRow>
+               ))}
               </TableBody>
             </Table>
           </div>
@@ -713,82 +721,7 @@ const UserPage = () => {
 
       {/*SEND A COMMAND*/}
       <div>
-        <Dialog
-          open={openModalCommand}
-          onClose={handleCloseModalCommand}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
-        >
-          <DialogTitle id="alert-dialog-title">
-            {"Comando Guardado"}
-          </DialogTitle>
-          <DialogContent>
-            <form>
-              <TextField
-                fullWidth
-                id="outlined-basic"
-                label="Descripcion"
-                variant="outlined"
-              />
-              <FormControl
-                variant="outlined"
-                fullWidth={true}
-                className={classes.formControl}
-              >
-                <InputLabel htmlFor="outlined-age-native-simple">
-                  {t("deviceCommand")}
-                </InputLabel>
-                <Select
-                  native
-                  fullWidth
-                  // value={key}
-                  // onChange={handleChange}
-                  label={t("deviceCommand")}
-                  name="name"
-                  type="text"
-                  variant="outlined"
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                >
-                  <option aria-label="None" value="" />
-                  <option value={10}>Ten</option>
-                  <option value={20}>Twenty</option>
-                  <option value={30}>Thirty</option>
-                </Select>
-              </FormControl>
-              <Typography>
-                Enviar SMS:
-                <Radio
-                  checked={radioValueCommand === true}
-                  onClick={handleChangeRadioCommand}
-                  color="primary"
-                  value={true}
-                  name="radio-button-demo"
-                  inputProps={{ "aria-label": "A" }}
-                />{" "}
-                Si
-                <Radio
-                  checked={radioValueCommand === false}
-                  onChange={handleChangeRadioCommand}
-                  color="primary"
-                  value={false}
-                  name="radio-button-demo"
-                  inputProps={{ "aria-label": "B" }}
-                />{" "}
-                No
-              </Typography>
-            </form>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleCloseModalCommand} color="primary">
-              Disagree
-            </Button>
-            <Button color="primary" autoFocus>
-              Agree
-            </Button>
-          </DialogActions>
-        </Dialog>
+        <SavedCommands open={openModalCommand} handleCloseModal={handleCloseModalCommands}/>
       </div>
 
       {/*MODAL ADD COMPUTEDATTRIBUTE*/}
