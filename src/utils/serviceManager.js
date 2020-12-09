@@ -151,12 +151,20 @@ const getGraphicData = (from, to, params) => {
     .then((response) => response.json());
 };
 
-const getMaintenanceByUserId = (id) => {
+const getMaintenance = (id) => {
+  if(id){
   return fetch(`api/maintenance?userId=${id}`, { method: "GET" })
     .catch(function (error) {
       console.log("setMaintenance error: ", error);
     })
     .then((response) => response.json());
+  } else {
+    return fetch(`api/maintenance`, { method: "GET" })
+    .catch(function (error) {
+      console.log("setMaintenance error: ", error);
+    })
+    .then((response) => response.json());
+  }
 };
 
 const getCurrentAddress = (lat = -32.882297, lng = -68.815419) => {
@@ -262,7 +270,7 @@ export {
   getSummaryReports,
   getGraphicData,
   setUser,
-  getMaintenanceByUserId,
+  getMaintenance,
   getCurrentAddress,
   getServer,
   getCommandTypes,

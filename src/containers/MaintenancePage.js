@@ -145,7 +145,7 @@ const MaintenancePage = () => {
   },[])
 
   const getMaintenance = async (userId) => {
-    const response = await service.getMaintenanceByUserId(userId);
+    const response = await service.getMaintenance(userId);
     setMaintenance(response);
   }
 

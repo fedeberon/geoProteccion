@@ -122,19 +122,24 @@ const DevicePage = () => {
   const variable = {
     geocerca: "sharedGeofences",
     notification: "sharedNotifications",
-    atrCalculados: "sharedComputeAttributes",
+    atrCalculados: "sharedComputedAttributes",
     comGuardados: "sharedSavedCommands",
     mantenimiento: "sharedMaintenance",
   };
 
-  const handleOpenFullDialog = (parametro) => {
+  const handleOpenFullDialog = (parametro, deviceId) => {
     setOpenFullDialog(true);
     setType(parametro);
+    if(deviceId){
+      setDeviceId(deviceId);
+    }
     handleCloseMenuMore();
+
   };
 
   const handleCloseFullDialog = () => {
     setOpenFullDialog(false);
+    setDeviceId("");
   };
 
   const handleClickCommand = (idDevice) => {
@@ -353,21 +358,19 @@ const DevicePage = () => {
               <MenuItem onClick={() => handleClickCommand(device.id)}>
                 {t("deviceCommand")}
               </MenuItem>
-              <MenuItem onClick={() => handleOpenFullDialog(variable.geocerca)}>
+              <MenuItem onClick={() => handleOpenFullDialog(variable.geocerca, device.id)}>
                 {t("sharedGeofences")}
               </MenuItem>
-              <MenuItem
-                onClick={() => handleOpenFullDialog(variable.notification)}
-              >
+              <MenuItem onClick={() => handleOpenFullDialog(variable.notification, device.id)}>
                 {t("sharedNotifications")}
               </MenuItem>
-              <MenuItem onClick={handleCloseMenuMore}>
+              <MenuItem onClick={() => handleOpenFullDialog(variable.atrCalculados, device.id)}>
                 {t("sharedComputedAttributes")}
               </MenuItem>
-              <MenuItem onClick={handleCloseMenuMore}>
+              <MenuItem onClick={() => handleOpenFullDialog(variable.comGuardados, device.id)}>
                 {t("sharedSavedCommands")}
               </MenuItem>
-              <MenuItem onClick={handleCloseMenuMore}>
+              <MenuItem onClick={() => handleOpenFullDialog(variable.mantenimiento, device.id)}>
                 {t("sharedMaintenance")}
               </MenuItem>
               <MenuItem onClick={handleCloseMenuMore}>
@@ -867,7 +870,7 @@ const DevicePage = () => {
                       name="radio-button-demo"
                       inputProps={{ "aria-label": "A" }}
                     />
-                    t('reportYes')}
+                    {t('reportYes')}
                     <Radio
                       checked={radioValue === false}
                       onChange={handleChangeRadio}

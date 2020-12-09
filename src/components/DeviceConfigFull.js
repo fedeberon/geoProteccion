@@ -145,81 +145,47 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-const DeviceConfigFull = ({ open, close, type }) => {
+const DeviceConfigFull = ({ open, close, type, deviceId }) => {
   const classes = useStyles();
   const userId = useSelector((state) => state.session.user.id);
   const [openFull, setOpenFull] = useState(false);
   const [order, setOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState("calories");
   const [selected, setSelected] = useState([]);
-  const [tableNumber, setTableNumber] = useState(0);
-  const [geozones, setGeozones] = useState([]);
-  const [notifications, setNotifications] = useState([]);
-  const [computedAttributes, setComputedAttributes] = useState([]);
-  const [savedCommands, setSavedCommands] = useState([]);
-  const [maintenance, setMaintenance] = useState([]);
   const [arrayToMap, setArrayToMap] = useState([]);
 
   useEffect(() => {
-    const getGeozones = async (userId) => {
-      const response = await service.getGeozonesByUserId(userId);
-      setGeozones(response);
-    };
-    getGeozones(userId);
-  }, [tableNumber === 1]);
-
-  useEffect(() => {
-    const getNotifications = async (userId) => {
-      const response = await service.getNotificationsByUserId(userId);
-      setNotifications(response);
-    };
-    getNotifications(userId);
-  }, [tableNumber === 2]);
-
-  // useEffect(()=> {
-  //   const getComputedAttributes = async (deviceId) => {
-  //     const response = await service.getComputedAttributesById(deviceId);
-  //     setComputedAttributes(response)
-  //   }
-  //   getComputedAttributes(deviceId);
-  // },[tableNumber===3])
-
-  // useEffect(()=> {
-  //   const getCommands = async (deviceId) => {
-  //     const response = await service.getCommandsByDeviceId(deviceId);
-  //     setSavedCommands(response);
-  //   }
-  //   getCommands(deviceId);
-  // },[tableNumber===4])
-
-  // useEffect(()=> {
-  //   const getMaintenance = () => {
-  //     fetch (`api/maintenance`, {method: 'GET', headers: {'Accept': 'application/json'} })
-  //     .then(response => {
-  //       if(response.ok){
-  //         setMaintenance(response);
-  //       }
-  //     })
-  //   }
-  //   getMaintenance();
-  // },[tableNumber===5])
-
-  useEffect(() => {
     if (type === "sharedGeofences") {
-      setTableNumber(1);
-      setArrayToMap(geozones);
+      const getGeozones = async (userId) => {
+        const response = await service.getGeozonesByUserId(userId);
+        setArrayToMap(response);
+      };
+      getGeozones(userId);
     } else if (type === "sharedNotifications") {
-      setTableNumber(2);
-      setArrayToMap(notifications);
+      const getNotifications = async (userId) => {
+        const response = await service.getNotificationsByUserId(userId);
+        setArrayToMap(response);
+      };
+      getNotifications(userId);
     } else if (type === "sharedComputedAttributes") {
-      setTableNumber(3);
-      // setArrayToMap(computedAttributes);
+      const getComputedAttributes = async () => {
+        const response = await service.getComputedAttributes();
+        setArrayToMap(response);
+      }
+      getComputedAttributes();
     } else if (type === "sharedSavedCommands") {
-      setTableNumber(4);
-      // setArrayToMap(savedCommands);
+      const getCommands = async () => {
+        const response = await service.getCommands();
+        setArrayToMap(response);
+      }
+      getCommands();
+
     } else if (type === "sharedMaintenance") {
-      setTableNumber(5);
-      // setArrayToMap(maintenance);
+      const getMaintenances = async () => {
+        const response = await service.getMaintenance();
+        setArrayToMap(response);
+      }
+      getMaintenances();
     }
   }, [type]);
 
@@ -496,7 +462,7 @@ const DeviceConfigFull = ({ open, close, type }) => {
               {headCellssharedMaintenance.map((headCell) => (
                 <TableCell
                   key={headCell.id}
-                  align={headCell.numeric ? "right" : "left"}
+                  align={headCell.numeric ? "left" : "left"}
                   padding={headCell.disablePadding ? "none" : "default"}
                   sortDirection={orderBy === headCell.id ? order : false}
                 >
@@ -600,6 +566,138 @@ const DeviceConfigFull = ({ open, close, type }) => {
                       {t(`${Boolean(row.always)}`)}
                     </TableCell>
                     <TableCell align="inherit">{row.notificators}</TableCell>
+                  </TableRow>
+                );
+              }
+            )}
+          </TableBody>
+        );
+        case "sharedComputedAttributes":
+        return (
+          <TableBody>
+            {stableSort(arrayToMap, getComparator(order, orderBy)).map(
+              (row, index) => {
+                const isItemSelected = isSelected(row.description);
+                const labelId = `enhanced-table-checkbox-${index}`;
+
+                return (
+                  <TableRow
+                    hover
+                    onClick={(event) => handleClick(event, row.description)}
+                    role="checkbox"
+                    aria-checked={isItemSelected}
+                    tabIndex={-1}
+                    key={row.description}
+                    selected={isItemSelected}
+                  >
+                    <TableCell padding="checkbox">
+                      <Checkbox
+                        checked={isItemSelected}
+                        inputProps={{ "aria-labelledby": labelId }}
+                      />
+                    </TableCell>
+                    <TableCell
+                      component="th"
+                      id={labelId}
+                      scope="row"
+                      padding="none"
+                    >
+                      {row.description}
+                    </TableCell>
+                    <TableCell align="inherit">
+                      {row.attribute}
+                    </TableCell>
+                  </TableRow>
+                );
+              }
+            )}
+          </TableBody>
+        );
+        case "sharedSavedCommands":
+        return (
+          <TableBody>
+            {stableSort(arrayToMap, getComparator(order, orderBy)).map(
+              (row, index) => {
+                const isItemSelected = isSelected(row.id);
+                const labelId = `enhanced-table-checkbox-${index}`;
+
+                return (
+                  <TableRow
+                    hover
+                    onClick={(event) => handleClick(event, row.id)}
+                    role="checkbox"
+                    aria-checked={isItemSelected}
+                    tabIndex={-1}
+                    key={row.id}
+                    selected={isItemSelected}
+                  >
+                    <TableCell padding="checkbox">
+                      <Checkbox
+                        checked={isItemSelected}
+                        inputProps={{ "aria-labelledby": labelId }}
+                      />
+                    </TableCell>
+                    <TableCell
+                      component="th"
+                      id={labelId}
+                      scope="row"
+                      padding="none"
+                    >
+                      {row.description}
+                    </TableCell>
+                    <TableCell align="inherit">
+                      {row.type}
+                    </TableCell>
+                    <TableCell align="inherit">
+                      {t(`${Boolean(row.textChannel)}`)}
+                    </TableCell>
+                  </TableRow>
+                );
+              }
+            )}
+          </TableBody>
+        );
+        case "sharedMaintenance":
+        return (
+          <TableBody>
+            {stableSort(arrayToMap, getComparator(order, orderBy)).map(
+              (row, index) => {
+                const isItemSelected = isSelected(row.id);
+                const labelId = `enhanced-table-checkbox-${index}`;
+
+                return (
+                  <TableRow
+                    hover
+                    onClick={(event) => handleClick(event, row.id)}
+                    role="checkbox"
+                    aria-checked={isItemSelected}
+                    tabIndex={-1}
+                    key={row.id}
+                    selected={isItemSelected}
+                  >
+                    <TableCell padding="checkbox">
+                      <Checkbox
+                        checked={isItemSelected}
+                        inputProps={{ "aria-labelledby": labelId }}
+                      />
+                    </TableCell>
+                    <TableCell
+                      component="th"
+                      id={labelId}
+                      scope="row"
+                      padding="none"
+                    >
+                      {row.name}
+                    </TableCell>
+                    <TableCell align="inherit">
+                      {row.type}
+                    </TableCell>
+                    <TableCell align="inherit">
+                      {row.start}
+                    </TableCell>
+                    <TableCell align="inherit">
+                      {row.period}
+                    </TableCell>
                   </TableRow>
                 );
               }
