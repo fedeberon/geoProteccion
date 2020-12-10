@@ -5,6 +5,9 @@ const userPageStyle = makeStyles((theme) => ({
     width: "100%",
     height: "100%",    
     overflowY: "auto",
+    [theme.breakpoints.up("md")]: {
+     paddingTop: "4%",
+    },
   },
   formControl: {
     margin: "13px 0px",
