@@ -35,6 +35,7 @@ import EditTwoToneIcon from "@material-ui/icons/EditTwoTone";
 import CloseIcon from "@material-ui/icons/Close";
 import IconButton from "@material-ui/core/IconButton";
 import SavedCommands from '../components/SavedCommands';
+import UserData from '../components/UserData';
 
 const styles = (theme) => ({});
 
@@ -228,12 +229,12 @@ const UserPage = () => {
   return (
     <div className={classes.root}>
       <div
-        className="title-section"
+        className={classes.subtitles}
         style={{ justifyContent: "space-between", display: "flex" }}
       >
-        <h2>Información de Usuario</h2>
+       <h2>{t("settingsUser")}</h2>
         <Typography>
-          {user.administrator && (
+          {/*{user.administrator && (*/}
             <Button
               onClick={() => showMenuAdmin()}
               button
@@ -241,7 +242,7 @@ const UserPage = () => {
             >
               Administrador
             </Button>
-          )}
+          {/*)}*/}
         </Typography>
       </div>
       <div
@@ -261,247 +262,249 @@ const UserPage = () => {
         </Tabs>
 
         <TabPanel value={value} index={0} style={{ paddingBottom: "10%" }}>
-          <div className={classes.subtitles}>
-            <h2>Preferencias</h2>
-          </div>
-          <div className={classes.buttonGroup}>
-            <ButtonGroup
-              variant="text"
-              color="default"
-              aria-label="text primary button group"
-            >
-              <Button>Atributos</Button>
-              <Button>
-                <i className="fas fa-map-marker-alt" />
-                &nbsp;Obtener estado del mapa
-              </Button>
-              <Button onClick={() => handleSaveServer()}>Save</Button>
-            </ButtonGroup>
-          </div>
-          <form>
-            <Table style={{ display: "table-cell" }}>
-              <TableBody>
-                <TableRow>
-                  <TableCell>Capa de Mapa:</TableCell>
-                  <TableCell>
-                    <FormControl
-                      variant="outlined"
-                      className={classes.formControlType}
-                    >
-                      <Select
-                        style={{ width: "229px" }}
-                        native
-                        value="custom"
-                        onChange={handleChangeType}
-                      >
-                        <option aria-label="None" value="" />
-                        {/*{typesValues.map((types, index) => (*/}
-                        <option key={1} value="custom">
-                          CUSTOM(X,Y,Z)
-                        </option>
-                      </Select>
-                    </FormControl>
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>{t("mapCustomLabel")}:</TableCell>
-                  <TableCell>
-                    <TextField
-                      id="outlined-basic"
-                      label={t("mapCustomLabel")}
-                      value={server.mapUrl}
-                      onChange={(e) =>
-                        setServer({ ...server, mapUrl: e.target.value })
-                      }
-                      variant="outlined"
-                    />
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>{t("positionLatitude")}:</TableCell>
-                  <TableCell>
-                    <TextField
-                      id="outlined-number"
-                      label="Number"
-                      value={server.latitude}
-                      onChange={(e) =>
-                        setServer({ ...server, latitude: e.target.value })
-                      }
-                      type="number"
-                      InputLabelProps={{
-                        shrink: true,
-                      }}
-                      variant="outlined"
-                    />
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>{t("positionLongitude")}:</TableCell>
-                  <TableCell>
-                    <TextField
-                      id="outlined-number"
-                      label="Number"
-                      value={server.longitude}
-                      onChange={(e) =>
-                        setServer({ ...server, longitude: e.target.value })
-                      }
-                      type="number"
-                      InputLabelProps={{
-                        shrink: true,
-                      }}
-                      variant="outlined"
-                    />
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>{t("serverZoom")}:</TableCell>
-                  <TableCell>
-                    <TextField
-                      id="outlined-number"
-                      label="Number"
-                      value={server.zoom}
-                      onChange={(e) =>
-                        setServer({ ...server, zoom: e.target.value })
-                      }
-                      type="number"
-                      InputLabelProps={{
-                        shrink: true,
-                      }}
-                      variant="outlined"
-                    />
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>{t("settingsTwelveHourFormat")}:</TableCell>
-                  <TableCell>
-                    <Checkbox
-                      checked={server.twelveHourFormat}
-                      onChange={() =>
-                        setServer({
-                          ...server,
-                          twelveHourFormat: !server.twelveHourFormat,
-                        })
-                      }
-                      color="primary"
-                      inputProps={{ "aria-label": "secondary checkbox" }}
-                    />
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>{t("serverForceSettings")}:</TableCell>
-                  <TableCell>
-                    <Checkbox
-                      checked={server.forceSettings}
-                      onChange={() =>
-                        setServer({
-                          ...server,
-                          forceSettings: !server.forceSettings,
-                        })
-                      }
-                      color="primary"
-                      inputProps={{ "aria-label": "secondary checkbox" }}
-                    />
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>Formato de coordenadas:</TableCell>
-                  <TableCell>
-                    <FormControl
-                      style={{ width: "229px" }}
-                      variant="outlined"
-                      className={classes.formControlType}
-                    >
-                      <Select
-                        native
-                        value={server.coordinateFormat}
-                        onChange={(e) =>
-                          setServer({
-                            ...server,
-                            coordinateFormat: e.target.value,
-                          })
-                        }
-                      >
-                        {/*{typesValues.map((types, index) => (*/}
-                        <option key={"dd"} value="dd">
-                          {t("sharedDecimalDegrees")}
-                        </option>
-                        <option key={"ddm"} value="ddm">
-                          {t("sharedDegreesDecimalMinutes")}
-                        </option>
-                        <option key={"dms"} value="dms">
-                          {t("sharedDegreesMinutesSeconds")}
-                        </option>
-                      </Select>
-                    </FormControl>
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>{t("mapPoiLayer")}:</TableCell>
-                  <TableCell>
-                    <TextField
-                      id="outlined-basic"
-                      label={t("mapPoiLayer")}
-                      variant="outlined"
-                    />
-                  </TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
-          </form>
-          <div className={classes.subtitles}>
-            <h2>Permisos</h2>
-          </div>
-          <div>
-            <form>
-              <TableBody>
-                <TableRow>
-                  <TableCell>Registro</TableCell>
-                  <TableCell>
-                    <Checkbox
-                      checked={checked}
-                      onChange={handleChangeCheckBox}
-                      color="primary"
-                      inputProps={{ "aria-label": "secondary checkbox" }}
-                    />
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>Sólo lectura:</TableCell>
-                  <TableCell>
-                    <Checkbox
-                      checked={checked}
-                      onChange={handleChangeCheckBox}
-                      color="primary"
-                      inputProps={{ "aria-label": "secondary checkbox" }}
-                    />
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>Dispositivo de sólo lectura:</TableCell>
-                  <TableCell>
-                    <Checkbox
-                      checked={checked}
-                      onChange={handleChangeCheckBox}
-                      color="primary"
-                      inputProps={{ "aria-label": "secondary checkbox" }}
-                    />
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>Limitar Comandos:</TableCell>
-                  <TableCell>
-                    <Checkbox
-                      checked={checked}
-                      onChange={handleChangeCheckBox}
-                      color="primary"
-                      inputProps={{ "aria-label": "secondary checkbox" }}
-                    />
-                  </TableCell>
-                </TableRow>
-              </TableBody>
-            </form>
-          </div>
-        </TabPanel>
+           <h2 className={classes.subtitles}>{t("settingsTitle")}</h2>
+            <div className={classes.buttonGroup}>
+              <ButtonGroup
+                variant="text"
+                color="default"
+                aria-label="text primary button group"
+              >
+                <Button>Atributos</Button>
+                <Button>
+                  <i className="fas fa-map-marker-alt" />
+                  &nbsp;Obtener estado del mapa
+                </Button>
+                <Button onClick={() => handleSaveServer()}>Save</Button>
+              </ButtonGroup>
+            </div>
+            <div>
+              <form>
+                <Table style={{ display: "table-cell" }}>
+                  <TableBody>
+                    <TableRow>
+                      <TableCell>Capa de Mapa:</TableCell>
+                      <TableCell>
+                        <FormControl
+                          variant="outlined"
+                          className={classes.formControlType}
+                        >
+                          <Select
+                            style={{ width: "229px" }}
+                            native
+                            value="custom"
+                            onChange={handleChangeType}
+                          >
+                            <option aria-label="None" value="" />
+                            {/*{typesValues.map((types, index) => (*/}
+                            <option key={1} value="custom">
+                              CUSTOM(X,Y,Z)
+                            </option>
+                          </Select>
+                        </FormControl>
+                      </TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>{t("mapCustomLabel")}:</TableCell>
+                      <TableCell>
+                        <TextField
+                          id="outlined-basic"
+                          label={t("mapCustomLabel")}
+                          value={server.mapUrl}
+                          onChange={(e) =>
+                            setServer({ ...server, mapUrl: e.target.value })
+                          }
+                          variant="outlined"
+                        />
+                      </TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>{t("positionLatitude")}:</TableCell>
+                      <TableCell>
+                        <TextField
+                          id="outlined-number"
+                          label="Number"
+                          value={server.latitude}
+                          onChange={(e) =>
+                            setServer({ ...server, latitude: e.target.value })
+                          }
+                          type="number"
+                          InputLabelProps={{
+                            shrink: true,
+                          }}
+                          variant="outlined"
+                        />
+                      </TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>{t("positionLongitude")}:</TableCell>
+                      <TableCell>
+                        <TextField
+                          id="outlined-number"
+                          label="Number"
+                          value={server.longitude}
+                          onChange={(e) =>
+                            setServer({ ...server, longitude: e.target.value })
+                          }
+                          type="number"
+                          InputLabelProps={{
+                            shrink: true,
+                          }}
+                          variant="outlined"
+                        />
+                      </TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>{t("serverZoom")}:</TableCell>
+                      <TableCell>
+                        <TextField
+                          id="outlined-number"
+                          label="Number"
+                          value={server.zoom}
+                          onChange={(e) =>
+                            setServer({ ...server, zoom: e.target.value })
+                          }
+                          type="number"
+                          InputLabelProps={{
+                            shrink: true,
+                          }}
+                          variant="outlined"
+                        />
+                      </TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>{t("settingsTwelveHourFormat")}:</TableCell>
+                      <TableCell>
+                        <Checkbox
+                          checked={server.twelveHourFormat}
+                          onChange={() =>
+                            setServer({
+                              ...server,
+                              twelveHourFormat: !server.twelveHourFormat,
+                            })
+                          }
+                          color="primary"
+                          inputProps={{ "aria-label": "secondary checkbox" }}
+                        />
+                      </TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>{t("serverForceSettings")}:</TableCell>
+                      <TableCell>
+                        <Checkbox
+                          checked={server.forceSettings}
+                          onChange={() =>
+                            setServer({
+                              ...server,
+                              forceSettings: !server.forceSettings,
+                            })
+                          }
+                          color="primary"
+                          inputProps={{ "aria-label": "secondary checkbox" }}
+                        />
+                      </TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>Formato de coordenadas:</TableCell>
+                      <TableCell>
+                        <FormControl
+                          style={{ width: "229px" }}
+                          variant="outlined"
+                          className={classes.formControlType}
+                        >
+                          <Select
+                            native
+                            value={server.coordinateFormat}
+                            onChange={(e) =>
+                              setServer({
+                                ...server,
+                                coordinateFormat: e.target.value,
+                              })
+                            }
+                          >
+                            {/*{typesValues.map((types, index) => (*/}
+                            <option key={"dd"} value="dd">
+                              {t("sharedDecimalDegrees")}
+                            </option>
+                            <option key={"ddm"} value="ddm">
+                              {t("sharedDegreesDecimalMinutes")}
+                            </option>
+                            <option key={"dms"} value="dms">
+                              {t("sharedDegreesMinutesSeconds")}
+                            </option>
+                          </Select>
+                        </FormControl>
+                      </TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>{t("mapPoiLayer")}:</TableCell>
+                      <TableCell>
+                        <TextField
+                          id="outlined-basic"
+                          label={t("mapPoiLayer")}
+                          variant="outlined"
+                        />
+                      </TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </form>
+            </div>
+            <body>
+              <h2 className={classes.subtitles}>{t("sharedPermissions")}</h2>
+            </body>
+            <div>
+              <form>
+                <Table>
+                  <TableBody>
+                    <TableRow>
+                      <TableCell>Registro</TableCell>
+                      <TableCell>
+                        <Checkbox
+                          checked={checked}
+                          onChange={handleChangeCheckBox}
+                          color="primary"
+                          inputProps={{ "aria-label": "secondary checkbox" }}
+                        />
+                      </TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>Sólo lectura:</TableCell>
+                      <TableCell>
+                        <Checkbox
+                          checked={checked}
+                          onChange={handleChangeCheckBox}
+                          color="primary"
+                          inputProps={{ "aria-label": "secondary checkbox" }}
+                        />
+                      </TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>Dispositivo de sólo lectura:</TableCell>
+                      <TableCell>
+                        <Checkbox
+                          checked={checked}
+                          onChange={handleChangeCheckBox}
+                          color="primary"
+                          inputProps={{ "aria-label": "secondary checkbox" }}
+                        />
+                      </TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>Limitar Comandos:</TableCell>
+                      <TableCell>
+                        <Checkbox
+                          checked={checked}
+                          onChange={handleChangeCheckBox}
+                          color="primary"
+                          inputProps={{ "aria-label": "secondary checkbox" }}
+                        />
+                      </TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </form>
+            </div>
+          </TabPanel>
 
 
         {/*ADMIN STATISTICS*/}
@@ -696,11 +699,14 @@ const UserPage = () => {
           </div>
         </TabPanel>
       </div>
+
+      {/*USER DATA*/}
       <div
         className={classes.UserPageSize}
         style={{ display: `${showAdministration ? "none" : "block"}` }}
       >
-        <TableContainer component={Paper}>
+        <UserData/>
+        {/* <TableContainer component={Paper}>
           <Table className={classes.table} aria-label="simple table">
             <TableHead>
               <TableRow></TableRow>
@@ -716,7 +722,7 @@ const UserPage = () => {
               ))}
             </TableBody>
           </Table>
-        </TableContainer>
+        </TableContainer> */}
       </div>
 
       {/*SEND A COMMAND*/}

@@ -75,6 +75,11 @@ const DevicePage = () => {
   const [availableTypesByDeviceId, setAvailableTypesByDeviceId] = useState([]);
   const [openFullDialog, setOpenFullDialog] = useState(false);
   const [type, setType] = useState("");
+  const [commandToSend, setCommandToSend] = useState("");
+  const [commandData, setCommandData] = useState("");
+  const [openModalAcumulators, setOpenModalAcumulators] = useState(false);
+  const [totalDistance, setTotalDistance] = useState(0);
+  const [positionHours, setPositionHours] = useState(0);
   const [newDevice, setNewDevice] = useState({
     id: null,
     name: "",
@@ -134,24 +139,11 @@ const DevicePage = () => {
       setDeviceId(deviceId);
     }
     handleCloseMenuMore();
-
   };
 
   const handleCloseFullDialog = () => {
     setOpenFullDialog(false);
     setDeviceId("");
-  };
-
-  const handleClickCommand = (idDevice) => {
-    setOpenModalCommand(!openModalCommand);
-    setDeviceId(idDevice);
-    getCommandTypes(idDevice);
-    handleCloseMenuMore();
-  };
-
-  const handleCloseModalCommand = () => {
-    setOpenModalCommand(false);
-    setAvailableTypesByDeviceId([]);
   };
 
   const showExtraData = () => {
@@ -194,6 +186,10 @@ const DevicePage = () => {
     setOpenedMenu(null);
   };
 
+  const handleChangeCommandToSend = (event) => {
+    setCommandToSend(event.target.value)
+  }
+
   const [collapsedIndex, setCollapsedIndex] = useState(-1);
 
   const handleExpandClick = (index) => {
@@ -212,11 +208,70 @@ const DevicePage = () => {
     setOpenG(!openG);
   };
 
+  const handleOpenAcumulators = (id) => {
+    setOpenModalAcumulators(!openModalAcumulators);
+    setDeviceId(id);
+    setTotalDistance(((positions[id].attributes.totalDistance)/1000).toFixed(5));
+    setPositionHours((positions[id].attributes.hours)/3600000);
+    handleCloseMenuMore();
+  }
+
+  const handleCloseAcumulators = () => {
+    setOpenModalAcumulators(!openModalAcumulators);
+    setDeviceId('');
+  }
+
+  const handleChangeTotalDistance = (event) => {
+    setTotalDistance(event.target.value);
+  }
+
+  //Send Commands Functions (4)
+  const handleChangeCommandData = (event) => {
+    setCommandData(event.target.value)
+  }
+
+  const handleClickCommand = (deviceId) => {
+    setOpenModalCommand(!openModalCommand);
+    setDeviceId(deviceId);
+    getCommandTypes(deviceId);
+    handleCloseMenuMore();
+  };
+
+  const handleCloseModalCommand = () => {
+    setOpenModalCommand(false);
+    setAvailableTypesByDeviceId([]);
+    setRadioValueCommand(false);
+    setCommandData("");
+    setCommandToSend("");
+    setDeviceId("");
+  };
+
+  const handleSendCommand = () => {
+    let data = {};
+    data.deviceId = deviceId;
+    data.textChannel = radioValueCommand;
+    data.type = commandToSend;
+    data.description = "Nuevo...";
+    data.attributes = {
+      data: commandData
+    }
+
+    // const response = fetch(`api/command/send?deviceId=${deviceId}`, {
+    //   method: 'POST',
+    //   body: data,
+    // }).then(response => response)
+
+    console.log("fetch done, but desactivated");
+    handleCloseModalCommand();
+  }
+  //End Send Commands Functions
+
   const getCommandTypes = async (idDevice) => {
     const response = await service.getCommandTypes(idDevice);
-    if (response.ok) {
-      setAvailableTypesByDeviceId(response);
-    }
+
+    setAvailableTypesByDeviceId(response);
+    console.log(availableTypesByDeviceId);
+    
   };
 
   const handleSave = (id = null) => {
@@ -373,7 +428,7 @@ const DevicePage = () => {
               <MenuItem onClick={() => handleOpenFullDialog(variable.mantenimiento, device.id)}>
                 {t("sharedMaintenance")}
               </MenuItem>
-              <MenuItem onClick={handleCloseMenuMore}>
+              <MenuItem onClick={() => handleOpenAcumulators(device.id)}>
                 {t("sharedDeviceAccumulators")}
               </MenuItem>
             </Menu>
@@ -671,7 +726,7 @@ const DevicePage = () => {
                         {t("deviceTotalDistance")}:&nbsp;
                       </strong>
                       {positions && positions[device.id]
-                        ? positions[device.id].attributes.totalDistance
+                        ? (Math.round((positions[device.id].attributes.totalDistance.toFixed(2))/10))/100
                         : "Undefined"}
                     </ListItemText>
                   </ListItem>
@@ -689,9 +744,7 @@ const DevicePage = () => {
                         {t("positionMotion")}:&nbsp;
                       </strong>
                       {positions && positions[device.id]
-                        ? Boolean(
-                            positions[device.id].attributes.motion
-                          ).toString()
+                        ? `${t(`${Boolean(positions[device.id].attributes.motion).toString()}`)}`
                         : "Undefined"}
                     </ListItemText>
                   </ListItem>
@@ -1245,38 +1298,16 @@ const DevicePage = () => {
             aria-describedby="alert-dialog-description"
           >
             <DialogTitle id="alert-dialog-title">
-              {"Use Google's location service?"}
+              {t("deviceCommand")}
+              <IconButton aria-label="close" className={classes.closeButton}
+                        onClick={handleClickCommand}
+                        >
+              <CloseIcon/>
+            </IconButton>
             </DialogTitle>
             <DialogContent>
               <form>
-                <FormControl
-                  variant="outlined"
-                  fullWidth={true}
-                  className={classes.formControl}
-                >
-                  <InputLabel htmlFor="outlined-age-native-simple">
-                    {t("deviceCommand")}
-                  </InputLabel>
-                  <Select
-                    native
-                    fullWidth
-                    // value={key}
-                    // onChange={handleChange}
-                    label={t("deviceCommand")}
-                    name="name"
-                    type="text"
-                    variant="outlined"
-                    inputlabelprops={{
-                      shrink: true,
-                    }}
-                  >
-                    <option aria-label="None" value="" />
-                    <option value={10}>Ten</option>
-                    <option value={20}>Twenty</option>
-                    <option value={30}>Thirty</option>
-                  </Select>
-                </FormControl>
-                <Typography>
+              <Typography>
                   {t('commandSendSms')}:
                   <Radio
                     checked={radioValueCommand === true}
@@ -1297,14 +1328,123 @@ const DevicePage = () => {
                   />
                   {t('reportNo')}
                 </Typography>
+                <FormControl
+                  variant="outlined"
+                  fullWidth={true}
+                  className={classes.formControl}
+                >
+                  <InputLabel htmlFor="outlined-age-native-simple">
+                    {t("sharedType")}
+                  </InputLabel>
+                  <Select
+                    native
+                    fullWidth
+                    value={commandToSend}
+                    onChange={handleChangeCommandToSend}
+                    label={t("sharedType")}
+                    name="name"
+                    type="text"
+                    variant="outlined"
+                    inputlabelprops={{
+                      shrink: true,
+                    }}
+                  >
+                    <option aria-label="None" value="" />
+                    {availableTypesByDeviceId.map((type) => (
+                      <option key={type.type} value={type.type}>
+                        {type.type} 
+                      </option>
+                    ))}
+                  </Select>
+                </FormControl>
+                <TextField style={{display: `${commandToSend === 'custom' ? 'block' : 'none'}`}}
+                  label={t("commandData")}
+                  margin="normal"
+                  fullWidth
+                  value={newAttribute.value}
+                  name="commandData"
+                  onChange={handleChangeCommandData}
+                  type="text"
+                  variant="outlined"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />             
               </form>
             </DialogContent>
             <DialogActions>
               <Button onClick={handleCloseModalCommand} color="primary">
-                Disagree
+                {t("sharedCancel")}
               </Button>
-              <Button onClick={handleClickCommand} color="primary" autoFocus>
-                Agree
+              <Button onClick={handleSendCommand} color="primary" autoFocus>
+                {t("commandSend")}
+              </Button>
+            </DialogActions>
+          </Dialog>
+        </div>
+        <div>
+          <Dialog
+            open={openModalAcumulators}
+            onClose={handleCloseAcumulators}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+          >
+            <DialogTitle id="alert-dialog-title">
+              {t("sharedDeviceAccumulators")}
+              <IconButton aria-label="close" className={classes.closeButton}
+                        onClick={handleCloseAcumulators}
+                        >
+              <CloseIcon/>
+            </IconButton>
+            </DialogTitle>
+            <DialogContent>
+              <form> 
+                <Table>
+                <TableBody>
+                  <TableRow>
+                    <TableCell style={{padding: 0}}>
+                    <TextField style={{width: '95%'}}
+                  label={t("deviceTotalDistance")}
+                  margin="normal"                 
+                  value={totalDistance}
+                  name="totalDistance"
+                  onChange={handleChangeTotalDistance}
+                  type="number"
+                  variant="outlined"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}                  
+                />
+                    </TableCell>
+                    <TableCell style={{padding: 0}}>Km</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell style={{padding: 0}}>
+                    <TextField style={{width: '95%'}}
+                  label={t("positionHours")}
+                  margin="normal"                 
+                  value={positionHours}
+                  name="commandData"
+                  onChange={handleChangeCommandData}
+                  type="number"
+                  variant="outlined"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />   
+                    </TableCell>
+                    <TableCell style={{padding: 0}}>Hs</TableCell>
+                  </TableRow>
+                  </TableBody>              
+                  </Table>                            
+              </form>
+            </DialogContent>
+            <DialogActions>
+              <Button disabled onClick={handleCloseAcumulators} color="primary">
+                {t("sharedSet")}
+              </Button>
+              <Button onClick={handleCloseAcumulators} color="primary" autoFocus>
+                {t("sharedCancel")}
               </Button>
             </DialogActions>
           </Dialog>

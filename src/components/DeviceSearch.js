@@ -72,17 +72,20 @@ function DeviceSearch(deviceId) {
           inputProps={{ "aria-label": "search google maps" }}
           onChange={(event) => filterDevices(event.target.value)}
         />
+        {showDeviceList ? (
+          <i onClick={() => toggleDeviceList()} className="fas fa-angle-up fa-lg" 
+          style={{ marginTop: "14px", position: 'absolute', right: '8%'}} />
+        ) : (
+          <i onClick={() => toggleDeviceList()} className="fas fa-angle-down fa-lg" 
+          style={{ marginTop: "14px", position: 'absolute', right: '8%'}} />
+        )}
       </div>
-      <div
+      {/* <div
         style={{ display: "flex", width: "100%", cursor: "pointer" }}
         onClick={() => toggleDeviceList()}
       >
-        {showDeviceList ? (
-          <i className="fas fa-angle-up fa-lg" style={{ margin: "0 auto" }} />
-        ) : (
-          <i className="fas fa-angle-down fa-lg" style={{ margin: "0 auto" }} />
-        )}
-      </div>
+        
+      </div> */}
       <div className={showDeviceList ? "device-list" : "display-none"}>
         {deviceList.map((device, index, list) => (
           <Fragment key={device.id}>

@@ -89,6 +89,8 @@ const MaintenancePage = () => {
   const [ attributes, setAttributes] = useState({});
   const [openAttributes, setOpenAttributes] = useState(false);
   const [expanded, setExpanded] = useState('');
+  const [onEdit, setOnEdit] = useState(false);
+  const [indexValue, setIndexValue] = useState(0);
   const [state, setState] = useState({
     id: '',
     name: '',
@@ -115,6 +117,8 @@ const MaintenancePage = () => {
   const handleCloseAttributes = () => {
     setOpenAttributes(false);
     setAttributes({});
+    setKey('');
+    setValue('');
   }
 
   const handleSetAttributes = (object) => {
@@ -126,14 +130,24 @@ const MaintenancePage = () => {
   }
 
   const handleSaveAttributes = () => {
-    attributesList.push({
-      [key]: value
-    })
+    if(onEdit){
+      attributesList.splice(indexValue, 1, {[key]: value});
+
+      attributesList.map((attribute) => {
+        setAttributes({...attributes, ...attribute});
+      });
+    } else {
+      attributesList.push({
+        [key]: value
+      })
+      setKey('');
+      setValue('');
+      attributesList.map((attribute) => {
+        setAttributes({...attributes, ...attribute});
+      });
+    }
     setKey('');
     setValue('');
-    attributesList.map((attribute) => {
-      setAttributes({...attributes, ...attribute});
-    });
   }
 
   const handleChange = (panel) => (event, newExpanded) => {
@@ -179,6 +193,15 @@ const MaintenancePage = () => {
     }
   }
 
+  const handleEditAttributes = (keyValue, value, index) => {
+    setKey(keyValue);
+    setValue(value);
+    setIndexValue(index);
+    setOnEdit(true);
+    const buttonElem = document.getElementById("button-edit-att");
+    buttonElem.innerHTML = `${t("sharedEdit")}`;
+  }
+
   const handleCancelModal = () => {
     setShowModal(!showModal);
     setState({id:'',name:'',type:'index',start:'',period:'',attributes:{},});
@@ -188,7 +211,9 @@ const MaintenancePage = () => {
   const handleCancelEdit = () => {
     setState({id:'',name:'',type:'index',start:'',period:'',attributes:{},});
     setElem(false);
-    setShowModal(!showModal)
+    setShowModal(!showModal);
+    setKey('');
+    setValue('');
   }
 
   const handlePost = () => {
@@ -545,7 +570,9 @@ const MaintenancePage = () => {
               </TableHead>
               <TableBody>
                 {Object.entries(attributes).map(([key, value], index) =>
-                  <TableRow key={index} >
+                  <TableRow key={index} hover
+                  //  onClick={() => handleEditAttributes(key, value, index)} 
+                   >
                     <TableCell>{key}</TableCell>
                     <TableCell>{value}</TableCell>
                     <TableCell className={classes.rowAtri}>
@@ -564,7 +591,7 @@ const MaintenancePage = () => {
           </TableContainer>
           </DialogContent>
           <DialogActions>
-            <Button disabled={ !(key !== '' && value !== '') }
+            <Button id="button-edit-att" disabled={ !(key !== '' && value !== '') }
               onClick={handleSaveAttributes} color="success" variant="outlined">
               {t('sharedAdd')}
             </Button>

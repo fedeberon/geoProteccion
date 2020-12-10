@@ -10,13 +10,14 @@ const deviceSearchStyles = makeStyles((theme) => ({
     margin: "17px 8px",
     position: "fixed",
     left: "0px",
-    borderRadius: "40px",
+    borderRadius: "28px",
     webkitBoxShadow: "0px 0px 20px 1px rgba(102, 97, 102, 0.8)",
     mozBoxShadow: "0px 0px 20px 1px rgba(102, 97, 102, 0.8)",
     boxShadow: "0px 0px 20px 1px rgba(102, 97, 102, 0.8)",
     [theme.breakpoints.up("md")]: {
       position: "unset",
       margin: "0px 15px 0px 10px",
+      height: "fit-content",
     },
   },
   iconButton: {

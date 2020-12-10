@@ -44,6 +44,12 @@ const getGeozonesByUserId = (id) => {
     .then((response) => response.json());
 };
 
+const getGeozonesByDeviceId = (deviceId) => {
+  return fetch(`api/geofences?deviceId=${deviceId}`, {method: 'GET'})
+    .catch(function (error) {console.log('setGeofencesByDeviceIderror: ' + error)})
+    .then(response => response.json());
+}
+
 const getNotificationsByUserId = (id) => {
   return fetch(`api/notifications?userId=${id}`, { method: "GET" })
     .catch(function (error) {
@@ -282,4 +288,5 @@ export {
   getStatistics,
   updateServer,
   getCommands,
+  getGeozonesByDeviceId
 };

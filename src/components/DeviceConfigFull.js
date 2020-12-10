@@ -153,14 +153,21 @@ const DeviceConfigFull = ({ open, close, type, deviceId }) => {
   const [orderBy, setOrderBy] = useState("calories");
   const [selected, setSelected] = useState([]);
   const [arrayToMap, setArrayToMap] = useState([]);
+  const [geofencesByDeviceId, setGeofencesByDeviceId] = useState([]);
+  let asd = [];
 
   useEffect(() => {
     if (type === "sharedGeofences") {
+      const getGeozonesByDevice = async() => {
+        const responseGeofences = await service.getGeozonesByDeviceId(deviceId);
+        setGeofencesByDeviceId(responseGeofences);
+      }      
+      getGeozonesByDevice();
       const getGeozones = async (userId) => {
         const response = await service.getGeozonesByUserId(userId);
         setArrayToMap(response);
       };
-      getGeozones(userId);
+      getGeozones(userId);      
     } else if (type === "sharedNotifications") {
       const getNotifications = async (userId) => {
         const response = await service.getNotificationsByUserId(userId);
@@ -187,13 +194,42 @@ const DeviceConfigFull = ({ open, close, type, deviceId }) => {
       }
       getMaintenances();
     }
-  }, [type]);
+  }, [open]);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
     setOrder(isAsc ? "desc" : "asc");
     setOrderBy(property);
   };
+
+  
+
+  const handleSetSelectedItem = (id) => {
+    let permission = {};
+    permission.deviceId = deviceId;
+    permission.geofenceId = id;
+
+    console.log(JSON.stringify(permission))
+
+    // fetch(`api/permissions`, {
+    //   method: 'POST',
+    //   headers: {"Content-Type": "application/json"},
+    //   body: JSON.stringify(permission),
+    // }).then(response => console.log(response))
+  }
+
+  const handleDeleteSelectedItem = (id) => {
+    let permission = {};
+    permission.deviceId = deviceId;
+    permission.geofenceId = id;
+
+    console.log(JSON.stringify(permission))
+    // fetch(`api/permissions`, {
+    //   method: 'DELETE',
+    //   headers: {"Content-Type": "application/json"},
+    //   body: JSON.stringify(permission),
+    // }).then(response => console.log(response))
+  }
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
@@ -205,6 +241,7 @@ const DeviceConfigFull = ({ open, close, type, deviceId }) => {
   };
 
   const isSelected = (name) => selected.indexOf(name) !== -1;
+
 
   const handleClose = () => {
     close();
@@ -224,7 +261,7 @@ const DeviceConfigFull = ({ open, close, type, deviceId }) => {
     rowCount: PropTypes.number.isRequired,
   };
 
-  const handleClick = (event, name) => {
+  const handleClick = (name, id) => {
     const selectedIndex = selected.indexOf(name);
     let newSelected = [];
 
@@ -493,26 +530,39 @@ const DeviceConfigFull = ({ open, close, type, deviceId }) => {
   function EnhancedTableBody() {
     switch (type) {
       case "sharedGeofences":
-        return (
-          <TableBody>
+
+        return (        
+          <TableBody>    
             {stableSort(arrayToMap, getComparator(order, orderBy)).map(
               (row, index) => {
+                geofencesByDeviceId.map((el)=>{selected.push(el.name)})
                 const isItemSelected = isSelected(row.name);
                 const labelId = `enhanced-table-checkbox-${index}`;
+
+                console.log(selected)
 
                 return (
                   <TableRow
                     hover
-                    onClick={(event) => handleClick(event, row.name)}
-                    role="checkbox"
-                    aria-checked={isItemSelected}
+                    onClick={function () {
+                      handleClick(row.name, row.id);
+                      if(!isItemSelected){              
+                        handleSetSelectedItem(row.id);
+
+                      } else {
+                        handleDeleteSelectedItem(row.id);    
+
+                      }
+                    }}
+                    
+                    role="checkbox"                  
                     tabIndex={-1}
                     key={row.name}
-                    selected={isItemSelected}
+                    
                   >
                     <TableCell padding="checkbox">
-                      <Checkbox
-                        checked={isItemSelected}
+                      <Checkbox                     
+                        checked={selected.includes(row.name) ? true : isItemSelected}
                         inputProps={{ "aria-labelledby": labelId }}
                       />
                     </TableCell>
@@ -720,6 +770,12 @@ const DeviceConfigFull = ({ open, close, type, deviceId }) => {
         >
           <AppBar className={classes.appBar}>
             <Toolbar>
+            <Button autoFocus color="inherit" onClick={handleClose}>
+                save
+              </Button>
+              <Typography variant="h6" className={classes.title}>
+                {t("deviceTitle")}
+              </Typography>
               <IconButton
                 edge="start"
                 color="inherit"
@@ -728,12 +784,6 @@ const DeviceConfigFull = ({ open, close, type, deviceId }) => {
               >
                 <CloseIcon />
               </IconButton>
-              <Typography variant="h6" className={classes.title}>
-                {t("deviceTitle")}
-              </Typography>
-              <Button autoFocus color="inherit" onClick={handleClose}>
-                save
-              </Button>
             </Toolbar>
           </AppBar>
 
