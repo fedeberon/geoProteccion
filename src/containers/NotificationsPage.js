@@ -310,9 +310,9 @@ export default function NotificationsPage() {
                             onChange={handleChangeType}
                           >
                             <option aria-label="None" value="" />
-                            {typesValues.map((types, index) => (
-                              <option key={index} value={types}>
-                                {t(`${types}`)}
+                            {typesValues.map((type, index) => (
+                              <option key={index} value={type}>
+                                {t(`${type}`)}
                               </option>
                             ))}
                           </Select>

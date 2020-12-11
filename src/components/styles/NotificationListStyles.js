@@ -21,8 +21,8 @@ const notificationListStyles = makeStyles((theme) => ({
       position: "absolute",
       margin: "0px 15px 0px 10px",
       width: "35%",
-      top: "11%",
-      left: "12%",
+      top: "9%",
+      left: "10%",
     },
   },
   iconButton: {

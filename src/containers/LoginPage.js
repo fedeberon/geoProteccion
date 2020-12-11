@@ -99,10 +99,12 @@ const LoginPage = () => {
         localStorage.username = email;
         localStorage.password = password;
         localStorage.checkbox = isChecked;
+        localStorage.token = user.token;
       } else {
         localStorage.username = "";
         localStorage.password = "";
         localStorage.checkbox = false;
+        localStorage.token = "";
       }
       history.push("/");
     } else {
@@ -127,6 +129,8 @@ const LoginPage = () => {
       setIsChecked(localStorage.checkbox === "true");
     }
   });
+
+
 
   return (
     <Grid container component="main" className={classes.root}>
@@ -293,7 +297,6 @@ const LoginPage = () => {
               // type="submit"
               fullWidth
               variant="contained"
-              color="success"
             >
               {t("loginRegister")}
             </Button>

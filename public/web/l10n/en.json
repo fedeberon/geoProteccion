@@ -464,5 +464,6 @@
     "geofenceEnter": "Entering geofence",
     "geofenceExit": "Leaving geofence",
     "showLess": "Show Less",
-    "brand": "Brand"
+    "brand": "Brand",
+    "updatedInfo": "Successfully Updated"
 }

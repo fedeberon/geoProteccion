@@ -253,6 +253,16 @@ const updateServer = (server) => {
     .then((response) => response.json());
 };
 
+const updateUser = (id, data) => {
+  return fetch(`api/users/${id}`, {
+    method: 'PUT',
+    headers: { "Content-Type": "application/json", Accept: "application/json" },
+    body: JSON.stringify(data),
+  }).catch(function (error) {
+    console.log("updateUser error: ", error);
+  }).then((response) => response.json());
+};
+
 const getCommands = () => {
   return fetch(`api/commands`, { method: "GET" })
     .catch(function (error) {
@@ -288,5 +298,6 @@ export {
   getStatistics,
   updateServer,
   getCommands,
-  getGeozonesByDeviceId
+  getGeozonesByDeviceId,
+  updateUser
 };

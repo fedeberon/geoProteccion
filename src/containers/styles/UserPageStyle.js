@@ -3,10 +3,16 @@ import { makeStyles } from "@material-ui/core/styles";
 const userPageStyle = makeStyles((theme) => ({
   root: {
     width: "100%",
-    height: "100%",    
+    height: "100%",
     overflowY: "auto",
     [theme.breakpoints.up("md")]: {
-     paddingTop: "4%",
+     paddingTop: "3%",
+         },
+  },
+  rootSnack: {
+    width: '100%',
+    '& > * + *': {
+      marginTop: theme.spacing(2),
     },
   },
   formControl: {
@@ -31,6 +37,9 @@ const userPageStyle = makeStyles((theme) => ({
     minWidth: 120,
   },
   subtitles: {
+    fontSize: '19px',
+    fontWeight: 600,
+    margin: '13px 0px',
     backgroundColor: "lavender",
     padding: "4px",
     color: "cadetblue",
@@ -39,7 +48,13 @@ const userPageStyle = makeStyles((theme) => ({
     display: "flow-root",
     height: "8%",
     [theme.breakpoints.up("md")]: {
-     
+
+    },
+  },
+  centerItems: {
+    [theme.breakpoints.up("md")]: {
+      display: '-webkit-box',
+      justifyContent: 'center',
     },
   },
   UserPageSize: {
@@ -53,7 +68,7 @@ const userPageStyle = makeStyles((theme) => ({
       },
   },
   buttonGroup: {
-    display: "flex",
+    display: "inline-block",
     flexDirection: "column-reverse",
     alignItems: "left",
     "& > *": {

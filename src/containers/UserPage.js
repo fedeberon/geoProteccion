@@ -25,7 +25,7 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
 import InputLabel from "@material-ui/core/InputLabel";
-import Radio from "@material-ui/core/Radio";
+import Container from '@material-ui/core/Container';
 import DialogActions from "@material-ui/core/DialogActions";
 import * as service from "../utils/serviceManager";
 import userPageStyle from "./styles/UserPageStyle";
@@ -232,7 +232,7 @@ const UserPage = () => {
         className={classes.subtitles}
         style={{ justifyContent: "space-between", display: "flex" }}
       >
-       <h2>{t("settingsUser")}</h2>
+       <p>{t("settingsUser")}</p>
         <Typography>
           {/*{user.administrator && (*/}
             <Button
@@ -262,9 +262,10 @@ const UserPage = () => {
         </Tabs>
 
         <TabPanel value={value} index={0} style={{ paddingBottom: "10%" }}>
-           <h2 className={classes.subtitles}>{t("settingsTitle")}</h2>
-            <div className={classes.buttonGroup}>
-              <ButtonGroup
+          <Container component={Paper}>
+           <p className={classes.subtitles}>{t("settingsTitle")}</p>
+
+              <ButtonGroup className={classes.buttonGroup}
                 variant="text"
                 color="default"
                 aria-label="text primary button group"
@@ -276,9 +277,8 @@ const UserPage = () => {
                 </Button>
                 <Button onClick={() => handleSaveServer()}>Save</Button>
               </ButtonGroup>
-            </div>
-            <div>
-              <form>
+
+            <div className={classes.centerItems}>
                 <Table style={{ display: "table-cell" }}>
                   <TableBody>
                     <TableRow>
@@ -307,7 +307,6 @@ const UserPage = () => {
                       <TableCell>{t("mapCustomLabel")}:</TableCell>
                       <TableCell>
                         <TextField
-                          id="outlined-basic"
                           label={t("mapCustomLabel")}
                           value={server.mapUrl}
                           onChange={(e) =>
@@ -339,7 +338,6 @@ const UserPage = () => {
                       <TableCell>{t("positionLongitude")}:</TableCell>
                       <TableCell>
                         <TextField
-                          id="outlined-number"
                           label="Number"
                           value={server.longitude}
                           onChange={(e) =>
@@ -357,7 +355,6 @@ const UserPage = () => {
                       <TableCell>{t("serverZoom")}:</TableCell>
                       <TableCell>
                         <TextField
-                          id="outlined-number"
                           label="Number"
                           value={server.zoom}
                           onChange={(e) =>
@@ -439,7 +436,6 @@ const UserPage = () => {
                       <TableCell>{t("mapPoiLayer")}:</TableCell>
                       <TableCell>
                         <TextField
-                          id="outlined-basic"
                           label={t("mapPoiLayer")}
                           variant="outlined"
                         />
@@ -447,13 +443,9 @@ const UserPage = () => {
                     </TableRow>
                   </TableBody>
                 </Table>
-              </form>
             </div>
-            <body>
-              <h2 className={classes.subtitles}>{t("sharedPermissions")}</h2>
-            </body>
-            <div>
-              <form>
+              <p className={classes.subtitles}>{t("sharedPermissions")}</p>
+            <div className={classes.centerItems}>
                 <Table>
                   <TableBody>
                     <TableRow>
@@ -502,10 +494,9 @@ const UserPage = () => {
                     </TableRow>
                   </TableBody>
                 </Table>
-              </form>
             </div>
+            </Container>
           </TabPanel>
-
 
         {/*ADMIN STATISTICS*/}
         <TabPanel value={value} index={1}>

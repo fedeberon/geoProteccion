@@ -1,5 +1,6 @@
 import { hot } from "react-hot-loader/root";
-import React, { useEffect } from "react";
+import React, { useState, useEffect, useLayoutEffect } from "react";
+import { useHistory } from "react-router-dom";
 import { Switch, Route } from "react-router-dom";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import MainPage from "./containers/MainPage";
@@ -24,6 +25,7 @@ import SocketController from "./components/SocketController";
 const App = () => {
   const dispatch = useDispatch();
   const authenticated = useSelector((state) => state.session.authenticated);
+
   useEffect(() => {
     const isViewportDesktop = isWidthUp(
       "md",
