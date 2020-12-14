@@ -479,6 +479,9 @@ button {
 
 /* ancho de pantalla de menos de 600px* (mobile)*/
 @media only screen and (max-width: 600px) {
+  #addressdevices {
+    max-width: 300px !important;
+  }
   #mui-component-notifi-buttons{
     display: flex !important;
     align-items: center !important;

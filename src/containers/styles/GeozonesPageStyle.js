@@ -20,7 +20,7 @@ const geozonesPageStyle = makeStyles((theme) => ({
     display: "inherit",
     flexWrap: "wrap",
     [theme.breakpoints.up("md")]: {
-
+      paddingBottom: "4%",
     },
   },
   formControl: {

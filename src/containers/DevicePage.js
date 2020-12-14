@@ -86,6 +86,7 @@ const DevicePage = () => {
   const [openModalAcumulators, setOpenModalAcumulators] = useState(false);
   const [totalDistance, setTotalDistance] = useState(0);
   const [positionHours, setPositionHours] = useState(0);
+  const [addressFound, setAddressFound] = useState('');
   const [newDevice, setNewDevice] = useState({
     id: null,
     name: "",
@@ -200,6 +201,7 @@ const DevicePage = () => {
 
   const handleExpandClick = (index) => {
     setCollapsedIndex(collapsedIndex === index ? -1 : index);
+    setAddressFound('');
   };
 
   const [open, setOpen] = React.useState(false);
@@ -347,16 +349,16 @@ const DevicePage = () => {
     getGroups();
   }, []);
 
-  function SetCategoryIcon(category) {
+  const showAddress = async (deviceId, latitude, longitude) => {
+    // let addressElement = document.getElementById("devicepage-" + deviceId);
+    // addressElement.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>';
+    
+    
+    let response = await fetch(`api/server/geocode?latitude=${latitude}&longitude=${longitude}`, {method: 'GET'})
+      .catch(function (error) { console.log('setCurrentAddress error: ', error)})
+      .then(response => response.text());
 
-    window.Images = ['arrow', 'default', 'animal', 'bicycle', 'boat', 'bus', 'car',
-      'crane', 'helicopter', 'motorcycle', 'offroad', 'person', 'pickup', 'plane',
-      'ship', 'tractor', 'train', 'tram', 'trolleybus', 'truck', 'van', 'scooter'];
-
-    return <img src={`./web/images/${category}.svg`}></img>
-  }
-  const get = () => {
-    console.log(newDevice.category)
+    setAddressFound(response);
   }
 
   return (
@@ -596,7 +598,7 @@ const DevicePage = () => {
                         {t("positionAccuracy")}:&nbsp;
                       </strong>
                       {positions && positions[device.id]
-                        ? positions[device.id].accuracy
+                        ? `${Math.expm1((positions[device.id].accuracy)/1000).toFixed(2) } Km`      
                         : "Undefined"}
                     </ListItemText>
                   </ListItem>
@@ -632,7 +634,7 @@ const DevicePage = () => {
                         {t("positionSpeed")}:&nbsp;
                       </strong>
                       {positions && positions[device.id]
-                        ? positions[device.id].speed
+                        ? `${positions[device.id].speed} Km/h`
                         : "Undefined"}
                     </ListItemText>
                   </ListItem>
@@ -663,11 +665,33 @@ const DevicePage = () => {
                         className="fas fa-clock"
                       />
                     </ListItemIcon>
-                    <ListItemText>
+                    <ListItemText id="addressdevices">
                       <strong className={classes.cardItemText}>
                         {t("currentAddress")}:&nbsp;
                       </strong>
-                      Unknown
+                      <Button 
+                        className={classes.showAddressButton}
+                        disabled={addressFound}
+                        size="small" 
+                        color="primary" 
+                        onClick={() => showAddress(device.id, positions[device.id].latitude, positions[device.id].longitude)} 
+                      >
+                      <p                      
+                        style={{display: 'inline', color: 'cadetblue'}}
+                        id={`devicepage-${device.id}`}
+                      >                        
+                        {`${addressFound === "" ? `${t("sharedShowAddress")}` : `${addressFound}`}`}
+                      </p>
+                      </Button> 
+                      {/* <p id={`devicepage-${device.id}`} onClick={<showAddress 
+                        deviceId={device.id}
+                        latitude={positions && positions[device.id] ? positions[device.id].latitude : ""}
+                        longitude={positions && positions[device.id] ? positions[device.id].longitude : ""}
+                      />}>
+                      Mostrar
+                      </p> */}
+                     
+                      
                     </ListItemText>
                   </ListItem>
                   <ListItem
@@ -730,7 +754,7 @@ const DevicePage = () => {
                         {t("positionDistance")}:&nbsp;
                       </strong>
                       {positions && positions[device.id]
-                        ? positions[device.id].attributes.distance
+                        ? `${positions[device.id].attributes.distance} Km`
                         : "Undefined"}
                     </ListItemText>
                   </ListItem>
@@ -748,7 +772,7 @@ const DevicePage = () => {
                         {t("deviceTotalDistance")}:&nbsp;
                       </strong>
                       {positions && positions[device.id]
-                        ? (Math.round((positions[device.id].attributes.totalDistance.toFixed(2)) / 10)) / 100
+                        ? `${(Math.round((positions[device.id].attributes.totalDistance.toFixed(2)) / 10)) / 100} Km`
                         : "Undefined"}
                     </ListItemText>
                   </ListItem>
