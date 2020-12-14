@@ -375,6 +375,17 @@ button {
 
 /* ancho de pantalla de mas de 960px (desktop-notebook)*/
 @media only screen and (min-width: 960px){
+  
+  #mui-component-select-category {
+    display: flex !important;
+    align-items: center !important;
+    padding: 2% !important;
+  }
+  #mui-component-select-name {
+    display: flex;
+    align-items: center;
+    padding: 2%;
+  }
   .MuiBadge-anchorOriginTopRightRectangle {
     top: 3px !important;
     right: 5px !important;
@@ -388,6 +399,7 @@ button {
   }
   .title-section {
     color: #7b94a2;
+    margin-top: 5%;
   }
   .title-section > h2 {
     border: 10px;
@@ -467,6 +479,23 @@ button {
 
 /* ancho de pantalla de menos de 600px* (mobile)*/
 @media only screen and (max-width: 600px) {
+  #mui-component-notifi-buttons{
+    display: flex !important;
+    align-items: center !important;
+  }
+  #mui-component-select-category {
+    display: flex !important;
+    align-items: center !important;
+    padding: 2% !important;
+  }
+  #mui-component-select-name {
+    display: flex;
+    align-items: center;
+    padding: 2%;
+  }
+  .MuiDialog-paper {
+    margin: 1px !important;
+  }
   .MuiBadge-anchorOriginTopRightRectangle {
     top: 20px !important;
     right: 15px !important;
@@ -476,16 +505,15 @@ button {
   .close-config-modal {
     margin-left: -30px !important;
   }
-
-  .MuiDialog-paperScrollPaper {
+  /* .MuiDialog-paperScrollPaper {
     display: inline-table !important;
-  }
+  } */
   .MuiDialog-paper {
     overflow-y: hidden;
   }
 
   .MuiTableCell-root {
-    padding: 0px 5px !important;
+    padding: 8px 5px !important;
     line-height: 1 !important;
   }
   .MuiToolbar-regular {

@@ -16,7 +16,6 @@ import CardMedia from "@material-ui/core/CardMedia";
 import CardContent from "@material-ui/core/CardContent";
 import CardActions from "@material-ui/core/CardActions";
 import Collapse from "@material-ui/core/Collapse";
-import Avatar from "@material-ui/core/Avatar";
 import IconButton from "@material-ui/core/IconButton";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
@@ -47,7 +46,13 @@ import Radio from "@material-ui/core/Radio";
 import CloseIcon from "@material-ui/icons/Close";
 import DeviceConfigFull from "../components/DeviceConfigFull";
 import devicePageStyle from "./styles/DevicePageStyle";
-import {devicesActions} from "../store";
+import { devicesActions } from "../store";
+import Grid from '@material-ui/core/Grid';
+import DraftsIcon from '@material-ui/icons/Drafts';
+import SendIcon from '@material-ui/icons/Send';
+import PriorityHighIcon from '@material-ui/icons/PriorityHigh';
+import Avatar from '@material-ui/core/Avatar';
+import MenuList from '@material-ui/core/MenuList';
 
 const useStyles = devicePageStyle;
 
@@ -63,6 +68,7 @@ const DevicePage = () => {
   const positions = useSelector((state) => state.positions.items, shallowEqual);
   const [moreInfo, setMoreInfo] = useState(false);
   const [anchorEl, setAnchorEl] = useState(false);
+  const [dense, setDense] = React.useState(false);
   const [openedMenu, setOpenedMenu] = useState(null);
   const [openModalAdd, setOpenModalAdd] = useState(false);
   const [openModalEdit, setOpenModalEdit] = useState(false);
@@ -101,28 +107,28 @@ const DevicePage = () => {
   const [groups, setGroups] = useState([]);
   const [selectedDevice, setSelectedDevice] = useState({});
   const [categories, setCategories] = useState([
-    "Arrow",
-    "Default",
-    "Animal",
-    "Bicycle",
-    "Boat",
-    "Bus",
-    "Car",
-    "Crane",
-    "Helicopter",
-    "Motorcycle",
-    "Offroad",
-    "Person",
-    "Pickup",
-    "Plane",
-    "Ship",
-    "Tractor",
-    "Train",
-    "Tram",
-    "Trolleybus",
-    "Truck",
-    "Van",
-    "Scooter",
+    "categoryArrow",
+    "categoryDefault",
+    "categoryAnimal",
+    "categoryBicycle",
+    "categoryBoat",
+    "categoryBus",
+    "categoryCar",
+    "categoryCrane",
+    "categoryHelicopter",
+    "categoryMotorcycle",
+    "categoryOffroad",
+    "categoryPerson",
+    "categoryPickup",
+    "categoryPlane",
+    "categoryShip",
+    "categoryTractor",
+    "categoryTrain",
+    "categoryTram",
+    "categoryTrolleybus",
+    "categoryTruck",
+    "categoryVan",
+    "categoryScooter",
   ]);
   const variable = {
     geocerca: "sharedGeofences",
@@ -135,7 +141,7 @@ const DevicePage = () => {
   const handleOpenFullDialog = (parametro, deviceId) => {
     setOpenFullDialog(true);
     setType(parametro);
-    if(deviceId){
+    if (deviceId) {
       setDeviceId(deviceId);
     }
     handleCloseMenuMore();
@@ -211,8 +217,8 @@ const DevicePage = () => {
   const handleOpenAcumulators = (id) => {
     setOpenModalAcumulators(!openModalAcumulators);
     setDeviceId(id);
-    setTotalDistance(((positions[id].attributes.totalDistance)/1000).toFixed(5));
-    setPositionHours((positions[id].attributes.hours)/3600000);
+    setTotalDistance(((positions[id].attributes.totalDistance) / 1000).toFixed(5));
+    setPositionHours((positions[id].attributes.hours) / 3600000);
     handleCloseMenuMore();
   }
 
@@ -271,49 +277,53 @@ const DevicePage = () => {
 
     setAvailableTypesByDeviceId(response);
     console.log(availableTypesByDeviceId);
-    
+
   };
 
-  const handleSave = (id = null) => {
+  const handleSave = (id) => {
     let device = id ? { ...selectedDevice } : { ...newDevice };
     device.lastUpdate = new Date();
     let request;
 
-     if (id) {
-       request = fetch(`/api/devices/${id}`, {
-         method: 'PUT',
-         headers: {'Content-Type': 'application/json'},
-         body: JSON.stringify(device),
-       });
-     } else {
-       request = fetch('/api/devices', {
-         method: 'POST',
-         headers: {'Content-Type': 'application/json'},
-         body: JSON.stringify(device),
-       });
-     }
-     request.then(response => {
-       if (response.ok) {
+    console.log(JSON.stringify(selectedDevice));
 
-         const getDevices = async (userId) => {
-           let response = await service.getDeviceByUserId(userId);
-           dispatch(devicesActions.update(response));
-         }
+    if (id) {
+      request = fetch(`/api/devices/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(device),
+      });
+    } else {
+      request = fetch('/api/devices', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(device),
+      });
+    }
+    request.catch(function (error) {console.log('savingDeviceerror: ', error);})
+    .then(response => {
+      if (response.ok) {
+
+        const getDevices = async (userId) => {
+          let response = await service.getDeviceByUserId(userId);
+          dispatch(devicesActions.update(response));
+        }
         getDevices(userId);
-       }
-     });
-     if(openModalEdit){
-     handleClickEdit();
-     } else if(openModalAdd){
-       handleClickAdd();
-     };
-   };
+      }
+    });
+    if (openModalEdit) {
+      setOpenModalEdit(!openModalEdit);
+      setSelectedDevice({});
+    } else if (openModalAdd) {
+      handleClickAdd();
+    };
+  };
 
   const handleRemove = (deviceId) => {
     handleCloseMenuMore();
     let option = confirm("¿Eliminar Device N°" + deviceId + "?");
     if (option) {
-      fetch(`/api/devices/${deviceId}`, {method: 'DELETE'}).then(response => {
+      fetch(`/api/devices/${deviceId}`, { method: 'DELETE' }).then(response => {
         if (response.ok) {
           const getDevices = async (userId) => {
             let response = await service.getDeviceByUserId(userId);
@@ -337,9 +347,21 @@ const DevicePage = () => {
     getGroups();
   }, []);
 
+  function SetCategoryIcon(category) {
+
+    window.Images = ['arrow', 'default', 'animal', 'bicycle', 'boat', 'bus', 'car',
+      'crane', 'helicopter', 'motorcycle', 'offroad', 'person', 'pickup', 'plane',
+      'ship', 'tractor', 'train', 'tram', 'trolleybus', 'truck', 'van', 'scooter'];
+
+    return <img src={`./web/images/${category}.svg`}></img>
+  }
+  const get = () => {
+    console.log(newDevice.category)
+  }
+
   return (
     <>
-      <div style={{ marginTop: "5%" }} className="title-section">
+      <div className="title-section">
         <h2>{t("deviceTitle")}</h2>
         <Divider />
       </div>
@@ -369,7 +391,7 @@ const DevicePage = () => {
               className={classes.MuiHeaderRoot}
               avatar={
                 <Avatar aria-label="recipe" className={classes.avatar}>
-                  <i className="fas fa-truck-moving" />
+                  <img src={`./web/images/${device.category}.svg`}></img>
                 </Avatar>
               }
               action={
@@ -726,7 +748,7 @@ const DevicePage = () => {
                         {t("deviceTotalDistance")}:&nbsp;
                       </strong>
                       {positions && positions[device.id]
-                        ? (Math.round((positions[device.id].attributes.totalDistance.toFixed(2))/10))/100
+                        ? (Math.round((positions[device.id].attributes.totalDistance.toFixed(2)) / 10)) / 100
                         : "Undefined"}
                     </ListItemText>
                   </ListItem>
@@ -755,9 +777,8 @@ const DevicePage = () => {
                     onClick={() => showMore()}
                   >
                     <ListItemText style={{ textAlign: "center" }}>
-                      <strong className={classes.cardItemText}>{`${
-                        moreInfo ? `${t("showLess")}` : `${t("showMore")}`
-                      }`}</strong>
+                      <strong className={classes.cardItemText}>{`${moreInfo ? `${t("showLess")}` : `${t("showMore")}`
+                        }`}</strong>
                     </ListItemText>
                   </ListItem>
                 </List>
@@ -841,7 +862,7 @@ const DevicePage = () => {
                       })
                     }
                     label={t("groupDialog")}
-                    name="name"
+                    name="groupid"
                     type="text"
                     variant="outlined"
                     inputlabelprops={{
@@ -889,7 +910,7 @@ const DevicePage = () => {
                     variant="outlined"
                   />
                   <Select
-                    native
+                    style={{marginTop: '16px', marginBottom: '16px', height: '55px'}} 
                     fullWidth
                     value={newDevice.category}
                     onChange={(event) =>
@@ -899,20 +920,23 @@ const DevicePage = () => {
                       })
                     }
                     label={t("groupCategory")}
-                    name="name"
+                    name="category"
                     type="text"
-                    variant="outlined"
-                    inputlabelprops={{
-                      shrink: true,
-                    }}
+                    variant="outlined"                  
                   >
-                    <option aria-label="none" value="0" />
                     {categories.map((category, index) => (
-                      <option key={index} value={category}>
-                        {category}
-                      </option>
+                      <MenuItem 
+                      key={index} value={category.slice(8).toLocaleLowerCase()} >
+                        <ListItemIcon>
+                          <Avatar aria-label="recipe" className={classes.avatar}>
+                            <img alt="" src={`./web/images/${category.substring(8).toLocaleLowerCase()}.svg`}></img>
+                          </Avatar>
+                        </ListItemIcon>
+                        <Typography variant="inherit">{t(`${category}`)}</Typography>
+                      </MenuItem>
                     ))}
-                  </Select>
+
+                  </Select>                 
                   <Typography>
                     {t('sharedDisabled')}:
                     <Radio
@@ -1080,7 +1104,7 @@ const DevicePage = () => {
                     variant="outlined"
                   />
                   <Select
-                    native
+                    style={{marginTop: '16px', marginBottom: '16px',height: '55px'}} 
                     fullWidth
                     value={selectedDevice.category}
                     onChange={(event) =>
@@ -1090,18 +1114,21 @@ const DevicePage = () => {
                       })
                     }
                     label={t("groupCategory")}
-                    name="name"
+                    name="category"
                     type="text"
                     variant="outlined"
-                    inputlabelprops={{
-                      shrink: true,
-                    }}
+                    
                   >
-                    <option aria-label="none" value="0" />
                     {categories.map((category, index) => (
-                      <option key={index} value={category}>
-                        {category}
-                      </option>
+                      <MenuItem 
+                      key={index} value={category.slice(8).toLocaleLowerCase()} >
+                        <ListItemIcon>
+                          <Avatar aria-label="recipe" className={classes.avatar}>
+                            <img alt="" src={`./web/images/${category.substring(8).toLocaleLowerCase()}.svg`}></img>
+                          </Avatar>
+                        </ListItemIcon>
+                        <Typography variant="inherit">{t(`${category}`)}</Typography>
+                      </MenuItem>
                     ))}
                   </Select>
                   <Typography>
@@ -1154,8 +1181,8 @@ const DevicePage = () => {
             <DialogTitle id="alert-dialog-title">
               {t("sharedAttributes")}
               <IconButton aria-label="close" className={classes.closeButton}
-                          onClick={handleClickAttributes}>
-                <CloseIcon/>
+                onClick={handleClickAttributes}>
+                <CloseIcon />
               </IconButton>
             </DialogTitle>
             <DialogContent>
@@ -1207,10 +1234,10 @@ const DevicePage = () => {
               >
                 <TableHead>
                   <TableRow className={classes.tablerow}>
-                    <TableCell style={{padding: "14px", fontSize: "12px"}}>
+                    <TableCell style={{ padding: "14px", fontSize: "12px" }}>
                       {t('sharedName')}
                     </TableCell>
-                    <TableCell style={{padding: "14px", fontSize: "12px"}}>
+                    <TableCell style={{ padding: "14px", fontSize: "12px" }}>
                       {t('stateValue')}
                     </TableCell>
                   </TableRow>
@@ -1300,14 +1327,14 @@ const DevicePage = () => {
             <DialogTitle id="alert-dialog-title">
               {t("deviceCommand")}
               <IconButton aria-label="close" className={classes.closeButton}
-                        onClick={handleClickCommand}
-                        >
-              <CloseIcon/>
-            </IconButton>
+                onClick={handleClickCommand}
+              >
+                <CloseIcon />
+              </IconButton>
             </DialogTitle>
             <DialogContent>
               <form>
-              <Typography>
+                <Typography>
                   {t('commandSendSms')}:
                   <Radio
                     checked={radioValueCommand === true}
@@ -1352,12 +1379,12 @@ const DevicePage = () => {
                     <option aria-label="None" value="" />
                     {availableTypesByDeviceId.map((type) => (
                       <option key={type.type} value={type.type}>
-                        {type.type} 
+                        {type.type}
                       </option>
                     ))}
                   </Select>
                 </FormControl>
-                <TextField style={{display: `${commandToSend === 'custom' ? 'block' : 'none'}`}}
+                <TextField style={{ display: `${commandToSend === 'custom' ? 'block' : 'none'}` }}
                   label={t("commandData")}
                   margin="normal"
                   fullWidth
@@ -1369,7 +1396,7 @@ const DevicePage = () => {
                   InputLabelProps={{
                     shrink: true,
                   }}
-                />             
+                />
               </form>
             </DialogContent>
             <DialogActions>
@@ -1392,51 +1419,51 @@ const DevicePage = () => {
             <DialogTitle id="alert-dialog-title">
               {t("sharedDeviceAccumulators")}
               <IconButton aria-label="close" className={classes.closeButton}
-                        onClick={handleCloseAcumulators}
-                        >
-              <CloseIcon/>
-            </IconButton>
+                onClick={handleCloseAcumulators}
+              >
+                <CloseIcon />
+              </IconButton>
             </DialogTitle>
             <DialogContent>
-              <form> 
+              <form>
                 <Table>
-                <TableBody>
-                  <TableRow>
-                    <TableCell style={{padding: 0}}>
-                    <TextField style={{width: '95%'}}
-                  label={t("deviceTotalDistance")}
-                  margin="normal"                 
-                  value={totalDistance}
-                  name="totalDistance"
-                  onChange={handleChangeTotalDistance}
-                  type="number"
-                  variant="outlined"
-                  InputLabelProps={{
-                    shrink: true,
-                  }}                  
-                />
-                    </TableCell>
-                    <TableCell style={{padding: 0}}>Km</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell style={{padding: 0}}>
-                    <TextField style={{width: '95%'}}
-                  label={t("positionHours")}
-                  margin="normal"                 
-                  value={positionHours}
-                  name="commandData"
-                  onChange={handleChangeCommandData}
-                  type="number"
-                  variant="outlined"
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                />   
-                    </TableCell>
-                    <TableCell style={{padding: 0}}>Hs</TableCell>
-                  </TableRow>
-                  </TableBody>              
-                  </Table>                            
+                  <TableBody>
+                    <TableRow>
+                      <TableCell style={{ padding: 0 }}>
+                        <TextField style={{ width: '95%' }}
+                          label={t("deviceTotalDistance")}
+                          margin="normal"
+                          value={totalDistance}
+                          name="totalDistance"
+                          onChange={handleChangeTotalDistance}
+                          type="number"
+                          variant="outlined"
+                          InputLabelProps={{
+                            shrink: true,
+                          }}
+                        />
+                      </TableCell>
+                      <TableCell style={{ padding: 0 }}>Km</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell style={{ padding: 0 }}>
+                        <TextField style={{ width: '95%' }}
+                          label={t("positionHours")}
+                          margin="normal"
+                          value={positionHours}
+                          name="commandData"
+                          onChange={handleChangeCommandData}
+                          type="number"
+                          variant="outlined"
+                          InputLabelProps={{
+                            shrink: true,
+                          }}
+                        />
+                      </TableCell>
+                      <TableCell style={{ padding: 0 }}>Hs</TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
               </form>
             </DialogContent>
             <DialogActions>

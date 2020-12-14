@@ -14,12 +14,15 @@ const notificationsPageStyle = makeStyles((theme) => ({
       backgroundColor: theme.palette.background.paper,
     },
   },
-  table: {
-    minWidth: 650,
-  },
+  // table: {
+  //   minWidth: 650,
+  // },
   formControlType: {
     margin: theme.spacing(1),
     minWidth: 120,
+  },
+  buttonFunctions: {
+    minWidth: '48px !important',
   },
   selectEmpty: {
     marginTop: theme.spacing(2),

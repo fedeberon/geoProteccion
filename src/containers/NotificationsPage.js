@@ -201,7 +201,7 @@ export default function NotificationsPage() {
   return (
     <>
       <div className={classes.root}>
-        <div style={{ marginTop: "5%" }} className="title-section">
+        <div className="title-section">
           <h2>{t("sharedNotifications")}</h2>
           <Divider />
         </div>
@@ -247,14 +247,14 @@ export default function NotificationsPage() {
                     <TableCell align="center">
                       {notification.notificators}
                     </TableCell>
-                    <TableCell align="center">
-                      <Button
+                    <TableCell id="mui-component-notifi-buttons" align="center">
+                      <Button   className={classes.buttonFunctions}
                         title={t("sharedEdit")}
                         onClick={() => handleOpenEdit(notification)}
                       >
                         <EditTwoToneIcon />
                       </Button>
-                      <Button
+                      <Button className={classes.buttonFunctions}
                         title={t("sharedRemove")}
                         onClick={() => removeNotification(notification.id)}
                       >

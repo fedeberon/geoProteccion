@@ -44,6 +44,9 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: theme.palette.background.paper,
     },
   },
+  buttonFunctions: {
+    minWidth: '48px !important',
+  },
   formControl: {
     width: '229px',
     minWidth: 120,
@@ -70,9 +73,9 @@ const useStyles = makeStyles((theme) => ({
   demoGrid: {
     backgroundColor: theme.palette.background.paper,
   },
-  table: {
-    minWidth: 350,
-  },
+  // table: {
+  //   minWidth: 350,
+  // },
 }))
 
 
@@ -286,7 +289,7 @@ const MaintenancePage = () => {
 
   return (
     <div className={classes.root}>
-      <div style={{marginTop: '5%'}} className="title-section">
+      <div className="title-section">
         <h2>{t('sharedMaintenance')}</h2>
         <Divider/>
       </div>
@@ -299,12 +302,11 @@ const MaintenancePage = () => {
       <TableContainer component={Paper}>
         <Table >
           <TableHead>
-          <TableRow>
+          <TableRow >
             <TableCell>{t('sharedName')}</TableCell>
             <TableCell>{t('sharedType')}</TableCell>
             <TableCell>{t('maintenanceStart')}</TableCell>
-            <TableCell>{t('maintenancePeriod')}</TableCell>
-            <TableCell>{t('sharedAttributes')}</TableCell>
+            <TableCell>{t('maintenancePeriod')}</TableCell>            
             <TableCell align="center"/>
           </TableRow>
           </TableHead>
@@ -314,28 +316,13 @@ const MaintenancePage = () => {
                 <TableCell>{el.name}</TableCell>
                 <TableCell>{el.type}</TableCell>
                 <TableCell>{el.start}</TableCell>
-                <TableCell>{el.period}</TableCell>
-                <TableCell>
-                  <Accordion key={el.id} square expanded={expanded === `panel${el.id}`} onChange={handleChange(`panel${el.id}`)}>
-                    <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
-                      {t('sharedAttributes')}
-                    </AccordionSummary>
-                    <AccordionDetails>
-                      {Object.entries(el.attributes).map(([key, value]) =>
-                        <TableRow key={key}>
-                          <TableCell>{key}</TableCell>
-                          <TableCell>{value}</TableCell>
-                        </TableRow>
-                      )}
-                    </AccordionDetails>
-                  </Accordion>
-                </TableCell>
-                <TableCell align="center">
-                  <Button onClick={() => handleShowModal(el)}title={t('sharedEdit')}
+                <TableCell>{el.period}</TableCell>                
+                <TableCell align="center" style={{display: 'inline-flex'}}>
+                  <Button className={classes.buttonFunctions} onClick={() => handleShowModal(el)}title={t('sharedEdit')}
                   >
                     <EditTwoToneIcon/>
                   </Button>
-                  <Button onClick={() => handleRemove(el.id)} title={t('sharedRemove')}
+                  <Button className={classes.buttonFunctions} onClick={() => handleRemove(el.id)} title={t('sharedRemove')}
                   >
                     <DeleteTwoTone />
                   </Button>
@@ -353,6 +340,7 @@ const MaintenancePage = () => {
           onClose={handleShowModal}
           aria-labelledby="alert-dialog-title"
           aria-describedby="alert-dialog-description"
+          id="addmaintenance" 
         >
           <DialogTitle id="customized-dialog-title"
                        onClose={handleCancelEdit}>

@@ -267,6 +267,8 @@ export default function GeozonesPages() {
           {t("sharedAdd")}
         </Button>
       </Container>
+
+      <div className={classes.geozonesContainer}>
       {geozones.map((geozone, index) => (
         <Accordion key={index} className={classes.accordionStyle}>
           <AccordionSummary
@@ -350,6 +352,7 @@ export default function GeozonesPages() {
           </AccordionActions>
         </Accordion>
       ))}
+      </div>
 
       {/*Modal Add New Geozone*/}
       <Dialog

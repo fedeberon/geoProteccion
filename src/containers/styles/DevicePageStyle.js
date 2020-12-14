@@ -12,6 +12,13 @@ const devicePageStyle = makeStyles((theme) => ({
       flexBasis: "33%",
     },
   },
+  rootList: {
+    flexGrow: 1,
+    maxWidth: 752,
+  },
+  demoList: {
+    backgroundColor: theme.palette.background.paper,
+  },
   DivicePageSize: {
     float: "right",
     width: "70%",
@@ -72,7 +79,7 @@ const devicePageStyle = makeStyles((theme) => ({
     transform: "rotate(180deg)",
   },
   avatar: {
-    backgroundColor: "#7093f5",
+    backgroundColor: "#e4efea",
   },
   devicesPage: {
     width: "100%",
