@@ -1,6 +1,6 @@
 import t from "../common/localization";
 import circleToPolygon from "circle-to-polygon";
-import { getCourse } from "./functions";
+import { getCourse, getDateTime } from "./functions";
 
 const typeRegEx = /(\w*)[ ]?[(]/;
 const circlePositionRegEx = /[(](.*) (.*)[,]/;
@@ -139,7 +139,7 @@ const createFeature = (devices, position, isViewportDesktop) => {
                                         ${t("sharedHour")}
                                     </th>
                                     <td>
-                                        ${position.deviceTime}
+                                        ${getDateTime(position.deviceTime)}
                                     </td>
                                 </tr>
                                 <tr>
@@ -147,7 +147,7 @@ const createFeature = (devices, position, isViewportDesktop) => {
                                         ${t("positionLatitude")}
                                     </th>
                                     <td>
-                                        ${position.latitude}
+                                        ${position.latitude}°
                                     </td>
                                 </tr>
                                 <tr>
@@ -155,7 +155,7 @@ const createFeature = (devices, position, isViewportDesktop) => {
                                         ${t("positionLongitude")}
                                     </th>
                                     <td>
-                                        ${position.longitude}
+                                        ${position.longitude}°
                                     </td>
                                 </tr>
                                 <tr>
@@ -163,15 +163,15 @@ const createFeature = (devices, position, isViewportDesktop) => {
                                         ${t("positionValid")}
                                     </th>
                                     <td>
-                                        ${position.valid}
+                                        ${t(`${position.valid}`)}
                                     </td>
                                 </tr>
                                 <tr>
                                     <th>
                                         ${t("positionAccuracy")}
                                     </th>
-                                    <td>
-                                        ${position.accuracy}
+                                    <td>                                       
+                                        ${Math.expm1((position.accuracy)/1000).toFixed(2) } Km
                                     </td>
                                 </tr>
                                 <tr>
@@ -187,7 +187,7 @@ const createFeature = (devices, position, isViewportDesktop) => {
                                         ${t("positionSpeed")}
                                     </th>
                                     <td>
-                                        ${position.speed}
+                                        ${position.speed} Km/h
                                     </td>
                                 </tr>
                                 <tr>
@@ -203,7 +203,7 @@ const createFeature = (devices, position, isViewportDesktop) => {
                                         ${t("positionAddress")}
                                     </th>
                                     <td>
-                                        ${position.address}
+                                        ${t("deviceStatusUnknown")}
                                     </td>
                                 </tr>
                                 <tr>
@@ -219,7 +219,7 @@ const createFeature = (devices, position, isViewportDesktop) => {
                                         ${t("positionIgnition")}
                                     </th>
                                     <td>
-                                        ${position.attributes.ignition}
+                                        ${t(`${position.attributes.ignition}`)}  
                                     </td>
                                 </tr>
                                 <tr>
@@ -235,15 +235,15 @@ const createFeature = (devices, position, isViewportDesktop) => {
                                         ${t("positionDistance")}
                                     </th>
                                     <td>
-                                        ${position.attributes.distance}
+                                        ${position.attributes.distance} Km
                                     </td>
                                 </tr>
                                 <tr>
                                     <th>
                                         ${t("deviceTotalDistance")}
                                     </th>
-                                    <td>
-                                        ${position.attributes.totalDistance}
+                                    <td>                                        
+                                        ${(Math.round((position.attributes.totalDistance.toFixed(2)) / 10)) / 100} Km
                                     </td>
                                 </tr>
                                 <tr>
@@ -251,14 +251,15 @@ const createFeature = (devices, position, isViewportDesktop) => {
                                         ${t("positionMotion")}
                                     </th>
                                     <td>
-                                        ${position.attributes.motion}
+                                        ${t(`${position.attributes.motion}`)}                                        
                                     </td>
                                 </tr>
                             </table>
                         </div>
 
                         <div class="popup-map-body" id="main-data-${device.id}">
-                            <i style="${desktopView ? '' : 'color: white'}"class="fas fa-truck-moving vehicule-type"></i>
+                        
+                            <img class="vehicule-type" src="./web/images/${device.category}.svg"></img>
                             <table class="body-list">
                                 <tr>
                                     <td><i class="icon-fa fas fa-map-marker-alt"/></td>
@@ -283,7 +284,9 @@ const createFeature = (devices, position, isViewportDesktop) => {
                                     <th>${t("positionSpeed")}</th>
                                     <td>
                                         <td>
-                                            <p class="${desktopView ? 'status-inactive' : 'status-inactive-mobile'}">${speed}</p>
+                                            <p class="${desktopView ? 'status-inactive' : 'status-inactive-mobile'}">
+                                            ${speed} Km/h
+                                            </p>
                                         </td>
                                     </td>
                                 </tr>
@@ -292,7 +295,9 @@ const createFeature = (devices, position, isViewportDesktop) => {
                                     <th>${t("mileage")}</th>
                                     <td>
                                         <td>
-                                            <p class="${desktopView ? 'status-inactive' : 'status-inactive-mobile'}">${kilometers}</p>
+                                            <p class="${desktopView ? 'status-inactive' : 'status-inactive-mobile'}">                                           
+                                            ${(Math.round((kilometers.toFixed(2)) / 10)) / 100} Km
+                                            </p>
                                         </td>
                                     </td>
                                 </tr>

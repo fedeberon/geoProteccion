@@ -375,6 +375,10 @@ button {
 
 /* ancho de pantalla de mas de 960px (desktop-notebook)*/
 @media only screen and (min-width: 960px){
+  .card-device-detail:hover {
+    background-color:rgb(95, 133, 202);
+    cursor: pointer !important;
+  }
   
   #mui-component-select-category {
     display: flex !important;
@@ -479,6 +483,9 @@ button {
 
 /* ancho de pantalla de menos de 600px* (mobile)*/
 @media only screen and (max-width: 600px) {
+  .mapboxgl-popup-content {
+    position: sticky !important;
+  }
   #addressdevices {
     max-width: 300px !important;
   }

@@ -349,11 +349,7 @@ const DevicePage = () => {
     getGroups();
   }, []);
 
-  const showAddress = async (deviceId, latitude, longitude) => {
-    // let addressElement = document.getElementById("devicepage-" + deviceId);
-    // addressElement.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>';
-    
-    
+  const showAddress = async (deviceId, latitude, longitude) => {   
     let response = await fetch(`api/server/geocode?latitude=${latitude}&longitude=${longitude}`, {method: 'GET'})
       .catch(function (error) { console.log('setCurrentAddress error: ', error)})
       .then(response => response.text());
@@ -682,16 +678,7 @@ const DevicePage = () => {
                       >                        
                         {`${addressFound === "" ? `${t("sharedShowAddress")}` : `${addressFound}`}`}
                       </p>
-                      </Button> 
-                      {/* <p id={`devicepage-${device.id}`} onClick={<showAddress 
-                        deviceId={device.id}
-                        latitude={positions && positions[device.id] ? positions[device.id].latitude : ""}
-                        longitude={positions && positions[device.id] ? positions[device.id].longitude : ""}
-                      />}>
-                      Mostrar
-                      </p> */}
-                     
-                      
+                      </Button>
                     </ListItemText>
                   </ListItem>
                   <ListItem

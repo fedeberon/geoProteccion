@@ -5,7 +5,7 @@ const deviceSearchStyles = makeStyles((theme) => ({
     padding: "4px 4px",
     display: "grid",
     alignItems: "center",
-    width: "75%",
+    width: "73%",
     height: "auto",
     margin: "17px 8px",
     position: "fixed",
@@ -18,6 +18,7 @@ const deviceSearchStyles = makeStyles((theme) => ({
       position: "unset",
       margin: "0px 15px 0px 10px",
       height: "fit-content",
+      width: "75%",
     },
   },
   iconButton: {
