@@ -21,10 +21,21 @@ import { getBreakpointFromWidth } from "./utils/functions";
 import { sessionActions } from "./store";
 import DeviceDetail from "./components/DeviceDetail";
 import SocketController from "./components/SocketController";
+import * as service from "./utils/serviceManager";
+
+import Validation from './components/Validation';
+
+
 
 const App = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch();  
+  const history = useHistory();
   const authenticated = useSelector((state) => state.session.authenticated);
+  const server = useSelector((state) => state.session.server);
+  const user = useSelector((state) => state.session.user);
+  
+  let response;
+
 
   useEffect(() => {
     const isViewportDesktop = isWidthUp(
@@ -37,15 +48,48 @@ const App = () => {
         value: isViewportDesktop,
       })
     );
+    console.log(authenticated)
   });
 
+  useEffect(()=> {
+
+        if(localStorage.token){          
+          history.push("/validation");          
+        }
+
+        const asdasd = async () => {   
+        
+        if(localStorage.token && localStorage.username && localStorage.password){
+        
+        response = await service.setSession(localStorage.username, localStorage.password);
+        const user = response.status === 200 ? await response.json() : "";
+
+        
+          if (response.ok) {
+            dispatch(sessionActions.authenticated(true));
+            dispatch(sessionActions.setUser(user));
+            response = await service.getServer();
+            dispatch(sessionActions.setServer(response));                       
+          }
+              
+      }
+    }
+    asdasd();    
+    setTimeout(() => {
+      history.push("/");
+    }, 2000);   
+    
+  },[]);  
+
   return (
+    
     <>
       <CssBaseline />
-      <SuccessSnackbar />
+      <SuccessSnackbar />      
       {authenticated && <SocketController />}
-      <Switch>
-        <Route exact path="/login" component={LoginPage} />
+         
+      <Switch>         
+        <Route exact path="/login" component={LoginPage} />     
         <PrivateRoute
           exact
           path="/"
@@ -112,7 +156,7 @@ const App = () => {
           isAuthenticated={authenticated}
           component={RouteReportPage}
         />
-      </Switch>
+      </Switch>      
     </>
   );
 };

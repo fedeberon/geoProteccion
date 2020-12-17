@@ -5,7 +5,7 @@ const deviceSearchStyles = makeStyles((theme) => ({
     padding: "4px 4px",
     display: "grid",
     alignItems: "center",
-    width: "73%",
+    width: "74%",
     height: "auto",
     margin: "17px 8px",
     position: "fixed",

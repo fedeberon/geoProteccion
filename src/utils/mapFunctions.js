@@ -126,7 +126,8 @@ const createFeature = (devices, position, isViewportDesktop) => {
                                         <p id="device-${device.id}">${t("deviceStatusUnknown")}</p></p>
                                     </tr>
                                     <li>
-                                        <button class="${desktopView ? 'button-black' : 'button-black-mobile'}" onClick="showAddress(${device.id},${position.latitude},${position.longitude})">${t("sharedShowAddress")}</button>
+                                    
+                                        <li style="color: blue" onClick="showAddress(${device.id},${position.latitude},${position.longitude})">${t("sharedShowAddress")}</li>
                                     </li>
                                 </li>
                             </ul>

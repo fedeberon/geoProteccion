@@ -240,7 +240,7 @@ map.on("load", () => {
 
   loadImage("images/background.svg").then((background) => {
     Promise.all([
-      loadIcon("icon-marker", background, "images/icon/marker.svg"),
+      loadIcon("icon-marker", background, "web/images/arrow.svg"),
     ]).then(() => {
       ready = true;
       if (registeredListener) {

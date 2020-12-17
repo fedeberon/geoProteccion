@@ -87,6 +87,7 @@ const LoginPage = () => {
 
   const handleLogin = async (event) => {
     event.preventDefault();
+
     let response = await service.setSession(email, password);
     const user = response.status === 200 ? await response.json() : "";
 
@@ -106,7 +107,9 @@ const LoginPage = () => {
         localStorage.checkbox = false;
         localStorage.token = "";
       }
-      history.push("/");
+      setTimeout(() => {
+        history.push("/");
+      }, 1500); 
     } else {
       setFailed(true);
       setPassword("");

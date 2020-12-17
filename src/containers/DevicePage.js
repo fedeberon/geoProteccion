@@ -442,13 +442,13 @@ const DevicePage = () => {
               <MenuItem onClick={() => handleOpenFullDialog(variable.atrCalculados, device.id)}>
                 {t("sharedComputedAttributes")}
               </MenuItem>
-              <MenuItem onClick={() => handleOpenFullDialog(variable.comGuardados, device.id)}>
+              <MenuItem style={{display: 'none'}} onClick={() => handleOpenFullDialog(variable.comGuardados, device.id)}>
                 {t("sharedSavedCommands")}
               </MenuItem>
-              <MenuItem onClick={() => handleOpenFullDialog(variable.mantenimiento, device.id)}>
+              <MenuItem style={{display: 'none'}} onClick={() => handleOpenFullDialog(variable.mantenimiento, device.id)}>
                 {t("sharedMaintenance")}
               </MenuItem>
-              <MenuItem onClick={() => handleOpenAcumulators(device.id)}>
+              <MenuItem style={{display: 'none'}}  onClick={() => handleOpenAcumulators(device.id)}>
                 {t("sharedDeviceAccumulators")}
               </MenuItem>
             </Menu>

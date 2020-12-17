@@ -108,10 +108,10 @@ const MainToolbar = () => {
             <ListItem button onClick={() => history.push("/notifications")}>
               <ListItemText primary={t("sharedNotifications")} />
             </ListItem>
-            <ListItem button onClick={() => history.push("/calendars")}>
+            <ListItem style={{display: 'none'}} button onClick={() => history.push("/calendars")}>
               <ListItemText primary={t("sharedCalendars")} />
             </ListItem>
-            <ListItem button onClick={() => history.push("/maintenance")}>
+            <ListItem style={{display: 'none'}} button onClick={() => history.push("/maintenance")}>
               <ListItemText primary={t("sharedMaintenance")} />
             </ListItem>
             <Divider />
