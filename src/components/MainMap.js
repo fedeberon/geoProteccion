@@ -17,7 +17,7 @@ import {
 
 const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource }) => {
   const containerEl = useRef(null);
-
+  const user = useSelector((state) => state.session.user);
   const [mapReady, setMapReady] = useState(false);
 
   const mapCenter = useSelector((state) => {
@@ -151,7 +151,7 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource }) => {
     if (source) {
       source.setData(positions);
     }
-  }, [positions]);
+  }, []);
 
   const style = {
     width: "100%",

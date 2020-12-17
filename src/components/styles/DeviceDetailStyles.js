@@ -48,7 +48,7 @@ const deviceDetailStyles = makeStyles((theme) => ({
     display: 'inline-block',
     // width: '360px',
     [theme.breakpoints.up("md")]: {
-      width: '550px',
+      width: '490px',
       display: 'block',
     },
   },
@@ -59,7 +59,7 @@ const deviceDetailStyles = makeStyles((theme) => ({
     padding: '0px 10px',
     paddingBottom: '15%',
       [theme.breakpoints.up("md")]: {
-        width: "38%",
+        width: "39%",
         marginTop: "5%",
         paddingBottom: '5%',
       },
