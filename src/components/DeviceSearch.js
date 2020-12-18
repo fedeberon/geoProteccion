@@ -62,11 +62,13 @@ function DeviceSearch(deviceId) {
     filterDevices();
   }, [devices.length > 0]);
 
-  // const goSearch = (e) => {
-  //   if(e.keyCode == 13){
-  //     () => dispatchDevice(device)
-  //   }
-  // }
+  const goSearch = (e) => {
+    if(e.keyCode === 13){
+      // const object = devices.find(element => element.id === filteredDevices.id);
+      // console.log(object)
+      // dispatchDevice(object);c
+    }
+  }
 
   return (
     <Paper component="form" className={classes.paper}>
@@ -83,7 +85,7 @@ function DeviceSearch(deviceId) {
           placeholder={t("sharedSearch")}
           inputProps={{ "aria-label": "search google maps" }}
           onChange={(event) => filterDevices(event.target.value)}
-          // onKeyPress={(event) => goSearch(event.target.value)}
+          onKeyPress={(e) => goSearch(e.target.value)}
         />
         {showDeviceList ? (
           <i onClick={() => toggleDeviceList()} className="fas fa-angle-up fa-lg" 

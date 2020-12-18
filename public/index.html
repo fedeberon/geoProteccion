@@ -14,6 +14,7 @@
     <script>
       async function showAddress(deviceId, latitude, longitude) {
         let addressElement = document.getElementById("device-" + deviceId);
+        let linkAddress = document.getElementById("addressShown");
         addressElement.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>';
         
         let response = await fetch(`api/server/geocode?latitude=${latitude}&longitude=${longitude}`, {method: 'GET'})
@@ -21,21 +22,31 @@
           .then(response => response.text());
 
         addressElement.innerHTML = response;
+        addressElement.style.display = "";
+        linkAddress.style = "display: none";
       }
 
       function showDetails(deviceId) {
         let headerElement = document.getElementById("header-" + deviceId);
         let mainElement = document.getElementById("main-data-" + deviceId);
         let detailsElement = document.getElementById("details-" + deviceId);
+        let buttonText = document.getElementById("buttonShowMore");
+        let buttonTextLess = document.getElementById("buttonShowLess");
+        
 
         if (detailsElement.getAttribute('style') === 'display: none;') {
           headerElement.style = 'display: none;';
           mainElement.style = 'display: none;';
           detailsElement.style = '';
+          buttonText.style.display = 'none';
+          buttonTextLess.style = 'display: block';
+
         } else {
           headerElement.style = '';
           mainElement.style = '';
           detailsElement.style = 'display: none;';
+          buttonText.style.display = '';
+          buttonTextLess.style.display = 'none';
         }
       }
     </script>

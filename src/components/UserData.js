@@ -6,7 +6,7 @@ import TableContainer from "@material-ui/core/TableContainer";
 import Container from '@material-ui/core/Container';
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
-import { makeStyles } from '@material-ui/core/styles';
+import { useHistory } from "react-router-dom";
 import NativeSelect from '@material-ui/core/NativeSelect';
 import { useDispatch } from "react-redux";
 import t from "../common/localization";
@@ -34,6 +34,7 @@ function Alert(props) {
 const UserData = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const history = useHistory();
   const user = useSelector((state) => state.session.user);
   const [server, setServer] = useState({});
   const storeServer = useSelector((state) => state.session.server);
@@ -41,7 +42,9 @@ const UserData = () => {
   const [openSnackSuccess, setOpenSnackSuccess] = React.useState(false);
   const [computedAttributes, setComputedAttributes] = useState([]);
   const [openModalComputedAttribute, setOpenModalComputedAttribute] = useState(false);
-  const [newUserValues, setNewUserValues] = useState(user);
+  const [session, setSession] = useState(user);
+
+
 
   const handleCloseSnack = (event, reason) => {
     if (reason === 'clickaway') {
@@ -51,15 +54,16 @@ const UserData = () => {
   };
 
   const handleSaveData = () => {
+    
     const updateUser = async () => {
-      const response = await service.updateUser(user.id, newUserValues);
-      if (response.ok) {
-        dispatch(sessionActions.setUser(user));
-      }
+      const response = await service.updateUser(user.id, session);
+      
+      dispatch(sessionActions.setUser(response));
+      setSession(response);
     }
-    updateUser()
+      updateUser()
       .then(response => response)
-      .then(response => setOpenSnackSuccess(true));
+      .then(response => setOpenSnackSuccess(true));      
   };
 
   useEffect(() => {
@@ -79,7 +83,7 @@ const UserData = () => {
     <div>
       <div>
         <p className={classes.subtitles}>{t("commandData")}</p>
-        <Container style={{ display: 'contents' }}>
+        <Container style={{ display: 'none' }}> {/*display: 'contents'*/}
           <ButtonGroup style={{marginBottom: '12px'}} fullWidth size="small" aria-label="small outlined button group">
             <Button>{t('sharedAttributes')}</Button>
             <Button tittle={`${t('sharedGetMapState')}`}>
@@ -98,9 +102,9 @@ const UserData = () => {
                 <TableCell>
                   <TextField
                     fullWidth
-                    value={newUserValues.name}
-                    onChange={(event) => setNewUserValues({
-                      ...newUserValues,
+                    value={session.name}
+                    onChange={(event) => setSession({
+                      ...session,
                       name: (event.target.value)
                     })}
                     type="text"
@@ -112,9 +116,9 @@ const UserData = () => {
                 <TableCell>
                   <TextField
                     fullWidth
-                    value={newUserValues.email}
-                    onChange={(event) => setNewUserValues({
-                      ...newUserValues,
+                    value={session.email}
+                    onChange={(event) => setSession({
+                      ...session,
                       email: (event.target.value)
                     })}
                     type="text"
@@ -126,14 +130,14 @@ const UserData = () => {
                 <TableCell>
                   <TextField
                     fullWidth
-                    placeholder={t("sharedEdit")}
-                    value={newUserValues.password}
-                    onChange={(event) => setNewUserValues({
-                      ...newUserValues,
+                    placeholder={t(`${session.password}`)}
+                    value={session.password}
+                    onChange={(event) => setSession({
+                      ...session,
                       password: (event.target.value)
                     })}
                     type="text"
-                  />
+                  />                
                 </TableCell>
               </TableRow>
             </TableBody>
@@ -147,9 +151,9 @@ const UserData = () => {
                 <TableCell>Telefono</TableCell>
                 <TableCell><TextField
                   fullWidth
-                  value={newUserValues.phone}
-                  onChange={(e) => setNewUserValues({
-                    ...newUserValues,
+                  value={session.phone}
+                  onChange={(e) => setSession({
+                    ...session,
                     phone: e.target.value
                   })}
                   type="text"
@@ -160,10 +164,10 @@ const UserData = () => {
                 <TableCell>
                   <FormControl fullWidth={true} className={classes.formControlUser}>
                     <NativeSelect
-                      value={newUserValues.map}
+                      value={session.map}
                       fullWidth
-                      onChange={(e) => setNewUserValues({
-                        ...newUserValues,
+                      onChange={(e) => setSession({
+                        ...session,
                         map: e.target.value
                       })}
                     >
@@ -177,10 +181,10 @@ const UserData = () => {
                 <TableCell>{t("positionLatitude")}:</TableCell>
                 <TableCell><TextField
                   fullWidth
-                  value={newUserValues.latitude}
+                  value={session.latitude}
                   onChange={(e) =>
-                    setNewUserValues({
-                      ...newUserValues,
+                    setSession({
+                      ...session,
                       latitude: e.target.value
                     })
                   }
@@ -192,10 +196,10 @@ const UserData = () => {
                 <TableCell><TextField
                   fullWidth
 
-                  value={newUserValues.longitude}
+                  value={session.longitude}
                   onChange={(e) =>
-                    setNewUserValues({
-                      ...newUserValues,
+                    setSession({
+                      ...session,
                       longitude: e.target.value
                     })
                   }
@@ -206,10 +210,10 @@ const UserData = () => {
                 <TableCell>{t("serverZoom")}:</TableCell>
                 <TableCell><TextField
                   fullWidth
-                  value={newUserValues.zoom}
+                  value={session.zoom}
                   onChange={(e) =>
-                    setNewUserValues({
-                      ...newUserValues,
+                    setSession({
+                      ...session,
                       zoom: e.target.value
                     })
                   }
@@ -220,11 +224,11 @@ const UserData = () => {
                 <TableCell>{t("settingsTwelveHourFormat")}:</TableCell>
                 <TableCell>
                   <Checkbox
-                    checked={newUserValues.twelveHourFormat}
+                    checked={session.twelveHourFormat}
                     onChange={() =>
-                      setNewUserValues({
-                        ...newUserValues,
-                        twelveHourFormat: !newUserValues.twelveHourFormat,
+                      setSession({
+                        ...session,
+                        twelveHourFormat: !session.twelveHourFormat,
                       })
                     }
                     color="primary"
@@ -240,10 +244,10 @@ const UserData = () => {
                 >
                   <Select
                     native
-                    value={newUserValues.coordinateFormat}
+                    value={session.coordinateFormat}
                     onChange={(e) =>
-                      setNewUserValues({
-                        ...newUserValues,
+                      setSession({
+                        ...session,
                         coordinateFormat: e.target.value,
                       })
                     }
@@ -265,9 +269,9 @@ const UserData = () => {
                 <TableCell>{t("mapPoiLayer")}:</TableCell>
                 <TableCell><TextField
                   fullWidth
-                  value={newUserValues.poiLayer}
-                  onChange={(event) => setNewUserValues({
-                    ...newUserValues,
+                  value={session.poiLayer}
+                  onChange={(event) => setSession({
+                    ...session,
                     poiLayer: (event.target.value)
                   })}
                   type="text"
@@ -284,10 +288,10 @@ const UserData = () => {
                 <TableCell>{t('sharedDisabled')}:</TableCell>
                 <TableCell>
                   <Checkbox
-                    checked={newUserValues.disabled}
-                    onChange={() => setNewUserValues({
-                      ...newUserValues,
-                      disabled: !newUserValues.disabled
+                    checked={session.disabled}
+                    onChange={() => setSession({
+                      ...session,
+                      disabled: !session.disabled
                     })}
                     color="primary"
                     inputProps={{ "aria-label": "secondary checkbox" }}
@@ -298,10 +302,10 @@ const UserData = () => {
                 <TableCell>{t('userAdmin')}:</TableCell>
                 <TableCell>
                   <Checkbox
-                    checked={newUserValues.administrator}
-                    onChange={() => setNewUserValues({
-                      ...newUserValues,
-                      administrator: !newUserValues.administrator
+                    checked={session.administrator}
+                    onChange={() => setSession({
+                      ...session,
+                      administrator: !session.administrator
                     })}
                     color="primary"
                     inputProps={{ "aria-label": "secondary checkbox" }}
@@ -312,10 +316,10 @@ const UserData = () => {
                 <TableCell>{t('serverReadonly')}:</TableCell>
                 <TableCell>
                   <Checkbox
-                    checked={newUserValues.readOnly}
-                    onChange={() => setNewUserValues({
-                      ...newUserValues,
-                      readOnly: !newUserValues.readOnly
+                    checked={session.readOnly}
+                    onChange={() => setSession({
+                      ...session,
+                      readOnly: !session.readOnly
                     })}
                     color="primary"
                     inputProps={{ "aria-label": "secondary checkbox" }}
@@ -326,10 +330,10 @@ const UserData = () => {
                 <TableCell>{t('userDeviceReadonly')}:</TableCell>
                 <TableCell>
                   <Checkbox
-                    checked={newUserValues.deviceReadOnly}
-                    onChange={() => setNewUserValues({
-                      ...newUserValues,
-                      deviceReadOnly: !newUserValues.devicesReadOnly
+                    checked={session.deviceReadOnly}
+                    onChange={() => setSession({
+                      ...session,
+                      deviceReadOnly: !session.devicesReadOnly
                     })}
                     color="primary"
                     inputProps={{ "aria-label": "secondary checkbox" }}
@@ -340,12 +344,12 @@ const UserData = () => {
                 <TableCell>{t('userLimitCommands')}:</TableCell>
                 <TableCell>
                   <Checkbox
-                    checked={newUserValues.limitCommands}
+                    checked={session.limitCommands}
                     color="primary"
                     inputProps={{ "aria-label": "secondary checkbox" }}
-                    onChange={() => setNewUserValues({
-                      ...newUserValues,
-                      limitCommands: !newUserValues.limitCommands
+                    onChange={() => setSession({
+                      ...session,
+                      limitCommands: !session.limitCommands
                     })}
                   />
                 </TableCell>
@@ -355,11 +359,11 @@ const UserData = () => {
                 <TableCell>
                   <form className={classes.containerDateTime} noValidate>
                     <TextField
-                      value={newUserValues.expirationTime}
+                      value={session.expirationTime}
                       fullWidth
                       type="date"
-                      onChange={(event) => setNewUserValues({
-                        ...newUserValues,
+                      onChange={(event) => setSession({
+                        ...session,
                         expirationTime: (event.target.value)
                       })}
                     />
@@ -370,10 +374,10 @@ const UserData = () => {
                 <TableCell>{t("userDeviceLimit")}:</TableCell>
                 <TableCell><TextField
                   fullWidth
-                  value={newUserValues.deviceLimit}
+                  value={session.deviceLimit}
                   type="number"
-                  onChange={(event) => setNewUserValues({
-                    ...newUserValues,
+                  onChange={(event) => setSession({
+                    ...session,
                     deviceLimit: (event.target.value)
                   })}
                 /></TableCell>
@@ -382,9 +386,9 @@ const UserData = () => {
                 <TableCell>{t("userUserLimit")}:</TableCell>
                 <TableCell><TextField
                   fullWidth
-                  value={newUserValues.userLimit}
-                  onChange={(event) => setNewUserValues({
-                    ...newUserValues,
+                  value={session.userLimit}
+                  onChange={(event) => setSession({
+                    ...session,
                     userLimit: (event.target.value)
                   })}
                   type="number"

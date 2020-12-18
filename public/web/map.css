@@ -64,8 +64,10 @@ button {
   color: white !important;
 }
 
+
 .button-black {
-  width: 80%;
+  width: 75%;
+  margin-left: 10%;
   border-radius: 6px;
   background-color: #1d193e;
   text-transform: uppercase;
@@ -230,7 +232,7 @@ button {
 
 .device-list {
   overflow-y: scroll;
-  height: 300px;
+  height: auto;
 }
 .device-list::-webkit-scrollbar {
   width: 10px;
@@ -375,6 +377,11 @@ button {
 
 /* ancho de pantalla de mas de 960px (desktop-notebook)*/
 @media only screen and (min-width: 960px){
+  #addressShown:hover {
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
   .card-device-detail:hover {
     background-color:rgb(95, 133, 202);
     cursor: pointer !important;

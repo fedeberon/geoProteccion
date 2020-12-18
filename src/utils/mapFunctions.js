@@ -104,6 +104,7 @@ const createFeature = (devices, position, isViewportDesktop) => {
     const speed = position.speed;
     const kilometers = position.attributes.totalDistance;
     const desktopView = isViewportDesktop;
+    const showData = '';
 
     return {
       name: device ? `${name} ${speed} Km/h` : '',
@@ -114,7 +115,7 @@ const createFeature = (devices, position, isViewportDesktop) => {
                                     <p style="${desktopView ? 'font-size: 16px' : 'font-size: 20px'}"><strong  class="bold">${carPlate + '</strong> - ' + name} </p>
                                 </li>
                                 <li>
-                                    <p>18:21:32  14/07/2020 <span class="display-flex status-${status}">${status}<span class="${desktopView ? 'status-inactive' : 'status-inactive-mobile'}">&nbsp;2 hours ago</span></span></p>
+                                    <p>${getDateTime(position.deviceTime)}</p>
                                 </li>
                                 <!--
                                 <li><p>${brand + ' ' + model + ' ' + year}</p></li>
@@ -123,11 +124,11 @@ const createFeature = (devices, position, isViewportDesktop) => {
                                 <li>
                                     <tr>
                                         <p><strong>${t("currentAddress")+':'}</strong>
-                                        <p id="device-${device.id}">${t("deviceStatusUnknown")}</p></p>
+                                        <p style="display: none" id="device-${device.id}">${t("deviceStatusUnknown")}</p></p>
                                     </tr>
                                     <li>
                                     
-                                        <li style="color: blue" onClick="showAddress(${device.id},${position.latitude},${position.longitude})">${t("sharedShowAddress")}</li>
+                                        <li style="color: blue" id="addressShown" onClick="showAddress(${device.id},${position.latitude},${position.longitude})">${t("sharedShowAddress")}</li>
                                     </li>
                                 </li>
                             </ul>
@@ -267,7 +268,9 @@ const createFeature = (devices, position, isViewportDesktop) => {
                                     <th>${t("deviceContact")}</th>
                                     <td>
                                         <td>
-                                            <p class="${desktopView ? 'status-inactive' : 'status-inactive-mobile'}">Abierto</p>
+                                            <p class="${desktopView ? 'status-inactive' : 'status-inactive-mobile'}">
+                                            ${t(`${position.attributes.ignition}`)}
+                                            </p>
                                         </td>
                                     </td>
                                 </tr>
@@ -276,7 +279,9 @@ const createFeature = (devices, position, isViewportDesktop) => {
                                     <th>${t("currentStatus")}</th>
                                     <td>
                                         <td>
-                                            <p class="${desktopView ? 'status-inactive' : 'status-inactive-mobile'}">No</p>
+                                            <p class="${desktopView ? 'status-inactive' : 'status-inactive-mobile'}">
+                                            <span class="display-flex status-${status}"><strong>${status}</strong></span>
+                                            </p>
                                         </td>
                                     </td>
                                 </tr>
@@ -317,8 +322,11 @@ const createFeature = (devices, position, isViewportDesktop) => {
                             <button class="${desktopView ? 'button-black' : 'button-black-mobile'}" href="#/device/${device.id}">
                                 ${t("activateCircuitBreaker")}
                             </button>
-                            <button class="${desktopView ? 'button-black' : 'button-black-mobile'}" onClick="showDetails(${device.id})">
-                                ${t("showMore")}
+                            <button id="buttonShowMore" class="${desktopView ? 'button-black' : 'button-black-mobile'}" onClick="showDetails(${device.id})">
+                                ${t(`showMore`)}
+                            </button>
+                            <button id="buttonShowLess" style="display: none"class="${desktopView ? 'button-black' : 'button-black-mobile'}" onClick="showDetails(${device.id})">
+                                ${t(`showLess`)}
                             </button>
                         </div>
                     </div>`

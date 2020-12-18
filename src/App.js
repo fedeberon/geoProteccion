@@ -30,9 +30,7 @@ import Validation from './components/Validation';
 const App = () => {
   const dispatch = useDispatch();  
   const history = useHistory();
-  const authenticated = useSelector((state) => state.session.authenticated);
-  const server = useSelector((state) => state.session.server);
-  const user = useSelector((state) => state.session.user);
+  const authenticated = useSelector((state) => state.session.authenticated);  
   
   let response;
 
@@ -57,27 +55,23 @@ const App = () => {
           history.push("/validation");          
         }
 
-        const asdasd = async () => {   
-        
-        if(localStorage.token && localStorage.username && localStorage.password){
-        
+        const autoLogin = async () => {           
+        if(localStorage.token && localStorage.username && localStorage.password){        
         response = await service.setSession(localStorage.username, localStorage.password);
         const user = response.status === 200 ? await response.json() : "";
-
         
-          if (response.ok) {
-            dispatch(sessionActions.authenticated(true));
-            dispatch(sessionActions.setUser(user));
-            response = await service.getServer();
-            dispatch(sessionActions.setServer(response));                       
-          }
-              
+        if (response.status === 200) {
+          dispatch(sessionActions.authenticated(true));
+          dispatch(sessionActions.setUser(user));
+          response = await service.getServer();
+          dispatch(sessionActions.setServer(response));                       
+        }              
       }
     }
-    asdasd();    
+    autoLogin();    
     setTimeout(() => {
       history.push("/");
-    }, 2000);   
+    }, 3000);   
     
   },[]);  
 
@@ -86,8 +80,7 @@ const App = () => {
     <>
       <CssBaseline />
       <SuccessSnackbar />      
-      {authenticated && <SocketController />}
-         
+      {authenticated && <SocketController />}         
       <Switch>         
         <Route exact path="/login" component={LoginPage} />     
         <PrivateRoute
