@@ -1,5 +1,6 @@
 import React, { useRef, useLayoutEffect, useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { devicesActions } from "../store";
 import mapManager from "../utils/mapManager";
 import { makeStyles } from "@material-ui/core/styles";
 import {
@@ -18,7 +19,8 @@ import {
 const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource }) => {
   const containerEl = useRef(null);
   const user = useSelector((state) => state.session.user);
-  const [mapReady, setMapReady] = useState(false);
+  const [mapReady, setMapReady] = useState(false); 
+  const dispatch = useDispatch(); 
 
   const mapCenter = useSelector((state) => {
     if (state.devices.selectedId) {
@@ -169,7 +171,8 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource }) => {
   };
 
   const cursorPointer = () => {
-    mapManager.map.getCanvas().style.cursor = "pointer";
+
+    mapManager.map.getCanvas().style.cursor = "pointer";    
   };
   const cursorDefault = () => {
     mapManager.map.getCanvas().style.cursor = "";

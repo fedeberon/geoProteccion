@@ -105,7 +105,7 @@ export default function Menu({ layout }) {
           tooltipOpen={!isViewportDesktop}
           onClick={(e) => {
             e.stopPropagation();
-            history.push("/calendars");
+            // history.push("/calendars");
           }}
           tooltipPlacement={isViewportDesktop ? "right" : "left"}
         />
@@ -117,7 +117,7 @@ export default function Menu({ layout }) {
           tooltipOpen={!isViewportDesktop}
           onClick={(e) => {
             e.stopPropagation();
-            history.push("/maintenance");
+            // history.push("/maintenance");
           }}
           tooltipPlacement={isViewportDesktop ? "right" : "left"}
         />

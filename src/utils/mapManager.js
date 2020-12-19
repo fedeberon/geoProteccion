@@ -233,6 +233,7 @@ const map = new mapboxgl.Map({
 map.addControl(new mapboxgl.NavigationControl(), "bottom-right");
 
 map.on("load", () => {
+
   map.loadImage("images/icon/triangle.png", function (error, image) {
     if (error) throw error;
     map.addImage("triangle", image);
@@ -240,7 +241,7 @@ map.on("load", () => {
 
   loadImage("images/background.svg").then((background) => {
     Promise.all([
-      loadIcon("icon-marker", background, "web/images/arrow.svg"),
+      loadIcon("icon-marker", background, "web/images/default.svg"),
     ]).then(() => {
       ready = true;
       if (registeredListener) {

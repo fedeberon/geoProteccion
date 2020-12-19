@@ -38,14 +38,16 @@ function DeviceSearch(deviceId) {
 
   const dispatchDevice = (device) => {
     dispatch(devicesActions.select(device));
-    toggleDeviceList();
+    toggleDeviceList();    
   };
 
   const filterDevices = (value = "") => {
     if(value.length > 0){
       setShowDeviceList(true)
+      let object = document.getElementById("deviceListSearch");
+      object.style.height = 'auto';
     } else {
-      setShowDeviceList(false)
+      setShowDeviceList(false)      
     }
 
     const regex = new RegExp(`${value !== "" ? value : ".+"}`, "gi");
@@ -63,11 +65,18 @@ function DeviceSearch(deviceId) {
   }, [devices.length > 0]);
 
   const goSearch = (e) => {
-    if(e.keyCode === 13){
-      // const object = devices.find(element => element.id === filteredDevices.id);
-      // console.log(object)
-      // dispatchDevice(object);c
+    let value;
+    devices.map((el) =>{
+      if(el.name.toString().toLocaleLowerCase().includes(e.toLocaleLowerCase())){
+        value = el;        
+      }      
+    })
+    if(value){
+      dispatchDevice(value);    
     }
+    setTimeout(()=> {
+      dispatch(devicesActions.select(""));
+    },1500);
   }
 
   return (
@@ -82,10 +91,9 @@ function DeviceSearch(deviceId) {
         </IconButton>
         <InputBase
           className={classes.input}
-          placeholder={t("sharedSearch")}
-          inputProps={{ "aria-label": "search google maps" }}
+          placeholder={t("sharedSearch")}          
           onChange={(event) => filterDevices(event.target.value)}
-          onKeyPress={(e) => goSearch(e.target.value)}
+          onKeyPress={(e) => e.key === 'Enter' ? goSearch(e.target.value) : ""}
         />
         {showDeviceList ? (
           <i onClick={() => toggleDeviceList()} className="fas fa-angle-up fa-lg" 
@@ -101,7 +109,7 @@ function DeviceSearch(deviceId) {
       >
         
       </div> */}
-      <div className={showDeviceList ? "device-list" : "display-none"}>
+      <div id="deviceListSearch"className={showDeviceList ? "device-list" : "display-none"}>
         {deviceList.map((device, index, list) => (
           <Fragment key={device.id}>
             <ListItem
