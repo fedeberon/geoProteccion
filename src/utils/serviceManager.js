@@ -58,6 +58,14 @@ const getNotificationsByUserId = (id) => {
     .then((response) => response.json());
 };
 
+const getNotificationsByDeviceId = (id) => {
+  return fetch(`api/notifications?deviceId=${id}`, { method: "GET" })
+    .catch(function (error) {
+      console.log("setNotifications error: ", error);
+    })
+    .then((response) => response.json());
+};
+
 const getAvailableTypes = () => {
   return fetch(`api/notifications/types`, { method: "GET" })
     .catch(function (error) {
@@ -199,7 +207,7 @@ const getServer = () => {
     .then((response) => response.json());
 };
 
-const getComputedAttributesById = (deviceId) => {
+const getComputedAttributesByDeviceId = (deviceId) => {
   return fetch(`api/attributes/computed?deviceId=${deviceId}`, {
     method: "GET",
   })
@@ -276,6 +284,7 @@ export {
   getDeviceByUserId,
   getGeozonesByUserId,
   getNotificationsByUserId,
+  getNotificationsByDeviceId,
   getAvailableTypes,
   getRoutesReports,
   getEventsReports,
@@ -290,7 +299,7 @@ export {
   getCurrentAddress,
   getServer,
   getCommandTypes,
-  getComputedAttributesById,
+  getComputedAttributesByDeviceId,
   getComputedAttributes,
   getCommandsByDeviceId,
   getGroups,

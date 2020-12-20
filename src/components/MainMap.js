@@ -1,7 +1,6 @@
 import React, { useRef, useLayoutEffect, useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { devicesActions } from "../store";
 import mapManager from "../utils/mapManager";
+import {useSelector} from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   calculatePolygonCenter,
@@ -18,9 +17,7 @@ import {
 
 const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource }) => {
   const containerEl = useRef(null);
-  const user = useSelector((state) => state.session.user);
   const [mapReady, setMapReady] = useState(false); 
-  const dispatch = useDispatch(); 
 
   const mapCenter = useSelector((state) => {
     if (state.devices.selectedId) {
