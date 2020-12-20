@@ -74,6 +74,13 @@ const devicePageStyle = makeStyles((theme) => ({
       margin: "2%",
     },
   },
+  formControlAttribute: {
+    width: '38%', 
+    marginLeft: '10px',
+    [theme.breakpoints.up("md")]: {
+      width: '42%', 
+    },
+  },
   media: {
     height: "160px",
     display: "list-item",

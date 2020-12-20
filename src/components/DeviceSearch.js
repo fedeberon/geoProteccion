@@ -38,7 +38,11 @@ function DeviceSearch(deviceId) {
 
   const dispatchDevice = (device) => {
     dispatch(devicesActions.select(device));
-    toggleDeviceList();    
+    toggleDeviceList();  
+    
+    setTimeout(()=> {
+      dispatch(devicesActions.select(""));
+    },1500);
   };
 
   const filterDevices = (value = "") => {

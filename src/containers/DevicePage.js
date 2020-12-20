@@ -14,7 +14,8 @@ import Card from "@material-ui/core/Card";
 import CardHeader from "@material-ui/core/CardHeader";
 import CardMedia from "@material-ui/core/CardMedia";
 import CardContent from "@material-ui/core/CardContent";
-import CardActions from "@material-ui/core/CardActions";
+import EditTwoToneIcon from "@material-ui/icons/EditTwoTone";
+import {DeleteTwoTone} from "@material-ui/icons";
 import Collapse from "@material-ui/core/Collapse";
 import IconButton from "@material-ui/core/IconButton";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
@@ -87,6 +88,7 @@ const DevicePage = () => {
   const [totalDistance, setTotalDistance] = useState(0);
   const [positionHours, setPositionHours] = useState(0);
   const [addressFound, setAddressFound] = useState('');
+  const [showFormAttributes, setShowFormAttributes] = useState(false);
   const [newDevice, setNewDevice] = useState({
     id: null,
     name: "",
@@ -104,7 +106,7 @@ const DevicePage = () => {
     attributes: {},
   });
   const [attributes, setAttributes] = useState({});
-  const [newAttribute, setNewAttribute] = useState({ name: null, value: null });
+  const [newAttribute, setNewAttribute] = useState({ name: "", value: "" });
   const [groups, setGroups] = useState([]);
   const [selectedDevice, setSelectedDevice] = useState({});
   const [categories, setCategories] = useState([
@@ -177,10 +179,11 @@ const DevicePage = () => {
 
   const handleClickAttributes = () => {
     setOpenModalAttributes(!openModalAttributes);
-    setSelectedDevice({ ...selectedDevice, attributes: attributes });
+    setSelectedDevice({ ...selectedDevice, attributes: selectedDevice.attributes });
     setNewDevice({ ...newDevice, attributes: attributes });
     let originalAttributes = getOriginalAttributes(selectedDevice.attributes);
     setAttributes(originalAttributes);
+    setNewAttribute({ name: "", value: "" });    
   };
 
   const handleClickMenuMore = (event) => {
@@ -334,6 +337,9 @@ const DevicePage = () => {
         attributes: {},
       });
     };
+    setNewAttribute({ name: null, value: null });
+    console.log(attributes)
+    console.log(devices)
   };
 
   const handleRemove = (deviceId) => {
@@ -381,6 +387,27 @@ const DevicePage = () => {
   useEffect(()=> {    
     getDevices();
   },[])
+
+  // const handleEditAttribute = (attribute, index) => {
+  //   setNewAttribute({name: attribute[0], value: attribute[1]});
+  // }
+
+  // const onBlurFunction = (e) => {
+  //   let x = document.getElementById("keyattribute");
+  //   x.value = x.value.toUpperCase();
+
+  //   if (e.target.value !== "") {
+  //     let {
+  //       [attribute[0]]: value,
+  //       ...rest
+  //     } = attributes;
+  //     setAttributes({
+  //       ...rest,
+  //       [e.target.value]: attribute[1],
+  //     });
+  //   }
+  //   e.target.value = "";
+  // }
 
   return (
     <>
@@ -1209,6 +1236,7 @@ const DevicePage = () => {
         {/*Modal Attributes*/}
         <div>
           <Dialog
+            
             open={openModalAttributes}
             onClose={handleClickAttributes}
             aria-labelledby="alert-dialog-title"
@@ -1221,49 +1249,77 @@ const DevicePage = () => {
                 <CloseIcon />
               </IconButton>
             </DialogTitle>
-            <DialogContent>
-              <form>
-                <FormControl
-                  variant="outlined"
-                  fullWidth={true}
-                  className={classes.formControl}
-                >
-                  <TextField
-                    label="Name"
-                    margin="normal"
-                    fullWidth
-                    value={newAttribute.name}
-                    name="name"
-                    onChange={(e) =>
-                      setNewAttribute({ ...newAttribute, name: e.target.value })
-                    }
-                    type="text"
+            <div style={{display: 'inline-block'}}>            
+              <div style={{marginBottom: '25px'}}> 
+                <form style={{borderBottomStyle: 'inset', borderTopStyle: 'outset'}}>
+                  <FormControl                    
                     variant="outlined"
-                    InputLabelProps={{
-                      shrink: true,
+                    fullWidth={true}
+                    className={classes.formControlAttribute}
+                  >
+                    <TextField
+                      style={{marginTop: '5px', marginBottom: '5px'}}
+                      placeholder={t('sharedName')}
+                      id="outlined-margin-dense-name"
+                      // className={classes.textField}
+                      margin="dense"
+                      variant="outlined"
+                      value={newAttribute.name}
+                      name="name"
+                      onChange={(e) =>
+                        setNewAttribute({ ...newAttribute, name: e.target.value })
+                      }
+                    />                  
+                  </FormControl>
+                  <FormControl
+                    style={{marginRight: '5px'}}
+                    variant="outlined"
+                    fullWidth={true}
+                    className={classes.formControlAttribute}
+                  >
+                    <TextField
+                      style={{marginTop: '5px', marginBottom: '5px'}}
+                      placeholder={t('stateValue')}
+                      id="outlined-margin-dense-value"
+                      // className={classes.textField}
+                      margin="dense"
+                      variant="outlined"
+                      value={newAttribute.value}
+                      name="value"
+                      onChange={(e) =>
+                        setNewAttribute({ ...newAttribute, value: e.target.value })
+                      }                    
+                    />                  
+                  </FormControl>
+                  <Button  
+                    // onClick={() =>
+                    //   setAttributes({
+                    //     ...attributes,
+                    //     [newAttribute.name]: newAttribute.value,
+                    //   })
+                    // }
+                    title={t('sharedAdd')}
+                    style={{
+                    backgroundColor: '#82f582', 
+                    minWidth: '40px', 
+                    display: 'inline-block', 
+                    margin: '7px 2px'
                     }}
-                  />
-                </FormControl>
-                <TextField
-                  label="Value"
-                  margin="normal"
-                  fullWidth
-                  value={newAttribute.value}
-                  name="value"
-                  onChange={(e) =>
-                    setNewAttribute({ ...newAttribute, value: e.target.value })
-                  }
-                  type="text"
-                  variant="outlined"
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                />
-              </form>
+                    variant="outlined"
+                  >
+                    <i style={{fontSize: '17px', color: 'white'}} class="fas fa-plus"></i>
+                  </Button>
+                  
+                </form>
+              </div>          
+            </div>
+            <DialogContent style={{padding: 0, maxHeight: '250px', marginBottom: '23px'}}>
+              
               <Table
                 fullWidth
+                size="small"
                 style={{
-                  border: "1px solid",
+                  backgroundColor: "snow",
                   height: "200px",
                   overflowY: "scroll",
                 }}
@@ -1278,17 +1334,57 @@ const DevicePage = () => {
                     </TableCell>
                   </TableRow>
                 </TableHead>
-                <TableBody>
+                <TableBody style={{display: 'table-footer-group'}}>
                   {Object.entries(attributes).map((attribute, index) => (
-                    <TableRow>
+                    <TableRow key={index} hover
+                      // onClick={() => handleEditAttribute(attribute, index)}
+                    >
+                      <TableCell
+                        value={attribute[0]}
+                        name="key"
+                        onBlur={(e) => {
+                          if (e.target.value !== "") {
+                            let {
+                              [attribute[0]]: value,
+                              ...rest
+                            } = attributes;
+                            setAttributes({
+                              ...rest,
+                              [e.target.value]: attribute[1],
+                            });
+                          }
+                          e.target.value = "";
+                        }}                        
+                      >
+                        {attribute[0]}
+                      </TableCell>
+                      <TableCell
+                        
+                        name="value"
+                        onChange={(e) =>
+                          setAttributes({
+                            ...attributes,
+                            [attribute[0]]: e.target.value,
+                          })
+                        }
+                      >
+                        {attribute[1]}
+                      </TableCell>  
                       <TableCell>
+                          <Button 
+                          // className={classes.buttonFunctions} onClick={() => handleRemove(el.id)} title={t('sharedRemove')}
+                           >
+                            <DeleteTwoTone />
+                          </Button> 
+                      </TableCell>                    
+                                    
+                      {/* <TableCell>
                         <TextField
-                          label="Value"
                           margin="normal"
                           fullWidth
                           name="key"
                           placeholder={attribute[0]}
-                          onBlur={(e) => {
+                          onBlur={(e) => {                            
                             if (e.target.value !== "") {
                               let {
                                 [attribute[0]]: value,
@@ -1303,14 +1399,10 @@ const DevicePage = () => {
                           }}
                           type="text"
                           variant="outlined"
-                          InputLabelProps={{
-                            shrink: true,
-                          }}
                         />
                       </TableCell>
                       <TableCell>
                         <TextField
-                          label="Value"
                           margin="normal"
                           fullWidth
                           value={attribute[1]}
@@ -1323,29 +1415,17 @@ const DevicePage = () => {
                           }
                           type="text"
                           variant="outlined"
-                          InputLabelProps={{
-                            shrink: true,
-                          }}
                         />
-                      </TableCell>
+                      </TableCell> */}
                     </TableRow>
                   ))}
                 </TableBody>
               </Table>
             </DialogContent>
             <DialogActions>
-              <Button
-                onClick={() =>
-                  setAttributes({
-                    ...attributes,
-                    [newAttribute.name]: newAttribute.value,
-                  })
-                }
-                color="primary"
-              >
-                {t('sharedAdd')}
-              </Button>
-              <Button onClick={handleClickAttributes} color="primary" autoFocus>
+               <Button 
+              //  onClick={handleClickAttributes} 
+               color="primary" autoFocus>
                 {t('sharedSave')}
               </Button>
             </DialogActions>
