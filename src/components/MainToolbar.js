@@ -99,7 +99,9 @@ const MainToolbar = () => {
             <ListItem button onClick={() => history.push("/device/list")}>
               <ListItemText primary={t("deviceTitle")} />
             </ListItem>
-            <ListItem button onClick={() => history.push("/groups")}>
+            <ListItem button 
+            // onClick={() => history.push("/groups")}
+            >
               <ListItemText primary={t("settingsGroups")} />
             </ListItem>
             <ListItem button onClick={() => history.push("/geozones")}>

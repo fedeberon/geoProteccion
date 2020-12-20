@@ -60,7 +60,7 @@ const DevicePage = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const { id } = useParams();
-  const devices = useSelector(
+  const storageDevices = useSelector(
     (state) => Object.values(state.devices.items),
     shallowEqual
   );
@@ -68,7 +68,7 @@ const DevicePage = () => {
   const positions = useSelector((state) => state.positions.items, shallowEqual);
   const [moreInfo, setMoreInfo] = useState(false);
   const [anchorEl, setAnchorEl] = useState(false);
-  const [dense, setDense] = React.useState(false);
+  const [devices, setDevices] = useState([]);
   const [openedMenu, setOpenedMenu] = useState(null);
   const [openModalAdd, setOpenModalAdd] = useState(false);
   const [openModalEdit, setOpenModalEdit] = useState(false);
@@ -99,7 +99,7 @@ const DevicePage = () => {
     phone: "",
     model: "",
     contact: "",
-    category: "",
+    category: "default",
     geofenceIds: [],
     attributes: {},
   });
@@ -305,12 +305,12 @@ const DevicePage = () => {
     request.catch(function (error) {console.log('savingDeviceerror: ', error);})
     .then(response => {
       if (response.ok) {
-
-        const getDevices = async (userId) => {
+        const getDevicesByUser = async (userId) => {
           let response = await service.getDeviceByUserId(userId);
           dispatch(devicesActions.update(response));
+          getDevices();
         }
-        getDevices(userId);
+        getDevicesByUser(userId);
       }
     });
     if (openModalEdit) {
@@ -318,6 +318,21 @@ const DevicePage = () => {
       setSelectedDevice({});
     } else if (openModalAdd) {
       handleClickAdd();
+      setNewDevice({id: null,
+        name: "",
+        uniqueId: "",
+        status: "",
+        disabled: true,
+        lastUpdate: null,
+        positionId: null,
+        groupId: null,
+        phone: "",
+        model: "",
+        contact: "",
+        category: "default",
+        geofenceIds: [],
+        attributes: {},
+      });
     };
   };
 
@@ -327,11 +342,12 @@ const DevicePage = () => {
     if (option) {
       fetch(`/api/devices/${deviceId}`, { method: 'DELETE' }).then(response => {
         if (response.ok) {
-          const getDevices = async (userId) => {
+          const getDevicesByUser = async (userId) => {
             let response = await service.getDeviceByUserId(userId);
             dispatch(devicesActions.update(response));
+            getDevices();
           }
-          getDevices(userId);
+          getDevicesByUser(userId);
         }
       });
     }
@@ -356,6 +372,15 @@ const DevicePage = () => {
 
     setAddressFound(response);
   }
+
+  const getDevices = async () => {
+    const response = await service.getDeviceByUserId(userId);
+    setDevices(response);      
+  };
+
+  useEffect(()=> {    
+    getDevices();
+  },[])
 
   return (
     <>

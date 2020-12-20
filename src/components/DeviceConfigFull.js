@@ -152,14 +152,14 @@ const DeviceConfigFull = ({ open, close, type, deviceId }) => {
   const [order, setOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState("calories");
   const [selected, setSelected] = useState([]);
-  const [arrayToMap, setArrayToMap] = useState([]);  
+  const [arrayToMap, setArrayToMap] = useState([]);
   const [geofencesByDeviceId, setGeofencesByDeviceId] = useState([]);
   const [notificationsByDeviceId, setNotificationsByDeviceId] = useState([]);
   const [computedAttributesByDeviceId, setComputedAttributesByDeviceId] = useState([]);
   let asd = [];
 
   useEffect(() => {
-    if (type === "sharedGeofences") {      
+    if (type === "sharedGeofences") {
       const getGeozonesByDevice = async() => {
         const responseGeofences = await service.getGeozonesByDeviceId(deviceId);
         setGeofencesByDeviceId(responseGeofences);
