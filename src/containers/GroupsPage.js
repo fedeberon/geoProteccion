@@ -21,9 +21,12 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import CloseIcon from "@material-ui/icons/Close";
 import TextField from "@material-ui/core/TextField";
-import GroupsAttributesDialog from '../components/GroupsAttributesDialog';
+import AttributesDialog from '../components/AttributesDialog';
 import EditTwoToneIcon from "@material-ui/icons/EditTwoTone";
-import {DeleteTwoTone} from "@material-ui/icons";
+import {DeleteTwoTone, MoreVert} from "@material-ui/icons";
+import DeviceConfigFull from "../components/DeviceConfigFull";
+import Menu from "@material-ui/core/Menu";
+import MenuItem from "@material-ui/core/MenuItem";
 
 const useStyles = groupsPageStyle;
 
@@ -33,6 +36,12 @@ const GroupsPage = () => {
   const [openAddGroup, setOpenAddGroup] = useState(false);
   const [extraData, setExtraData] = useState(false);
   const [dialogAttributes, setDialogAttributes] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(false);
+  const [openedMenu, setOpenedMenu] = useState(null);
+  const [openFullDialog, setOpenFullDialog] = useState(false);
+  const [type, setType] = useState("");
+  const [groupId, setGroupId] = useState('');
+  const [groupAssignment, setGroupAssignment] = useState(false);
   const [newGroup, setNewGroup] = useState({
     id: '',
     name: '',
@@ -51,6 +60,14 @@ const GroupsPage = () => {
       attributes: {},
     });
     }
+  };
+
+  const variable = {
+    geocerca: "sharedGeofences",
+    notification: "sharedNotifications",
+    atrCalculados: "sharedComputedAttributes",
+    comGuardados: "sharedSavedCommands",
+    mantenimiento: "sharedMaintenance",
   };
 
   const handleOpenDialogAttributes = () => {
@@ -128,6 +145,32 @@ const GroupsPage = () => {
     }
   }
 
+  const handleClickMenuMore = (event) => {
+    setAnchorEl(event.currentTarget);
+    setOpenedMenu(event.currentTarget.value);
+    setGroupAssignment(true);
+  };
+
+  const handleCloseMenuMore = () => {
+    setAnchorEl(null);
+    setOpenedMenu(null);
+  };
+
+  const handleOpenFullDialog = (parametro, groupId) => {
+    setOpenFullDialog(true);
+    setType(parametro);
+    if (groupId) {
+      setGroupId(groupId);
+    }
+    handleCloseMenuMore();
+  };
+
+  const handleCloseFullDialog = () => {
+    setOpenFullDialog(false);
+    setGroupId("");
+    setGroupAssignment(false);
+  };
+
   return (
     <div>
       <div className="title-section">
@@ -161,19 +204,55 @@ const GroupsPage = () => {
                 <TableRow key={index} hover>
                   <TableCell>{group.name}</TableCell>
                   <TableCell align="right">
-                  <Button className={classes.buttonFunctions} 
-                  onClick={() => handleOpenDialog(group)}
-                  title={t('sharedEdit')}
-                  >
-                    <EditTwoToneIcon/>
-                  </Button>
-                  <Button className={classes.buttonFunctions} 
-                  onClick={() => handleRemove(group.id)} title={t('sharedRemove')}
-                  >
-                    <DeleteTwoTone />
-                  </Button>
-                </TableCell>
-              </TableRow>
+                    <Button className={classes.buttonFunctions} 
+                    onClick={() => handleOpenDialog(group)}
+                    title={t('sharedEdit')}
+                    >
+                      <EditTwoToneIcon/>
+                    </Button>
+                    <Button className={classes.buttonFunctions} 
+                    onClick={() => handleRemove(group.id)} title={t('sharedRemove')}
+                    >
+                      <DeleteTwoTone />
+                    </Button>
+                    <Button 
+                    value={group.id}
+                    onClick={handleClickMenuMore}>
+                      <MoreVert/>
+                    </Button>
+                  </TableCell>                  
+                    <Menu
+                      id={group.id}
+                      anchorEl={anchorEl}
+                      open={parseInt(openedMenu) === group.id}
+                      onClose={handleCloseMenuMore}
+                      >
+                      {/* <MenuItem 
+                      // onClick={() => handleClickCommand(group.id)}
+                      >
+                        {t("sharedSavedCommands")}
+                      </MenuItem> */}
+                      <MenuItem onClick={() => handleOpenFullDialog(variable.geocerca, group.id)}>
+                        {t("sharedGeofences")}
+                      </MenuItem>
+                      <MenuItem onClick={() => handleOpenFullDialog(variable.notification, group.id)}>
+                        {t("sharedNotifications")}
+                      </MenuItem>
+                      <MenuItem onClick={() => handleOpenFullDialog(variable.atrCalculados, group.id)}>
+                        {t("sharedComputedAttributes")}
+                      </MenuItem>
+                      <MenuItem style={{display: 'none'}} onClick={() => handleOpenFullDialog(variable.comGuardados, device.id)}>
+                        {t("sharedSavedCommands")}
+                      </MenuItem>
+                      <MenuItem style={{display: 'none'}} onClick={() => handleOpenFullDialog(variable.mantenimiento, device.id)}>
+                        {t("sharedMaintenance")}
+                      </MenuItem>
+                      <MenuItem style={{display: 'none'}}  onClick={() => handleOpenAcumulators(device.id)}>
+                        {t("sharedDeviceAccumulators")}
+                      </MenuItem>
+                    </Menu>
+                  
+                </TableRow>              
               ))}            
             </TableBody>
           </Table>
@@ -266,12 +345,21 @@ const GroupsPage = () => {
         </DialogActions>
       </Dialog>
       </div>
-      <GroupsAttributesDialog 
-      data={newGroup.attributes}
-      savingAttributes={savingAttributes}
-      open={dialogAttributes} 
-      close={handleCloseDialogAttributes}
-     />
+        <AttributesDialog 
+          data={newGroup.attributes}
+          savingAttributes={savingAttributes}
+          open={dialogAttributes} 
+          close={handleCloseDialogAttributes}
+        />
+        <div>
+          <DeviceConfigFull
+            open={openFullDialog}
+            close={handleCloseFullDialog}
+            type={type}
+            deviceId={groupId}
+            groupAssignment={groupAssignment}
+          />
+        </div>
     </div>
   );
 };

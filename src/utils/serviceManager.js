@@ -50,6 +50,12 @@ const getGeozonesByDeviceId = (deviceId) => {
     .then(response => response.json());
 }
 
+const getGeozonesByGroupId = (groupId) => {
+  return fetch(`api/geofences?groupId=${groupId}`, {method: 'GET'})
+    .catch(function (error) {console.log('setGeofencesByGroupIderror: ' + error)})
+    .then(response => response.json());
+}
+
 const getNotificationsByUserId = (id) => {
   return fetch(`api/notifications?userId=${id}`, { method: "GET" })
     .catch(function (error) {
@@ -60,6 +66,14 @@ const getNotificationsByUserId = (id) => {
 
 const getNotificationsByDeviceId = (id) => {
   return fetch(`api/notifications?deviceId=${id}`, { method: "GET" })
+    .catch(function (error) {
+      console.log("setNotifications error: ", error);
+    })
+    .then((response) => response.json());
+};
+
+const getNotificationsByGroupId = (id) => {
+  return fetch(`api/notifications?groupId=${id}`, { method: "GET" })
     .catch(function (error) {
       console.log("setNotifications error: ", error);
     })
@@ -217,6 +231,16 @@ const getComputedAttributesByDeviceId = (deviceId) => {
     .then((response) => response.json());
 };
 
+const getComputedAttributesByGroupId = (groupId) => {
+  return fetch(`api/attributes/computed?groupId=${groupId}`, {
+    method: "GET",
+  })
+    .catch(function (error) {
+      console.log("getComputedAttributesById error: ", error);
+    })
+    .then((response) => response.json());
+};
+
 const getComputedAttributes = () => {
   return fetch(`api/attributes/computed`, { method: "GET" })
     .catch(function (error) {
@@ -308,5 +332,8 @@ export {
   updateServer,
   getCommands,
   getGeozonesByDeviceId,
-  updateUser
+  updateUser,
+  getGeozonesByGroupId,
+  getNotificationsByGroupId,
+  getComputedAttributesByGroupId
 };

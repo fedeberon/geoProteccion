@@ -6,7 +6,6 @@ import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
 import { Typography } from "@material-ui/core";
-import Button from "@material-ui/core/Button";
 import Slide from "@material-ui/core/Slide";
 import PropTypes from "prop-types";
 import Table from "@material-ui/core/Table";
@@ -61,19 +60,19 @@ const headCellssharedGeofences = [
 
 const headCellssharedNotifications = [
   {
-    id: "name",
+    id: "type",
     numeric: false,
     disablePadding: true,
     label: `${t("notificationType")}`,
   },
   {
-    id: "calories",
+    id: "always",
     numeric: false,
     disablePadding: false,
     label: `${t("notificationAlways")}`,
   },
   {
-    id: "fat",
+    id: "notificators",
     numeric: false,
     disablePadding: false,
     label: `${t("notificationNotificators")}`,
@@ -82,13 +81,13 @@ const headCellssharedNotifications = [
 
 const headCellssharedComputedAttributes = [
   {
-    id: "name",
+    id: "description",
     numeric: false,
     disablePadding: true,
     label: `${t("sharedDescription")}`,
   },
   {
-    id: "calories",
+    id: "attribute",
     numeric: false,
     disablePadding: false,
     label: `${t("sharedAttribute")}`,
@@ -96,19 +95,19 @@ const headCellssharedComputedAttributes = [
 ];
 const headCellssharedSavedCommands = [
   {
-    id: "name",
+    id: "description",
     numeric: false,
     disablePadding: true,
     label: `${t("sharedDescription")}`,
   },
   {
-    id: "calories",
+    id: "type",
     numeric: false,
     disablePadding: false,
     label: `${t("sharedType")}`,
   },
   {
-    id: "fat",
+    id: "sendSms",
     numeric: false,
     disablePadding: false,
     label: `${t("commandSendSms")}`,
@@ -122,19 +121,19 @@ const headCellssharedMaintenance = [
     label: `${t("sharedName")}`,
   },
   {
-    id: "calories",
+    id: "type",
     numeric: false,
     disablePadding: false,
     label: `${t("sharedType")}`,
   },
   {
-    id: "fat",
+    id: "start",
     numeric: true,
     disablePadding: false,
     label: `${t("maintenanceStart")}`,
   },
   {
-    id: "carbs",
+    id: "period",
     numeric: true,
     disablePadding: false,
     label: `${t("maintenancePeriod")}`,
@@ -145,7 +144,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-const DeviceConfigFull = ({ open, close, type, deviceId }) => {
+const DeviceConfigFull = ({ open, close, type, deviceId, groupAssignment }) => {
   const classes = useStyles();
   const userId = useSelector((state) => state.session.user.id);
   const [openFull, setOpenFull] = useState(false);
@@ -154,39 +153,66 @@ const DeviceConfigFull = ({ open, close, type, deviceId }) => {
   const [selected, setSelected] = useState([]);
   const [arrayToMap, setArrayToMap] = useState([]);
   const [geofencesByDeviceId, setGeofencesByDeviceId] = useState([]);
+  const [geofencesByGroupId, setGeofencesByGroupId] = useState([]);
   const [notificationsByDeviceId, setNotificationsByDeviceId] = useState([]);
+  const [notificationsByGroupId, setNotificationsByGroupId] = useState([]);
   const [computedAttributesByDeviceId, setComputedAttributesByDeviceId] = useState([]);
+  const [computedAttributesByGroupId, setComputedAttributesByGroupId] = useState([]);
   let asd = [];
 
   useEffect(() => {
-    if (type === "sharedGeofences") {
-      const getGeozonesByDevice = async() => {
-        const responseGeofences = await service.getGeozonesByDeviceId(deviceId);
-        setGeofencesByDeviceId(responseGeofences);
-      }      
-      getGeozonesByDevice();
+    if (type === "sharedGeofences") {      
+      if(groupAssignment){
+        const getGeozonesByGroup = async() => {
+          const responseGeofences = await service.getGeozonesByGroupId(deviceId);
+          setGeofencesByGroupId(responseGeofences);
+        }      
+        getGeozonesByGroup();
+      } else {
+        const getGeozonesByDevice = async() => {
+          const responseGeofences = await service.getGeozonesByDeviceId(deviceId);
+          setGeofencesByDeviceId(responseGeofences);
+        }      
+        getGeozonesByDevice();         
+      }
       const getGeozones = async (userId) => {
         const response = await service.getGeozonesByUserId(userId);
         setArrayToMap(response);
       };
-      getGeozones(userId);      
-    } else if (type === "sharedNotifications") {
-      const getNotificationsByDeviceId = async() => {
-        const responseNotifications = await service.getNotificationsByDeviceId(deviceId);
-        setNotificationsByDeviceId(responseNotifications);
-      } 
-      getNotificationsByDeviceId();
+      getGeozones(userId);     
+    } else if (type === "sharedNotifications") {      
+      if(groupAssignment){
+        const getNotificationsByGroupId = async() => {
+          const responseNotifications = await service.getNotificationsByGroupId(deviceId);
+          setNotificationsByGroupId(responseNotifications);
+        }       
+        getNotificationsByGroupId();
+      } else {
+        const getNotificationsByDeviceId = async() => {
+          const responseNotifications = await service.getNotificationsByDeviceId(deviceId);
+          setNotificationsByDeviceId(responseNotifications);
+        }       
+        getNotificationsByDeviceId();
+      }
       const getNotifications = async (userId) => {
         const response = await service.getNotificationsByUserId(userId);
         setArrayToMap(response);
       };
-      getNotifications(userId);
+      getNotifications(userId);    
     } else if (type === "sharedComputedAttributes") {
-      const getComputedAttributesByDeviceId = async() => {
-        const responseNotifications = await service.getComputedAttributesByDeviceId(deviceId);
-        setComputedAttributesByDeviceId(responseNotifications);
-      } 
-      getComputedAttributesByDeviceId();
+      if(groupAssignment){
+        const getComputedAttributesByGroup = async() => {
+          const responseNotifications = await service.getComputedAttributesByGroupId(deviceId);
+          setComputedAttributesByGroupId(responseNotifications);
+        } 
+        getComputedAttributesByGroup();
+      } else {
+        const getComputedAttributesByDeviceId = async() => {
+          const responseNotifications = await service.getComputedAttributesByDeviceId(deviceId);
+          setComputedAttributesByDeviceId(responseNotifications);
+        } 
+        getComputedAttributesByDeviceId();
+      }      
       const getComputedAttributes = async () => {
         const response = await service.getComputedAttributes();
         setArrayToMap(response);
@@ -206,7 +232,7 @@ const DeviceConfigFull = ({ open, close, type, deviceId }) => {
       }
       getMaintenances();
     }
-  }, [open]);
+  }, [open===true]);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
@@ -216,37 +242,63 @@ const DeviceConfigFull = ({ open, close, type, deviceId }) => {
 
   useEffect(()=> {
     if(open){
-      geofencesByDeviceId.map((el)=>{
-        if(!(selected.some(el2 => el2.name === el.name))){
-          selected.push(el.name);
-        }             
-      })
+      if(groupAssignment){
+        geofencesByGroupId.map((el)=>{
+          if(!(selected.some(el2 => el2.name === el.name))){
+            selected.push(el.name);
+          }             
+        })
+      } else {
+        geofencesByDeviceId.map((el)=>{
+          if(!(selected.some(el2 => el2.name === el.name))){
+            selected.push(el.name);
+          }             
+        })
+      }      
     }    
-  },[geofencesByDeviceId])
+  },[geofencesByDeviceId, geofencesByGroupId])
 
   useEffect(()=> {
     if(open){
-      notificationsByDeviceId.map((el)=>{
-        if(!(selected.some(el2 => el2.type === el.type))){
-          selected.push(el.type);
-        }             
-      })
+      if(groupAssignment){
+        notificationsByGroupId.map((el)=>{
+          if(!(selected.some(el2 => el2.type === el.type))){
+            selected.push(el.type);
+          }             
+        })
+      } else {
+        notificationsByDeviceId.map((el)=>{
+          if(!(selected.some(el2 => el2.type === el.type))){
+            selected.push(el.type);
+          }             
+        })
+      }      
     }    
-  },[notificationsByDeviceId])
+  },[notificationsByDeviceId, notificationsByGroupId])
 
   useEffect(()=> {
     if(open){
-      computedAttributesByDeviceId.map((el)=>{
-        if(!(selected.some(el2 => el2.description === el.description))){
-          selected.push(el.description);
-        }             
-      })
+      if(groupAssignment){
+        computedAttributesByGroupId.map((el)=>{
+          if(!(selected.some(el2 => el2.description === el.description))){
+            selected.push(el.description);
+          }             
+        })
+      } else {
+        computedAttributesByDeviceId.map((el)=>{
+          if(!(selected.some(el2 => el2.description === el.description))){
+            selected.push(el.description);
+          }             
+        })
+      }      
     }    
-  },[computedAttributesByDeviceId])
+  },[computedAttributesByDeviceId, computedAttributesByGroupId])
 
   const handleSetSelectedItem = (id) => {
     let permission = {};
-    permission.deviceId = deviceId;
+
+    if(groupAssignment){
+      permission.groupId = deviceId;
     if(type === 'sharedGeofences'){
       permission.geofenceId = id;
     } else if(type === "sharedNotifications"){
@@ -254,6 +306,17 @@ const DeviceConfigFull = ({ open, close, type, deviceId }) => {
     } else if(type === "sharedComputedAttributes"){
       permission.attributeId = id;
     }
+    } else {
+      permission.deviceId = deviceId;
+      if(type === 'sharedGeofences'){
+        permission.geofenceId = id;
+      } else if(type === "sharedNotifications"){
+        permission.notificationId = id;
+      } else if(type === "sharedComputedAttributes"){
+        permission.attributeId = id;
+      }
+    }
+    
 
     console.log(JSON.stringify(permission))
 
@@ -266,7 +329,9 @@ const DeviceConfigFull = ({ open, close, type, deviceId }) => {
 
   const handleDeleteSelectedItem = (id) => {
     let permission = {};
-    permission.deviceId = deviceId;
+    
+    if(groupAssignment){
+      permission.groupId = deviceId;
     if(type === 'sharedGeofences'){
       permission.geofenceId = id;
     } else if(type === "sharedNotifications"){
@@ -274,7 +339,16 @@ const DeviceConfigFull = ({ open, close, type, deviceId }) => {
     } else if(type === "sharedComputedAttributes"){
       permission.attributeId = id;
     }
-    
+    } else {
+      permission.deviceId = deviceId;
+      if(type === 'sharedGeofences'){
+        permission.geofenceId = id;
+      } else if(type === "sharedNotifications"){
+        permission.notificationId = id;
+      } else if(type === "sharedComputedAttributes"){
+        permission.attributeId = id;
+      }
+    }    
 
     console.log(JSON.stringify(permission))
     fetch(`api/permissions`, {
@@ -286,9 +360,8 @@ const DeviceConfigFull = ({ open, close, type, deviceId }) => {
 
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
-
   const handleClose = () => {
-    setSelected([]);
+    // setSelected([]);
     close();
   };
 
@@ -564,8 +637,6 @@ const DeviceConfigFull = ({ open, close, type, deviceId }) => {
                 const isItemSelected = isSelected(row.name);
                 const labelId = `enhanced-table-checkbox-${index}`;
 
-                console.log(selected)
-
                 return (
                   <TableRow
                     hover
@@ -579,7 +650,7 @@ const DeviceConfigFull = ({ open, close, type, deviceId }) => {
                     }}                    
                     role="checkbox"                  
                     tabIndex={-1}
-                    key={row.name}                    
+                    key={index}                    
                   >
                     <TableCell padding="checkbox">
                       <Checkbox                     
@@ -622,7 +693,7 @@ const DeviceConfigFull = ({ open, close, type, deviceId }) => {
                     }}   
                     role="checkbox"
                     tabIndex={-1}
-                    key={row.index}
+                    key={index}
                   >
                     <TableCell padding="checkbox">
                       <Checkbox
@@ -632,9 +703,9 @@ const DeviceConfigFull = ({ open, close, type, deviceId }) => {
                     </TableCell>
                     <TableCell
                       component="th"
-                      id={labelId}
                       scope="row"
                       padding="none"
+                      id={index}
                     >
                       {t(`${row.type}`)}
                     </TableCell>

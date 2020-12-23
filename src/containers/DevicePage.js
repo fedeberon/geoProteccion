@@ -33,7 +33,6 @@ import AddIcon from "@material-ui/icons/Add";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
@@ -49,7 +48,7 @@ import DeviceConfigFull from "../components/DeviceConfigFull";
 import devicePageStyle from "./styles/DevicePageStyle";
 import { devicesActions } from "../store";
 import Avatar from '@material-ui/core/Avatar';
-import MenuList from '@material-ui/core/MenuList';
+import AttributesDialog from '../components/AttributesDialog';
 
 const useStyles = devicePageStyle;
 
@@ -84,16 +83,16 @@ const DevicePage = () => {
   const [totalDistance, setTotalDistance] = useState(0);
   const [positionHours, setPositionHours] = useState(0);
   const [addressFound, setAddressFound] = useState('');
-  const [showFormAttributes, setShowFormAttributes] = useState(false);
+  const [dialogAttributes, setDialogAttributes] = useState(false);
   const [newDevice, setNewDevice] = useState({
     id: null,
     name: "",
     uniqueId: "",
     status: "",
-    disabled: true,
+    disabled: false,
     lastUpdate: null,
     positionId: null,
-    groupId: null,
+    groupId: "",
     phone: "",
     model: "",
     contact: "",
@@ -286,8 +285,6 @@ const DevicePage = () => {
     device.lastUpdate = new Date();
     let request;
 
-    console.log(JSON.stringify(selectedDevice));
-
     if (id) {
       request = fetch(`/api/devices/${id}`, {
         method: 'PUT',
@@ -321,10 +318,10 @@ const DevicePage = () => {
         name: "",
         uniqueId: "",
         status: "",
-        disabled: true,
+        disabled: false,
         lastUpdate: null,
         positionId: null,
-        groupId: null,
+        groupId: "",
         phone: "",
         model: "",
         contact: "",
@@ -384,26 +381,27 @@ const DevicePage = () => {
     getDevices();
   },[])
 
-  // const handleEditAttribute = (attribute, index) => {
-  //   setNewAttribute({name: attribute[0], value: attribute[1]});
-  // }
+  const handleOpenDialogAttributes = () => {
+    setDialogAttributes(true);
+  }
 
-  // const onBlurFunction = (e) => {
-  //   let x = document.getElementById("keyattribute");
-  //   x.value = x.value.toUpperCase();
+  const handleCloseDialogAttributes = () => {
+    setDialogAttributes(false);
+  }
 
-  //   if (e.target.value !== "") {
-  //     let {
-  //       [attribute[0]]: value,
-  //       ...rest
-  //     } = attributes;
-  //     setAttributes({
-  //       ...rest,
-  //       [e.target.value]: attribute[1],
-  //     });
-  //   }
-  //   e.target.value = "";
-  // }
+  const savingAttributes = (objeto) => {    
+    if(openModalEdit){
+      setSelectedDevice({
+        ...selectedDevice,
+        attributes: objeto,
+      })
+    } else {
+      setNewDevice({
+        ...newDevice,
+        attributes: objeto,
+      })
+    }      
+  }
 
   return (
     <>
@@ -893,7 +891,7 @@ const DevicePage = () => {
                 </form>
                 <Button
                   style={{ margin: "10px 0px" }}
-                  onClick={handleClickAttributes}
+                  onClick={() => handleOpenDialogAttributes()}
                   fullWidth={true}
                   variant="outlined"
                   color="primary"
@@ -920,13 +918,9 @@ const DevicePage = () => {
                         groupId: event.target.value,
                       })
                     }
-                    label={t("groupDialog")}
                     name="groupid"
                     type="text"
                     variant="outlined"
-                    inputlabelprops={{
-                      shrink: true,
-                    }}
                   >
                     <option aria-label="none" value="0" />
                     {groups.map((group, index) => (
@@ -978,7 +972,6 @@ const DevicePage = () => {
                         category: event.target.value,
                       })
                     }
-                    label={t("groupCategory")}
                     name="category"
                     type="text"
                     variant="outlined"                  
@@ -996,11 +989,14 @@ const DevicePage = () => {
                     ))}
 
                   </Select>                 
-                  <Typography>
+                  
                     {t('sharedDisabled')}:
                     <Radio
-                      checked={radioValue === true}
-                      onClick={handleChangeRadio}
+                      checked={newDevice.disabled === true}
+                      onChange={() => setNewDevice({
+                        ...newDevice,
+                        disabled: true,
+                      })}
                       color="primary"
                       value={true}
                       name="radio-button-demo"
@@ -1008,15 +1004,18 @@ const DevicePage = () => {
                     />
                     {t('reportYes')}
                     <Radio
-                      checked={radioValue === false}
-                      onChange={handleChangeRadio}
+                      checked={newDevice.disabled === false}
+                      onChange={() => setNewDevice({
+                        ...newDevice,
+                        disabled: false,
+                      })}
                       color="primary"
                       value={false}
                       name="radio-button-demo"
                       inputProps={{ "aria-label": "B" }}
                     />
                     {t('reportNo')}
-                  </Typography>
+                  
                 </form>
               </Container>
             </DialogContent>
@@ -1081,7 +1080,7 @@ const DevicePage = () => {
                 </form>
                 <Button
                   style={{ margin: "10px 0px" }}
-                  onClick={handleClickAttributes}
+                  onClick={() => handleOpenDialogAttributes()}
                   fullWidth={true}
                   variant="outlined"
                   color="primary"
@@ -1108,13 +1107,9 @@ const DevicePage = () => {
                         groupId: event.target.value,
                       })
                     }
-                    label={t("groupDialog")}
                     name="name"
                     type="text"
                     variant="outlined"
-                    inputlabelprops={{
-                      shrink: true,
-                    }}
                   >
                     <option aria-label="none" value="0" />
                     {groups.map((group, index) => (
@@ -1190,11 +1185,13 @@ const DevicePage = () => {
                       </MenuItem>
                     ))}
                   </Select>
-                  <Typography>
                     {t('sharedDisabled')}:
                     <Radio
-                      checked={radioValue === true}
-                      onClick={handleChangeRadio}
+                      checked={selectedDevice.disabled === true}
+                      onChange={() => setSelectedDevice({
+                        ...selectedDevice,
+                        disabled: true,
+                      })}
                       color="primary"
                       value={true}
                       name="radio-button-demo"
@@ -1202,15 +1199,17 @@ const DevicePage = () => {
                     />
                     {t('reportYes')}
                     <Radio
-                      checked={radioValue === false}
-                      onChange={handleChangeRadio}
+                      checked={selectedDevice.disabled === false}
+                      onChange={() => setSelectedDevice({
+                        ...newDevice,
+                        disabled: false,
+                      })}
                       color="primary"
                       value={false}
                       name="radio-button-demo"
                       inputProps={{ "aria-label": "B" }}
                     />
                     {t('reportNo')}
-                  </Typography>
                 </form>
               </Container>
             </DialogContent>
@@ -1227,6 +1226,15 @@ const DevicePage = () => {
               </Button>
             </DialogActions>
           </Dialog>
+        </div>
+
+        <div>
+          <AttributesDialog 
+            data={selectedDevice.attributes ? selectedDevice.attributes : newDevice.attributes}
+            savingAttributes={savingAttributes}
+            open={dialogAttributes} 
+            close={handleCloseDialogAttributes}
+          />
         </div>
 
         {/*Modal Attributes*/}

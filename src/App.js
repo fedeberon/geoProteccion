@@ -30,7 +30,9 @@ import Validation from './components/Validation';
 const App = () => {
   const dispatch = useDispatch();  
   const history = useHistory();
-  const authenticated = useSelector((state) => state.session.authenticated);  
+  const [validating, setValidating] = useState(false);
+  const authenticated = useSelector((state) => state.session.authenticated);
+  const server = useSelector((state) => state.session.server);  
   
   let response;
 
@@ -46,15 +48,13 @@ const App = () => {
         value: isViewportDesktop,
       })
     );
-    console.log(authenticated)
   });
 
   useEffect(()=> {
-
         if(localStorage.token){          
-          history.push("/validation");          
+          history.push("/validation");  
+          setValidating(true);        
         }
-
         const autoLogin = async () => {           
         if(localStorage.token && localStorage.username && localStorage.password){        
         response = await service.setSession(localStorage.username, localStorage.password);
@@ -63,16 +63,18 @@ const App = () => {
         if (response.status === 200) {
           dispatch(sessionActions.authenticated(true));
           dispatch(sessionActions.setUser(user));
-          response = await service.getServer();
-          dispatch(sessionActions.setServer(response));                       
-        }              
+          let responseServer = await service.getServer();
+          dispatch(sessionActions.setServer(responseServer));                   
+        }        
+        if(server && user){
+          setTimeout(()=> {
+            history.push("/"); 
+            setValidating(false);   
+          },2000)                   
+        }    
       }
     }
-    autoLogin();    
-    setTimeout(() => {
-      history.push("/");
-    }, 3000);   
-    
+    autoLogin();   
   },[]);  
 
   return (
@@ -81,7 +83,8 @@ const App = () => {
       <CssBaseline />
       <SuccessSnackbar />      
       {authenticated && <SocketController />}         
-      <Switch>         
+      <Switch>       
+        <Route exact path="/validation" component={Validation}/>  
         <Route exact path="/login" component={LoginPage} />     
         <PrivateRoute
           exact
