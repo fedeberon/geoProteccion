@@ -77,7 +77,7 @@ const getAvailableTypes = () => {
 const getRoutesReports = (from, to, params = "") => {
   return fetch(`api/reports/route?` + `${params}from=${from}&to=${to}`, {
     method: "GET",
-    headers: { Accept: "application/json" },
+    headers: { "Accept": "application/json" },
   })
     .catch(function (error) {
       console.log("setRoutesReports error: ", error);
@@ -91,7 +91,7 @@ const getEventsReports = (fromDev, toDev, typeDev, paramsDev = "") => {
       `${paramsDev}` +
       `${typeDev}` +
       `from=${fromDev}&to=${toDev}`,
-    { method: "GET", headers: { Accept: "application/json" } }
+    { method: "GET", headers: { "Accept": "application/json" } }
   )
     .catch(function (error) {
       console.log("setEventsReports error: ", error);
@@ -102,7 +102,7 @@ const getEventsReports = (fromDev, toDev, typeDev, paramsDev = "") => {
 const getPositionsByDeviceId = (id, from, to) => {
   return fetch(`api/positions?` + `deviceId=${id}&from=${from}&to=${to}`, {
     method: "GET",
-    headers: { Accept: "application/json" },
+    headers: { "Accept": "application/json" },
   })
     .catch(function (error) {
       console.log("setPositions error: ", error);
@@ -113,7 +113,7 @@ const getPositionsByDeviceId = (id, from, to) => {
 const getPositionsReports = (ids) => {
   return fetch(`api/positions?` + `${ids}`, {
     method: "GET",
-    headers: { Accept: "application/json" },
+    headers: { "Accept": "application/json" },
   })
     .catch(function (error) {
       console.log("setPositions error: ", error);
@@ -124,7 +124,7 @@ const getPositionsReports = (ids) => {
 const getTripsReports = (from, to, params, type) => {
   return fetch(
     `api/reports/trips?` + `${params}` + `${type}` + `from=${from}&to=${to}`,
-    { method: "GET", headers: { Accept: "application/json" } }
+    { method: "GET", headers: { "Accept": "application/json" } }
   )
     .catch(function (error) {
       console.log("setTrips error: ", error);
@@ -135,7 +135,7 @@ const getTripsReports = (from, to, params, type) => {
 const getStopsReports = (from, to, params) => {
   return fetch(`api/reports/stops?` + `${params}` + `from=${from}&to=${to}`, {
     method: "GET",
-    headers: { Accept: "application/json" },
+    headers: { "Accept": "application/json" },
   })
     .catch(function (error) {
       console.log("setStops error: ", error);
@@ -146,7 +146,7 @@ const getStopsReports = (from, to, params) => {
 const getSummaryReports = (from, to, params) => {
   return fetch(`api/reports/summary?` + `${params}` + `from=${from}&to=${to}`, {
     method: "GET",
-    headers: { Accept: "application/json" },
+    headers: { "Accept": "application/json" },
   })
     .catch(function (error) {
       console.log("setSummary error: ", error);
@@ -157,7 +157,7 @@ const getSummaryReports = (from, to, params) => {
 const getGraphicData = (from, to, params) => {
   return fetch(`api/reports/route?` + `${params}from=${from}&to=${to}`, {
     method: "GET",
-    headers: { Accept: "application/json" },
+    headers: { "Accept": "application/json" },
   })
     .catch(function (error) {
       console.log("setRoutesReports error: ", error);

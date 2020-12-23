@@ -48,10 +48,6 @@ import CloseIcon from "@material-ui/icons/Close";
 import DeviceConfigFull from "../components/DeviceConfigFull";
 import devicePageStyle from "./styles/DevicePageStyle";
 import { devicesActions } from "../store";
-import Grid from '@material-ui/core/Grid';
-import DraftsIcon from '@material-ui/icons/Drafts';
-import SendIcon from '@material-ui/icons/Send';
-import PriorityHighIcon from '@material-ui/icons/PriorityHigh';
 import Avatar from '@material-ui/core/Avatar';
 import MenuList from '@material-ui/core/MenuList';
 
