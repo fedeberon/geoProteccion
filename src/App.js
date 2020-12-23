@@ -30,7 +30,6 @@ import Validation from './components/Validation';
 const App = () => {
   const dispatch = useDispatch();  
   const history = useHistory();
-  const [validating, setValidating] = useState(false);
   const authenticated = useSelector((state) => state.session.authenticated);
   const server = useSelector((state) => state.session.server);  
   
@@ -52,8 +51,7 @@ const App = () => {
 
   useEffect(()=> {
         if(localStorage.token){          
-          history.push("/validation");  
-          setValidating(true);        
+          history.push("/validation");      
         }
         const autoLogin = async () => {           
         if(localStorage.token && localStorage.username && localStorage.password){        
@@ -69,7 +67,6 @@ const App = () => {
         if(server && user){
           setTimeout(()=> {
             history.push("/"); 
-            setValidating(false);   
           },2000)                   
         }    
       }

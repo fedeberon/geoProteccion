@@ -68,10 +68,10 @@ function DeviceSearch(deviceId) {
     filterDevices();
   }, [devices.length > 0]);
 
-  const goSearch = (e) => {
+  const goSearch = (event) => {
     let value;
     devices.map((el) =>{
-      if(el.name.toString().toLocaleLowerCase().includes(e.toLocaleLowerCase())){
+      if(el.name.toString().toLocaleLowerCase().includes(event.toLocaleLowerCase())){
         value = el;        
       }      
     })
@@ -94,10 +94,16 @@ function DeviceSearch(deviceId) {
           <SearchIcon />
         </IconButton>
         <InputBase
+          type="text"
           className={classes.input}
           placeholder={t("sharedSearch")}          
           onChange={(event) => filterDevices(event.target.value)}
-          onKeyPress={(e) => e.key === 'Enter' ? goSearch(e.target.value) : ""}
+          onKeyPress={function (event) {
+            if(event.key === 'Enter'){
+              event.preventDefault();
+              goSearch(event.target.value)
+            }                      
+          }}
         />
         {showDeviceList ? (
           <i onClick={() => toggleDeviceList()} className="fas fa-angle-up fa-lg" 
