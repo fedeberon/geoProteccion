@@ -62,7 +62,6 @@ const GroupsAttributesDialog = ({open, close, savingAttributes, data}) => {
     const handleClose = () => {
      setEditRow(false);
      setNewAttribute({name: '', value: ''});
-     setAttributes({});
      close();
     };   
     

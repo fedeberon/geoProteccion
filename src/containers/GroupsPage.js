@@ -42,7 +42,15 @@ const GroupsPage = () => {
 
   const handleOpenDialog = (group) => {
     setOpenAddGroup(true);
-    setNewGroup(group);
+    if(group){
+      setNewGroup(group);
+    } else {
+      setNewGroup({id: '',
+      name: '',
+      groupId: '',
+      attributes: {},
+    });
+    }
   };
 
   const handleOpenDialogAttributes = () => {
@@ -103,9 +111,8 @@ const GroupsPage = () => {
         }).then(response => response.json())
         .then(data => console.log(data))
     }    
-    
-      getGroups();
-      setOpenAddGroup(false);
+    getGroups();
+    setOpenAddGroup(false);
   }
 
   const handleRemove = (id) => {
@@ -133,7 +140,7 @@ const GroupsPage = () => {
           type="button"
           color="primary"
           variant="outlined"
-          onClick={handleOpenDialog}
+          onClick={() => handleOpenDialog()}
         >
           <AddIcon color="primary" />
           {t("sharedAdd")}
@@ -155,7 +162,8 @@ const GroupsPage = () => {
                   <TableCell>{group.name}</TableCell>
                   <TableCell align="right">
                   <Button className={classes.buttonFunctions} 
-                  onClick={() => handleOpenDialog(group)}title={t('sharedEdit')}
+                  onClick={() => handleOpenDialog(group)}
+                  title={t('sharedEdit')}
                   >
                     <EditTwoToneIcon/>
                   </Button>
