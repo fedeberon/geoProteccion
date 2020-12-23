@@ -259,6 +259,7 @@ const GroupsPage = () => {
       </Dialog>
       </div>
       <GroupsAttributesDialog 
+      data={newGroup.attributes}
       savingAttributes={savingAttributes}
       open={dialogAttributes} 
       close={handleCloseDialogAttributes}

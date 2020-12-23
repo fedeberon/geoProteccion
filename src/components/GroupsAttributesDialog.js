@@ -46,7 +46,7 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 
-const GroupsAttributesDialog = ({open, close, savingAttributes}) => {
+const GroupsAttributesDialog = ({open, close, savingAttributes, data}) => {
 
     const classes = useStyles();
     const [openDialog, setOpenDialog] = useState(false);
@@ -64,11 +64,16 @@ const GroupsAttributesDialog = ({open, close, savingAttributes}) => {
      setNewAttribute({name: '', value: ''});
      setAttributes({});
      close();
-    };    
+    };   
+    
+    const handleCloseAttributes = () => {
+      close();
+    }
+
 
     useEffect(()=> {
-      console.log(attributes);
-    },[newAttribute])
+      setAttributes(data);
+    },[data])
 
     const handleEdit = (attribute) => {
       setNewAttribute({name: attribute[0], value: attribute[1]});
@@ -110,7 +115,7 @@ const GroupsAttributesDialog = ({open, close, savingAttributes}) => {
               <IconButton
                 aria-label="close"
                 className={classes.closeButton}
-                onClick={handleClose}
+                onClick={handleCloseAttributes}
               >
                 <CloseIcon />
               </IconButton>
