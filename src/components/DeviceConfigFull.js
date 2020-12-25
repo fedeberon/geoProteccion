@@ -361,7 +361,7 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupAssignment }) => {
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
   const handleClose = () => {
-    // setSelected([]);
+    setSelected([]);
     close();
   };
 
