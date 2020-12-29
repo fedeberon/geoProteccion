@@ -14,10 +14,12 @@ import Card from "@material-ui/core/Card";
 import CardHeader from "@material-ui/core/CardHeader";
 import CardMedia from "@material-ui/core/CardMedia";
 import CardContent from "@material-ui/core/CardContent";
-import EditTwoToneIcon from "@material-ui/icons/EditTwoTone";
+import Paper from '@material-ui/core/Paper';
+import InputBase from '@material-ui/core/InputBase';
 import {DeleteTwoTone} from "@material-ui/icons";
 import Collapse from "@material-ui/core/Collapse";
 import IconButton from "@material-ui/core/IconButton";
+import SearchIcon from '@material-ui/icons/Search';
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import List from "@material-ui/core/List";
@@ -60,6 +62,7 @@ const DevicePage = () => {
     (state) => Object.values(state.devices.items),
     shallowEqual
   );
+  const [devicesAux, setDevicesAux] = useState([]);
   const userId = useSelector((state) => state.session.user.id);
   const positions = useSelector((state) => state.positions.items, shallowEqual);
   const [moreInfo, setMoreInfo] = useState(false);
@@ -374,7 +377,8 @@ const DevicePage = () => {
 
   const getDevices = async () => {
     const response = await service.getDeviceByUserId(userId);
-    setDevices(response);      
+    setDevices(response);
+    setDevicesAux(response);    
   };
 
   useEffect(()=> {    
@@ -401,7 +405,27 @@ const DevicePage = () => {
         attributes: objeto,
       })
     }      
-  }
+  };
+
+  const filterDevices = (value = "") => {
+
+    if(value.length > 0){
+    const regex = new RegExp(`${value !== "" ? value : ".+"}`, "gi");
+    let filteredDevices = [];
+    if (devices.length > 0) {
+      filteredDevices = devices.filter(
+        (e) => regex.test(e.name) || regex.test(e.attributes.carPlate)
+      );
+    }
+    setDevices(filteredDevices);
+    } else {
+      setDevices(devicesAux);
+    }
+  };
+
+  useEffect(() => {
+    filterDevices();
+  }, [devices.length > 0]);
 
   return (
     <>
@@ -409,9 +433,9 @@ const DevicePage = () => {
         <h2>{t("deviceTitle")}</h2>
         <Divider />
       </div>
-      <Container>
+      <Container style={{display: `${window.innerWidth < 767 ? 'block' : 'inline-flex'}`, justifyContent: 'center'}}>
         <Button
-          style={{ margin: "10px 0px" }}
+          className={classes.buttonAddNewDevice}
           type="button"
           color="primary"
           variant="outlined"
@@ -420,6 +444,24 @@ const DevicePage = () => {
           <AddIcon color="primary" />
           {t("sharedAdd")}
         </Button>
+        <Paper component="form" className={classes.rootSearch}>
+          <InputBase
+            onChange={(event) => filterDevices(event.target.value)}
+            // onKeyPress={function (event) {
+            //   if(event.key === 'Enter'){
+            //     event.preventDefault();
+            //     goSearch(event.target.value)
+            //   }                      
+            // }}
+            className={classes.inputSearch}
+            placeholder="Buscar dispositivo"
+            inputProps={{ 'aria-label': 'search google maps' }}
+          />
+          <Divider className={classes.divider} orientation="vertical" />
+          <IconButton type="submit" className={classes.iconButtonSeach} aria-label="search">
+            <SearchIcon />
+          </IconButton>            
+        </Paper>
         <Divider />
       </Container>
 
@@ -845,7 +887,7 @@ const DevicePage = () => {
         ))}
 
         {/*MODAL ADD DEVICE*/}
-        <div style={{ height: "500px" }}>
+        <div>
           <Dialog
             open={openModalAdd}
             onClose={handleClickAdd}

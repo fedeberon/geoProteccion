@@ -12,6 +12,16 @@ const devicePageStyle = makeStyles((theme) => ({
       flexBasis: "33%",
     },
   },
+  buttonAddNewDevice: {
+    position: "inherit",
+    display: 'flex',
+    margin: '10px auto',
+    [theme.breakpoints.up("md")]: {
+      left: "2%",
+      position: "absolute",
+      margin: "10px 0px",
+    }, 
+  },
   showAddressButton: {
     fontSize: '12px',
     color: 'cadetblue',
@@ -19,8 +29,7 @@ const devicePageStyle = makeStyles((theme) => ({
     textTransform: 'inherit',
     [theme.breakpoints.up("md")]: {
       
-    },
-    
+    },    
   },
   rootList: {
     flexGrow: 1,
@@ -141,6 +150,26 @@ const devicePageStyle = makeStyles((theme) => ({
   title: {
     marginLeft: theme.spacing(2),
     flex: 1,
+  },
+  rootSearch: {
+    padding: '2px 4px',
+    display: 'flex',
+    alignItems: 'center',
+    width: '100%',
+    [theme.breakpoints.up("md")]: {
+      width: 400,
+    },
+  },
+  inputSearch: {
+    marginLeft: theme.spacing(1),
+    flex: 1,
+  },
+  iconButtonSearch: {
+    padding: 10,
+  },
+  divider: {
+    height: 28,
+    margin: 4,
   },
 }));
 
