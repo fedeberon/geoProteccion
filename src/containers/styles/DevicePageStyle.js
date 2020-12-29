@@ -152,6 +152,8 @@ const devicePageStyle = makeStyles((theme) => ({
     flex: 1,
   },
   rootSearch: {
+    height: '42px',
+    marginTop: '10px',
     padding: '2px 4px',
     display: 'flex',
     alignItems: 'center',

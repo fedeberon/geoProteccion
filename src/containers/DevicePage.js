@@ -447,18 +447,12 @@ const DevicePage = () => {
         <Paper component="form" className={classes.rootSearch}>
           <InputBase
             onChange={(event) => filterDevices(event.target.value)}
-            // onKeyPress={function (event) {
-            //   if(event.key === 'Enter'){
-            //     event.preventDefault();
-            //     goSearch(event.target.value)
-            //   }                      
-            // }}
             className={classes.inputSearch}
-            placeholder="Buscar dispositivo"
+            placeholder={`${t('sharedSearch')}`}
             inputProps={{ 'aria-label': 'search google maps' }}
           />
           <Divider className={classes.divider} orientation="vertical" />
-          <IconButton type="submit" className={classes.iconButtonSeach} aria-label="search">
+          <IconButton className={classes.iconButtonSeach} aria-label="search">
             <SearchIcon />
           </IconButton>            
         </Paper>
