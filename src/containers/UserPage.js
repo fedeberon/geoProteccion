@@ -4,7 +4,7 @@ import withWidth from "@material-ui/core/withWidth";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
-import TableContainer from "@material-ui/core/TableContainer";
+import Snackbar from '@material-ui/core/Snackbar';
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
@@ -14,6 +14,7 @@ import Tab from "@material-ui/core/Tab";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
 import t from "../common/localization";
+import MuiAlert from '@material-ui/lab/Alert';
 import { useSelector } from "react-redux";
 import Button from "@material-ui/core/Button";
 import Select from "@material-ui/core/Select";
@@ -79,19 +80,24 @@ function createData(field, userData) {
   return { field, userData };
 }
 
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
+
+
 const UserPage = () => {
   const classes = useStyles();
+  const [openSnackSuccess, setOpenSnackSuccess] = useState(false);
   const user = useSelector((state) => state.session.user);
   const storeServer = useSelector((state) => state.session.server);
   const [ rows, setRows ] = useState([]);
   const [ value, setValue ] = React.useState(0);
   const [ showAdministration, setShowAdministration ] = useState(false);
   const [ capsMap, setCapsMap ] = useState([]);
-  const [ checked, setChecked ] = React.useState(true);
   const [ fromDateTime, setFromDateTime ] = useState("");
   const [ toDateTime, setToDateTime ] = useState("");
   const [ openModalCommand, setOpenModalCommand ] = useState(false);
-  const [ server, setServer ] = useState({});
+  const [ server, setServer ] = useState(storeServer);
   const [ statistics, setStatistics ] = useState([]);
   const [ computedAttributes, setComputedAttributes ] = useState([]);
   const [ savedCommands, setSavedCommands ] = useState([]);
@@ -114,6 +120,14 @@ const UserPage = () => {
     to = toDateTime.toString();
     from = fromDateTime.toString();
   }
+
+  const handleCloseSnack = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpenSnackSuccess(false);
+  };
+
 
   const onChangeFromDateTime = (event) => {
     setFromDateTime(event.target.value);
@@ -146,10 +160,6 @@ const UserPage = () => {
     }
   }
 
-  const handleChangeCheckBox = (event) => {
-    setChecked(event.target.checked);
-  };
-
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
@@ -170,13 +180,16 @@ const UserPage = () => {
     setCapsMap(event.target.value);
   };
 
-
-
   const handleSaveServer = () => {
-    const saveServer = async () => {
+    const updateServer = async () => {
       let response = await service.updateServer(server);
+
+      dispatchEvent(sessionActions.setServer(response));
+      setServer(response);
     };
-    saveServer();
+    updateServer()
+    .then(response => response)
+    .then(response => setOpenSnackSuccess(true));
   };
 
   const handleCloseModalCommands = () => {
@@ -234,7 +247,7 @@ const UserPage = () => {
       >
        <p>{t("settingsUser")}</p>
         <Typography>
-          {/*{user.administrator && (*/}
+          {user.administrator && 
             <Button
               onClick={() => showMenuAdmin()}
               button
@@ -242,7 +255,7 @@ const UserPage = () => {
             >
               Administrador
             </Button>
-          {/*)}*/}
+          }
         </Typography>
       </div>
       <div
@@ -262,7 +275,7 @@ const UserPage = () => {
         </Tabs>
 
         <TabPanel value={value} index={0} style={{ paddingBottom: "10%" }}>
-          <Container component={Paper}>
+          <Container style={{textAlign: 'center', width: '50%'}} component={Paper}>
            <p className={classes.subtitles}>{t("settingsTitle")}</p>
 
               <ButtonGroup className={classes.buttonGroup}
@@ -270,19 +283,18 @@ const UserPage = () => {
                 color="default"
                 aria-label="text primary button group"
               >
-                <Button>Atributos</Button>
+                <Button>{t("sharedAttributes")}</Button>
                 <Button>
                   <i className="fas fa-map-marker-alt" />
-                  &nbsp;Obtener estado del mapa
+                  &nbsp;{t("sharedGetMapState")}
                 </Button>
-                <Button onClick={() => handleSaveServer()}>Save</Button>
               </ButtonGroup>
 
             <div className={classes.centerItems}>
-                <Table style={{ display: "table-cell" }}>
+                <Table style={{ display: "contents" }}>
                   <TableBody>
                     <TableRow>
-                      <TableCell>Capa de Mapa:</TableCell>
+                      <TableCell>{t("mapLayer")}:</TableCell>
                       <TableCell>
                         <FormControl
                           variant="outlined"
@@ -297,7 +309,7 @@ const UserPage = () => {
                             <option aria-label="None" value="" />
                             {/*{typesValues.map((types, index) => (*/}
                             <option key={1} value="custom">
-                              CUSTOM(X,Y,Z)
+                              {t("mapCustom")}
                             </option>
                           </Select>
                         </FormControl>
@@ -401,7 +413,7 @@ const UserPage = () => {
                       </TableCell>
                     </TableRow>
                     <TableRow>
-                      <TableCell>Formato de coordenadas:</TableCell>
+                      <TableCell>{t("settingsCoordinateFormat")}:</TableCell>
                       <TableCell>
                         <FormControl
                           style={{ width: "229px" }}
@@ -446,47 +458,59 @@ const UserPage = () => {
             </div>
               <p className={classes.subtitles}>{t("sharedPermissions")}</p>
             <div className={classes.centerItems}>
-                <Table>
+                <Table style={{ display: "contents" }}>
                   <TableBody>
                     <TableRow>
-                      <TableCell>Registro</TableCell>
+                      <TableCell>{t("serverRegistration")}:</TableCell>
                       <TableCell>
                         <Checkbox
-                          checked={checked}
-                          onChange={handleChangeCheckBox}
+                          checked={server.registration}
+                          onChange={() => setServer({
+                            ...server,
+                            registration: !server.registration
+                          })}
                           color="primary"
                           inputProps={{ "aria-label": "secondary checkbox" }}
                         />
                       </TableCell>
                     </TableRow>
                     <TableRow>
-                      <TableCell>Sólo lectura:</TableCell>
+                      <TableCell>{t("serverReadonly")}:</TableCell>
                       <TableCell>
                         <Checkbox
-                          checked={checked}
-                          onChange={handleChangeCheckBox}
+                          checked={server.readonly}
+                          onChange={() => setServer({
+                            ...server,
+                            readonly: !server.readonly
+                          })}
                           color="primary"
                           inputProps={{ "aria-label": "secondary checkbox" }}
                         />
                       </TableCell>
                     </TableRow>
                     <TableRow>
-                      <TableCell>Dispositivo de sólo lectura:</TableCell>
+                      <TableCell>{t("userDeviceReadonly")}:</TableCell>
                       <TableCell>
                         <Checkbox
-                          checked={checked}
-                          onChange={handleChangeCheckBox}
+                          checked={server.deviceReadonly}
+                          onChange={() => setServer({
+                            ...server,
+                            deviceReadonly: !server.deviceReadonly
+                          })}
                           color="primary"
                           inputProps={{ "aria-label": "secondary checkbox" }}
                         />
                       </TableCell>
                     </TableRow>
                     <TableRow>
-                      <TableCell>Limitar Comandos:</TableCell>
+                      <TableCell>{t("userLimitCommands")}:</TableCell>
                       <TableCell>
                         <Checkbox
-                          checked={checked}
-                          onChange={handleChangeCheckBox}
+                          checked={server.limitCommands}
+                          onChange={() => setServer({
+                            ...server,
+                            limitCommands: !server.limitCommands
+                          })}
                           color="primary"
                           inputProps={{ "aria-label": "secondary checkbox" }}
                         />
@@ -494,6 +518,14 @@ const UserPage = () => {
                     </TableRow>
                   </TableBody>
                 </Table>
+            </div>
+            <div>
+              <Button style={{margin: '20px 0px'}}
+               onClick={() => handleSaveServer()}
+               fullWidth color="primary" 
+               variant="outlined">
+                {t('sharedSave')}
+              </Button>
             </div>
             </Container>
           </TabPanel>
@@ -827,6 +859,11 @@ const UserPage = () => {
           </DialogActions>
         </Dialog>
       </div>
+      <Snackbar open={openSnackSuccess} autoHideDuration={6000} onClose={handleCloseSnack}>
+        <Alert onClose={handleCloseSnack} severity="success">
+          {t('updatedInfo')}!
+        </Alert>
+      </Snackbar>
     </div>
   );
 };

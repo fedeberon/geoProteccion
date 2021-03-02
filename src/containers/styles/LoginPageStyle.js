@@ -5,7 +5,7 @@ const loginPageStyle = makeStyles((theme) => ({
     height: "100vh",
   },
   image: {
-    backgroundImage: "url(http://164.68.101.162:8093/img/Tesla-maps.jpg)",
+    backgroundImage: "url(http://164.68.101.162:8080/img/Tesla-maps.jpg)",
     backgroundRepeat: "no-repeat",
     backgroundColor:
       theme.palette.type === "light"

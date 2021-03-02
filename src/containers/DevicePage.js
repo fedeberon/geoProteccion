@@ -382,7 +382,7 @@ const DevicePage = () => {
           <Card key={index} className={classes.root}>
             <CardMedia
               className={classes.media}
-              image="http://164.68.101.162:8093/img/Tesla-maps.jpg"
+              image="http://164.68.101.162:8080/img/Tesla-maps.jpg"
               title="Tesla"
             />
             <CardHeader
