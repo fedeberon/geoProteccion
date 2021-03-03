@@ -7,6 +7,10 @@ html, body, #root {
   display: none;
 }
 
+#cell-device-attribute:hover {
+  cursor: pointer;
+}
+
 li {
   list-style: none;
 }

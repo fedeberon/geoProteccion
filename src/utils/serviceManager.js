@@ -50,6 +50,12 @@ const getGeozonesByDeviceId = (deviceId) => {
     .then(response => response.json());
 }
 
+const getGeozonesByGroupId = (groupId) => {
+  return fetch(`api/geofences?groupId=${groupId}`, {method: 'GET'})
+    .catch(function (error) {console.log('setGeofencesByGroupIderror: ' + error)})
+    .then(response => response.json());
+}
+
 const getNotificationsByUserId = (id) => {
   return fetch(`api/notifications?userId=${id}`, { method: "GET" })
     .catch(function (error) {
@@ -60,6 +66,14 @@ const getNotificationsByUserId = (id) => {
 
 const getNotificationsByDeviceId = (id) => {
   return fetch(`api/notifications?deviceId=${id}`, { method: "GET" })
+    .catch(function (error) {
+      console.log("setNotifications error: ", error);
+    })
+    .then((response) => response.json());
+};
+
+const getNotificationsByGroupId = (id) => {
+  return fetch(`api/notifications?groupId=${id}`, { method: "GET" })
     .catch(function (error) {
       console.log("setNotifications error: ", error);
     })
@@ -77,7 +91,7 @@ const getAvailableTypes = () => {
 const getRoutesReports = (from, to, params = "") => {
   return fetch(`api/reports/route?` + `${params}from=${from}&to=${to}`, {
     method: "GET",
-    headers: { Accept: "application/json" },
+    headers: { "Accept": "application/json" },
   })
     .catch(function (error) {
       console.log("setRoutesReports error: ", error);
@@ -91,7 +105,7 @@ const getEventsReports = (fromDev, toDev, typeDev, paramsDev = "") => {
       `${paramsDev}` +
       `${typeDev}` +
       `from=${fromDev}&to=${toDev}`,
-    { method: "GET", headers: { Accept: "application/json" } }
+    { method: "GET", headers: { "Accept": "application/json" } }
   )
     .catch(function (error) {
       console.log("setEventsReports error: ", error);
@@ -102,7 +116,7 @@ const getEventsReports = (fromDev, toDev, typeDev, paramsDev = "") => {
 const getPositionsByDeviceId = (id, from, to) => {
   return fetch(`api/positions?` + `deviceId=${id}&from=${from}&to=${to}`, {
     method: "GET",
-    headers: { Accept: "application/json" },
+    headers: { "Accept": "application/json" },
   })
     .catch(function (error) {
       console.log("setPositions error: ", error);
@@ -113,7 +127,7 @@ const getPositionsByDeviceId = (id, from, to) => {
 const getPositionsReports = (ids) => {
   return fetch(`api/positions?` + `${ids}`, {
     method: "GET",
-    headers: { Accept: "application/json" },
+    headers: { "Accept": "application/json" },
   })
     .catch(function (error) {
       console.log("setPositions error: ", error);
@@ -124,7 +138,7 @@ const getPositionsReports = (ids) => {
 const getTripsReports = (from, to, params, type) => {
   return fetch(
     `api/reports/trips?` + `${params}` + `${type}` + `from=${from}&to=${to}`,
-    { method: "GET", headers: { Accept: "application/json" } }
+    { method: "GET", headers: { "Accept": "application/json" } }
   )
     .catch(function (error) {
       console.log("setTrips error: ", error);
@@ -135,7 +149,7 @@ const getTripsReports = (from, to, params, type) => {
 const getStopsReports = (from, to, params) => {
   return fetch(`api/reports/stops?` + `${params}` + `from=${from}&to=${to}`, {
     method: "GET",
-    headers: { Accept: "application/json" },
+    headers: { "Accept": "application/json" },
   })
     .catch(function (error) {
       console.log("setStops error: ", error);
@@ -146,7 +160,7 @@ const getStopsReports = (from, to, params) => {
 const getSummaryReports = (from, to, params) => {
   return fetch(`api/reports/summary?` + `${params}` + `from=${from}&to=${to}`, {
     method: "GET",
-    headers: { Accept: "application/json" },
+    headers: { "Accept": "application/json" },
   })
     .catch(function (error) {
       console.log("setSummary error: ", error);
@@ -157,7 +171,7 @@ const getSummaryReports = (from, to, params) => {
 const getGraphicData = (from, to, params) => {
   return fetch(`api/reports/route?` + `${params}from=${from}&to=${to}`, {
     method: "GET",
-    headers: { Accept: "application/json" },
+    headers: { "Accept": "application/json" },
   })
     .catch(function (error) {
       console.log("setRoutesReports error: ", error);
@@ -209,6 +223,16 @@ const getServer = () => {
 
 const getComputedAttributesByDeviceId = (deviceId) => {
   return fetch(`api/attributes/computed?deviceId=${deviceId}`, {
+    method: "GET",
+  })
+    .catch(function (error) {
+      console.log("getComputedAttributesById error: ", error);
+    })
+    .then((response) => response.json());
+};
+
+const getComputedAttributesByGroupId = (groupId) => {
+  return fetch(`api/attributes/computed?groupId=${groupId}`, {
     method: "GET",
   })
     .catch(function (error) {
@@ -308,5 +332,8 @@ export {
   updateServer,
   getCommands,
   getGeozonesByDeviceId,
-  updateUser
+  updateUser,
+  getGeozonesByGroupId,
+  getNotificationsByGroupId,
+  getComputedAttributesByGroupId
 };

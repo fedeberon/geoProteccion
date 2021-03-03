@@ -14,9 +14,12 @@ import Card from "@material-ui/core/Card";
 import CardHeader from "@material-ui/core/CardHeader";
 import CardMedia from "@material-ui/core/CardMedia";
 import CardContent from "@material-ui/core/CardContent";
-import CardActions from "@material-ui/core/CardActions";
+import Paper from '@material-ui/core/Paper';
+import InputBase from '@material-ui/core/InputBase';
+import {DeleteTwoTone} from "@material-ui/icons";
 import Collapse from "@material-ui/core/Collapse";
 import IconButton from "@material-ui/core/IconButton";
+import SearchIcon from '@material-ui/icons/Search';
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import List from "@material-ui/core/List";
@@ -32,7 +35,6 @@ import AddIcon from "@material-ui/icons/Add";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
@@ -47,12 +49,8 @@ import CloseIcon from "@material-ui/icons/Close";
 import DeviceConfigFull from "../components/DeviceConfigFull";
 import devicePageStyle from "./styles/DevicePageStyle";
 import { devicesActions } from "../store";
-import Grid from '@material-ui/core/Grid';
-import DraftsIcon from '@material-ui/icons/Drafts';
-import SendIcon from '@material-ui/icons/Send';
-import PriorityHighIcon from '@material-ui/icons/PriorityHigh';
 import Avatar from '@material-ui/core/Avatar';
-import MenuList from '@material-ui/core/MenuList';
+import AttributesDialog from '../components/AttributesDialog';
 
 const useStyles = devicePageStyle;
 
@@ -60,15 +58,16 @@ const DevicePage = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const { id } = useParams();
-  const devices = useSelector(
+  const storageDevices = useSelector(
     (state) => Object.values(state.devices.items),
     shallowEqual
   );
+  const [devicesAux, setDevicesAux] = useState([]);
   const userId = useSelector((state) => state.session.user.id);
   const positions = useSelector((state) => state.positions.items, shallowEqual);
   const [moreInfo, setMoreInfo] = useState(false);
   const [anchorEl, setAnchorEl] = useState(false);
-  const [dense, setDense] = React.useState(false);
+  const [devices, setDevices] = useState([]);
   const [openedMenu, setOpenedMenu] = useState(null);
   const [openModalAdd, setOpenModalAdd] = useState(false);
   const [openModalEdit, setOpenModalEdit] = useState(false);
@@ -87,24 +86,25 @@ const DevicePage = () => {
   const [totalDistance, setTotalDistance] = useState(0);
   const [positionHours, setPositionHours] = useState(0);
   const [addressFound, setAddressFound] = useState('');
+  const [dialogAttributes, setDialogAttributes] = useState(false);
   const [newDevice, setNewDevice] = useState({
     id: null,
     name: "",
     uniqueId: "",
     status: "",
-    disabled: true,
+    disabled: false,
     lastUpdate: null,
     positionId: null,
-    groupId: null,
+    groupId: "",
     phone: "",
     model: "",
     contact: "",
-    category: "",
+    category: "default",
     geofenceIds: [],
     attributes: {},
   });
   const [attributes, setAttributes] = useState({});
-  const [newAttribute, setNewAttribute] = useState({ name: null, value: null });
+  const [newAttribute, setNewAttribute] = useState({ name: "", value: "" });
   const [groups, setGroups] = useState([]);
   const [selectedDevice, setSelectedDevice] = useState({});
   const [categories, setCategories] = useState([
@@ -177,10 +177,11 @@ const DevicePage = () => {
 
   const handleClickAttributes = () => {
     setOpenModalAttributes(!openModalAttributes);
-    setSelectedDevice({ ...selectedDevice, attributes: attributes });
+    setSelectedDevice({ ...selectedDevice, attributes: selectedDevice.attributes });
     setNewDevice({ ...newDevice, attributes: attributes });
     let originalAttributes = getOriginalAttributes(selectedDevice.attributes);
     setAttributes(originalAttributes);
+    setNewAttribute({ name: "", value: "" });    
   };
 
   const handleClickMenuMore = (event) => {
@@ -287,8 +288,6 @@ const DevicePage = () => {
     device.lastUpdate = new Date();
     let request;
 
-    console.log(JSON.stringify(selectedDevice));
-
     if (id) {
       request = fetch(`/api/devices/${id}`, {
         method: 'PUT',
@@ -305,12 +304,12 @@ const DevicePage = () => {
     request.catch(function (error) {console.log('savingDeviceerror: ', error);})
     .then(response => {
       if (response.ok) {
-
-        const getDevices = async (userId) => {
+        const getDevicesByUser = async (userId) => {
           let response = await service.getDeviceByUserId(userId);
           dispatch(devicesActions.update(response));
+          getDevices();
         }
-        getDevices(userId);
+        getDevicesByUser(userId);
       }
     });
     if (openModalEdit) {
@@ -318,7 +317,25 @@ const DevicePage = () => {
       setSelectedDevice({});
     } else if (openModalAdd) {
       handleClickAdd();
+      setNewDevice({id: null,
+        name: "",
+        uniqueId: "",
+        status: "",
+        disabled: false,
+        lastUpdate: null,
+        positionId: null,
+        groupId: "",
+        phone: "",
+        model: "",
+        contact: "",
+        category: "default",
+        geofenceIds: [],
+        attributes: {},
+      });
     };
+    setNewAttribute({ name: null, value: null });
+    console.log(attributes)
+    console.log(devices)
   };
 
   const handleRemove = (deviceId) => {
@@ -327,11 +344,12 @@ const DevicePage = () => {
     if (option) {
       fetch(`/api/devices/${deviceId}`, { method: 'DELETE' }).then(response => {
         if (response.ok) {
-          const getDevices = async (userId) => {
+          const getDevicesByUser = async (userId) => {
             let response = await service.getDeviceByUserId(userId);
             dispatch(devicesActions.update(response));
+            getDevices();
           }
-          getDevices(userId);
+          getDevicesByUser(userId);
         }
       });
     }
@@ -357,15 +375,67 @@ const DevicePage = () => {
     setAddressFound(response);
   }
 
+  const getDevices = async () => {
+    const response = await service.getDeviceByUserId(userId);
+    setDevices(response);
+    setDevicesAux(response);    
+  };
+
+  useEffect(()=> {    
+    getDevices();
+  },[])
+
+  const handleOpenDialogAttributes = () => {
+    setDialogAttributes(true);
+  }
+
+  const handleCloseDialogAttributes = () => {
+    setDialogAttributes(false);
+  }
+
+  const savingAttributes = (objeto) => {    
+    if(openModalEdit){
+      setSelectedDevice({
+        ...selectedDevice,
+        attributes: objeto,
+      })
+    } else {
+      setNewDevice({
+        ...newDevice,
+        attributes: objeto,
+      })
+    }      
+  };
+
+  const filterDevices = (value = "") => {
+
+    if(value.length > 0){
+    const regex = new RegExp(`${value !== "" ? value : ".+"}`, "gi");
+    let filteredDevices = [];
+    if (devices.length > 0) {
+      filteredDevices = devices.filter(
+        (e) => regex.test(e.name) || regex.test(e.attributes.carPlate)
+      );
+    }
+    setDevices(filteredDevices);
+    } else {
+      setDevices(devicesAux);
+    }
+  };
+
+  useEffect(() => {
+    filterDevices();
+  }, [devices.length > 0]);
+
   return (
     <>
       <div className="title-section">
         <h2>{t("deviceTitle")}</h2>
         <Divider />
       </div>
-      <Container>
+      <Container style={{display: `${window.innerWidth < 767 ? 'block' : 'inline-flex'}`, justifyContent: 'center'}}>
         <Button
-          style={{ margin: "10px 0px" }}
+          className={classes.buttonAddNewDevice}
           type="button"
           color="primary"
           variant="outlined"
@@ -374,6 +444,18 @@ const DevicePage = () => {
           <AddIcon color="primary" />
           {t("sharedAdd")}
         </Button>
+        <Paper component="form" className={classes.rootSearch}>
+          <InputBase
+            onChange={(event) => filterDevices(event.target.value)}
+            className={classes.inputSearch}
+            placeholder={`${t('sharedSearch')}`}
+            inputProps={{ 'aria-label': 'search google maps' }}
+          />
+          <Divider className={classes.divider} orientation="vertical" />
+          <IconButton className={classes.iconButtonSeach} aria-label="search">
+            <SearchIcon />
+          </IconButton>            
+        </Paper>
         <Divider />
       </Container>
 
@@ -799,7 +881,7 @@ const DevicePage = () => {
         ))}
 
         {/*MODAL ADD DEVICE*/}
-        <div style={{ height: "500px" }}>
+        <div>
           <Dialog
             open={openModalAdd}
             onClose={handleClickAdd}
@@ -845,7 +927,7 @@ const DevicePage = () => {
                 </form>
                 <Button
                   style={{ margin: "10px 0px" }}
-                  onClick={handleClickAttributes}
+                  onClick={() => handleOpenDialogAttributes()}
                   fullWidth={true}
                   variant="outlined"
                   color="primary"
@@ -872,13 +954,9 @@ const DevicePage = () => {
                         groupId: event.target.value,
                       })
                     }
-                    label={t("groupDialog")}
                     name="groupid"
                     type="text"
                     variant="outlined"
-                    inputlabelprops={{
-                      shrink: true,
-                    }}
                   >
                     <option aria-label="none" value="0" />
                     {groups.map((group, index) => (
@@ -930,7 +1008,6 @@ const DevicePage = () => {
                         category: event.target.value,
                       })
                     }
-                    label={t("groupCategory")}
                     name="category"
                     type="text"
                     variant="outlined"                  
@@ -948,11 +1025,14 @@ const DevicePage = () => {
                     ))}
 
                   </Select>                 
-                  <Typography>
+                  
                     {t('sharedDisabled')}:
                     <Radio
-                      checked={radioValue === true}
-                      onClick={handleChangeRadio}
+                      checked={newDevice.disabled === true}
+                      onChange={() => setNewDevice({
+                        ...newDevice,
+                        disabled: true,
+                      })}
                       color="primary"
                       value={true}
                       name="radio-button-demo"
@@ -960,15 +1040,18 @@ const DevicePage = () => {
                     />
                     {t('reportYes')}
                     <Radio
-                      checked={radioValue === false}
-                      onChange={handleChangeRadio}
+                      checked={newDevice.disabled === false}
+                      onChange={() => setNewDevice({
+                        ...newDevice,
+                        disabled: false,
+                      })}
                       color="primary"
                       value={false}
                       name="radio-button-demo"
                       inputProps={{ "aria-label": "B" }}
                     />
                     {t('reportNo')}
-                  </Typography>
+                  
                 </form>
               </Container>
             </DialogContent>
@@ -1033,7 +1116,7 @@ const DevicePage = () => {
                 </form>
                 <Button
                   style={{ margin: "10px 0px" }}
-                  onClick={handleClickAttributes}
+                  onClick={() => handleOpenDialogAttributes()}
                   fullWidth={true}
                   variant="outlined"
                   color="primary"
@@ -1060,13 +1143,9 @@ const DevicePage = () => {
                         groupId: event.target.value,
                       })
                     }
-                    label={t("groupDialog")}
                     name="name"
                     type="text"
                     variant="outlined"
-                    inputlabelprops={{
-                      shrink: true,
-                    }}
                   >
                     <option aria-label="none" value="0" />
                     {groups.map((group, index) => (
@@ -1142,11 +1221,13 @@ const DevicePage = () => {
                       </MenuItem>
                     ))}
                   </Select>
-                  <Typography>
                     {t('sharedDisabled')}:
                     <Radio
-                      checked={radioValue === true}
-                      onClick={handleChangeRadio}
+                      checked={selectedDevice.disabled === true}
+                      onChange={() => setSelectedDevice({
+                        ...selectedDevice,
+                        disabled: true,
+                      })}
                       color="primary"
                       value={true}
                       name="radio-button-demo"
@@ -1154,15 +1235,17 @@ const DevicePage = () => {
                     />
                     {t('reportYes')}
                     <Radio
-                      checked={radioValue === false}
-                      onChange={handleChangeRadio}
+                      checked={selectedDevice.disabled === false}
+                      onChange={() => setSelectedDevice({
+                        ...newDevice,
+                        disabled: false,
+                      })}
                       color="primary"
                       value={false}
                       name="radio-button-demo"
                       inputProps={{ "aria-label": "B" }}
                     />
                     {t('reportNo')}
-                  </Typography>
                 </form>
               </Container>
             </DialogContent>
@@ -1181,9 +1264,19 @@ const DevicePage = () => {
           </Dialog>
         </div>
 
+        <div>
+          <AttributesDialog 
+            data={selectedDevice.attributes ? selectedDevice.attributes : newDevice.attributes}
+            savingAttributes={savingAttributes}
+            open={dialogAttributes} 
+            close={handleCloseDialogAttributes}
+          />
+        </div>
+
         {/*Modal Attributes*/}
         <div>
           <Dialog
+            
             open={openModalAttributes}
             onClose={handleClickAttributes}
             aria-labelledby="alert-dialog-title"
@@ -1196,49 +1289,77 @@ const DevicePage = () => {
                 <CloseIcon />
               </IconButton>
             </DialogTitle>
-            <DialogContent>
-              <form>
-                <FormControl
-                  variant="outlined"
-                  fullWidth={true}
-                  className={classes.formControl}
-                >
-                  <TextField
-                    label="Name"
-                    margin="normal"
-                    fullWidth
-                    value={newAttribute.name}
-                    name="name"
-                    onChange={(e) =>
-                      setNewAttribute({ ...newAttribute, name: e.target.value })
-                    }
-                    type="text"
+            <div style={{display: 'inline-block'}}>            
+              <div style={{marginBottom: '25px'}}> 
+                <form style={{borderBottomStyle: 'inset', borderTopStyle: 'outset'}}>
+                  <FormControl                    
                     variant="outlined"
-                    InputLabelProps={{
-                      shrink: true,
+                    fullWidth={true}
+                    className={classes.formControlAttribute}
+                  >
+                    <TextField
+                      style={{marginTop: '5px', marginBottom: '5px'}}
+                      placeholder={t('sharedName')}
+                      id="outlined-margin-dense-name"
+                      // className={classes.textField}
+                      margin="dense"
+                      variant="outlined"
+                      value={newAttribute.name}
+                      name="name"
+                      onChange={(e) =>
+                        setNewAttribute({ ...newAttribute, name: e.target.value })
+                      }
+                    />                  
+                  </FormControl>
+                  <FormControl
+                    style={{marginRight: '5px'}}
+                    variant="outlined"
+                    fullWidth={true}
+                    className={classes.formControlAttribute}
+                  >
+                    <TextField
+                      style={{marginTop: '5px', marginBottom: '5px'}}
+                      placeholder={t('stateValue')}
+                      id="outlined-margin-dense-value"
+                      // className={classes.textField}
+                      margin="dense"
+                      variant="outlined"
+                      value={newAttribute.value}
+                      name="value"
+                      onChange={(e) =>
+                        setNewAttribute({ ...newAttribute, value: e.target.value })
+                      }                    
+                    />                  
+                  </FormControl>
+                  <Button  
+                    // onClick={() =>
+                    //   setAttributes({
+                    //     ...attributes,
+                    //     [newAttribute.name]: newAttribute.value,
+                    //   })
+                    // }
+                    title={t('sharedAdd')}
+                    style={{
+                    backgroundColor: '#82f582', 
+                    minWidth: '40px', 
+                    display: 'inline-block', 
+                    margin: '7px 2px'
                     }}
-                  />
-                </FormControl>
-                <TextField
-                  label="Value"
-                  margin="normal"
-                  fullWidth
-                  value={newAttribute.value}
-                  name="value"
-                  onChange={(e) =>
-                    setNewAttribute({ ...newAttribute, value: e.target.value })
-                  }
-                  type="text"
-                  variant="outlined"
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                />
-              </form>
+                    variant="outlined"
+                  >
+                    <i style={{fontSize: '17px', color: 'white'}} class="fas fa-plus"></i>
+                  </Button>
+                  
+                </form>
+              </div>          
+            </div>
+            <DialogContent style={{padding: 0, maxHeight: '250px', marginBottom: '23px'}}>
+              
               <Table
                 fullWidth
+                size="small"
                 style={{
-                  border: "1px solid",
+                  backgroundColor: "snow",
                   height: "200px",
                   overflowY: "scroll",
                 }}
@@ -1253,17 +1374,57 @@ const DevicePage = () => {
                     </TableCell>
                   </TableRow>
                 </TableHead>
-                <TableBody>
+                <TableBody style={{display: 'table-footer-group'}}>
                   {Object.entries(attributes).map((attribute, index) => (
-                    <TableRow>
+                    <TableRow key={index} hover
+                      // onClick={() => handleEditAttribute(attribute, index)}
+                    >
+                      <TableCell
+                        value={attribute[0]}
+                        name="key"
+                        onBlur={(e) => {
+                          if (e.target.value !== "") {
+                            let {
+                              [attribute[0]]: value,
+                              ...rest
+                            } = attributes;
+                            setAttributes({
+                              ...rest,
+                              [e.target.value]: attribute[1],
+                            });
+                          }
+                          e.target.value = "";
+                        }}                        
+                      >
+                        {attribute[0]}
+                      </TableCell>
+                      <TableCell
+                        
+                        name="value"
+                        onChange={(e) =>
+                          setAttributes({
+                            ...attributes,
+                            [attribute[0]]: e.target.value,
+                          })
+                        }
+                      >
+                        {attribute[1]}
+                      </TableCell>  
                       <TableCell>
+                          <Button 
+                          // className={classes.buttonFunctions} onClick={() => handleRemove(el.id)} title={t('sharedRemove')}
+                           >
+                            <DeleteTwoTone />
+                          </Button> 
+                      </TableCell>                    
+                                    
+                      {/* <TableCell>
                         <TextField
-                          label="Value"
                           margin="normal"
                           fullWidth
                           name="key"
                           placeholder={attribute[0]}
-                          onBlur={(e) => {
+                          onBlur={(e) => {                            
                             if (e.target.value !== "") {
                               let {
                                 [attribute[0]]: value,
@@ -1278,14 +1439,10 @@ const DevicePage = () => {
                           }}
                           type="text"
                           variant="outlined"
-                          InputLabelProps={{
-                            shrink: true,
-                          }}
                         />
                       </TableCell>
                       <TableCell>
                         <TextField
-                          label="Value"
                           margin="normal"
                           fullWidth
                           value={attribute[1]}
@@ -1298,29 +1455,17 @@ const DevicePage = () => {
                           }
                           type="text"
                           variant="outlined"
-                          InputLabelProps={{
-                            shrink: true,
-                          }}
                         />
-                      </TableCell>
+                      </TableCell> */}
                     </TableRow>
                   ))}
                 </TableBody>
               </Table>
             </DialogContent>
             <DialogActions>
-              <Button
-                onClick={() =>
-                  setAttributes({
-                    ...attributes,
-                    [newAttribute.name]: newAttribute.value,
-                  })
-                }
-                color="primary"
-              >
-                {t('sharedAdd')}
-              </Button>
-              <Button onClick={handleClickAttributes} color="primary" autoFocus>
+               <Button 
+              //  onClick={handleClickAttributes} 
+               color="primary" autoFocus>
                 {t('sharedSave')}
               </Button>
             </DialogActions>
