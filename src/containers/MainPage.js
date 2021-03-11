@@ -76,17 +76,18 @@ const MainPage = ({ width }) => {
         </Drawer>
 
         {!showReports && server && (
-          <div className={classes.mapContainer}>
-            <ContainerDimensions>
-              <MainMap
-                geozones={geozones}
-                areGeozonesVisible={areGeozonesVisible}
-                zoom={mapZoom}
-                rasterSource={server.mapUrl.replace(/&amp;/g, "&")}
-              />
-            </ContainerDimensions>
-          </div>
-        )}
+              <div className={classes.mapContainer}>
+                <ContainerDimensions>
+                  <MainMap
+                    geozones={geozones}
+                    areGeozonesVisible={areGeozonesVisible}
+                    zoom={mapZoom}
+                    rasterSource={server.mapUrl.replace(/&amp;/g, "&")}
+                  />
+                </ContainerDimensions>
+              </div>
+            )
+         }
       </div>
 
       <ShortcutsMenu

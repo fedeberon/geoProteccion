@@ -15,7 +15,7 @@ import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
 import t from "../common/localization";
 import MuiAlert from '@material-ui/lab/Alert';
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import Button from "@material-ui/core/Button";
 import Select from "@material-ui/core/Select";
 import FormControl from "@material-ui/core/FormControl";
@@ -37,6 +37,9 @@ import CloseIcon from "@material-ui/icons/Close";
 import IconButton from "@material-ui/core/IconButton";
 import SavedCommands from '../components/SavedCommands';
 import UserData from '../components/UserData';
+import ServerAttributesDialog from '../components/ServerAttributesDialog';
+import {sessionActions} from "../store";
+
 
 const styles = (theme) => ({});
 
@@ -87,17 +90,19 @@ function Alert(props) {
 
 const UserPage = () => {
   const classes = useStyles();
+  const dispatch = useDispatch();
   const [openSnackSuccess, setOpenSnackSuccess] = useState(false);
   const user = useSelector((state) => state.session.user);
   const storeServer = useSelector((state) => state.session.server);
   const [ rows, setRows ] = useState([]);
   const [ value, setValue ] = React.useState(0);
   const [ showAdministration, setShowAdministration ] = useState(false);
-  const [ capsMap, setCapsMap ] = useState([]);
+  const [ dialogAttributes, setDialogAttributes ] = useState(false);
   const [ fromDateTime, setFromDateTime ] = useState("");
   const [ toDateTime, setToDateTime ] = useState("");
   const [ openModalCommand, setOpenModalCommand ] = useState(false);
   const [ server, setServer ] = useState(storeServer);
+  const [ serverUpdated, setServerUpdated ] = useState();
   const [ statistics, setStatistics ] = useState([]);
   const [ computedAttributes, setComputedAttributes ] = useState([]);
   const [ savedCommands, setSavedCommands ] = useState([]);
@@ -128,6 +133,16 @@ const UserPage = () => {
     setOpenSnackSuccess(false);
   };
 
+  const handleModalDialogAttributes = () => {
+    setDialogAttributes(!dialogAttributes);
+  }
+
+  const savingAttributes = (objeto) => {    
+      setServer({
+        ...server,
+        attributes: objeto,    
+    });
+  }
 
   const onChangeFromDateTime = (event) => {
     setFromDateTime(event.target.value);
@@ -176,15 +191,15 @@ const UserPage = () => {
     setOpenModalCommand(true);
   };
 
-  const handleChangeType = (event) => {
-    setCapsMap(event.target.value);
-  };
+  // const handleChangeType = (event) => {
+  //   setCapsMap(event.target.value);
+  // };
 
   const handleSaveServer = () => {
     const updateServer = async () => {
       let response = await service.updateServer(server);
 
-      dispatchEvent(sessionActions.setServer(response));
+      dispatch(sessionActions.setServer(response));
       setServer(response);
     };
     updateServer()
@@ -275,7 +290,7 @@ const UserPage = () => {
         </Tabs>
 
         <TabPanel value={value} index={0} style={{ paddingBottom: "10%" }}>
-          <Container style={{textAlign: 'center', width: '50%'}} component={Paper}>
+          <Container style={{textAlign: 'left', padding: '0px 5px'}} component={Paper}>
            <p className={classes.subtitles}>{t("settingsTitle")}</p>
 
               <ButtonGroup className={classes.buttonGroup}
@@ -283,8 +298,11 @@ const UserPage = () => {
                 color="default"
                 aria-label="text primary button group"
               >
-                <Button>{t("sharedAttributes")}</Button>
-                <Button>
+                <Button style={{backgroundColor: "gainsboro", fontSize: '12px', textTransform: 'capitalize'}}
+                  onClick={handleModalDialogAttributes}>
+                  {t("sharedAttributes")}
+                </Button>
+                <Button style={{backgroundColor: "gainsboro", fontSize: '12px', textTransform: 'capitalize'}}>
                   <i className="fas fa-map-marker-alt" />
                   &nbsp;{t("sharedGetMapState")}
                 </Button>
@@ -303,16 +321,37 @@ const UserPage = () => {
                           <Select
                             style={{ width: "229px" }}
                             native
-                            value="custom"
-                            onChange={handleChangeType}
+                            value={server.map}
+                            onChange={(e) =>
+                              setServer({ ...server, map: e.target.value })
+                            }
                           >
-                            <option aria-label="None" value="" />
-                            {/*{typesValues.map((types, index) => (*/}
-                            <option key={1} value="custom">
-                              {t("mapCustom")}
-                            </option>
+                            <option key={1} value="carto">{t("mapCarto")}</option>
+                            <option key={2} value="osm">{t("mapOsm")}</option>
+                            <option key={3} value="bingRoad">{t("mapBingRoad")}</option>
+                            <option key={4} value="bingAerial">{t("mapBingAerial")}</option>
+                            <option key={5} value="bingHybrid">{t("mapBingHybrid")}</option>
+                            <option key={6} value="baidu">{t("mapBaidu")}</option>
+                            <option key={7} value="yandexMap">{t("mapYandexMap")}</option>
+                            <option key={8} value="yandexSat">{t("mapYandexSat")}</option>
+                            <option key={9} value="wikimedia">{t("mapWikimedia")}</option>
+                            <option key={10} value="custom">{t("mapCustom")}</option>
+                            <option key={11} value="customArcgis">{t("mapCustomArcgis")}</option>
                           </Select>
                         </FormControl>
+                      </TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>{t("mapBingKey")}:</TableCell>
+                      <TableCell>
+                        <TextField
+                          label={t("mapBingKey")}
+                          value={server.bingKey}
+                          onChange={(e) =>
+                            setServer({ ...server, bingKey: e.target.value })
+                          }
+                          variant="outlined"
+                        />
                       </TableCell>
                     </TableRow>
                     <TableRow>
@@ -723,29 +762,22 @@ const UserPage = () => {
         </TabPanel>
       </div>
 
+      {/*MODAL ATTRIBUTES*/}
+      <div>
+          <ServerAttributesDialog             
+            data={server.attributes && server.attributes} //If exist, send attributes.
+            savingAttributes={savingAttributes} 
+            open={dialogAttributes} 
+            close={handleModalDialogAttributes}
+          />
+      </div>
+
       {/*USER DATA*/}
       <div
         className={classes.UserPageSize}
         style={{ display: `${showAdministration ? "none" : "block"}` }}
       >
         <UserData/>
-        {/* <TableContainer component={Paper}>
-          <Table className={classes.table} aria-label="simple table">
-            <TableHead>
-              <TableRow></TableRow>
-            </TableHead>
-            <TableBody>
-              {rows.map((row) => (
-                <TableRow key={row.field}>
-                  <TableCell component="th" scope="row">
-                    {row.field}
-                  </TableCell>
-                  <TableCell align="left">{row.userData}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer> */}
       </div>
 
       {/*SEND A COMMAND*/}

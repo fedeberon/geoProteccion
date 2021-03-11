@@ -68,11 +68,11 @@ const userPageStyle = makeStyles((theme) => ({
       },
   },
   buttonGroup: {
-    display: "inline-block",
-    flexDirection: "column-reverse",
+    display: "inline-flex",
+    flexDirection: "row",
     alignItems: "left",
     "& > *": {
-      margin: theme.spacing(1),
+      margin: '1px',
     },
   },
   containerDateTime: {

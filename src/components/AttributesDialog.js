@@ -68,7 +68,6 @@ const AttributesDialog = ({open, close, savingAttributes, data}) => {
       close();
     }
 
-
     useEffect(()=> {
       setAttributes(data);
     },[data])
@@ -210,9 +209,7 @@ const AttributesDialog = ({open, close, savingAttributes, data}) => {
                   >{attribute[1]}
                   </TableCell>
                   <TableCell align="right">
-                    <Button title={t('sharedRemove')}
-                            // className={classes.buttonFunctions} onClick={() => handleRemove(el.id)} title={t('sharedRemove')}
-                            >
+                    <Button title={t('sharedRemove')}>
                       <DeleteTwoTone title={`${t('sharedRemove')}`} 
                       id="rmv-button"onClick={() => removeAttribute(attribute)}/>
                     </Button> 

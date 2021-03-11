@@ -24,6 +24,10 @@ button {
   color: black;
 }
 
+#ContentServerDialog {
+  padding: 8px 10px !important;
+}
+
 .popup-map-div-mobile {
   padding-left: 8%;
   padding-right: 8%;
@@ -482,18 +486,25 @@ button {
     font-weight: bold;
   }
 
-  [aria-describedby="Menu-action-7-label"] {
+  [aria-describedby ="Menu-action-7-label"] {
     transform: translate(0px, 0px);
     font-weight: bold;
   }
   .MuiTypography-body1 {
     font-size: 12px !important;
   }
+  .MuiContainer-maxWidthLg {
+    width: 57% !important;
+  }
 
 }
 
 /* ancho de pantalla de menos de 600px* (mobile)*/
 @media only screen and (max-width: 600px) {
+  .MuiBox-root{
+    padding: 0 !important;
+  }
+
   .mapboxgl-popup-content {
     position: sticky !important;
   }

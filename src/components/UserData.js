@@ -68,7 +68,7 @@ const UserData = () => {
   useEffect(() => {
     setServer({
       ...storeServer,
-      mapUrl: storeServer.mapUrl.replace(/&amp;/g, "&"),
+      mapUrl: storeServer && storeServer.mapUrl.replace(/&amp;/g, "&"),
     });
   }, [storeServer]);
 
