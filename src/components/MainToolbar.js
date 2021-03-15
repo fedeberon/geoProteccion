@@ -58,7 +58,7 @@ const MainToolbar = () => {
             className={classes.button}
             startIcon={<MapIcon />}
           >
-            Ir a Mapa
+            {t('mapTitle')}
           </Button>
         </div>
         <div style={{ display: "flex" }}>

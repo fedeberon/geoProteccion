@@ -249,6 +249,14 @@ const getComputedAttributes = () => {
     .then((response) => response.json());
 };
 
+const removeComputedAttribute = (id) => {
+  return fetch(`api/attributes/computed/${id}`, {method: "DELETE"})
+    .catch(function (error) {
+      console.log("removeComputedAttributes error: ", error);
+    })
+    .then((response) => response.json());
+}
+
 const getCommandsByDeviceId = (deviceId) => {
   return fetch(`api/commands?deviceId=${deviceId}`, { method: "GET" })
     .catch(function (error) {
@@ -335,5 +343,6 @@ export {
   updateUser,
   getGeozonesByGroupId,
   getNotificationsByGroupId,
-  getComputedAttributesByGroupId
+  getComputedAttributesByGroupId,
+  removeComputedAttribute
 };

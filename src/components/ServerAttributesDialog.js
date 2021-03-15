@@ -295,22 +295,20 @@ const ServerAttributesDialog = ({open, close, savingAttributes, data}) => {
                         <ValueField/>
                       }  
                     </FormControl>
-                    
-
-                    <Button  
-                      onClick={() => callFunction()}
-                      title={title}
-                      disabled={!newAttribute.name || newAttribute.value === null}
-                      style={{
-                      backgroundColor: '#82f582', 
-                      minWidth: '40px', 
-                      display: 'inline-block', 
-                      margin: '7px 2px'
-                      }}
-                      variant="outlined"
-                    >
-                      <i style={{fontSize: '17px', color: 'white'}} className="fas fa-plus"></i>
-                    </Button>
+                      <Button  
+                        onClick={() => callFunction()}
+                        title={title}
+                        disabled={!newAttribute.name || newAttribute.value === null}
+                        style={{
+                        backgroundColor: '#82f582', 
+                        minWidth: '40px', 
+                        display: 'inline-block', 
+                        margin: '7px 2px'
+                        }}
+                        variant="outlined"
+                      >
+                        <i style={{fontSize: '17px', color: 'white'}} className="fas fa-plus"></i>
+                      </Button>
                   </form>
                 </div>    
                 <div style={{display: `${editRow ? 'flex' : 'none'}`}}>

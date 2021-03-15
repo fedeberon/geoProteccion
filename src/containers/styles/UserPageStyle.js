@@ -36,10 +36,17 @@ const userPageStyle = makeStyles((theme) => ({
   formControlType: {
     minWidth: 120,
   },
+  adminButton: {
+    textTransform: 'capitalize',
+    fontSize: '10px',
+    color: 'white',
+    background: 'darkkhaki',
+    boxShadow: '0 0 11px 0 rgb(102 97 102 / 80%)',
+    backgroundImage: 'linear-gradient( 25deg, #77F9D3 0%, #5CD2F8 50%, #5A79FF 100%)',
+  },
   subtitles: {
     fontSize: '19px',
-    fontWeight: 600,
-    margin: '13px 0px',
+    fontWeight: 600,    
     backgroundColor: "lavender",
     padding: "4px",
     color: "cadetblue",

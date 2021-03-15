@@ -3,6 +3,10 @@ html, body, #root {
   overflow: hidden;
 }
 
+#form-settings {
+  display: grid;
+}
+
 .scrollbar::-webkit-scrollbar {
   display: none;
 }
@@ -34,6 +38,9 @@ button {
   padding-top: 3%;
   color: white;
   font-size: 13px;
+}
+.computedAtribRows:hover {
+  cursor: pointer;
 }
 
 .footer-sp {
@@ -71,7 +78,6 @@ button {
   background-color: #1d193e !important;
   color: white !important;
 }
-
 
 .button-black {
   width: 75%;
@@ -385,6 +391,7 @@ button {
 
 /* ancho de pantalla de mas de 960px (desktop-notebook)*/
 @media only screen and (min-width: 960px){
+
   #addressShown:hover {
     text-decoration: underline;
     cursor: pointer;
@@ -501,6 +508,31 @@ button {
 
 /* ancho de pantalla de menos de 600px* (mobile)*/
 @media only screen and (max-width: 600px) {
+
+  #simple-tab-0 {
+    font-size: 11px;
+    min-width: 80px;
+    text-transform: capitalize;
+  }
+  #simple-tab-1 {
+    font-size: 11px;
+    min-width: 80px;
+    text-transform: capitalize;
+  }
+  #simple-tab-2 {
+    font-size: 11px;
+    min-width: 80px;
+    text-transform: capitalize;
+    flex-shrink: 1;
+  }
+  #simple-tab-3 {
+    font-size: 11px;
+    min-width: 80px;
+    text-transform: capitalize;
+    flex-shrink: 1;
+  }
+ 
+
   .MuiBox-root{
     padding: 0 !important;
   }
@@ -545,8 +577,9 @@ button {
   }
 
   .MuiTableCell-root {
-    padding: 8px 5px !important;
+    padding: 8px 3px !important;
     line-height: 1 !important;
+    font-size: 11px !important;
   }
   .MuiToolbar-regular {
     min-height: 35px !important;
