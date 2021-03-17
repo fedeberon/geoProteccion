@@ -15,6 +15,8 @@ import DialogActions from "@material-ui/core/DialogActions";
 import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
 import * as service from "../utils/serviceManager";
+import SC from "../common/SavedCommandsTypes.json";
+import tz from '../common/AllTimezones.json'
 
 const styles = makeStyles((theme) => ({
     formControl: {
@@ -30,23 +32,33 @@ const styles = makeStyles((theme) => ({
 }));
 
 const SavedCommands = ({open, handleCloseModal}) => {
-
+  const [aux, setAux] = useState();
+  const [flag, setFlag] = useState();
   const classes = styles();
   const [ openModal, setOpenModal ] = useState();
   const [ savedCommandTypes, setSavedCommandTypes ] = useState([]);
-  const [ description, setDescription ] = useState('');
-  const [ type, setType ] = useState('');
-  const [ textChannel, setTextChannel ] = useState(false);
-  const [ data, setData ] = useState('');
-  const [ reportPeriod, setReportPeriod ] = useState('');
+  const [ unitTime, setUnitTime ] = useState('');
+  const [ newSavedCommand, setNewSavedCommand] = useState({
+    attributes: {},
+    description: '',
+    deviceId: 0,
+    textChannel: false,
+    type: '',
+  })
 
   useEffect(() => {
     setOpenModal(open);
   },[open])
 
   const get = () => {
-    console.log(savedCommandTypes);
-  }
+    SC.SC.map(((object) => {     
+       console.log(object?.type);
+    }))
+  };
+
+  useEffect(()=> {
+    console.log(newSavedCommand);
+  }, [newSavedCommand])
 
   const getCommandsList = () => {
     return fetch(`api/commands/types`, { method: "GET" })
@@ -64,22 +76,6 @@ const SavedCommands = ({open, handleCloseModal}) => {
     getSavedCommands();
   },[])
 
-  const handleChangeRadioCommand = () => {
-    setTextChannel(!textChannel);
-  };
-
-  const handleChangeType = (event) => {
-    setType(event.target.value);
-  };
-
-  const handleChangeDescription = (event) => {
-    setDescription(event.target.value);
-  };
-
-  const handleChangeData = (event) => {
-    setData(event.target.value)
-  }
-
   const handleChangeReportPeriod = (event) => {
     setReportPeriod(event.target.value);
   }
@@ -91,7 +87,42 @@ const SavedCommands = ({open, handleCloseModal}) => {
       add.textChannel = textChannel;
 
       console.log(JSON.stringify(add));
+  }
 
+  const getCommandTypeName = (type) => {
+    let object = SC.SC.find((elem) => elem.type === type);
+    if(object)
+    return object.name
+  }
+
+  const getCommandKey = (type) => {
+    let object = SC.SC.find((elem) => elem.type === type);
+    if(object)
+    return object.key
+  }
+
+
+  const changeUnitTime = (e) => {
+    setFlag(true);
+    setUnitTime(e.target.value);
+    // setNewSavedCommand({
+    //   ...newSavedCommand,
+    //   attributes: {
+    //     [getCommandKey(newSavedCommand.type)]: ,
+    //   }
+    // })
+  }
+
+  const handleSetAttribute = (e) => {
+    e.preventDefault();
+    setFlag(false);
+    setAux(e.target.value * unitTime);
+    setNewSavedCommand({
+      ...newSavedCommand,
+      attributes: {
+        [getCommandKey(newSavedCommand.type)]: (Number(e.target.value) * unitTime)
+      },
+    })
   }
 
   return (
@@ -115,18 +146,25 @@ const SavedCommands = ({open, handleCloseModal}) => {
           <form>
             <TextField
               fullWidth
+              autoComplete="off"
               id="outlined-basic"
               label={t("sharedDescription")}
               name="description"
               variant="outlined"
-              value={description}
-              onChange={handleChangeDescription}
+              value={newSavedCommand.description}
+              onChange={(e) => setNewSavedCommand({
+                ...newSavedCommand,
+                description: e.target.value
+              })}
             />
-            <Typography>
+            <Typography style={{marginTop: '15px'}}>
               {t("commandSendSms")}:
               <Radio
-                checked={textChannel === true}
-                onClick={handleChangeRadioCommand}
+                checked={newSavedCommand.textChannel === true}
+                onChange={() => setNewSavedCommand({
+                  ...newSavedCommand,
+                  textChannel: !newSavedCommand.textChannel,
+                })}
                 color="primary"
                 value={true}
                 name="radio-button-demo"
@@ -134,8 +172,11 @@ const SavedCommands = ({open, handleCloseModal}) => {
               />{" "}
               {t("reportYes")}
               <Radio
-                checked={textChannel === false}
-                onChange={handleChangeRadioCommand}
+                checked={newSavedCommand.textChannel === false}
+                onChange={() => setNewSavedCommand({
+                  ...newSavedCommand,
+                  textChannel: !newSavedCommand.textChannel,
+                })}
                 color="primary"
                 value={false}
                 name="radio-button-demo"
@@ -147,6 +188,7 @@ const SavedCommands = ({open, handleCloseModal}) => {
               variant="outlined"
               fullWidth={true}
               className={classes.formControl}
+              disabled={!newSavedCommand.description}
             >
               <InputLabel htmlFor="outlined-age-native-simple">
                 {t("sharedType")}
@@ -154,8 +196,12 @@ const SavedCommands = ({open, handleCloseModal}) => {
               <Select
                 native
                 fullWidth
-                value={type}
-                onChange={handleChangeType}
+                value={newSavedCommand.type}
+                onChange={(e) => setNewSavedCommand({
+                  ...newSavedCommand,
+                  type: e.target.value,
+                  attributes: {},                 
+                })}
                 label={t("sharedType")}
                 name="type"
                 type="text"
@@ -166,46 +212,133 @@ const SavedCommands = ({open, handleCloseModal}) => {
               >
                 <option aria-label="None" value="" />
                 {savedCommandTypes.map((elem) => (
-                  <option key={elem.type} value={elem.type}>{elem.type}</option>
+                  <option key={elem.type} value={elem.type}>{t(`${getCommandTypeName(elem.type)}`)}</option>
                 ))}
               </Select>
             </FormControl>
-            <TextField style={{display: `${type === 'custom' ? 'block' : 'none'}`}}
-                       fullWidth
-                       id="outlined-basic"
-                       label={t("commandData")}
-                       name="data"
-                       variant="outlined"
-                       value={data}
-                       onChange={handleChangeData}
+            <TextField style={{marginBottom: '15px', display: 
+            `${newSavedCommand.type === 'sosNumber' ? 'block' : 'none'}`}}
+                      fullWidth
+                      id="outlined-basic"
+                      label={t("commandIndex")}
+                      name="data"
+                      type="number"
+                      autoComplete="off"
+                      variant="outlined"
+                      //value={newSavedCommand.attributes}
+                      onChange={(e) => setNewSavedCommand({
+                        ...newSavedCommand,
+                        attributes: {
+                          ...newSavedCommand.attributes,
+                          [getCommandKey(newSavedCommand.type)]: e.target.value,
+                        },
+                      })}
             />
-            <TextField style={{display: `${type === 'positionPeriodic' ? 'block' : 'none'}`}}
-                       fullWidth
-                       id="outlined-basic"
-                       label={t("commandPositionPeriodic")}
-                       name="reportPeriod"
-                       type="number"
-                       variant="outlined"
-                       value={reportPeriod}
-                       onChange={handleChangeReportPeriod}
+            <TextField style={{marginBottom: '15px', display: 
+            `${newSavedCommand.type === 'custom' ||
+              newSavedCommand.type === 'alarmVibration' ||
+              newSavedCommand.type === 'sendSms' ||
+              newSavedCommand.type === 'sendUssd' ||
+              newSavedCommand.type === 'sosNumber' ? 'block' : 'none'}`}}
+                      fullWidth
+                      id="outlined-basic"
+                      label={newSavedCommand.type === 'sendSms' ||
+                      newSavedCommand.type === 'sendUssd' ||
+                      newSavedCommand.type === 'sosNumber' ? `${t("commandPhone")}` : `${t("commandData")}` }
+                      name="data"
+                      autoComplete="off"
+                      variant="outlined"
+                      //value={newSavedCommand.attributes}
+                      onChange={(e) => setNewSavedCommand({
+                        ...newSavedCommand,
+                        attributes: {
+                          ...newSavedCommand.attributes,
+                          [newSavedCommand.type === 'sosNumber' ? `phone` :
+                            getCommandKey(newSavedCommand.type)]: e.target.value,
+                        },
+                      })}
             />
+            <TextField style={{display: 
+            `${newSavedCommand.type === 'sendSms' ? 'block' : 'none'}`}}
+                      fullWidth
+                      id="outlined-basic"
+                      label={t("commandMessage")}
+                      name="data"
+                      autoComplete="off"
+                      variant="outlined"
+                      //value={newSavedCommand.attributes}
+                      onChange={(e) => setNewSavedCommand({
+                        ...newSavedCommand,
+                        attributes: {
+                          ...newSavedCommand.attributes,
+                          [`message`]: e.target.value,
+                        },
+                      })}
+            />             
             <FormControl
               variant="outlined"
-              fullWidth={false}
+              fullWidth={true}
+              style={{display: '-webkit-box'}}
+              >     
+                  <TextField style={{width: '75%',
+                    display: `${newSavedCommand.type === 'positionPeriodic' ? 'inline-flex' : 'none'}`}}
+                    id="outlined-basic"
+                    minValue={0}
+                    label={t(`commandFrequency`)}
+                    name="reportPeriod"                                
+                    type="number"
+                    variant="outlined"
+                    error={flag}
+                    disabled={!unitTime}
+                    onChange={(e) => handleSetAttribute(e)}
+                  />             
+                  <Select style={{width: '20%', float: 'right',
+                    display: `${newSavedCommand.type === 'positionPeriodic' ? 'flex' : 'none'}`}}
+                      native
+                      value={unitTime}
+                      onChange={(e) => changeUnitTime(e)}                   
+                      name="type"
+                      type="text"
+                      variant="outlined"
+                    >
+                      <option value=""/>
+                      <option value={1}>s</option>
+                      <option value={60}>m</option>
+                      <option value={3600}>h</option>
+                    </Select>
+            </FormControl>
+            <FormControl
+              variant="outlined"
               className={classes.formControl}
-            >
-              <Select style={{display: `${type === 'positionPeriodic' ? 'block' : 'none'}`}}
-                native
-                // value={type}
-                // onChange={handleChangeType}
-                name="type"
-                type="text"
-                variant="outlined"
+              fullWidth={true}
+              style={{display: `${newSavedCommand.type === 'setTimezone' ? 'flex' : 'none'}`}}       
               >
-                <option value="s">s</option>
-                <option value="s">m</option>
-                <option value="s">h</option>
-              </Select>
+                  <InputLabel htmlFor="outlined-age-native-simple">
+                  {t("commandTimezone")}
+                  </InputLabel>
+                  <Select 
+                      native
+                      fullWidth
+                      //value={}                                       
+                      name="setTime"
+                      type="text"
+                      label={t("commandTimezone")}
+                      variant="outlined"
+                      InputLabelProps={{
+                        shrink: true,
+                      }}
+                      onChange={(e) => setNewSavedCommand({
+                        ...newSavedCommand,
+                        attributes: {
+                          [getCommandKey(newSavedCommand.type)]: e.target.value,
+                        },
+                      })}
+                    >
+                      <option aria-label="None" value="" />
+                      {tz.timezones.map((atr) => (
+                        <option key={atr}>{atr}</option>
+                      ))}
+                    </Select>
             </FormControl>
           </form>
         </DialogContent>
@@ -216,7 +349,7 @@ const SavedCommands = ({open, handleCloseModal}) => {
           <Button color="primary" autoFocus>
             Agree
           </Button>
-          <Button >
+          <Button onClick={get}>
               GET
           </Button>
         </DialogActions>

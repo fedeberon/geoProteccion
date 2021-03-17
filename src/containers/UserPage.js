@@ -822,6 +822,7 @@ const UserPage = () => {
                 <TableCell>{t("sharedDescription")}</TableCell>
                 <TableCell>{t("sharedType")}</TableCell>
                 <TableCell>{t("commandSendSms")}</TableCell>
+                <TableCell align="center"/>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -830,7 +831,23 @@ const UserPage = () => {
                   <TableCell>{object.description}</TableCell>
                   <TableCell>{object.type}</TableCell>
                   <TableCell>{t(`${object.textChannel}`)}</TableCell>
-                </TableRow>
+                  <TableCell style={{display: 'flex', justifyContent: 'center'}} align="center">
+                          <Button title={t('sharedEdit')}
+                                  //onClick={() => handleOpenSavedCommands(object)}
+                                  >
+                          <EditTwoToneIcon 
+                          style={{fontSize: window.innerWidth > 767 ? '19px' : ''}}
+                          />
+                          </Button>
+                          <Button title={t('sharedRemove')}
+                                  //onClick={() => removeSavedCommands(object.id)}
+                                  >
+                          <DeleteTwoTone 
+                          style={{fontSize: window.innerWidth > 767 ? '19px' : ''}}
+                          />
+                          </Button>
+                  </TableCell>
+                </TableRow>                 
                ))}
               </TableBody>
             </Table>
