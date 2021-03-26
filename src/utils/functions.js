@@ -94,7 +94,7 @@ const getOriginalAttributes = (attr) => {
 const getDate = (dateTime) => {
 
     let newdate = new Date(dateTime);
-    return newdate = `${newdate.getMonth()+1}-0${newdate.getDate()}-${newdate.getFullYear()}`
+    return newdate = `${newdate.getDate() < 10 ? `0${newdate.getDate()}` : newdate.getDate()}-${newdate.getMonth()+1 < 10 ? `0${newdate.getMonth()+1}` : newdate.getMonth()+1}-${newdate.getFullYear()}`
 }
 
 const getDateTime = (dateTime) => {

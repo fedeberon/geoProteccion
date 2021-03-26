@@ -85,6 +85,7 @@ const userPageStyle = makeStyles((theme) => ({
   containerDateTime: {
     display: "flex",
     flexWrap: "wrap",
+    width: 170,
   },
   textFieldDateTime: {
     marginLeft: theme.spacing(1),

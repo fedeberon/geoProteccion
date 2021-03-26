@@ -41,7 +41,27 @@ const UserData = () => {
   const [openSnackSuccess, setOpenSnackSuccess] = useState(false);
   const [computedAttributes, setComputedAttributes] = useState([]);
   const [openModalComputedAttribute, setOpenModalComputedAttribute] = useState(false);
-  const [session, setSession] = useState(user);
+  const [session, setSession] = useState({
+    name: user.name,
+    email: user.email,
+    password: user.password === null ? '' : user.password,
+    phone: user.phone,
+    map: user.map,
+    latitude: user.latitude,
+    longitude: user.longitude,
+    zoom: user.zoom,
+    twelveHourFormat: user.twelveHourFormat,
+    coordinateFormat: user.coordinateFormat,
+    poiLayer: user.porLayer,
+    disabled: user.disabled,
+    administrator: user.administrator,
+    readOnly: user.readOnly,
+    deviceReadOnly: user.deviceReadOnly,
+    limitCommands: user.limitCommands,
+    expirationTime: user.expirationTime === null ? '' : user.expirationTime,
+    deviceLimit: user.deviceLimit,
+    userLimit: user.userLimit
+  });
 
 
 
@@ -86,10 +106,10 @@ const UserData = () => {
           <ButtonGroup style={{marginBottom: '12px'}} fullWidth size="small" aria-label="small outlined button group">
             <Button>{t('sharedAttributes')}</Button>
             <Button tittle={`${t('sharedGetMapState')}`}>
-               <i class="fas fa-map-marker-alt"></i>
+               <i className="fas fa-map-marker-alt"></i>
             </Button>
             <Button tittle={`${t('sharedTestNotification')}`}>
-               <i class="far fa-envelope"></i>
+               <i className="far fa-envelope"></i>
             </Button>
           </ButtonGroup>
         </Container>
@@ -147,7 +167,7 @@ const UserData = () => {
           <Table>
             <TableBody>
               <TableRow>
-                <TableCell>Telefono</TableCell>
+                <TableCell>{t('sharedPhone')}</TableCell>
                 <TableCell><TextField
                   fullWidth
                   value={session.phone}

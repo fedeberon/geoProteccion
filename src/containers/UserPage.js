@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
 import withWidth from "@material-ui/core/withWidth";
 import Table from "@material-ui/core/Table";
@@ -41,6 +41,7 @@ import ServerAttributesDialog from '../components/ServerAttributesDialog';
 import positions from '../common/PositionsAttributes.json'
 import {sessionActions} from "../store";
 import { configureStore } from "@reduxjs/toolkit";
+import { TimelineContent } from "@material-ui/lab";
 
 
 const styles = (theme) => ({});
@@ -60,7 +61,7 @@ function TabPanel(props) {
     >
       {value === index && (
         <Box p={3}>
-          <Typography>{children}</Typography>
+          <Typography component="div">{children}</Typography>
         </Box>
       )}
     </div>
@@ -108,6 +109,7 @@ const UserPage = () => {
   const [ statistics, setStatistics ] = useState([]);
   const [ computedAttributes, setComputedAttributes ] = useState([]);
   const [ savedCommands, setSavedCommands ] = useState([]);
+  const [ commandData, setCommandData ] = useState();
   const [ openModalComputedAttribute, setOpenModalComputedAttribute ] = useState(false);
   const [ newComputedAttribute, setNewComputedAttribute ] = useState({
     description: '',
@@ -115,18 +117,6 @@ const UserPage = () => {
     expression: '',
     type: '',
   })
-
-  let to = '';
-  let from = '';
-
-  useEffect(()=>{
-    setDate();
-  },[fromDateTime,toDateTime])
-
-  const setDate = () => {
-    to = toDateTime.toString();
-    from = fromDateTime.toString();
-  }
 
   const handleCloseSnack = (event, reason) => {
     if (reason === 'clickaway') {
@@ -150,11 +140,11 @@ const UserPage = () => {
     setFromDateTime(event.target.value);
   };
 
-  const onChangeToDateTime = (event) => {
+  const onChangeToDateTime = (event) => {    
     setToDateTime(event.target.value);
   };
 
-  const showStatics = async(from,to) => {
+  const showStatistics = async(from,to) => {
     const response = await service.getStatistics(from,to);
     setStatistics(response);
   }
@@ -197,8 +187,11 @@ const UserPage = () => {
     setShowAdministration(!showAdministration);
   };
 
-  const handleOpenCommandModal = () => {
+  const handleOpenCommandModal = (object) => {
     setOpenModalCommand(true);
+    if(object !== null){
+      setCommandData(object);
+    }
   };
 
   const handleSaveServer = () => {
@@ -213,40 +206,9 @@ const UserPage = () => {
     .then(response => setOpenSnackSuccess(true));
   };
 
-  const handleCloseModalCommands = () => {
+  const handleCloseCommandModal = () => {
     setOpenModalCommand(false);
   }
-
-  useEffect(() => {
-    let name = createData(t("sharedName"), user.name);
-    let email = createData(t("userEmail"), user.email);
-    let phone = createData(t("sharedPhone"), user.phone);
-    let map = createData(t("mapTitle"), user.map);
-    let latitude = createData(t("positionLatitude"), user.latitude);
-    let longitude = createData(t("positionLongitude"), user.longitude);
-    let zoom = createData(t("serverZoom"), user.zoom);
-    let attributes = createData(t("sharedAttributes"), "NOT FINISHED");
-    let twelveHourFormat = createData(
-      t("settingsTwelveHourFormat"),
-      user.twelveHourFormat
-    );
-    let coordinatesFormat = createData(
-      t("settingsCoordinateFormat"),
-      user.coordinateFormat
-    );
-    setRows([
-      name,
-      email,
-      phone,
-      map,
-      latitude,
-      longitude,
-      zoom,
-      attributes,
-      twelveHourFormat,
-      coordinatesFormat,
-    ]);
-  }, [user]);
 
   useEffect(() => {
     setServer({
@@ -341,7 +303,6 @@ const UserPage = () => {
           {user.administrator && 
             <Button
               onClick={() => showMenuAdmin()}
-              button
               className={classes.adminButton}
             >
               {t('userAdmin')}
@@ -459,7 +420,7 @@ const UserPage = () => {
                             setServer({ ...server, latitude: e.target.value })
                           }
                           type="number"
-                          InputLabelProps={{
+                          inputlabelprops={{
                             shrink: true,
                           }}
                           variant="outlined"
@@ -476,7 +437,7 @@ const UserPage = () => {
                             setServer({ ...server, longitude: e.target.value })
                           }
                           type="number"
-                          InputLabelProps={{
+                          inputlabelprops={{
                             shrink: true,
                           }}
                           variant="outlined"
@@ -493,7 +454,7 @@ const UserPage = () => {
                             setServer({ ...server, zoom: e.target.value })
                           }
                           type="number"
-                          InputLabelProps={{
+                          inputlabelprops={{
                             shrink: true,
                           }}
                           variant="outlined"
@@ -651,55 +612,42 @@ const UserPage = () => {
 
         {/*ADMIN STATISTICS*/}
         <TabPanel value={value} index={1}>
-          <div>
-            <form>
-              <TableBody>
-                <TableRow>
-                  <TableCell>
-                    {t("reportFrom")}:
-                  </TableCell>
-                  <TableCell>
-                    <form className={classes.containerDateTime} noValidate>
-                      <TextField
-                        label={t('reportFrom')}
-                        value={fromDateTime.toString()}
-                        onChange={onChangeFromDateTime}
-                        type="date"
-                        defaultValue="2020-11-09T00:30"
-                        className={classes.textFieldDateTime}
-                        InputLabelProps={{
-                          shrink: true,
-                        }}
-                      />
-                    </form>
-                  </TableCell>
-                  <TableCell>{t("reportTo")}:</TableCell>
-                  <TableCell>
-                    <form className={classes.containerDateTime} noValidate>
-                      <TextField
-                        label={t('reportTo')}
-                        value={toDateTime.toString()}
-                        onChange={onChangeToDateTime}
-                        type="date"
-                        defaultValue={new Date()}
-                        className={classes.textFieldDateTime}
-                        InputLabelProps={{
-                          shrink: true,
-                        }}
-                      />
-                    </form>
-                  </TableCell>
-                  <TableCell>
-                    <Button button onClick={() => showStatics(fromDateTime, toDateTime)} variant="outlined" color="default">
-                      {t('reportShow')}
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              </TableBody>
-            </form>
-          </div>
-          <div>
-            <Table>
+          <Table style={{display: 'block', overflowX: window.innerWidth < 767 ? 'scroll' : ''}}>
+            <TableBody>
+              <TableRow>
+                <TableCell>
+                  {t("reportFrom")}:
+                </TableCell>
+                <TableCell>
+                  <form className={classes.containerDateTime} noValidate>
+                    <TextField
+                      value={fromDateTime.toString()}
+                      onChange={onChangeFromDateTime}
+                      type="date"
+                      className={classes.textFieldDateTime}                        
+                    />
+                  </form>
+                </TableCell>
+                <TableCell>{t("reportTo")}:</TableCell>
+                <TableCell>
+                  <form className={classes.containerDateTime} noValidate>
+                    <TextField
+                      value={toDateTime.toString()}
+                      onChange={onChangeToDateTime}
+                      type="date"
+                      className={classes.textFieldDateTime}
+                    />
+                  </form>
+                </TableCell>
+                <TableCell>
+                  <Button onClick={() => showStatistics(fromDateTime, toDateTime)} variant="outlined" color="default">
+                    {t('reportShow')}
+                  </Button>
+                </TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+            <Table style={{display: 'block', overflowX: window.innerWidth < 767 ? 'scroll' : ''}}>
               <TableHead>
                 <TableRow>
                   <TableCell>{t('statisticsCaptureTime')}</TableCell>
@@ -727,7 +675,6 @@ const UserPage = () => {
                 ))}
               </TableBody>
             </Table>
-          </div>
         </TabPanel>
 
         {/*ADMIN COMPUTED ATTRIBUTES*/}
@@ -740,7 +687,7 @@ const UserPage = () => {
                   color="default"
                   aria-label="text primary button group"
                 >
-                  <Button variant="outlined" color="primary" onClick={handleOpenComputedAttributes}>
+                  <Button variant="outlined" onClick={handleOpenComputedAttributes}>
                     <i className="fas fa-plus" />
                     &nbsp;{t('sharedAdd')}
                   </Button>                  
@@ -790,32 +737,13 @@ const UserPage = () => {
         </TabPanel>
 
          {/*ADMIN SAVED COMMANDS*/}
-        <TabPanel value={value} index={3}>
-          <div>
-            <form>
-              <div className={classes.buttonGroup}>
-                <ButtonGroup
-                  variant="text"
-                  color="default"
-                  aria-label="text primary button group"
-                >
-                  <Button onClick={handleOpenCommandModal}>
-                    <i className="fas fa-plus" />
-                    &nbsp;Agregar
-                  </Button>
-                  <Button>
-                    <i className="fas fa-edit" />
-                    &nbsp;Editar
-                  </Button>
-                  <Button>
-                    <i className="fas fa-trash-alt" />
-                    &nbsp;Eliminar
-                  </Button>
-                </ButtonGroup>
-              </div>
-            </form>
-          </div>
-          <div>
+        <TabPanel component={'span'} value={value} index={3}>
+          <Button variant="outlined"
+          onClick={handleOpenCommandModal}>
+            <i className="fas fa-plus" />
+            &nbsp;{t('sharedAdd')}
+          </Button>
+          {/* <Container> */}
             <Table>
               <TableHead>
                 <TableRow>
@@ -826,14 +754,14 @@ const UserPage = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-               {savedCommands.map((object) => (
-                <TableRow key="key">
+               {savedCommands.map((object,index) => (
+                <TableRow key={index}>
                   <TableCell>{object.description}</TableCell>
                   <TableCell>{object.type}</TableCell>
                   <TableCell>{t(`${object.textChannel}`)}</TableCell>
                   <TableCell style={{display: 'flex', justifyContent: 'center'}} align="center">
                           <Button title={t('sharedEdit')}
-                                  //onClick={() => handleOpenSavedCommands(object)}
+                                  onClick={() => handleOpenCommandModal(object)}
                                   >
                           <EditTwoToneIcon 
                           style={{fontSize: window.innerWidth > 767 ? '19px' : ''}}
@@ -851,7 +779,7 @@ const UserPage = () => {
                ))}
               </TableBody>
             </Table>
-          </div>
+          {/* </Container> */}
         </TabPanel>
       </div>
 
@@ -866,16 +794,17 @@ const UserPage = () => {
       </div>
 
       {/*USER DATA*/}
-      <div
-        className={classes.UserPageSize}
-        style={{ display: `${showAdministration ? "none" : "block"}` }}
-      >
+      <div className={classes.UserPageSize} style={{ display: `${showAdministration ? "none" : "block"}` }}>
         <UserData/>
       </div>
 
       {/*SEND A COMMAND*/}
       <div>
-        <SavedCommands open={openModalCommand} handleCloseModal={handleCloseModalCommands}/>
+        <SavedCommands 
+          open={openModalCommand} 
+          data={commandData} 
+          handleCloseModal={handleCloseCommandModal}
+        />
       </div>
 
       {/*MODAL ADD COMPUTEDATTRIBUTE*/}
@@ -923,7 +852,7 @@ const UserPage = () => {
                   name="attribute"
                   type="text"
                   variant="outlined"
-                  InputLabelProps={{
+                  inputlabelprops={{
                     shrink: true,
                   }}
                 >

@@ -114,7 +114,7 @@ const ServerAttributesDialog = ({open, close, savingAttributes, data}) => {
           break;
         case 'timezone': 
         return <>              
-              {tz.timezones.map((atr, index) => (
+              {tz.timezones.sort().map((atr, index) => (
                 <option key={atr}>{atr}</option>
               ))}
                 </>

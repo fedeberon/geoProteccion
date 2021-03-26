@@ -16,7 +16,8 @@ import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
 import * as service from "../utils/serviceManager";
 import SC from "../common/SavedCommandsTypes.json";
-import tz from '../common/AllTimezones.json'
+import tz from '../common/AllTimezones.json';
+import Checkbox from "@material-ui/core/Checkbox";
 
 const styles = makeStyles((theme) => ({
     formControl: {
@@ -31,13 +32,14 @@ const styles = makeStyles((theme) => ({
       },
 }));
 
-const SavedCommands = ({open, handleCloseModal}) => {
+const SavedCommands = ({open, handleCloseModal, data}) => {
   const [aux, setAux] = useState();
   const [flag, setFlag] = useState();
   const classes = styles();
-  const [ openModal, setOpenModal ] = useState();
+  const [ openModal, setOpenModal ] = useState(false);
   const [ savedCommandTypes, setSavedCommandTypes ] = useState([]);
   const [ unitTime, setUnitTime ] = useState('');
+  const [ isChecked, setIsChecked ] = useState(false); 
   const [ newSavedCommand, setNewSavedCommand] = useState({
     attributes: {},
     description: '',
@@ -46,14 +48,45 @@ const SavedCommands = ({open, handleCloseModal}) => {
     type: '',
   })
 
+  const closeModal = () => {
+    // setNewSavedCommand({
+    //   attributes: {},
+    //   description: '',
+    //   deviceId: 0,
+    //   textChannel: false,
+    //   type: '',
+    // })
+    handleCloseModal();
+  }
+
   useEffect(() => {
     setOpenModal(open);
+    // setTimeout(()=> {
+    //   data && setNewSavedCommand({
+    //     description: data.description,
+    //     deviceId: data.deviceId,
+    //     textChannel: data.textChannel,
+    //     type: data.type,
+    //     id: data.id
+    //   })
+    //   if(data){
+    //     Object.entries(data.attributes).map(([key,value]) => (    
+    //       setNewSavedCommand({
+    //       ...newSavedCommand,
+    //       attributes: {
+    //         ...newSavedCommand.attributes,
+    //         [key]: value
+    //       }
+    //     })
+    //   ))
+    //   } 
+    // },1500)
   },[open])
 
   const get = () => {
-    SC.SC.map(((object) => {     
-       console.log(object?.type);
-    }))
+   console.log("data desde userpage: ", data);
+   console.log("newsavedCommand: ", newSavedCommand);
+   console.log("newsavedcommand actualizado: ", newSavedCommand);
   };
 
   useEffect(()=> {
@@ -68,17 +101,14 @@ const SavedCommands = ({open, handleCloseModal}) => {
       .then((response) => response.json());
   };
 
+  const getSavedCommands = async () => {
+    const response = await getCommandsList();
+    setSavedCommandTypes(response);
+  }
+
   useEffect(() =>{
-    const getSavedCommands = async () => {
-      const response = await getCommandsList();
-      setSavedCommandTypes(response);
-    }
     getSavedCommands();
   },[])
-
-  const handleChangeReportPeriod = (event) => {
-    setReportPeriod(event.target.value);
-  }
 
   const handleAdd = () => {
     const add = {};
@@ -101,16 +131,42 @@ const SavedCommands = ({open, handleCloseModal}) => {
     return object.key
   }
 
+  const handleSetCheckbox = () => {
+    setIsChecked(!isChecked);
+    setNewSavedCommand({
+      ...newSavedCommand,
+      attributes: {
+        [getCommandKey(newSavedCommand.type)]: !isChecked
+      }
+    })
+  }
 
+  const setAttributeRadio = () => {
+    if(newSavedCommand.type === 'voiceMonitoring' || newSavedCommand.type === 'setAgps' ||
+    newSavedCommand.type === 'modePowerSaving' || newSavedCommand.type === 'modeDeepSleep' ||
+    newSavedCommand.type === 'alarmBattery' || newSavedCommand.type === 'alarmSos' ||
+    newSavedCommand.type === 'alarmRemove' || newSavedCommand.type === 'alarmFall'){
+      setNewSavedCommand({
+        ...newSavedCommand,
+        attributes: {
+          [getCommandKey(newSavedCommand.type)]: isChecked
+        }
+      })
+    } else {
+      setNewSavedCommand({
+        ...newSavedCommand,
+        attributes: {}
+      })
+    }
+  }
+
+  useEffect(()=> {
+    setAttributeRadio();
+  },[newSavedCommand.type])
+  
   const changeUnitTime = (e) => {
     setFlag(true);
     setUnitTime(e.target.value);
-    // setNewSavedCommand({
-    //   ...newSavedCommand,
-    //   attributes: {
-    //     [getCommandKey(newSavedCommand.type)]: ,
-    //   }
-    // })
   }
 
   const handleSetAttribute = (e) => {
@@ -128,7 +184,7 @@ const SavedCommands = ({open, handleCloseModal}) => {
   return (
       <Dialog
         open={openModal}
-        onClose={() => handleCloseModal()}
+        onClose={() => closeModal()}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
@@ -137,7 +193,7 @@ const SavedCommands = ({open, handleCloseModal}) => {
           <IconButton
               aria-label="close"
               className={classes.closeButton}
-              onClick={() => handleCloseModal()}
+              onClick={() => closeModal()}
             >
               <CloseIcon />
             </IconButton>
@@ -147,7 +203,6 @@ const SavedCommands = ({open, handleCloseModal}) => {
             <TextField
               fullWidth
               autoComplete="off"
-              id="outlined-basic"
               label={t("sharedDescription")}
               name="description"
               variant="outlined"
@@ -157,7 +212,7 @@ const SavedCommands = ({open, handleCloseModal}) => {
                 description: e.target.value
               })}
             />
-            <Typography style={{marginTop: '15px'}}>
+            <Typography component="div" style={{marginTop: '15px'}}>
               {t("commandSendSms")}:
               <Radio
                 checked={newSavedCommand.textChannel === true}
@@ -190,7 +245,7 @@ const SavedCommands = ({open, handleCloseModal}) => {
               className={classes.formControl}
               disabled={!newSavedCommand.description}
             >
-              <InputLabel htmlFor="outlined-age-native-simple">
+              <InputLabel>
                 {t("sharedType")}
               </InputLabel>
               <Select
@@ -200,13 +255,12 @@ const SavedCommands = ({open, handleCloseModal}) => {
                 onChange={(e) => setNewSavedCommand({
                   ...newSavedCommand,
                   type: e.target.value,
-                  attributes: {},                 
                 })}
                 label={t("sharedType")}
                 name="type"
                 type="text"
                 variant="outlined"
-                InputLabelProps={{
+                inputlabelprops={{
                   shrink: true,
                 }}
               >
@@ -217,12 +271,56 @@ const SavedCommands = ({open, handleCloseModal}) => {
               </Select>
             </FormControl>
             <TextField style={{marginBottom: '15px', display: 
-            `${newSavedCommand.type === 'sosNumber' ? 'block' : 'none'}`}}
+            `${newSavedCommand.type === 'sosNumber' || newSavedCommand.type === 'movementAlarm' ||
+               newSavedCommand.type === 'outputControl' ? 'block' : 'none'}`}}
                       fullWidth
-                      id="outlined-basic"
-                      label={t("commandIndex")}
+                      label={newSavedCommand.type === 'movementAlarm' ? `${t('commandRadius')}` : `${t("commandIndex")}`}
                       name="data"
                       type="number"
+                      InputProps={{ 
+                        inputProps: { min: 0}
+                      }}
+                      autoComplete="off"
+                      variant="outlined"
+                      //value={newSavedCommand.attributes}
+                      onChange={(e) => setNewSavedCommand({
+                        ...newSavedCommand,
+                        attributes: {
+                          ...newSavedCommand.attributes,
+                          [getCommandKey(newSavedCommand.type)]: Number(e.target.value),
+                        },
+                      })}
+            />
+            <TextField style={{marginBottom: '15px', display: 
+            `${newSavedCommand.type === 'custom' || newSavedCommand.type === 'alarmVibration' || newSavedCommand.type === 'alarmClock' ||
+              newSavedCommand.type === 'sendSms' || newSavedCommand.type === 'sendUssd' || newSavedCommand.type === 'setIndicator' ||
+              newSavedCommand.type === 'sosNumber' || newSavedCommand.type === 'silenceTime' || newSavedCommand.type === 'configuration' ||
+              newSavedCommand.type === 'setPhonebook'|| newSavedCommand.type === 'message' || newSavedCommand.type === 'setOdometer' ||
+              newSavedCommand.type === 'voiceMessage' || newSavedCommand.type === 'outputControl' || 
+              newSavedCommand.type === 'alarmSpeed' ? 'block' : 'none'}`}}
+                      fullWidth
+                      label={newSavedCommand.type === 'sendSms' ||
+                      newSavedCommand.type === 'sendUssd' ||
+                      newSavedCommand.type === 'sosNumber' ? `${t("commandPhone")}` : 
+                      newSavedCommand.type === 'message' ? `${t('commandMessage')}` : `${t("commandData")}` }
+                      name="data"
+                      autoComplete="off"
+                      variant="outlined"
+                      //value={newSavedCommand.attributes}
+                      onChange={(e) => setNewSavedCommand({
+                        ...newSavedCommand,
+                        attributes: {
+                          ...newSavedCommand.attributes,
+                          [newSavedCommand.type === 'sosNumber' ? `phone` : newSavedCommand.type === 'outputControl' ? 'data' :
+                            getCommandKey(newSavedCommand.type)]: e.target.value,
+                        },  
+                      })}
+            />
+            <TextField style={{display: 
+            `${newSavedCommand.type === 'setConnection' ? 'block' : 'none'}`}}
+                      fullWidth
+                      label={t("commandServer")}
+                      name="data"
                       autoComplete="off"
                       variant="outlined"
                       //value={newSavedCommand.attributes}
@@ -234,18 +332,18 @@ const SavedCommands = ({open, handleCloseModal}) => {
                         },
                       })}
             />
-            <TextField style={{marginBottom: '15px', display: 
-            `${newSavedCommand.type === 'custom' ||
-              newSavedCommand.type === 'alarmVibration' ||
-              newSavedCommand.type === 'sendSms' ||
-              newSavedCommand.type === 'sendUssd' ||
-              newSavedCommand.type === 'sosNumber' ? 'block' : 'none'}`}}
+            <TextField style={{marginTop: '15px', display: 
+            `${newSavedCommand.type === 'setConnection' ? 'block' : 'none'}`}}
                       fullWidth
-                      id="outlined-basic"
-                      label={newSavedCommand.type === 'sendSms' ||
-                      newSavedCommand.type === 'sendUssd' ||
-                      newSavedCommand.type === 'sosNumber' ? `${t("commandPhone")}` : `${t("commandData")}` }
-                      name="data"
+                      label={t("commandPort")}
+                      name="setConnection"
+                      type="number"
+                      InputProps={{ 
+                        inputProps: { 
+                          min: 1, 
+                          max: 65535
+                        }
+                      }}
                       autoComplete="off"
                       variant="outlined"
                       //value={newSavedCommand.attributes}
@@ -253,15 +351,13 @@ const SavedCommands = ({open, handleCloseModal}) => {
                         ...newSavedCommand,
                         attributes: {
                           ...newSavedCommand.attributes,
-                          [newSavedCommand.type === 'sosNumber' ? `phone` :
-                            getCommandKey(newSavedCommand.type)]: e.target.value,
+                          [`port`]: Number(e.target.value),
                         },
                       })}
             />
             <TextField style={{display: 
             `${newSavedCommand.type === 'sendSms' ? 'block' : 'none'}`}}
                       fullWidth
-                      id="outlined-basic"
                       label={t("commandMessage")}
                       name="data"
                       autoComplete="off"
@@ -282,10 +378,13 @@ const SavedCommands = ({open, handleCloseModal}) => {
               >     
                   <TextField style={{width: '75%',
                     display: `${newSavedCommand.type === 'positionPeriodic' ? 'inline-flex' : 'none'}`}}
-                    id="outlined-basic"
-                    minValue={0}
                     label={t(`commandFrequency`)}
-                    name="reportPeriod"                                
+                    name="reportPeriod"
+                    InputProps={{ 
+                      inputProps: { 
+                        min: 0
+                      }
+                    }}                                
                     type="number"
                     variant="outlined"
                     error={flag}
@@ -324,7 +423,7 @@ const SavedCommands = ({open, handleCloseModal}) => {
                       type="text"
                       label={t("commandTimezone")}
                       variant="outlined"
-                      InputLabelProps={{
+                      inputlabelprops={{
                         shrink: true,
                       }}
                       onChange={(e) => setNewSavedCommand({
@@ -335,23 +434,53 @@ const SavedCommands = ({open, handleCloseModal}) => {
                       })}
                     >
                       <option aria-label="None" value="" />
-                      {tz.timezones.map((atr) => (
+                      {tz.timezones.sort().map((atr) => (
                         <option key={atr}>{atr}</option>
                       ))}
                     </Select>
             </FormControl>
+            <FormControl
+              variant="outlined"
+              className={classes.formControl}
+              fullWidth={true}
+              style={{display: `${newSavedCommand.type === 'voiceMonitoring' ||
+              newSavedCommand.type === 'setAgps' || newSavedCommand.type === 'modeDeepSleep' ||
+              newSavedCommand.type === 'modePowerSaving' || newSavedCommand.type === 'alarmSos' ||
+              newSavedCommand.type === 'alarmBattery' || newSavedCommand.type === 'alarmFall' ||
+              newSavedCommand.type === 'alarmRemove' ? 'block' : 'none'}`}}       
+              >
+              <Typography component="div">
+              {t("commandEnable")}:
+              <Radio
+                checked={isChecked === true}
+                onChange={() => handleSetCheckbox()}
+                color="primary"
+                value={true}
+                name="radio-button-demo"
+                inputProps={{ "aria-label": "A" }}
+              />{" "}
+              {t("reportYes")}
+              <Radio
+                checked={isChecked === false}
+                onChange={() => handleSetCheckbox()}
+                color="primary"
+                value={false}
+                name="radio-button-demo"
+                inputProps={{ "aria-label": "B" }}
+              />{" "}
+              {t("reportNo")}
+            </Typography>
+            </FormControl>
           </form>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => handleCloseModal()} color="primary">
-            Disagree
+          <Button onClick={() => closeModal()} color="primary">
+            {t('sharedCancel')}
           </Button>
           <Button color="primary" autoFocus>
-            Agree
+            {t('sharedSave')}
           </Button>
-          <Button onClick={get}>
-              GET
-          </Button>
+          <Button onClick={get}>get</Button>
         </DialogActions>
       </Dialog>
   );
