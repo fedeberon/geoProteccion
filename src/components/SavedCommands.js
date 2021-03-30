@@ -33,6 +33,8 @@ const styles = makeStyles((theme) => ({
 }));
 
 const SavedCommands = ({open, handleCloseModal, data}) => {
+  const [ attribute1, setAttribute1 ] = useState();
+  const [ attribute2, setAttribute2 ] = useState();
   const [aux, setAux] = useState();
   const [flag, setFlag] = useState();
   const classes = styles();
@@ -48,50 +50,44 @@ const SavedCommands = ({open, handleCloseModal, data}) => {
     type: '',
   })
 
+  //Closing y reseting savedCommand-Modal
   const closeModal = () => {
-    // setNewSavedCommand({
-    //   attributes: {},
-    //   description: '',
-    //   deviceId: 0,
-    //   textChannel: false,
-    //   type: '',
-    // })
     handleCloseModal();
+    setNewSavedCommand({
+      attributes: {},
+      description: '',
+      deviceId: 0,
+      textChannel: false,
+      type: '',
+    })
   }
 
   useEffect(() => {
-    setOpenModal(open);
-    // setTimeout(()=> {
-    //   data && setNewSavedCommand({
-    //     description: data.description,
-    //     deviceId: data.deviceId,
-    //     textChannel: data.textChannel,
-    //     type: data.type,
-    //     id: data.id
-    //   })
-    //   if(data){
-    //     Object.entries(data.attributes).map(([key,value]) => (    
-    //       setNewSavedCommand({
-    //       ...newSavedCommand,
-    //       attributes: {
-    //         ...newSavedCommand.attributes,
-    //         [key]: value
-    //       }
-    //     })
-    //   ))
-    //   } 
-    // },1500)
-  },[open])
 
-  const get = () => {
-   console.log("data desde userpage: ", data);
-   console.log("newsavedCommand: ", newSavedCommand);
-   console.log("newsavedcommand actualizado: ", newSavedCommand);
-  };
+    setOpenModal(open);
+    if(data && data.id >= 0){
+      console.log(data);
+      console.log(Object.values(data.attributes)[0])
+      gettingValues();
+      setNewSavedCommand({
+        attributes: data.attributes,    
+        description: data.description,
+        deviceId: data.deviceId,
+        id: data.id,
+        textChannel: data.textChannel,
+        type: data.type,        
+      })
+    }
+  },[open])
 
   useEffect(()=> {
     console.log(newSavedCommand);
-  }, [newSavedCommand])
+  },[newSavedCommand])
+
+  const get = () => {
+    
+    console.log(Object.values(newSavedCommand.attributes)[1])
+  };
 
   const getCommandsList = () => {
     return fetch(`api/commands/types`, { method: "GET" })
@@ -136,7 +132,7 @@ const SavedCommands = ({open, handleCloseModal, data}) => {
     setNewSavedCommand({
       ...newSavedCommand,
       attributes: {
-        [getCommandKey(newSavedCommand.type)]: !isChecked
+        [getCommandKey(newSavedCommand.type)]: !isChecked,
       }
     })
   }
@@ -155,7 +151,7 @@ const SavedCommands = ({open, handleCloseModal, data}) => {
     } else {
       setNewSavedCommand({
         ...newSavedCommand,
-        attributes: {}
+        attributes: {...newSavedCommand.attributes},
       })
     }
   }
@@ -172,13 +168,43 @@ const SavedCommands = ({open, handleCloseModal, data}) => {
   const handleSetAttribute = (e) => {
     e.preventDefault();
     setFlag(false);
-    setAux(e.target.value * unitTime);
     setNewSavedCommand({
       ...newSavedCommand,
       attributes: {
         [getCommandKey(newSavedCommand.type)]: (Number(e.target.value) * unitTime)
       },
     })
+  }
+
+  function gettingValues(type) {
+    let valuetype = getCommandKey(type);
+    let asd;
+    if(data){
+      Object.entries(data.attributes).map(([key,value]) => {
+
+        switch (key) {
+          case 'index':
+            asd = value;
+          case 'phone':
+            asd = value;
+            break;
+          case 'frequency':
+            asd = value;
+            break;
+          default:
+            break;
+        }
+
+        // if(key === valuetype){
+        //   console.log(value)
+        //   setAttribute1(value);
+        // } else if (key === 'phone') {
+        //   console.log(value)
+        //   setAttribute2(value);
+        // }      
+      })
+    }
+    return asd;
   }
 
   return (
@@ -282,7 +308,7 @@ const SavedCommands = ({open, handleCloseModal, data}) => {
                       }}
                       autoComplete="off"
                       variant="outlined"
-                      //value={newSavedCommand.attributes}
+                      value={Object.values(newSavedCommand.attributes)[0]}
                       onChange={(e) => setNewSavedCommand({
                         ...newSavedCommand,
                         attributes: {
@@ -306,7 +332,9 @@ const SavedCommands = ({open, handleCloseModal, data}) => {
                       name="data"
                       autoComplete="off"
                       variant="outlined"
-                      //value={newSavedCommand.attributes}
+                      value={Object.values(newSavedCommand.attributes)[1] !== '' ? 
+                              Object.values(newSavedCommand.attributes)[1] :
+                              Object.values(newSavedCommand.attributes)[0]}
                       onChange={(e) => setNewSavedCommand({
                         ...newSavedCommand,
                         attributes: {
@@ -323,7 +351,7 @@ const SavedCommands = ({open, handleCloseModal, data}) => {
                       name="data"
                       autoComplete="off"
                       variant="outlined"
-                      //value={newSavedCommand.attributes}
+                      value={Object.values(newSavedCommand.attributes)[0]}
                       onChange={(e) => setNewSavedCommand({
                         ...newSavedCommand,
                         attributes: {
@@ -346,7 +374,7 @@ const SavedCommands = ({open, handleCloseModal, data}) => {
                       }}
                       autoComplete="off"
                       variant="outlined"
-                      //value={newSavedCommand.attributes}
+                      value={Object.values(newSavedCommand.attributes)[1]}
                       onChange={(e) => setNewSavedCommand({
                         ...newSavedCommand,
                         attributes: {
@@ -362,7 +390,7 @@ const SavedCommands = ({open, handleCloseModal, data}) => {
                       name="data"
                       autoComplete="off"
                       variant="outlined"
-                      //value={newSavedCommand.attributes}
+                      value={Object.values(newSavedCommand.attributes)[0]}
                       onChange={(e) => setNewSavedCommand({
                         ...newSavedCommand,
                         attributes: {
@@ -386,6 +414,7 @@ const SavedCommands = ({open, handleCloseModal, data}) => {
                       }
                     }}                                
                     type="number"
+                    value={Object.values(newSavedCommand.attributes)[0]}
                     variant="outlined"
                     error={flag}
                     disabled={!unitTime}
@@ -418,7 +447,7 @@ const SavedCommands = ({open, handleCloseModal, data}) => {
                   <Select 
                       native
                       fullWidth
-                      //value={}                                       
+                      value={Object.values(newSavedCommand.attributes)[0]}                                      
                       name="setTime"
                       type="text"
                       label={t("commandTimezone")}

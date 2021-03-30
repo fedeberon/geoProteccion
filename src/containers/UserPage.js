@@ -109,7 +109,7 @@ const UserPage = () => {
   const [ statistics, setStatistics ] = useState([]);
   const [ computedAttributes, setComputedAttributes ] = useState([]);
   const [ savedCommands, setSavedCommands ] = useState([]);
-  const [ commandData, setCommandData ] = useState();
+  const [ commandData, setCommandData ] = useState(undefined);
   const [ openModalComputedAttribute, setOpenModalComputedAttribute ] = useState(false);
   const [ newComputedAttribute, setNewComputedAttribute ] = useState({
     description: '',
@@ -118,7 +118,7 @@ const UserPage = () => {
     type: '',
   })
 
-  const handleCloseSnack = (event, reason) => {
+  const handleCloseSnack = (reason) => {
     if (reason === 'clickaway') {
       return;
     }
@@ -189,10 +189,16 @@ const UserPage = () => {
 
   const handleOpenCommandModal = (object) => {
     setOpenModalCommand(true);
-    if(object !== null){
+    if(object && object.id >= 0){
       setCommandData(object);
+    } else {
+      setCommandData();
     }
   };
+
+  const handleCloseCommandModal = () => {
+    setOpenModalCommand(false);
+  }
 
   const handleSaveServer = () => {
     const updateServer = async () => {
@@ -204,11 +210,7 @@ const UserPage = () => {
     updateServer()
     .then(response => response)
     .then(response => setOpenSnackSuccess(true));
-  };
-
-  const handleCloseCommandModal = () => {
-    setOpenModalCommand(false);
-  }
+  };  
 
   useEffect(() => {
     setServer({
@@ -798,7 +800,7 @@ const UserPage = () => {
         <UserData/>
       </div>
 
-      {/*SEND A COMMAND*/}
+      {/*SAVED COMMANDS MODAL-COMPONENT*/}
       <div>
         <SavedCommands 
           open={openModalCommand} 
