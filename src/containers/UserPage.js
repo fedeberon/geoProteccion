@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
 import withWidth from "@material-ui/core/withWidth";
 import Table from "@material-ui/core/Table";
@@ -15,7 +15,7 @@ import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
 import t from "../common/localization";
 import MuiAlert from '@material-ui/lab/Alert';
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import Button from "@material-ui/core/Button";
 import Select from "@material-ui/core/Select";
 import FormControl from "@material-ui/core/FormControl";
@@ -31,12 +31,17 @@ import DialogActions from "@material-ui/core/DialogActions";
 import * as service from "../utils/serviceManager";
 import userPageStyle from "./styles/UserPageStyle";
 import { getDate } from "../utils/functions";
-import {DeleteTwoTone, Label} from "@material-ui/icons";
+import {DeleteTwoTone} from "@material-ui/icons";
 import EditTwoToneIcon from "@material-ui/icons/EditTwoTone";
 import CloseIcon from "@material-ui/icons/Close";
 import IconButton from "@material-ui/core/IconButton";
 import SavedCommands from '../components/SavedCommands';
 import UserData from '../components/UserData';
+import ServerAttributesDialog from '../components/ServerAttributesDialog';
+import positions from '../common/PositionsAttributes.json'
+import {sessionActions} from "../store";
+import SC from "../common/SavedCommandsTypes.json";
+
 
 const styles = (theme) => ({});
 
@@ -55,7 +60,7 @@ function TabPanel(props) {
     >
       {value === index && (
         <Box p={3}>
-          <Typography>{children}</Typography>
+          <Typography component="div">{children}</Typography>
         </Box>
       )}
     </div>
@@ -87,75 +92,77 @@ function Alert(props) {
 
 const UserPage = () => {
   const classes = useStyles();
+  const dispatch = useDispatch();
   const [openSnackSuccess, setOpenSnackSuccess] = useState(false);
   const user = useSelector((state) => state.session.user);
   const storeServer = useSelector((state) => state.session.server);
   const [ rows, setRows ] = useState([]);
   const [ value, setValue ] = React.useState(0);
   const [ showAdministration, setShowAdministration ] = useState(false);
-  const [ capsMap, setCapsMap ] = useState([]);
+  const [ dialogAttributes, setDialogAttributes ] = useState(false);
   const [ fromDateTime, setFromDateTime ] = useState("");
   const [ toDateTime, setToDateTime ] = useState("");
   const [ openModalCommand, setOpenModalCommand ] = useState(false);
   const [ server, setServer ] = useState(storeServer);
+  const [ editingComputedAttribute, setEditingComputedAttribute ] = useState(false);
   const [ statistics, setStatistics ] = useState([]);
   const [ computedAttributes, setComputedAttributes ] = useState([]);
   const [ savedCommands, setSavedCommands ] = useState([]);
+  const [ commandData, setCommandData ] = useState(undefined);
   const [ openModalComputedAttribute, setOpenModalComputedAttribute ] = useState(false);
-  const [ objectComputedAttribute, setObjectComputedAttribute ] = useState({
+  const [ newComputedAttribute, setNewComputedAttribute ] = useState({
     description: '',
-    attribute: 'raw',
+    attribute: '',
     expression: '',
     type: '',
   })
 
-  let to = '';
-  let from = '';
-
-  useEffect(()=>{
-    setDate();
-  },[fromDateTime,toDateTime])
-
-  const setDate = () => {
-    to = toDateTime.toString();
-    from = fromDateTime.toString();
-  }
-
-  const handleCloseSnack = (event, reason) => {
+  const handleCloseSnack = (reason) => {
     if (reason === 'clickaway') {
       return;
     }
     setOpenSnackSuccess(false);
   };
 
+  const handleModalDialogAttributes = () => {
+    setDialogAttributes(!dialogAttributes);
+  }
+
+  const savingAttributes = (objeto) => {    
+      setServer({
+        ...server,
+        attributes: objeto,    
+    });
+  }
 
   const onChangeFromDateTime = (event) => {
     setFromDateTime(event.target.value);
   };
 
-  const onChangeToDateTime = (event) => {
+  const onChangeToDateTime = (event) => {    
     setToDateTime(event.target.value);
   };
 
-  const showStatics = async(from,to) => {
+  const showStatistics = async(from,to) => {
     const response = await service.getStatistics(from,to);
     setStatistics(response);
   }
 
   const showComputedAttributes = async() => {
     const response = await service.getComputedAttributes();
-    setComputedAttributes(response);
-    console.log(computedAttributes);
+    setComputedAttributes(response);    
   }
 
-  const handleShowComputedAttribute = (object) => {
-    setOpenModalComputedAttribute(!openModalComputedAttribute);
-    if(object){
-      setObjectComputedAttribute({
-        description: object.description,
-        attribute: object.attribute,
-        expression: object.expression,
-        type: object.type,
+  const handleOpenComputedAttributes = (item) => {
+    setOpenModalComputedAttribute(true);
+    if(typeof(item.id) === 'number'){      
+      setEditingComputedAttribute(true);
+      setNewComputedAttribute({
+        id: item.id,
+        description: item.description,
+        attribute: item.attribute,
+        expression: item.expression,
+        type: item.type,
       })
     }
   }
@@ -164,68 +171,50 @@ const UserPage = () => {
     setValue(newValue);
   };
 
-  const handleCloseModalCommand = () => {
-    setOpenModalCommand(false);
+  const handleCloseComputedAttributes = () => {
+    setOpenModalComputedAttribute(false);
+    setEditingComputedAttribute(false);
+    setNewComputedAttribute({
+      description: '',
+      attribute: '',
+      expression: '',
+      type: '',
+    })
   };
 
   const showMenuAdmin = () => {
     setShowAdministration(!showAdministration);
   };
 
-  const handleOpenCommandModal = () => {
+  const handleOpenCommandModal = (object) => {
     setOpenModalCommand(true);
+    if(object && object.id >= 0){
+      setCommandData(object);
+    } else {
+      setCommandData();
+    }
   };
 
-  const handleChangeType = (event) => {
-    setCapsMap(event.target.value);
-  };
+  const handleCloseCommandModal = (response) => {
+    setOpenModalCommand(false);
+    if(response !== undefined){
+      setTimeout(()=> {
+        getSavedCommands();
+      },1500);      
+    }
+  }
 
   const handleSaveServer = () => {
     const updateServer = async () => {
       let response = await service.updateServer(server);
 
-      dispatchEvent(sessionActions.setServer(response));
+      dispatch(sessionActions.setServer(response));
       setServer(response);
     };
     updateServer()
     .then(response => response)
     .then(response => setOpenSnackSuccess(true));
-  };
-
-  const handleCloseModalCommands = () => {
-    setOpenModalCommand(false);
-  }
-
-  useEffect(() => {
-    let name = createData(t("sharedName"), user.name);
-    let email = createData(t("userEmail"), user.email);
-    let phone = createData(t("sharedPhone"), user.phone);
-    let map = createData(t("mapTitle"), user.map);
-    let latitude = createData(t("positionLatitude"), user.latitude);
-    let longitude = createData(t("positionLongitude"), user.longitude);
-    let zoom = createData(t("serverZoom"), user.zoom);
-    let attributes = createData(t("sharedAttributes"), "NOT FINISHED");
-    let twelveHourFormat = createData(
-      t("settingsTwelveHourFormat"),
-      user.twelveHourFormat
-    );
-    let coordinatesFormat = createData(
-      t("settingsCoordinateFormat"),
-      user.coordinateFormat
-    );
-    setRows([
-      name,
-      email,
-      phone,
-      map,
-      latitude,
-      longitude,
-      zoom,
-      attributes,
-      twelveHourFormat,
-      coordinatesFormat,
-    ]);
-  }, [user]);
+  };  
 
   useEffect(() => {
     setServer({
@@ -239,6 +228,97 @@ const UserPage = () => {
     setSavedCommands(response);
   }
 
+  useEffect(()=> {
+    let object = positions.positionsAttributes.find(element => element.key === newComputedAttribute.attribute);
+    if(object){
+      setNewComputedAttribute({
+        ...newComputedAttribute,
+        type: object.valueType,
+      })
+    } else {
+      setNewComputedAttribute({
+        ...newComputedAttribute,
+        type: '',
+      })
+    }
+
+  },[newComputedAttribute.attribute])
+
+  const saveComputedAttribute = (object) => {    
+    let response = fetch(editingComputedAttribute ? `api/attributes/computed/${newComputedAttribute.id}` : 
+    `api/attributes/computed`, {
+      method: editingComputedAttribute ? 'PUT' : 'POST',
+      headers: {'Content-Type': 'application/json',
+                'Accept': '*/*'},
+      body: JSON.stringify(object)})
+      .then(response => response.json())
+      .then(data => {
+        if(data){
+          showComputedAttributes();
+        } else {
+          console.log('saveComputedAttribute error');
+        }
+      })    
+    console.log(response);
+    handleCloseComputedAttributes();
+  }
+
+  const removeComputedAttribute = (id) => {
+    let option = confirm(`${t('sharedRemoveConfirm')}`);
+    if(option){
+      const removingComputedAttribute = async () => {
+        await service.removeComputedAttribute(id);        
+      }
+      removingComputedAttribute();           
+    } else {
+      handleCloseComputedAttributes();
+    }
+    setTimeout(()=> {
+      showComputedAttributes();
+    },2000)
+  }
+
+  const removeSavedCommands = (id) => {
+    let option = confirm(`${t('sharedRemoveConfirm')}`);
+    if(option){
+      fetch(`api/commands/${id}`, {
+        method: 'DELETE',
+      }).then(response => {
+        if(response.status === 204){
+          getSavedCommands();
+        } else {          
+          alert('error');
+        }
+      })
+    }
+  }
+
+  const getAttributeName = (key) => {
+    let value = positions.positionsAttributes.find(elem => elem.key === key);
+    return value.name;
+  }
+
+  const getAttributeType = (type) => {
+    let value = positions.positionsAttributes.find(elem => elem.valueType === type);
+
+    switch (value.valueType) {
+      case "number":
+        return "sharedTypeNumber";
+      case "string":
+        return "sharedTypeString";
+      case "boolean":
+        return "sharedTypeBoolean";
+      default: 
+        return null;
+    }
+  }
+
+  const getCommandTypeName = (type) => {
+    let object = SC.SC.find((elem) => elem.type === type);
+    if(object)
+    return object.name
+  }
+
   return (
     <div className={classes.root}>
       <div
@@ -250,10 +330,9 @@ const UserPage = () => {
           {user.administrator && 
             <Button
               onClick={() => showMenuAdmin()}
-              button
-              style={{ textTransform: "capitalize" }}
+              className={classes.adminButton}
             >
-              Administrador
+              {t('userAdmin')}
             </Button>
           }
         </Typography>
@@ -267,6 +346,7 @@ const UserPage = () => {
           onChange={handleChange}
           aria-label="simple tabs example"
           centered
+          style={{marginBottom: '9px'}}
         >
           <Tab label={t('commandServer')} {...a11yProps(0)} />
           <Tab label={t('statisticsTitle')} {...a11yProps(1)} />
@@ -275,7 +355,7 @@ const UserPage = () => {
         </Tabs>
 
         <TabPanel value={value} index={0} style={{ paddingBottom: "10%" }}>
-          <Container style={{textAlign: 'center', width: '50%'}} component={Paper}>
+          <Container style={{textAlign: 'left', padding: '0px 5px'}} component={Paper}>
            <p className={classes.subtitles}>{t("settingsTitle")}</p>
 
               <ButtonGroup className={classes.buttonGroup}
@@ -283,10 +363,17 @@ const UserPage = () => {
                 color="default"
                 aria-label="text primary button group"
               >
-                <Button>{t("sharedAttributes")}</Button>
-                <Button>
+                <Button style={{backgroundColor: "#e6e6fa", fontSize: '12px', textTransform: 'capitalize'}}
+                  onClick={handleModalDialogAttributes}>
+                  {t("sharedAttributes")}
+                </Button>
+                <Button style={{backgroundColor: "#e6e6fa", fontSize: '12px', textTransform: 'capitalize'}}>
                   <i className="fas fa-map-marker-alt" />
                   &nbsp;{t("sharedGetMapState")}
+                </Button>
+                <Button onClick={() => handleSaveServer()}
+                style={{backgroundColor: "#e6e6fa", fontSize: '12px', textTransform: 'capitalize'}}>                  
+                  &nbsp;{t("sharedSave")}
                 </Button>
               </ButtonGroup>
 
@@ -303,16 +390,37 @@ const UserPage = () => {
                           <Select
                             style={{ width: "229px" }}
                             native
-                            value="custom"
-                            onChange={handleChangeType}
+                            value={server.map}
+                            onChange={(e) =>
+                              setServer({ ...server, map: e.target.value })
+                            }
                           >
-                            <option aria-label="None" value="" />
-                            {/*{typesValues.map((types, index) => (*/}
-                            <option key={1} value="custom">
-                              {t("mapCustom")}
-                            </option>
+                            <option key={1} value="carto">{t("mapCarto")}</option>
+                            <option key={2} value="osm">{t("mapOsm")}</option>
+                            <option key={3} value="bingRoad">{t("mapBingRoad")}</option>
+                            <option key={4} value="bingAerial">{t("mapBingAerial")}</option>
+                            <option key={5} value="bingHybrid">{t("mapBingHybrid")}</option>
+                            <option key={6} value="baidu">{t("mapBaidu")}</option>
+                            <option key={7} value="yandexMap">{t("mapYandexMap")}</option>
+                            <option key={8} value="yandexSat">{t("mapYandexSat")}</option>
+                            <option key={9} value="wikimedia">{t("mapWikimedia")}</option>
+                            <option key={10} value="custom">{t("mapCustom")}</option>
+                            <option key={11} value="customArcgis">{t("mapCustomArcgis")}</option>
                           </Select>
                         </FormControl>
+                      </TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>{t("mapBingKey")}:</TableCell>
+                      <TableCell>
+                        <TextField
+                          label={t("mapBingKey")}
+                          value={server.bingKey}
+                          onChange={(e) =>
+                            setServer({ ...server, bingKey: e.target.value })
+                          }
+                          variant="outlined"
+                        />
                       </TableCell>
                     </TableRow>
                     <TableRow>
@@ -339,7 +447,7 @@ const UserPage = () => {
                             setServer({ ...server, latitude: e.target.value })
                           }
                           type="number"
-                          InputLabelProps={{
+                          inputlabelprops={{
                             shrink: true,
                           }}
                           variant="outlined"
@@ -356,7 +464,7 @@ const UserPage = () => {
                             setServer({ ...server, longitude: e.target.value })
                           }
                           type="number"
-                          InputLabelProps={{
+                          inputlabelprops={{
                             shrink: true,
                           }}
                           variant="outlined"
@@ -373,7 +481,7 @@ const UserPage = () => {
                             setServer({ ...server, zoom: e.target.value })
                           }
                           type="number"
-                          InputLabelProps={{
+                          inputlabelprops={{
                             shrink: true,
                           }}
                           variant="outlined"
@@ -429,8 +537,7 @@ const UserPage = () => {
                                 coordinateFormat: e.target.value,
                               })
                             }
-                          >
-                            {/*{typesValues.map((types, index) => (*/}
+                          >                            
                             <option key={"dd"} value="dd">
                               {t("sharedDecimalDegrees")}
                             </option>
@@ -532,55 +639,42 @@ const UserPage = () => {
 
         {/*ADMIN STATISTICS*/}
         <TabPanel value={value} index={1}>
-          <div>
-            <form>
-              <TableBody>
-                <TableRow>
-                  <TableCell>
-                    {t("reportFrom")}:
-                  </TableCell>
-                  <TableCell>
-                    <form className={classes.containerDateTime} noValidate>
-                      <TextField
-                        label={t('reportFrom')}
-                        value={fromDateTime.toString()}
-                        onChange={onChangeFromDateTime}
-                        type="date"
-                        defaultValue="2020-11-09T00:30"
-                        className={classes.textFieldDateTime}
-                        InputLabelProps={{
-                          shrink: true,
-                        }}
-                      />
-                    </form>
-                  </TableCell>
-                  <TableCell>{t("reportTo")}:</TableCell>
-                  <TableCell>
-                    <form className={classes.containerDateTime} noValidate>
-                      <TextField
-                        label={t('reportTo')}
-                        value={toDateTime.toString()}
-                        onChange={onChangeToDateTime}
-                        type="date"
-                        defaultValue={new Date()}
-                        className={classes.textFieldDateTime}
-                        InputLabelProps={{
-                          shrink: true,
-                        }}
-                      />
-                    </form>
-                  </TableCell>
-                  <TableCell>
-                    <Button button onClick={() => showStatics(fromDateTime, toDateTime)} variant="outlined" color="default">
-                      {t('reportShow')}
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              </TableBody>
-            </form>
-          </div>
-          <div>
-            <Table>
+          <Table style={{display: 'block', overflowX: window.innerWidth < 767 ? 'scroll' : ''}}>
+            <TableBody>
+              <TableRow>
+                <TableCell>
+                  {t("reportFrom")}:
+                </TableCell>
+                <TableCell>
+                  <form className={classes.containerDateTime} noValidate>
+                    <TextField
+                      value={fromDateTime.toString()}
+                      onChange={onChangeFromDateTime}
+                      type="date"
+                      className={classes.textFieldDateTime}                        
+                    />
+                  </form>
+                </TableCell>
+                <TableCell>{t("reportTo")}:</TableCell>
+                <TableCell>
+                  <form className={classes.containerDateTime} noValidate>
+                    <TextField
+                      value={toDateTime.toString()}
+                      onChange={onChangeToDateTime}
+                      type="date"
+                      className={classes.textFieldDateTime}
+                    />
+                  </form>
+                </TableCell>
+                <TableCell>
+                  <Button onClick={() => showStatistics(fromDateTime, toDateTime)} variant="outlined" color="default">
+                    {t('reportShow')}
+                  </Button>
+                </TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+            <Table style={{display: 'block', overflowX: window.innerWidth < 767 ? 'scroll' : ''}}>
               <TableHead>
                 <TableRow>
                   <TableCell>{t('statisticsCaptureTime')}</TableCell>
@@ -608,7 +702,6 @@ const UserPage = () => {
                 ))}
               </TableBody>
             </Table>
-          </div>
         </TabPanel>
 
         {/*ADMIN COMPUTED ATTRIBUTES*/}
@@ -621,18 +714,10 @@ const UserPage = () => {
                   color="default"
                   aria-label="text primary button group"
                 >
-                  <Button onClick={handleShowComputedAttribute}>
+                  <Button variant="outlined" onClick={handleOpenComputedAttributes}>
                     <i className="fas fa-plus" />
                     &nbsp;{t('sharedAdd')}
-                  </Button>
-                  <Button>
-                    <i className="fas fa-edit" />
-                    &nbsp;{t('sharedEdit')}
-                  </Button>
-                  <Button>
-                    <i className="fas fa-trash-alt" />
-                    &nbsp;{t('sharedRemove')}
-                  </Button>
+                  </Button>                  
                 </ButtonGroup>
               </div>
             </form>
@@ -649,25 +734,31 @@ const UserPage = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {computedAttributes.map((el) => (
-                  <TableRow key={el.id}>
-                  <TableCell>{el.description}</TableCell>
-                  <TableCell>{el.attribute}</TableCell>
-                  <TableCell>{el.expression}</TableCell>
-                  <TableCell>{el.type}</TableCell>
-                  <TableCell align="center">
+                {computedAttributes.sort((f,s) => {
+                 return f.id - s.id
+               }).map((el) => (
+                  <TableRow className="computedAtribRows" hover key={el.id}>
+                  <TableCell >{el.description}</TableCell>
+                  <TableCell >{t(`${getAttributeName(el.attribute)}`)}</TableCell>
+                  <TableCell >{el.expression}</TableCell>
+                  <TableCell >{t(`${getAttributeType(el.type)}`)}</TableCell>
+                  <TableCell  align="center">
                           <Button title={t('sharedEdit')}
-                                  // onClick={() => handleOpenComputedAttribute(el)}
+                                  onClick={() => handleOpenComputedAttributes(el)}
                                   >
-                          <EditTwoToneIcon/>
+                          <EditTwoToneIcon 
+                          style={{fontSize: window.innerWidth > 767 ? '19px' : ''}}
+                          />
                           </Button>
                           <Button title={t('sharedRemove')}
-                                  // onClick={() => removeComputedAttribute(el.id)}
+                                  onClick={() => removeComputedAttribute(el.id)}
                                   >
-                          <DeleteTwoTone />
+                          <DeleteTwoTone 
+                          style={{fontSize: window.innerWidth > 767 ? '19px' : ''}}
+                          />
                           </Button>
                         </TableCell>
-                </TableRow>
+                </TableRow> 
                 ))}
               </TableBody>
             </Table>
@@ -675,89 +766,83 @@ const UserPage = () => {
         </TabPanel>
 
          {/*ADMIN SAVED COMMANDS*/}
-        <TabPanel value={value} index={3}>
-          <div>
-            <form>
-              <div className={classes.buttonGroup}>
-                <ButtonGroup
-                  variant="text"
-                  color="default"
-                  aria-label="text primary button group"
-                >
-                  <Button onClick={handleOpenCommandModal}>
-                    <i className="fas fa-plus" />
-                    &nbsp;Agregar
-                  </Button>
-                  <Button>
-                    <i className="fas fa-edit" />
-                    &nbsp;Editar
-                  </Button>
-                  <Button>
-                    <i className="fas fa-trash-alt" />
-                    &nbsp;Eliminar
-                  </Button>
-                </ButtonGroup>
-              </div>
-            </form>
-          </div>
-          <div>
+        <TabPanel component={'span'} value={value} index={3}>
+          <Button variant="outlined"
+          onClick={handleOpenCommandModal}>
+            <i className="fas fa-plus" />
+            &nbsp;{t('sharedAdd')}
+          </Button>
+          {/* <Container> */}
             <Table>
               <TableHead>
                 <TableRow>
                 <TableCell>{t("sharedDescription")}</TableCell>
                 <TableCell>{t("sharedType")}</TableCell>
                 <TableCell>{t("commandSendSms")}</TableCell>
+                <TableCell align="center"/>
                 </TableRow>
               </TableHead>
               <TableBody>
-               {savedCommands.map((object) => (
-                <TableRow key="key">
+               {savedCommands.sort((f,s) => {
+                 return f.id - s.id
+               }).map((object,index) => (
+                <TableRow key={index}>
                   <TableCell>{object.description}</TableCell>
-                  <TableCell>{object.type}</TableCell>
+                  <TableCell>{t(`${getCommandTypeName(object.type)}`)}</TableCell>
                   <TableCell>{t(`${object.textChannel}`)}</TableCell>
-                </TableRow>
+                  <TableCell style={{display: 'flex', justifyContent: 'center'}} align="center">
+                          <Button title={t('sharedEdit')}
+                                  onClick={() => handleOpenCommandModal(object)}
+                                  >
+                          <EditTwoToneIcon 
+                          style={{fontSize: window.innerWidth > 767 ? '19px' : ''}}
+                          />
+                          </Button>
+                          <Button title={t('sharedRemove')}
+                                  onClick={() => removeSavedCommands(object.id)}
+                                  >
+                          <DeleteTwoTone 
+                          style={{fontSize: window.innerWidth > 767 ? '19px' : ''}}
+                          />
+                          </Button>
+                  </TableCell>
+                </TableRow>                 
                ))}
               </TableBody>
             </Table>
-          </div>
+          {/* </Container> */}
         </TabPanel>
       </div>
 
-      {/*USER DATA*/}
-      <div
-        className={classes.UserPageSize}
-        style={{ display: `${showAdministration ? "none" : "block"}` }}
-      >
-        <UserData/>
-        {/* <TableContainer component={Paper}>
-          <Table className={classes.table} aria-label="simple table">
-            <TableHead>
-              <TableRow></TableRow>
-            </TableHead>
-            <TableBody>
-              {rows.map((row) => (
-                <TableRow key={row.field}>
-                  <TableCell component="th" scope="row">
-                    {row.field}
-                  </TableCell>
-                  <TableCell align="left">{row.userData}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer> */}
+      {/*MODAL ATTRIBUTES*/}
+      <div>
+          <ServerAttributesDialog             
+            data={server.attributes && server.attributes} //If exist, send attributes.
+            savingAttributes={savingAttributes} 
+            open={dialogAttributes} 
+            close={handleModalDialogAttributes}
+          />
       </div>
 
-      {/*SEND A COMMAND*/}
+      {/*USER DATA*/}
+      <div className={classes.UserPageSize} style={{ display: `${showAdministration ? "none" : "block"}` }}>
+        <UserData/>
+      </div>
+
+      {/*SAVED COMMANDS MODAL-COMPONENT*/}
       <div>
-        <SavedCommands open={openModalCommand} handleCloseModal={handleCloseModalCommands}/>
+        <SavedCommands 
+          open={openModalCommand} 
+          data={commandData} 
+          handleCloseModal={handleCloseCommandModal}
+        />
       </div>
 
       {/*MODAL ADD COMPUTEDATTRIBUTE*/}
       <div>
         <Dialog
           open={openModalComputedAttribute}
-          onClose={handleShowComputedAttribute}
+          onClose={handleCloseComputedAttributes}
           aria-labelledby="alert-dialog-title"
           aria-describedby="alert-dialog-description"
         >
@@ -766,95 +851,87 @@ const UserPage = () => {
                        >
             {t('sharedAdd')}
             <IconButton aria-label="close" className={classes.closeButton}
-                        onClick={handleShowComputedAttribute}
+                        onClick={handleCloseComputedAttributes}
                         >
               <CloseIcon/>
             </IconButton>
           </DialogTitle>
           <DialogContent>
-            <form>
+            <form id="form-settings">
               <TextField
               fullWidth
+              autoComplete="off"
               id="outlined-basic"
               label={t('sharedDescription')}
               variant="outlined"
-              value={objectComputedAttribute.description}
-              onChange={(e) => setObjectComputedAttribute({
+              value={newComputedAttribute.description}
+              onChange={(e) => setNewComputedAttribute({
+                ...newComputedAttribute,
                 description: e.target.value
               })}
               />
-              <FormControl variant="outlined" fullWidth={true} className={classes.formControl}>
+              <FormControl variant="outlined"  className={classes.formControl}>
                 <InputLabel htmlFor="outlined-age-native-simple">{t('deviceCommand')}</InputLabel>
                 <Select
                   native
-                  value={objectComputedAttribute.attribute}
-                  onChange={(e) => setObjectComputedAttribute({
+                  value={newComputedAttribute.attribute}
+                  onChange={(e) => setNewComputedAttribute({
+                    ...newComputedAttribute,
                     attribute: e.target.value
                   })}
                   label={t('sharedAttribute')}
                   name="attribute"
                   type="text"
                   variant="outlined"
-                  InputLabelProps={{
+                  inputlabelprops={{
                     shrink: true,
                   }}
                 >
-                      <option value='raw'>{t('positionRaw')}</option>
-                      <option value='index'>{t('positionIndex')}</option>
-                      <option value='hdop'>{t('positionHdop')}</option>
-                      <option value='vdop'>{t('positionVdop')}</option>
-                      <option value='pdop'>{t('positionPdop')}</option>
-                      <option value='sat'>{t('positionSat')}</option>
-                      <option
-                        value='satVisible'>{t('positionSatVisible')}</option>
-                      <option value='rssi'>{t('positionRssi')}</option>
-                      <option value='gps'>{t('positionGps')}</option>
-                      <option value='odometer'>{t('positionOdometer')}</option>
-                      <option
-                        value='odometerMaintenance'>{t('positionServiceOdometer')}</option>
-                      <option
-                        value='odometerTrip'>{t('positionTripOdometer')}</option>
-                      <option value='hours'>{t('positionHours')}</option>
-                      <option value='steps'>{t('positionSteps')}</option>
-                      <option value='power'>{t('positionPower')}</option>
-                      <option value='batery'>{t('positionBattery')}</option>
-                      <option
-                        value='bateryLevel'>{t('positionBatteryLevel')}</option>
-                      <option value='fuel'>{t('positionFuel')}</option>
-                      <option
-                        value='fuelConsumtion'>{t('positionFuelConsumption')}</option>
-                      <option value='distance'>{t('sharedDistance')}</option>
-                      <option
-                        value='totalDistance'>{t('deviceTotalDistance')}</option>
-                      <option value='rpm'>{t('positionRpm')}</option>
-                      <option value='throttle'>{t('positionThrottle')}</option>
-                      <option value='armado'>{t('positionArmed')}</option>
-                      <option
-                        value='acceleration'>{t('positionAcceleration')}</option>
-                      <option
-                        value='deviceTemp'>{t('positionDeviceTemp')}</option>
-                      <option value='obdSpeed'>{t('positionObdSpeed')}</option>
-                      <option
-                        value='obdOdometer'>{t('positionObdOdometer')}</option>
+                    <option aria-label="None" value=""/>
+                    {positions.positionsAttributes.map((attribute, index) => (
+                      <option                           
+                        value={attribute.key} 
+                        key={index}>{t(`${attribute.name}`)}
+                      </option>
+                    ))}                       
                 </Select>
               </FormControl>
-              <TextField style={{minWidth: 'min-width: -webkit-fill-available !important'}}
+              <TextField 
                 id="outlined-multiline-static"
                 label={t('sharedExpression')}
                 multiline
                 rows={4}
-                value={objectComputedAttribute.expression}
+                value={newComputedAttribute.expression}
+                onChange={(e) => setNewComputedAttribute({
+                  ...newComputedAttribute,
+                  expression: e.target.value
+                })}
                 placeholder={t('sharedExpression')}
                 variant="outlined"
               />
+              <FormControl variant="outlined"  className={classes.formControl}>
+                <TextField
+                  label={t('sharedType')}
+                  value={newComputedAttribute.type === 'number' ? `${t(`sharedTypeNumber`)}` : 
+                        newComputedAttribute.type === 'string' ? `${t(`sharedTypeString`)}` : `${t(`sharedTypeBoolean`)}`}                
+                  name="attribute"
+                  type="text"
+                  variant="outlined"    
+                  disabled                            
+                />
+              </FormControl>
             </form>
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleCloseModalCommand} color="primary">
-              Disagree
+            <Button onClick={handleCloseComputedAttributes} color="primary">
+              {t(`sharedCancel`)}
             </Button>
-            <Button  color="primary" autoFocus>
-              Agree
+            <Button disabled={!newComputedAttribute.attribute ||
+                              !newComputedAttribute.expression ||
+                              !newComputedAttribute.description}
+             onClick={() => saveComputedAttribute(newComputedAttribute)} 
+             color="primary" autoFocus>
+              {t(`sharedSave`)}
             </Button>
           </DialogActions>
         </Dialog>

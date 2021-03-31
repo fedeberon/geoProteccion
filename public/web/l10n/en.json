@@ -320,6 +320,7 @@
     "eventsScrollToLast": "Scroll To Last",
     "alarmGeneral": "General",
     "alarmSos": "SOS",
+    "alarmClock": "alarmClock",
     "alarmVibration": "Vibration",
     "alarmMovement": "Movement",
     "alarmLowspeed": "Low Speed",

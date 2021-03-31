@@ -31,7 +31,8 @@ const getDeviceByUserId = (id) => {
 };
 
 const getStatistics = (from, to) => {
-  return fetch(`api/statistics?from=${from}T00%3A00%3A00.000Z&to=${to}T00%3A00%3A00.000Z`,{ method: 'GET' })
+  let time = new Date();
+  return fetch(`api/statistics?from=${from}T00%3A00%3A00.000Z&to=${to}T${time.getHours()<10 ? `0${time.getHours()}` : time.getHours()}%3A${time.getMinutes()<10 ? `0${time.getMinutes()}` : time.getMinutes()}%3A00.000Z`,{ method: 'GET' })
     .catch(function (error) { console.log('setStatistics error: ', error)})
     .then(response => response.json());
 }
@@ -249,6 +250,14 @@ const getComputedAttributes = () => {
     .then((response) => response.json());
 };
 
+const removeComputedAttribute = (id) => {
+  return fetch(`api/attributes/computed/${id}`, {method: "DELETE"})
+    .catch(function (error) {
+      console.log("removeComputedAttributes error: ", error);
+    })
+    .then((response) => response.json());
+}
+
 const getCommandsByDeviceId = (deviceId) => {
   return fetch(`api/commands?deviceId=${deviceId}`, { method: "GET" })
     .catch(function (error) {
@@ -335,5 +344,6 @@ export {
   updateUser,
   getGeozonesByGroupId,
   getNotificationsByGroupId,
-  getComputedAttributesByGroupId
+  getComputedAttributesByGroupId,
+  removeComputedAttribute
 };

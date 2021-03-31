@@ -322,6 +322,7 @@
     "eventsScrollToLast": "Desplazarse hasta el último",
     "alarmGeneral": "General",
     "alarmSos": "SOS",
+    "alarmClock": "alarmClock",
     "alarmVibration": "Vibración",
     "alarmMovement": "Movimiento",
     "alarmLowspeed": " Rápida Aceleración",
