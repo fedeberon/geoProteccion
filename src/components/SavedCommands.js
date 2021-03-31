@@ -33,15 +33,12 @@ const styles = makeStyles((theme) => ({
 }));
 
 const SavedCommands = ({open, handleCloseModal, data}) => {
-  const [ attribute1, setAttribute1 ] = useState();
-  const [ attribute2, setAttribute2 ] = useState();
-  const [aux, setAux] = useState();
-  const [flag, setFlag] = useState();
+  
   const classes = styles();
+  const [flag, setFlag] = useState();
   const [ openModal, setOpenModal ] = useState(false);
   const [ savedCommandTypes, setSavedCommandTypes ] = useState([]);
   const [ unitTime, setUnitTime ] = useState('');
-  const [ isChecked, setIsChecked ] = useState(false); 
   const [ newSavedCommand, setNewSavedCommand] = useState({
     attributes: {},
     description: '',
@@ -51,23 +48,14 @@ const SavedCommands = ({open, handleCloseModal, data}) => {
   })
 
   //Closing y reseting savedCommand-Modal
-  const closeModal = () => {
-    handleCloseModal();
-    setNewSavedCommand({
-      attributes: {},
-      description: '',
-      deviceId: 0,
-      textChannel: false,
-      type: '',
-    })
+  const closeModal = (response) => {
+    handleCloseModal(response);    
   }
 
+  //Inputs offsets from userPage Component
   useEffect(() => {
-
     setOpenModal(open);
     if(data && data.id >= 0){
-      console.log(data);
-      console.log(Object.values(data.attributes)[0])
       gettingValues();
       setNewSavedCommand({
         attributes: data.attributes,    
@@ -77,17 +65,16 @@ const SavedCommands = ({open, handleCloseModal, data}) => {
         textChannel: data.textChannel,
         type: data.type,        
       })
+    } else {
+      setNewSavedCommand({
+        attributes: {},
+        description: '',
+        deviceId: 0,
+        textChannel: false,
+        type: '',
+      })
     }
   },[open])
-
-  useEffect(()=> {
-    console.log(newSavedCommand);
-  },[newSavedCommand])
-
-  const get = () => {
-    
-    console.log(Object.values(newSavedCommand.attributes)[1])
-  };
 
   const getCommandsList = () => {
     return fetch(`api/commands/types`, { method: "GET" })
@@ -106,13 +93,24 @@ const SavedCommands = ({open, handleCloseModal, data}) => {
     getSavedCommands();
   },[])
 
-  const handleAdd = () => {
-    const add = {};
-      add.description = description;
-      add.type = type;
-      add.textChannel = textChannel;
+  useEffect(()=> {
+    console.log(newSavedCommand);
+  },[newSavedCommand])
 
-      console.log(JSON.stringify(add));
+  const handlePostCommand = (id) => {
+    let response = fetch(`${id && id >= 0 ? `api/commands/${id}` : `api/commands`}`, {
+      method: `${id && id >= 0 ? `PUT` : `POST`}`,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': '*/*'
+      },
+      body: JSON.stringify(newSavedCommand),
+    }).catch(function (error) {
+      console.log("postCommand error: ", error);
+    })
+    .then((response) => response.json());
+    
+    closeModal(response);
   }
 
   const getCommandTypeName = (type) => {
@@ -128,11 +126,10 @@ const SavedCommands = ({open, handleCloseModal, data}) => {
   }
 
   const handleSetCheckbox = () => {
-    setIsChecked(!isChecked);
     setNewSavedCommand({
       ...newSavedCommand,
       attributes: {
-        [getCommandKey(newSavedCommand.type)]: !isChecked,
+        [getCommandKey(newSavedCommand.type)]: !Object.values(newSavedCommand.attributes)[0],
       }
     })
   }
@@ -145,7 +142,7 @@ const SavedCommands = ({open, handleCloseModal, data}) => {
       setNewSavedCommand({
         ...newSavedCommand,
         attributes: {
-          [getCommandKey(newSavedCommand.type)]: isChecked
+          [getCommandKey(newSavedCommand.type)]: Object.values(newSavedCommand.attributes)[0]
         }
       })
     } else {
@@ -165,7 +162,7 @@ const SavedCommands = ({open, handleCloseModal, data}) => {
     setUnitTime(e.target.value);
   }
 
-  const handleSetAttribute = (e) => {
+  const setAttributePositionPeriod = (e) => {
     e.preventDefault();
     setFlag(false);
     setNewSavedCommand({
@@ -177,14 +174,14 @@ const SavedCommands = ({open, handleCloseModal, data}) => {
   }
 
   function gettingValues(type) {
-    let valuetype = getCommandKey(type);
     let asd;
+
     if(data){
       Object.entries(data.attributes).map(([key,value]) => {
-
         switch (key) {
           case 'index':
             asd = value;
+            break;
           case 'phone':
             asd = value;
             break;
@@ -193,15 +190,7 @@ const SavedCommands = ({open, handleCloseModal, data}) => {
             break;
           default:
             break;
-        }
-
-        // if(key === valuetype){
-        //   console.log(value)
-        //   setAttribute1(value);
-        // } else if (key === 'phone') {
-        //   console.log(value)
-        //   setAttribute2(value);
-        // }      
+        }    
       })
     }
     return asd;
@@ -332,7 +321,7 @@ const SavedCommands = ({open, handleCloseModal, data}) => {
                       name="data"
                       autoComplete="off"
                       variant="outlined"
-                      value={Object.values(newSavedCommand.attributes)[1] !== '' ? 
+                      value={Object.values(newSavedCommand.attributes)[1] !== undefined ? 
                               Object.values(newSavedCommand.attributes)[1] :
                               Object.values(newSavedCommand.attributes)[0]}
                       onChange={(e) => setNewSavedCommand({
@@ -414,11 +403,11 @@ const SavedCommands = ({open, handleCloseModal, data}) => {
                       }
                     }}                                
                     type="number"
-                    value={Object.values(newSavedCommand.attributes)[0]}
+                    //value={(e) => e.target.value}
                     variant="outlined"
                     error={flag}
                     disabled={!unitTime}
-                    onChange={(e) => handleSetAttribute(e)}
+                    onChange={(e) => setAttributePositionPeriod(e)}
                   />             
                   <Select style={{width: '20%', float: 'right',
                     display: `${newSavedCommand.type === 'positionPeriodic' ? 'flex' : 'none'}`}}
@@ -481,7 +470,7 @@ const SavedCommands = ({open, handleCloseModal, data}) => {
               <Typography component="div">
               {t("commandEnable")}:
               <Radio
-                checked={isChecked === true}
+                checked={Object.values(newSavedCommand.attributes)[0] === true}
                 onChange={() => handleSetCheckbox()}
                 color="primary"
                 value={true}
@@ -490,7 +479,7 @@ const SavedCommands = ({open, handleCloseModal, data}) => {
               />{" "}
               {t("reportYes")}
               <Radio
-                checked={isChecked === false}
+                checked={Object.values(newSavedCommand.attributes)[0] === false}
                 onChange={() => handleSetCheckbox()}
                 color="primary"
                 value={false}
@@ -506,10 +495,9 @@ const SavedCommands = ({open, handleCloseModal, data}) => {
           <Button onClick={() => closeModal()} color="primary">
             {t('sharedCancel')}
           </Button>
-          <Button color="primary" autoFocus>
+          <Button onClick={() => handlePostCommand(newSavedCommand.id)}color="primary" autoFocus>
             {t('sharedSave')}
           </Button>
-          <Button onClick={get}>get</Button>
         </DialogActions>
       </Dialog>
   );

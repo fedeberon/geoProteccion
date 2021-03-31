@@ -40,8 +40,7 @@ import UserData from '../components/UserData';
 import ServerAttributesDialog from '../components/ServerAttributesDialog';
 import positions from '../common/PositionsAttributes.json'
 import {sessionActions} from "../store";
-import { configureStore } from "@reduxjs/toolkit";
-import { TimelineContent } from "@material-ui/lab";
+import SC from "../common/SavedCommandsTypes.json";
 
 
 const styles = (theme) => ({});
@@ -196,8 +195,17 @@ const UserPage = () => {
     }
   };
 
-  const handleCloseCommandModal = () => {
+  const handleCloseCommandModal = (response) => {
+    console.log(response);
+    console.log("0")
     setOpenModalCommand(false);
+    if(response !== undefined){
+      console.log("1")
+      setTimeout(()=> {
+        getSavedCommands();
+      },1500);      
+    }
+    console.log("2")
   }
 
   const handleSaveServer = () => {
@@ -274,6 +282,21 @@ const UserPage = () => {
     },2000)
   }
 
+  const removeSavedCommands = (id) => {
+    let option = confirm(`${t('sharedRemoveConfirm')}`);
+    if(option){
+      fetch(`api/commands/${id}`, {
+        method: 'DELETE',
+      }).then(response => {
+        if(response.status === 204){
+          getSavedCommands();
+        } else {          
+          alert('error');
+        }
+      })
+    }
+  }
+
   const getAttributeName = (key) => {
     let value = positions.positionsAttributes.find(elem => elem.key === key);
     return value.name;
@@ -292,6 +315,12 @@ const UserPage = () => {
       default: 
         return null;
     }
+  }
+
+  const getCommandTypeName = (type) => {
+    let object = SC.SC.find((elem) => elem.type === type);
+    if(object)
+    return object.name
   }
 
   return (
@@ -709,7 +738,9 @@ const UserPage = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {computedAttributes.map((el) => (
+                {computedAttributes.sort((f,s) => {
+                 return f.id - s.id
+               }).map((el) => (
                   <TableRow className="computedAtribRows" hover key={el.id}>
                   <TableCell >{el.description}</TableCell>
                   <TableCell >{t(`${getAttributeName(el.attribute)}`)}</TableCell>
@@ -756,10 +787,12 @@ const UserPage = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-               {savedCommands.map((object,index) => (
+               {savedCommands.sort((f,s) => {
+                 return f.id - s.id
+               }).map((object,index) => (
                 <TableRow key={index}>
                   <TableCell>{object.description}</TableCell>
-                  <TableCell>{object.type}</TableCell>
+                  <TableCell>{t(`${getCommandTypeName(object.type)}`)}</TableCell>
                   <TableCell>{t(`${object.textChannel}`)}</TableCell>
                   <TableCell style={{display: 'flex', justifyContent: 'center'}} align="center">
                           <Button title={t('sharedEdit')}
@@ -770,7 +803,7 @@ const UserPage = () => {
                           />
                           </Button>
                           <Button title={t('sharedRemove')}
-                                  //onClick={() => removeSavedCommands(object.id)}
+                                  onClick={() => removeSavedCommands(object.id)}
                                   >
                           <DeleteTwoTone 
                           style={{fontSize: window.innerWidth > 767 ? '19px' : ''}}
