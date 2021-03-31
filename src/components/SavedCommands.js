@@ -93,10 +93,6 @@ const SavedCommands = ({open, handleCloseModal, data}) => {
     getSavedCommands();
   },[])
 
-  useEffect(()=> {
-    console.log(newSavedCommand);
-  },[newSavedCommand])
-
   const handlePostCommand = (id) => {
     let response = fetch(`${id && id >= 0 ? `api/commands/${id}` : `api/commands`}`, {
       method: `${id && id >= 0 ? `PUT` : `POST`}`,

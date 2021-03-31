@@ -196,16 +196,12 @@ const UserPage = () => {
   };
 
   const handleCloseCommandModal = (response) => {
-    console.log(response);
-    console.log("0")
     setOpenModalCommand(false);
     if(response !== undefined){
-      console.log("1")
       setTimeout(()=> {
         getSavedCommands();
       },1500);      
     }
-    console.log("2")
   }
 
   const handleSaveServer = () => {
