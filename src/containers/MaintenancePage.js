@@ -18,12 +18,7 @@ import {useSelector} from "react-redux";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 import TextField from "@material-ui/core/TextField";
-import Accordion from "@material-ui/core/Accordion";
-import AccordionSummary from "@material-ui/core/AccordionSummary";
-import AccordionDetails from "@material-ui/core/AccordionDetails";
-import InputLabel from "@material-ui/core/InputLabel";
-import DialogContentText from "@material-ui/core/DialogContentText";
-import Typography from "@material-ui/core/Typography";
+import AttributesDialog from '../components/AttributesDialog';
 import IconButton from "@material-ui/core/IconButton";
 import EditTwoToneIcon from "@material-ui/icons/EditTwoTone";
 import {DeleteTwoTone} from "@material-ui/icons";
@@ -80,21 +75,13 @@ const useStyles = makeStyles((theme) => ({
 
 
 const MaintenancePage = () => {
-
+  const userId = useSelector((state) => state.session.user.id);
   const classes = useStyles();
   const [ maintenance, setMaintenance ] = useState([]);
-  const userId = useSelector((state) => state.session.user.id);
   const [ showModal, setShowModal ] = useState(false);
   const [ elem, setElem ] = useState(false);
-  const [ key, setKey ] = useState('');
-  const [ value, setValue ] = useState('');
-  const [ attributesList, setAttributesList ] = useState([]);
-  const [ attributes, setAttributes] = useState({});
-  const [openAttributes, setOpenAttributes] = useState(false);
-  const [expanded, setExpanded] = useState('');
-  const [onEdit, setOnEdit] = useState(false);
-  const [indexValue, setIndexValue] = useState(0);
-  const [state, setState] = useState({
+  const [dialogAttributes, setDialogAttributes] = useState(false);
+  const [newMaintenance, setNewMaintenance] = useState({
     id: '',
     name: '',
     type: 'index',
@@ -102,60 +89,6 @@ const MaintenancePage = () => {
     period: '',
     attributes: {},
   });
-
-  const handleShowAttributes = (attributesData) => {
-    setOpenAttributes(!openAttributes);
-    if(attributesData) {
-      setAttributes({
-        ...attributes,
-        ...attributesData,
-      });
-      Object.entries(attributes).map(([key,value]) =>{
-        attributesList.push({
-          [key]: value
-        })})
-    }
-  };
-
-  const handleCloseAttributes = () => {
-    setOpenAttributes(false);
-    setAttributes({});
-    setKey('');
-    setValue('');
-  }
-
-  const handleSetAttributes = (object) => {
-    setState({
-      ...state,
-      attributes: object,
-    })
-    setOpenAttributes(false);
-  }
-
-  const handleSaveAttributes = () => {
-    if(onEdit){
-      attributesList.splice(indexValue, 1, {[key]: value});
-
-      attributesList.map((attribute) => {
-        setAttributes({...attributes, ...attribute});
-      });
-    } else {
-      attributesList.push({
-        [key]: value
-      })
-      setKey('');
-      setValue('');
-      attributesList.map((attribute) => {
-        setAttributes({...attributes, ...attribute});
-      });
-    }
-    setKey('');
-    setValue('');
-  }
-
-  const handleChange = (panel) => (event, newExpanded) => {
-    setExpanded(newExpanded ? panel : false);
-  };
 
   useEffect(() =>{
     getMaintenance(userId);
@@ -166,26 +99,20 @@ const MaintenancePage = () => {
     setMaintenance(response);
   }
 
-  const handleChangeAttributesKey = (event) => {
-    setKey(event.target.value);
-  };
-  const handleChangeAttributesValue = (event) => {
-    setValue(event.target.value);
-  };
-
   const handleChangeSelects = (event) => {
     const name = event.target.name;
-    setState({
-      ...state,
+    setNewMaintenance({
+      ...newMaintenance,
       [name]: event.target.value,
     });
   };
 
+  //Show & Hide modal to add or edit maintenances
   const handleShowModal = (elemento) => {
     setShowModal(!showModal);
     if(elemento){
       setElem(true);
-      setState({
+      setNewMaintenance({
         id: elemento.id,
         name: elemento.name,
         type: elemento.type,
@@ -196,76 +123,53 @@ const MaintenancePage = () => {
     }
   }
 
-  const handleEditAttributes = (keyValue, value, index) => {
-    setKey(keyValue);
-    setValue(value);
-    setIndexValue(index);
-    setOnEdit(true);
-    const buttonElem = document.getElementById("button-edit-att");
-    buttonElem.innerHTML = `${t("sharedEdit")}`;
-  }
-
   const handleCancelModal = () => {
     setShowModal(!showModal);
-    setState({id:'',name:'',type:'index',start:'',period:'',attributes:{},});
-    setAttributes({});
+    setNewMaintenance({id:'',name:'',type:'index',start:'',period:'',attributes:{},});
   }
 
   const handleCancelEdit = () => {
-    setState({id:'',name:'',type:'index',start:'',period:'',attributes:{},});
+    setNewMaintenance({id:'',name:'',type:'index',start:'',period:'',attributes:{},});
     setElem(false);
     setShowModal(!showModal);
-    setKey('');
-    setValue('');
   }
 
   const handlePost = () => {
-
-      const addMaintenance = {}
-      addMaintenance.name = state.name;
-      addMaintenance.type = state.type;
-      addMaintenance.start = state.start;
-      addMaintenance.period = state.period;
-      addMaintenance.attributes = attributes;
-
-      console.log(JSON.stringify(addMaintenance))
-
-      fetch(`api/maintenance`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-        body: JSON.stringify(addMaintenance)
-      }).then(response => {
-        if (response.ok) {
-          getMaintenance(userId);
-        }
-      })
+    fetch(`api/maintenance`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify(newMaintenance)
+    }).then(response => {
+      if (response.ok) {
+        getMaintenance(userId);
+      }
+    })
     handleShowModal();
   }
 
-  const handleEdit = (state) => {
+  const handleEdit = (newMaintenance) => {
 
-    fetch(`api/maintenance/${state.id}`, {
+    fetch(`api/maintenance/${newMaintenance.id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
       },
-      body: JSON.stringify(state)
+      body: JSON.stringify(newMaintenance)
     }).then(response => {
       if(response.ok){
-        setState({id:'',name:'',type:'index',start:'',period:'',attributes:{},});
+        setNewMaintenance({id:'',name:'',type:'index',start:'',period:'',attributes:{},});
         setElem(false);
-        setAttributes({});
         getMaintenance(userId);
       }
     })
     setShowModal(!showModal);
   }
 
-  const handleRemove = (id) => {
+  const handleRemoveMaintenance = (id) => {
     let option = confirm(`Del n° ${id}`);
     if(option){
       fetch(`api/maintenance/${id}`, {method: 'DELETE'})
@@ -278,14 +182,23 @@ const MaintenancePage = () => {
     }
   }
 
-  const removeAttribute = (index) => {
-    // attributesList.splice(index,1);
-    // attributesList.map((attribute) => {
-    //   setAttributes({...attributes, ...attribute});
-    // });
-    // console.log(attributesList);
+  //Show Attributes configuration
+  const handleOpenDialogAttributes = () => {
+    setDialogAttributes(true);
   }
 
+  //Hide Attributes configuration
+  const handleCloseDialogAttributes = () => {
+    setDialogAttributes(false);
+  }
+
+  //Set Maintenance's attributes
+  const savingAttributes = (objeto) => {
+    setNewMaintenance({
+        ...newMaintenance,
+        attributes: objeto,
+      })     
+  };
 
   return (
     <div className={classes.root}>
@@ -322,7 +235,7 @@ const MaintenancePage = () => {
                   >
                     <EditTwoToneIcon/>
                   </Button>
-                  <Button className={classes.buttonFunctions} onClick={() => handleRemove(el.id)} title={t('sharedRemove')}
+                  <Button className={classes.buttonFunctions} onClick={() => handleRemoveMaintenance(el.id)} title={t('sharedRemove')}
                   >
                     <DeleteTwoTone />
                   </Button>
@@ -351,90 +264,71 @@ const MaintenancePage = () => {
             </IconButton>
           </DialogTitle>
           <DialogContent>
-
-              <Table>
+            <Table>
+              <TableBody>
                 <TableRow>
                   <TableCell>{t('sharedName')}:</TableCell>
-                  <TableCell><TextField
-                    id="outlined-basic"
-                    value={state.name}
-                    name="name"
-                    label={`${t('sharedName')}`}
-                    variant="outlined"
-                    inputProps={{
-                      name: 'name',
-                      shrink: true,
-                    }}
-                    onChange={handleChangeSelects}
-                  /></TableCell>
+                  <TableCell>
+                    <TextField
+                      id="outlined-basic"
+                      value={newMaintenance.name}
+                      name="name"
+                      autoComplete="off"
+                      variant="outlined"
+                      onChange={handleChangeSelects}
+                    />
+                  </TableCell>
                 </TableRow>
                 <TableRow>
                   <TableCell>{t('sharedType')}:</TableCell>
-                  <TableCell><FormControl variant="outlined"
-                                          className={classes.formControl}>
-                    <InputLabel
-                      htmlFor="outlined-age-native-simple">Type</InputLabel>
-                    <Select
-                      native
-                      value={state.type}
-                      onChange={handleChangeSelects}
-                      label="Type"
-                      inputProps={{
-                        name: 'type',
-                      }}
-                    >
-                      <option value='index'>{t('positionIndex')}</option>
-                      <option value='hdop'>{t('positionHdop')}</option>
-                      <option value='vdop'>{t('positionVdop')}</option>
-                      <option value='pdop'>{t('positionPdop')}</option>
-                      <option value='sat'>{t('positionSat')}</option>
-                      <option
-                        value='satVisible'>{t('positionSatVisible')}</option>
-                      <option value='rssi'>{t('positionRssi')}</option>
-                      <option value='gps'>{t('positionGps')}</option>
-                      <option value='odometer'>{t('positionOdometer')}</option>
-                      <option
-                        value='odometerMaintenance'>{t('positionServiceOdometer')}</option>
-                      <option
-                        value='odometerTrip'>{t('positionTripOdometer')}</option>
-                      <option value='hours'>{t('positionHours')}</option>
-                      <option value='steps'>{t('positionSteps')}</option>
-                      <option value='power'>{t('positionPower')}</option>
-                      <option value='batery'>{t('positionBattery')}</option>
-                      <option
-                        value='bateryLevel'>{t('positionBatteryLevel')}</option>
-                      <option value='fuel'>{t('positionFuel')}</option>
-                      <option
-                        value='fuelConsumtion'>{t('positionFuelConsumption')}</option>
-                      <option value='distance'>{t('sharedDistance')}</option>
-                      <option
-                        value='totalDistance'>{t('deviceTotalDistance')}</option>
-                      <option value='rpm'>{t('positionRpm')}</option>
-                      <option value='throttle'>{t('positionThrottle')}</option>
-                      <option value='armado'>{t('positionArmed')}</option>
-                      <option
-                        value='acceleration'>{t('positionAcceleration')}</option>
-                      <option
-                        value='deviceTemp'>{t('positionDeviceTemp')}</option>
-                      <option value='obdSpeed'>{t('positionObdSpeed')}</option>
-                      <option
-                        value='obdOdometer'>{t('positionObdOdometer')}</option>
-                    </Select>
-                  </FormControl></TableCell>
+                  <TableCell>
+                    <FormControl variant="outlined"
+                                className={classes.formControl}>
+                      <Select
+                        native
+                        value={newMaintenance.type}
+                        onChange={handleChangeSelects}
+                      >
+                        <option value='index'>{t('positionIndex')}</option>
+                        <option value='hdop'>{t('positionHdop')}</option>
+                        <option value='vdop'>{t('positionVdop')}</option>
+                        <option value='pdop'>{t('positionPdop')}</option>
+                        <option value='sat'>{t('positionSat')}</option>
+                        <option value='satVisible'>{t('positionSatVisible')}</option>
+                        <option value='rssi'>{t('positionRssi')}</option>
+                        <option value='gps'>{t('positionGps')}</option>
+                        <option value='odometer'>{t('positionOdometer')}</option>
+                        <option value='odometerMaintenance'>{t('positionServiceOdometer')}</option>
+                        <option value='odometerTrip'>{t('positionTripOdometer')}</option>
+                        <option value='hours'>{t('positionHours')}</option>
+                        <option value='steps'>{t('positionSteps')}</option>
+                        <option value='power'>{t('positionPower')}</option>
+                        <option value='batery'>{t('positionBattery')}</option>
+                        <option value='bateryLevel'>{t('positionBatteryLevel')}</option>
+                        <option value='fuel'>{t('positionFuel')}</option>
+                        <option value='fuelConsumtion'>{t('positionFuelConsumption')}</option>
+                        <option value='distance'>{t('sharedDistance')}</option>
+                        <option value='totalDistance'>{t('deviceTotalDistance')}</option>
+                        <option value='rpm'>{t('positionRpm')}</option>
+                        <option value='throttle'>{t('positionThrottle')}</option>
+                        <option value='armado'>{t('positionArmed')}</option>
+                        <option value='acceleration'>{t('positionAcceleration')}</option>
+                        <option value='deviceTemp'>{t('positionDeviceTemp')}</option>
+                        <option value='obdSpeed'>{t('positionObdSpeed')}</option>
+                        <option value='obdOdometer'>{t('positionObdOdometer')}</option>
+                      </Select>
+                    </FormControl>
+                  </TableCell>
                 </TableRow>
                 <TableRow>
                   <TableCell>{t('maintenanceStart')}:</TableCell>
                   <TableCell><TextField
                     id="outlined-basic"
-                    value={state.start}
+                    value={newMaintenance.start}
                     name="start"
-                    label={t('maintenanceStart')}
                     type="number"
+                    autoComplete="off"
                     variant="outlined"
-                    inputProps={{
-                      name: 'start',
-                      shrink: true,
-                    }}
                     onChange={handleChangeSelects}
                   /></TableCell>
                 </TableRow>
@@ -442,19 +336,15 @@ const MaintenancePage = () => {
                   <TableCell>{t('maintenancePeriod')}:</TableCell>
                   <TableCell><TextField
                     id="outlined-basic"
-                    value={state.period}
+                    value={newMaintenance.period}
                     name="period"
-                    label={t('maintenancePeriod')}
                     type="number"
                     variant="outlined"
-                    inputProps={{
-                      name: 'period',
-                      shrink: true,
-                    }}
                     onChange={handleChangeSelects}
                   /></TableCell>
                 </TableRow>
-              </Table>
+              </TableBody>
+            </Table>
           </DialogContent><br/>
           {!elem ?
             <DialogActions>
@@ -463,7 +353,7 @@ const MaintenancePage = () => {
                 position: 'absolute',
                 left: '7%',
                 bottom: '2%'}}
-                      onClick={() => handleShowAttributes()} variant="outlined"
+                      onClick={() => handleOpenDialogAttributes()} variant="outlined"
                       color="primary">
                 {t('sharedAttributes')}
               </Button>
@@ -482,116 +372,29 @@ const MaintenancePage = () => {
                 left: '7%',
                 bottom: '2%'
               }}
-                      onClick={() => handleShowAttributes(state.attributes)} variant="outlined"
+                      onClick={() => handleOpenDialogAttributes(newMaintenance.attributes)} variant="outlined"
                       color="primary">
                 {t('sharedAttributes')}
               </Button>
               <Button onClick={handleCancelEdit} color="primary">
                 {t('sharedCancel')}
               </Button>
-              <Button onClick={() => handleEdit(state)} color="primary" autoFocus>
+              <Button onClick={() => handleEdit(newMaintenance)} color="primary" autoFocus>
                 {t('sharedEdit')}
               </Button>
             </DialogActions>
           }
         </Dialog>
       </div>
-
       {/*MODAL ATTRIBUTES*/}
       <div>
-        <Dialog
-          open={openAttributes}
-          onClose={handleCloseAttributes}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
-        >
-          <DialogTitle id="customized-dialog-title"
-                       onClose={handleCloseAttributes}>
-            {t('sharedAttributes')}
-            <IconButton aria-label="close" className={classes.closeButton}
-                        onClick={handleCloseAttributes}>
-              <CloseIcon/>
-            </IconButton>
-          </DialogTitle>
-          <DialogContent>
-            <DialogContentText id="alert-dialog-description2">
-              <TableRow>
-                <TableCell>{t('sharedName')}:</TableCell>
-                <TableCell>
-                  <TextField
-                    label={t('sharedName')}
-                    value={key}
-                    name="name"
-                    onChange={handleChangeAttributesKey}
-                    type="text"
-                    variant="outlined"
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                  />
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>{t('stateValue')}:</TableCell>
-              <TableCell> <TextField
-                label={t('stateValue')}
-                value={value}
-                name="value"
-                onChange={handleChangeAttributesValue}
-                type="text"
-                variant="outlined"
-                InputLabelProps={{
-                  shrink: true,
-                }}
-              /></TableCell>
-              </TableRow>
-            </DialogContentText>
-
-          <TableContainer component={Paper} style={{height: '150px'}}>
-            <Table size="small" className={classes.table}>
-              <TableHead>
-                <TableRow>
-                  <TableCell>{t('sharedName')}</TableCell>
-                  <TableCell>{t('stateValue')}</TableCell>
-                  <TableCell align="center"/>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {Object.entries(attributes).map(([key, value], index) =>
-                  <TableRow key={index} hover
-                  //  onClick={() => handleEditAttributes(key, value, index)} 
-                   >
-                    <TableCell>{key}</TableCell>
-                    <TableCell>{value}</TableCell>
-                    <TableCell className={classes.rowAtri}>
-                      <IconButton style={{fontSize: '15px', padding: 0}}>
-                        <i onClick={() => removeAttribute(index)}
-                           style={{color: 'red'}}
-                           title={t('sharedRemove')}
-                           className="far fa-trash-alt"
-                        />
-                      </IconButton>
-                      </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </TableContainer>
-          </DialogContent>
-          <DialogActions>
-            <Button id="button-edit-att" disabled={ !(key !== '' && value !== '') }
-              onClick={handleSaveAttributes} color="success" variant="outlined">
-              {t('sharedAdd')}
-            </Button>
-            <Button onClick={handleCloseAttributes} color="primary">
-              {t('sharedCancel')}
-            </Button>
-            <Button onClick={()=> handleSetAttributes(attributes)} color="primary" autoFocus>
-              {t('sharedSave')}
-            </Button>
-          </DialogActions>
-        </Dialog>
-      </div>
+          <AttributesDialog  
+            data={newMaintenance.attributes}
+            savingAttributes={savingAttributes} 
+            open={dialogAttributes} 
+            close={handleCloseDialogAttributes}
+          />
+      </div>      
     </div>
   );
 }

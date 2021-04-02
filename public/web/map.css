@@ -500,9 +500,9 @@ button {
   .MuiTypography-body1 {
     font-size: 12px !important;
   }
-  .MuiContainer-maxWidthLg {
+  /* .MuiContainer-maxWidthLg {
     width: 57% !important;
-  }
+  } */
 
 }
 

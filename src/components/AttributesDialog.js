@@ -10,38 +10,33 @@ import Paper from "@material-ui/core/Paper";
 import t from "../common/localization";
 import { makeStyles } from "@material-ui/core/styles";
 import FormControl from "@material-ui/core/FormControl";
-import * as service from "../utils/serviceManager";
-import Divider from "@material-ui/core/Divider";
 import TextField from "@material-ui/core/TextField";
-import Container from "@material-ui/core/Container";
 import Button from "@material-ui/core/Button";
-import AddIcon from "@material-ui/icons/Add";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import CloseIcon from "@material-ui/icons/Close";
-import Select from "@material-ui/core/Select";
 import {DeleteTwoTone} from "@material-ui/icons";
 
 const useStyles = makeStyles((theme) => ({
     closeButton: {
-        position: "absolute",
-        right: theme.spacing(1),
-        top: theme.spacing(1),
-        color: theme.palette.grey[500],
+      position: "absolute",
+      right: theme.spacing(1),
+      top: theme.spacing(1),
+      color: theme.palette.grey[500],
     },
-        container: {
-        marginTop: theme.spacing(2),
-        height: "60%",
+      container: {
+      marginTop: theme.spacing(2),
+      height: "60%",
     },
-        formControlAttribute: {
-        width: '38%', 
-        marginLeft: '10px',
-        [theme.breakpoints.up("md")]: {
-            width: '42%', 
-        },
-    },
+      formControlAttribute: {
+      width: '38%', 
+      marginLeft: '10px',
+      [theme.breakpoints.up("md")]: {
+          width: '42%', 
+      },
+    },      
 }))
 
 
@@ -49,10 +44,13 @@ const AttributesDialog = ({open, close, savingAttributes, data}) => {
 
     const classes = useStyles();
     const [openDialog, setOpenDialog] = useState(false);
-    const [newAttribute, setNewAttribute] = useState({}); 
     const [attributes, setAttributes] = useState({}); 
     const [title, setTitle] = useState(`${t('sharedAdd')}`);
     const [editRow, setEditRow] = useState(false); 
+    const [newAttribute, setNewAttribute] = useState({
+      name: '',
+      value: ''
+    }); 
 
     useEffect(()=>{
      setOpenDialog(open);
@@ -94,6 +92,7 @@ const AttributesDialog = ({open, close, savingAttributes, data}) => {
       setNewAttribute({name: '', value: ''});      
     }
 
+    //Send attributes to parent component
     const handleSetAttributes = () => {
       savingAttributes(attributes);
       close();
@@ -134,6 +133,7 @@ const AttributesDialog = ({open, close, savingAttributes, data}) => {
                         placeholder={`${editRow ? `${newAttribute.name}` : `${t('sharedName')}`}`}
                         disabled={editRow}
                         name="name"
+                        autoComplete="off"
                         onChange={(e) =>
                           setNewAttribute({
                             ...newAttribute,
@@ -155,6 +155,7 @@ const AttributesDialog = ({open, close, savingAttributes, data}) => {
                         variant="outlined"
                         value={newAttribute.value}
                         name="value"
+                        autoComplete="off"
                         onChange={(e) =>
                           setNewAttribute({
                             ...newAttribute,

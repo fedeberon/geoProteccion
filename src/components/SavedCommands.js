@@ -40,12 +40,18 @@ const SavedCommands = ({open, handleCloseModal, data}) => {
   const [ savedCommandTypes, setSavedCommandTypes ] = useState([]);
   const [ unitTime, setUnitTime ] = useState('');
   const [ newSavedCommand, setNewSavedCommand] = useState({
-    attributes: {},
+    attributes: {
+      data: '',
+    },
     description: '',
     deviceId: 0,
     textChannel: false,
     type: '',
   })
+
+  useEffect(()=> {
+    console.log(newSavedCommand)
+  },[newSavedCommand])
 
   //Closing y reseting savedCommand-Modal
   const closeModal = (response) => {
@@ -324,7 +330,7 @@ const SavedCommands = ({open, handleCloseModal, data}) => {
                         ...newSavedCommand,
                         attributes: {
                           ...newSavedCommand.attributes,
-                          [newSavedCommand.type === 'sosNumber' ? `phone` : newSavedCommand.type === 'outputControl' ? 'data' :
+                          [newSavedCommand.type === 'sosNumber' ? 'phone' : newSavedCommand.type === 'outputControl' ? 'data' :
                             getCommandKey(newSavedCommand.type)]: e.target.value,
                         },  
                       })}
