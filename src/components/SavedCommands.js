@@ -47,16 +47,12 @@ const SavedCommands = ({open, handleCloseModal, data}) => {
     deviceId: 0,
     textChannel: false,
     type: '',
-  })
-
-  useEffect(()=> {
-    console.log(newSavedCommand)
-  },[newSavedCommand])
-
+  });
+  
   //Closing y reseting savedCommand-Modal
   const closeModal = (response) => {
     handleCloseModal(response);    
-  }
+  };
 
   //Inputs offsets from userPage Component
   useEffect(() => {
@@ -80,7 +76,7 @@ const SavedCommands = ({open, handleCloseModal, data}) => {
         type: '',
       })
     }
-  },[open])
+  },[open]);
 
   const getCommandsList = () => {
     return fetch(`api/commands/types`, { method: "GET" })
@@ -93,11 +89,11 @@ const SavedCommands = ({open, handleCloseModal, data}) => {
   const getSavedCommands = async () => {
     const response = await getCommandsList();
     setSavedCommandTypes(response);
-  }
+  };
 
   useEffect(() =>{
     getSavedCommands();
-  },[])
+  },[]);
 
   const handlePostCommand = (id) => {
     let response = fetch(`${id && id >= 0 ? `api/commands/${id}` : `api/commands`}`, {
@@ -113,19 +109,19 @@ const SavedCommands = ({open, handleCloseModal, data}) => {
     .then((response) => response.json());
     
     closeModal(response);
-  }
+  };
 
   const getCommandTypeName = (type) => {
     let object = SC.SC.find((elem) => elem.type === type);
     if(object)
     return object.name
-  }
+  };
 
   const getCommandKey = (type) => {
     let object = SC.SC.find((elem) => elem.type === type);
     if(object)
     return object.key
-  }
+  };
 
   const handleSetCheckbox = () => {
     setNewSavedCommand({
@@ -134,7 +130,7 @@ const SavedCommands = ({open, handleCloseModal, data}) => {
         [getCommandKey(newSavedCommand.type)]: !Object.values(newSavedCommand.attributes)[0],
       }
     })
-  }
+  };
 
   const setAttributeRadio = () => {
     if(newSavedCommand.type === 'voiceMonitoring' || newSavedCommand.type === 'setAgps' ||
@@ -153,16 +149,16 @@ const SavedCommands = ({open, handleCloseModal, data}) => {
         attributes: {...newSavedCommand.attributes},
       })
     }
-  }
+  };
 
   useEffect(()=> {
     setAttributeRadio();
-  },[newSavedCommand.type])
+  },[newSavedCommand.type]);
   
   const changeUnitTime = (e) => {
     setFlag(true);
     setUnitTime(e.target.value);
-  }
+  };
 
   const setAttributePositionPeriod = (e) => {
     e.preventDefault();
@@ -173,11 +169,10 @@ const SavedCommands = ({open, handleCloseModal, data}) => {
         [getCommandKey(newSavedCommand.type)]: (Number(e.target.value) * unitTime)
       },
     })
-  }
+  };
 
-  function gettingValues(type) {
+  function gettingValues() {
     let asd;
-
     if(data){
       Object.entries(data.attributes).map(([key,value]) => {
         switch (key) {
@@ -196,7 +191,7 @@ const SavedCommands = ({open, handleCloseModal, data}) => {
       })
     }
     return asd;
-  }
+  };
 
   return (
       <Dialog
