@@ -15,7 +15,7 @@ import TableRow from "@material-ui/core/TableRow";
 import Table from "@material-ui/core/Table";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import Radio from "@material-ui/core/Radio";
-import Button from "@material-ui/core/Button";
+import Chip from '@material-ui/core/Chip';
 import reportsConfigStyles from "./styles/ReportsConfigStyles";
 
 const useStyles = reportsConfigStyles;
@@ -31,23 +31,27 @@ const MenuProps = {
   },
 };
 
-export default function ReportsConfig({ handleReportsConfig }) {
+export default function ReportsConfig({ handleReportsConfig, reportType }) {
   const userId = useSelector((state) => state.session.user.id);
   const classes = useStyles();
+  let dateNow = new Date();
   const [devices, setDevices] = useState([]);
   const [deviceSelected, setDeviceSelected] = useState([]);
+  const [listDeviceSelected, setListDeviceSelected] = useState([]);
   const [typeEventSelected, setTypeEventSelected] = useState([]);
   const [fromDateTime, setFromDateTime] = useState("");
   const [toDateTime, setToDateTime] = useState("");
-  const [availableTypes, setAvailableTypes] = useState([]);
-  const [reportType, setReportType] = useState("route");
+  const [groups, setGroups] = useState([]);
+  const [groupsSelected, setGroupsSelected] = useState([]);
+  const [listGroupsSelected, setListGroupsSelected] = useState([]);
+  const [availableTypes, setAvailableTypes] = useState([]);  
   const [graphicType, setGraphicType] = useState("speed");
   const [showMarkers, setShowMarkers] = useState(false);
+  const [period, setPeriod] = useState('');
 
   useEffect(() => {
     handleShowReport();
   }, [
-    reportType,
     deviceSelected,
     typeEventSelected,
     fromDateTime,
@@ -55,20 +59,6 @@ export default function ReportsConfig({ handleReportsConfig }) {
     showMarkers,
     graphicType,
   ]);
-
-  const handleShowReport = () => {
-    const configuration = {};
-    configuration.arrayDevices = devices;
-    configuration.arrayDeviceSelected = deviceSelected;
-    configuration.arrayTypeEventSelected = typeEventSelected;
-    configuration.fromDate = fromDateTime;
-    configuration.toDate = toDateTime;
-    configuration.report = reportType;
-    configuration.showMarkers = showMarkers;
-    configuration.graphicType = graphicType;
-
-    handleReportsConfig(configuration);
-  };
 
   const onChangeFromDateTime = (event) => {
     setFromDateTime(event.target.value);
@@ -79,16 +69,55 @@ export default function ReportsConfig({ handleReportsConfig }) {
   };
 
   const handleChangeDevices = (event) => {
-    setDeviceSelected(event.target.value);
+    let ids = [];
+    event.target.value.map(object => {
+      devices.map(dev => {        
+        if(dev.name === object){
+          ids.push(dev.id);          
+        }        
+      })      
+    })    
+    setDeviceSelected(ids);
+    setListDeviceSelected(event.target.value);
   };
+
+  const handleChangeGroup = (event) => {
+    let ids = [];
+    event.target.value.map(object => {
+      groups.map(group => {        
+        if(group.name === object){
+          ids.push(group.id);          
+        }        
+      })      
+    })    
+    setGroupsSelected(ids);
+    setListGroupsSelected(event.target.value);
+  };
+
+  const handleShowReport = () => {
+    let configuration = {};
+    configuration.arrayDevices = devices;
+    configuration.arrayDeviceSelected = deviceSelected;
+    configuration.arrayGroupSelected = groupsSelected;
+    configuration.arrayTypeEventSelected = typeEventSelected;
+    configuration.fromDate = fromDateTime;
+    configuration.toDate = toDateTime;
+    configuration.showMarkers = showMarkers;
+    configuration.graphicType = graphicType;
+
+    handleReportsConfig(configuration);
+  };
+
+  useEffect(()=> {
+    console.log(groupsSelected);
+    console.log(period);
+    console.log(fromDateTime);
+    console.log(toDateTime);
+  },[groupsSelected, period, fromDateTime, toDateTime])
 
   const handleChangeTypeEvent = (event) => {
     setTypeEventSelected(event.target.value);
-  };
-
-  const handleChangeReportType = (event) => {
-    setReportType(event.target.value);
-  };
+  };  
 
   const handleChangeGraphicType = (event) => {
     setGraphicType(event.target.value);
@@ -98,73 +127,75 @@ export default function ReportsConfig({ handleReportsConfig }) {
     setShowMarkers(!showMarkers);
   };
 
-  useEffect(() => {
-    const getDevices = async (userId) => {
-      const response = await service.getDeviceByUserId(userId);
-      setDevices(response);
-    };
+  const handleChangePeriod = (event) => {
+    setPeriod(event.target.value)
+  }
+  useEffect(()=> {
+    console.log(dateNow);
+    switch(period) {
+      case 'today':
+        setFromDateTime(`${dateNow.getFullYear()}-${dateNow.getMonth()+1 < 10 ? `0${dateNow.getMonth()+1}` : dateNow.getMonth()+1}-${dateNow.getDate() < 10 ? `0${dateNow.getDate()}` : dateNow.getDate()}T03:00:00.000Z`)
+        setToDateTime(`${dateNow.getFullYear()}-${dateNow.getMonth()+1 < 10 ? `0${dateNow.getMonth()+1}` : dateNow.getMonth()+1}-${dateNow.getDate()+1 < 10 ? `0${dateNow.getDate()+1}` : dateNow.getDate()+1}T03:00:00.000Z`)
+        break;
+      case 'yesterday':        
+        setFromDateTime(`${dateNow.getFullYear()}-${dateNow.getMonth()+1 < 10 ? `0${dateNow.getMonth()+1}` : dateNow.getMonth()+1}-${dateNow.getDate()-1 < 10 ? `0${dateNow.getDate()-1}` : dateNow.getDate()-1}T03:00:00.000Z`)
+        setToDateTime(`${dateNow.getFullYear()}-${dateNow.getMonth()+1 < 10 ? `0${dateNow.getMonth()+1}` : dateNow.getMonth()+1}-${dateNow.getDate() < 10 ? `0${dateNow.getDate()}` : dateNow.getDate()}T03:00:00.000Z`)
+        break;
+      case 'thisWeek':
+        let startWeek = dateNow.getDate() - dateNow.getDay() + 1;     
+        setFromDateTime(`${dateNow.getFullYear()}-${dateNow.getMonth()+1 < 10 ? `0${dateNow.getMonth()+1}` : dateNow.getMonth()+1}-${startWeek < 10 ? `0${startWeek}` : startWeek}T03:00:00.000Z`)
+        setToDateTime(`${dateNow.getFullYear()}-${dateNow.getMonth()+1 < 10 ? `0${dateNow.getMonth()+1}` : dateNow.getMonth()+1}-${(startWeek + 7) < 10 ? `0${(startWeek + 7)}` : (startWeek + 7)}T03:00:00.000Z`)
+        break;
+      default: 
+        break;  
+    }
+  },[period])
+
+  useEffect(() => {    
     getDevices(userId);
     getAvailableTypes();
+    getAvailableGroups();
   }, [userId]);
+
+  const getDevices = async (userId) => {
+    const response = await service.getDeviceByUserId(userId);
+    setDevices(response);
+  };
 
   const getAvailableTypes = async () => {
     const response = await service.getAvailableTypes();
     setAvailableTypes(response);
   };
 
+  const getAvailableGroups = async () => {
+    const response = await service.getGroups();
+    setGroups(response);
+  }
+
   return (
     <div>
       <Table>
         <TableRow>
-          <TableCell>{t("reportType")}:</TableCell>
-          <TableCell>
-            <FormControl required className={classes.formControlReportType}>
-              <InputLabel htmlFor="age-native-required">
-                {t("reportTitle")}
-              </InputLabel>
-              <Select
-                native
-                value={reportType}
-                onChange={handleChangeReportType}
-                name="Reports"
-                inputProps={{
-                  id: "age-native-required",
-                }}
-              >
-                <option value="route">{t("reportRoute")}</option>
-                <option value="events">{t("reportEvents")}</option>
-                <option value="trips">{t("reportTrips")}</option>
-                <option value="stops">{t("reportStops")}</option>
-                <option value="summary">{t("reportSummary")}</option>
-                <option value="graphic">{t("reportChart")}</option>
-              </Select>
-              <FormHelperText>Required</FormHelperText>
-            </FormControl>
-          </TableCell>
-        </TableRow>
-        <TableRow>
           <TableCell>{t("sharedSelectDevice")}:</TableCell>
           <TableCell>
-            <FormControl className={classes.formControlDevices}>
-              <InputLabel id="demo-mutiple-checkbox-label">
-                {t("deviceTitle")}
-              </InputLabel>
+            <FormControl className={classes.formControlDevices}>              
               <Select
-                labelId="demo-mutiple-checkbox-label"
-                id="demo-mutiple-checkbox"
                 multiple
-                value={deviceSelected}
+                id="select-multiple-chip"
+                value={listDeviceSelected}
                 onChange={handleChangeDevices}
-                input={<Input />}
-                renderValue={(selected) => selected.join(", ")}
-                MenuProps={MenuProps}
+                input={<Input id="select-multiple-chip" />}
+                renderValue={(selected) => (
+                  <div className={classes.chips}>
+                    {selected.map((value) => (
+                      <Chip key={value} label={value} className={classes.chip} />
+                    ))}
+                  </div>
+                )}
               >
                 {devices.map((device) => (
-                  <MenuItem key={device.id} value={device.id}>
-                    <Checkbox
-                      checked={deviceSelected.indexOf(device.id) > -1}
-                    />
-                    <ListItemText primary={device.name} />
+                  <MenuItem key={device.name} value={device.name}>
+                    {device.name}
                   </MenuItem>
                 ))}
               </Select>
@@ -175,19 +206,60 @@ export default function ReportsConfig({ handleReportsConfig }) {
         <TableRow>
           <TableCell>{t("sharedSelectGroup")}:</TableCell>
           <TableCell>
-            <FormControl className={classes.formControlDevices} disabled>
-              <InputLabel htmlFor="age-native-disabled">
-                {t("groupDialog")}
-              </InputLabel>
-              <Select native value="">
-                <option aria-label="None" value="" />
-                <option value={10}>1</option>
-                <option value={20}>2</option>
-                <option value={30}>3</option>
-              </Select>
-            </FormControl>
+            <FormControl className={classes.formControlDevices}>              
+                <Select
+                  multiple
+                  id="select-multiple-chip2"
+                  value={listGroupsSelected}
+                  onChange={handleChangeGroup}
+                  input={<Input id="select-multiple-chip2" />}
+                  renderValue={(selected) => (
+                    <div className={classes.chips}>
+                      {selected.map((value) => (
+                        <Chip key={value} label={value} className={classes.chip} />
+                      ))}
+                    </div>
+                  )}
+                >
+                  {groups.map((device) => (
+                    <MenuItem key={device.name} value={device.name}>
+                      {device.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>           
             <br />
           </TableCell>
+        </TableRow>       
+
+        <TableRow>
+          <TableCell>{t("reportPeriod")}:</TableCell>
+          <TableCell>
+            <FormControl required className={classes.formControlDevices}>              
+              <Select
+                native
+                value={period}
+                onChange={handleChangePeriod}
+                name="Reports"
+                inputProps={{
+                  id: "age-native-required",
+                }}
+              >
+                <option value=""/>
+                <option value="custom">{t('reportCustom')}</option>
+                <option value="today">{t("reportToday")}</option>
+                <option value="yesterday">{t("reportYesterday")}</option>
+                <option value="thisWeek">{t("reportThisWeek")}</option>
+                <option value="previousWeek">{t("reportPreviousWeek")}</option>
+                <option value="thisMonth">{t("reportThisMonth")}</option>
+                <option value="previousMonth">{t("reportPreviousMonth")}</option>
+              </Select> 
+            </FormControl>           
+            <br />
+          </TableCell>
+        </TableRow>
+        <TableRow>
+
         </TableRow>
         <TableRow
           style={{ display: `${reportType === "graphic" ? "" : "none"}` }}
@@ -279,7 +351,7 @@ export default function ReportsConfig({ handleReportsConfig }) {
             <br />
           </TableCell>
         </TableRow>
-        <TableRow>
+        <TableRow style={{ display: `${period === 'custom' ? '' : 'none'}` }}>
           <TableCell>{t("reportFrom")}:</TableCell>
           <TableCell>
             <form className={classes.containerDateTime} noValidate>
@@ -298,7 +370,7 @@ export default function ReportsConfig({ handleReportsConfig }) {
             <br />
           </TableCell>
         </TableRow>
-        <TableRow>
+        <TableRow style={{ display: `${period === 'custom' ? '' : 'none'}` }}>
           <TableCell>{t("reportTo")}:</TableCell>
           <TableCell>
             <form className={classes.containerDateTime} noValidate>
@@ -316,7 +388,7 @@ export default function ReportsConfig({ handleReportsConfig }) {
             </form>
             <br />
           </TableCell>
-        </TableRow>
+        </TableRow>      
         <TableRow>
           <TableCell>{t("reportShowMarkers")}:</TableCell>
           <TableCell>
@@ -339,7 +411,7 @@ export default function ReportsConfig({ handleReportsConfig }) {
             />{" "}
             {t("reportNo")}
           </TableCell>
-        </TableRow>
+        </TableRow>          
       </Table>
     </div>
   );

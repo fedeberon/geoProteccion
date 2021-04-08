@@ -17,6 +17,13 @@ const reportsConfigStyles = makeStyles((theme) => ({
     display: "flex",
     flexWrap: "wrap",
   },
+  chips: {
+    display: 'flex',
+    flexWrap: 'wrap',
+  },
+  chip: {
+    margin: 2,
+  },
   textFieldDateTime: {
     marginLeft: theme.spacing(1),
     marginRight: theme.spacing(1),

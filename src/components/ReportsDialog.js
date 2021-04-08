@@ -40,6 +40,9 @@ import { useSelector } from "react-redux";
 import { downloadCsv } from "../utils/functions";
 import GraphicChart from "./GraphicChart";
 import reportsDialogStyles from "./styles/ReportsDialogStyles";
+import InputLabel from '@material-ui/core/InputLabel';
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
 
 const useStyles = reportsDialogStyles;
 
@@ -110,6 +113,20 @@ export default function ReportsDialog({
   const [chartData, setChartData] = useState({});
   const auxData = [];
   const timeData = [];
+  const [reportType, setReportType] = useState();
+  const [newReport, setNewReport] = useState({
+    deviceId: '',
+    type: 'AllEvents',
+    from: '',
+    to: '',
+    page: 0,
+    start: 0,
+    limit: 25
+  })
+
+  const handleChangeReportType = (event) => {
+    setReportType(event.target.value);
+  };
 
   const handleScroll = (event) => {
     const { scrollTop, clientHeight, scrollHeight } = event.currentTarget;
@@ -187,25 +204,31 @@ export default function ReportsDialog({
     setSliceLastIndex(15);
     setIsLoading(true);
     let params = "";
+    let groups = "";
     let from = "";
     let to = "";
     let response = "";
     let type = "";
     let positions = "";
-    let devicesSelected = reportConfiguration.arrayDeviceSelected;
     let fromDate = reportConfiguration.fromDate;
     let toDate = reportConfiguration.toDate;
     let typesSelected = reportConfiguration.arrayTypeEventSelected;
+    console.log(reportConfiguration);
 
-    switch (reportConfiguration.report) {
+    switch (reportType) {
       case "route":
-        devicesSelected.map((element) => {
+        reportConfiguration.arrayDeviceSelected.map((element) => {
           params = params + "deviceId=" + element + "&";
         });
-        from = fromDate + ":00Z";
-        to = toDate + ":00Z";
-
-        response = await getRoutesReports(from, to, params);
+        reportConfiguration.arrayGroupSelected.map((element) => {
+          groups = groups + "groupId=" + element + "&";
+        });
+        response = await getRoutesReports(
+          reportConfiguration.fromDate, 
+          reportConfiguration.toDate, 
+          params,
+          groups
+        );
         setRoute(response);
         setIsLoading(false);
         break;
@@ -216,8 +239,8 @@ export default function ReportsDialog({
         typesSelected.map((element) => {
           type = type + "type=" + element + "&";
         });
-        from = fromDate + ":00Z";
-        to = toDate + ":00Z";
+        from = fromDate + ".000Z";
+        to = toDate + ".000Z";
 
         response = await getEventsReports(from, to, type, params);
         setEvents(response);
@@ -243,8 +266,8 @@ export default function ReportsDialog({
         typesSelected.map((element) => {
           type = type + "type=" + element + "&";
         });
-        from = fromDate + ":00Z";
-        to = toDate + ":00Z";
+        from = fromDate + ".000Z";
+        to = toDate + ".000Z";
 
         response = await getTripsReports(from, to, type, params);
         setTrips(response);
@@ -365,7 +388,7 @@ export default function ReportsDialog({
     let columns = [];
     let data = [];
 
-    switch (reportConfiguration.report) {
+    switch (reportType) {
       case "route":
         columns = [
           "Id",
@@ -506,7 +529,7 @@ export default function ReportsDialog({
       default:
         break;
     }
-    downloadCsv(columns, data, reportConfiguration.report);
+    downloadCsv(columns, data, reportType);
   };
 
   return (
@@ -535,11 +558,38 @@ export default function ReportsDialog({
             </IconButton>
           </Toolbar>
         </AppBar>
+
+
         {/*Modal Configuration*/}
         <div className={classes.positionButton}>
+
+          <FormControl required className={classes.formControlReportType}>
+            <InputLabel htmlFor="age-native-required">
+              {t("reportType")}
+            </InputLabel>
+            <Select
+              native
+              value={reportType}
+              onChange={handleChangeReportType}
+              name="Reports"
+              inputProps={{
+                id: "age-native-required",
+              }}
+            >
+              <option value=""/>
+              <option value="route">{t("reportRoute")}</option>
+              <option value="events">{t("reportEvents")}</option>
+              <option value="trips">{t("reportTrips")}</option>
+              <option value="stops">{t("reportStops")}</option>
+              <option value="summary">{t("reportSummary")}</option>
+              <option value="graphic">{t("reportChart")}</option>
+            </Select>            
+          </FormControl>
+
           <Button
             variant="outlined"
             color="primary"
+            disabled={!reportType}
             onClick={handleOpenConfigModal}
           >
             {t("reportConfigure")}
@@ -548,8 +598,8 @@ export default function ReportsDialog({
             variant="outlined"
             color="primary"
             disabled={
-              reportConfiguration.report === "graphic" ||
-              !reportConfiguration.report
+              reportType === "graphic" ||
+              !reportType
             }
             onClick={handleDownloadExcel}
           >
@@ -582,7 +632,7 @@ export default function ReportsDialog({
             </Toolbar>
             <Divider />
             <DialogContent>
-              <ReportsConfig handleReportsConfig={handleReportsConfig} />
+              <ReportsConfig reportType={reportType} handleReportsConfig={handleReportsConfig} />
             </DialogContent>
             <DialogActions>
               <Button onClick={handleResetConfig} color="primary">
@@ -594,6 +644,8 @@ export default function ReportsDialog({
             </DialogActions>
           </Dialog>
         </div>
+
+
         {/*Table for ROUTE Reports*/}
         <div
           onScroll={handleScroll}

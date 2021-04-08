@@ -8,6 +8,13 @@ const reportsDialogStyles = makeStyles((theme) => ({
     marginLeft: theme.spacing(2),
     flex: 1,
   },
+  formControlReportType: {
+    margin: "4px",
+    minWidth: 200,
+    [theme.breakpoints.up("md")]: {
+      top: "15%",
+    },
+  },
   backdrop: {
     zIndex: theme.zIndex.drawer + 2000,
     color: "#fff",
@@ -38,12 +45,13 @@ const reportsDialogStyles = makeStyles((theme) => ({
   },
   positionButton: {
     width: "100%",
-    justifyContent: "center",
+    //justifyContent: "center",    
     position: "absolute",
-    display: "flex",
-    top: "10%",
+    display: "inline-grid",
+    top: "8%",
     [theme.breakpoints.up("md")]: {
       top: "15%",
+      display: "flex",
     },
   },
   tableReports: {
