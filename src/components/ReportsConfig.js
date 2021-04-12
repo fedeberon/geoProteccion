@@ -134,17 +134,17 @@ export default function ReportsConfig({ handleReportsConfig, reportType }) {
     console.log(dateNow);
     switch(period) {
       case 'today':
-        setFromDateTime(`${dateNow.getFullYear()}-${dateNow.getMonth()+1 < 10 ? `0${dateNow.getMonth()+1}` : dateNow.getMonth()+1}-${dateNow.getDate() < 10 ? `0${dateNow.getDate()}` : dateNow.getDate()}T03:00:00.000Z`)
-        setToDateTime(`${dateNow.getFullYear()}-${dateNow.getMonth()+1 < 10 ? `0${dateNow.getMonth()+1}` : dateNow.getMonth()+1}-${dateNow.getDate()+1 < 10 ? `0${dateNow.getDate()+1}` : dateNow.getDate()+1}T03:00:00.000Z`)
+        setFromDateTime(`${dateNow.getFullYear()}-${dateNow.getMonth()+1 < 10 ? `0${dateNow.getMonth()+1}` : dateNow.getMonth()+1}-${dateNow.getDate() < 10 ? `0${dateNow.getDate()}` : dateNow.getDate()}T03:00`)
+        setToDateTime(`${dateNow.getFullYear()}-${dateNow.getMonth()+1 < 10 ? `0${dateNow.getMonth()+1}` : dateNow.getMonth()+1}-${dateNow.getDate()+1 < 10 ? `0${dateNow.getDate()+1}` : dateNow.getDate()+1}T03:00`)
         break;
       case 'yesterday':        
-        setFromDateTime(`${dateNow.getFullYear()}-${dateNow.getMonth()+1 < 10 ? `0${dateNow.getMonth()+1}` : dateNow.getMonth()+1}-${dateNow.getDate()-1 < 10 ? `0${dateNow.getDate()-1}` : dateNow.getDate()-1}T03:00:00.000Z`)
-        setToDateTime(`${dateNow.getFullYear()}-${dateNow.getMonth()+1 < 10 ? `0${dateNow.getMonth()+1}` : dateNow.getMonth()+1}-${dateNow.getDate() < 10 ? `0${dateNow.getDate()}` : dateNow.getDate()}T03:00:00.000Z`)
+        setFromDateTime(`${dateNow.getFullYear()}-${dateNow.getMonth()+1 < 10 ? `0${dateNow.getMonth()+1}` : dateNow.getMonth()+1}-${dateNow.getDate()-1 < 10 ? `0${dateNow.getDate()-1}` : dateNow.getDate()-1}T03:00`)
+        setToDateTime(`${dateNow.getFullYear()}-${dateNow.getMonth()+1 < 10 ? `0${dateNow.getMonth()+1}` : dateNow.getMonth()+1}-${dateNow.getDate() < 10 ? `0${dateNow.getDate()}` : dateNow.getDate()}T03:00`)
         break;
       case 'thisWeek':
         let startWeek = dateNow.getDate() - dateNow.getDay() + 1;     
-        setFromDateTime(`${dateNow.getFullYear()}-${dateNow.getMonth()+1 < 10 ? `0${dateNow.getMonth()+1}` : dateNow.getMonth()+1}-${startWeek < 10 ? `0${startWeek}` : startWeek}T03:00:00.000Z`)
-        setToDateTime(`${dateNow.getFullYear()}-${dateNow.getMonth()+1 < 10 ? `0${dateNow.getMonth()+1}` : dateNow.getMonth()+1}-${(startWeek + 7) < 10 ? `0${(startWeek + 7)}` : (startWeek + 7)}T03:00:00.000Z`)
+        setFromDateTime(`${dateNow.getFullYear()}-${dateNow.getMonth()+1 < 10 ? `0${dateNow.getMonth()+1}` : dateNow.getMonth()+1}-${startWeek < 10 ? `0${startWeek}` : startWeek}T03:00`)
+        setToDateTime(`${dateNow.getFullYear()}-${dateNow.getMonth()+1 < 10 ? `0${dateNow.getMonth()+1}` : dateNow.getMonth()+1}-${(startWeek + 7) < 10 ? `0${(startWeek + 7)}` : (startWeek + 7)}T03:00`)
         break;
       default: 
         break;  

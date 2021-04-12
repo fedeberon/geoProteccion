@@ -16,18 +16,10 @@ import {
   getRandomHex,
 } from "../utils/mapFunctions";
 
-const ReportsMap = ({
-  geozones,
-  route,
-  events,
-  trips,
-  showMarkers,
-  selectedPosition,
-}) => {
+const ReportsMap = ({geozones,route,events,trips,showMarkers,selectedPosition,}) => {
+  
   const containerEl = useRef(null);
-
   const [mapReady, setMapReady] = useState(false);
-
   const mapCenter = useSelector((state) => {
     if (state.devices.selectedId) {
       const position = state.positions.items[state.devices.selectedId] || null;

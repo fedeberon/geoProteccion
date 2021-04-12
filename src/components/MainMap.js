@@ -302,10 +302,14 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource }) => {
 
     const labels = createLabels(geozonesFiltered);
 
-    mapManager.map.addSource("geozones-labels", {
-      type: "geojson",
-      data: labels,
-    });
+    try {
+      mapManager.map.addSource("geozones-labels", {
+        type: "geojson",
+        data: labels,
+      });
+    } catch(error){
+      console.error(error)
+    }    
 
     mapManager.addLabelLayer("geozones-labels", "geozones-labels", "{name}");
 

@@ -355,7 +355,7 @@ const UserPage = () => {
         </Tabs>
 
         <TabPanel value={value} index={0} style={{ paddingBottom: "10%" }}>
-          <Container style={{textAlign: 'left', padding: '0px 5px'}} component={Paper}>
+          <Container id="setAccountContainer" style={{textAlign: 'left', padding: '0px 5px'}} component={Paper}>
            <p className={classes.subtitles}>{t("settingsTitle")}</p>
 
               <ButtonGroup className={classes.buttonGroup}

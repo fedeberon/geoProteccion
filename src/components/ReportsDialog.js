@@ -11,6 +11,8 @@ import t from "../common/localization";
 import ReportsMap from "./ReportsMap";
 import PropTypes from "prop-types";
 import { Line } from "react-chartjs-2";
+import * as service from "../utils/serviceManager";
+import { getDateTime } from '../utils/functions';
 import Box from "@material-ui/core/Box";
 import ReportsConfig from "./ReportsConfig";
 import DialogActions from "@material-ui/core/DialogActions";
@@ -92,7 +94,10 @@ export default function ReportsDialog({
   const isViewportDesktop = useSelector(
     (state) => state.session.deviceAttributes.isViewportDesktop
   );
-  const devices = useSelector((state) => state.devices.items);
+  const userId = useSelector((state) => state.session.user.id);
+  const [devices, setDevices] = useState([]);
+  const [showAddress, setShowAddress] = useState(false);
+  // const devices = useSelector((state) => state.devices.items);
   const [open, setOpen] = React.useState(false);
   const [fullscreen, setFullscreen] = useState(false);
   const [hidden, setHidden] = useState(false);
@@ -111,6 +116,7 @@ export default function ReportsDialog({
   const [sliceFirstIndex, setSliceFirstIndex] = useState(0);
   const [graphicData, setGraphicData] = useState([]);
   const [chartData, setChartData] = useState({});
+  let address = new String();
   const auxData = [];
   const timeData = [];
   const [reportType, setReportType] = useState();
@@ -148,6 +154,15 @@ export default function ReportsDialog({
       }
     }
   };
+
+  const getDevices = async (userId) => {
+    const response = await service.getDeviceByUserId(userId);
+    setDevices(response);
+  };
+
+  useEffect(() => {
+    getDevices(userId);
+  },[])
 
   useEffect(() => {
     setOpen(showReports);
@@ -532,6 +547,16 @@ export default function ReportsDialog({
     downloadCsv(columns, data, reportType);
   };
 
+  const GetDeviceName = (id) => {
+    let name;
+    devices && devices.map((dev) => {
+      if(dev.id === id){
+        name = dev.name;
+      }
+    });
+    return name;
+  }
+
   return (
     <div>
       <Backdrop className={classes.backdrop} open={isLoading}>
@@ -587,6 +612,7 @@ export default function ReportsDialog({
           </FormControl>
 
           <Button
+            className={classes.buttonsConfig}
             variant="outlined"
             color="primary"
             disabled={!reportType}
@@ -595,6 +621,7 @@ export default function ReportsDialog({
             {t("reportConfigure")}
           </Button>
           <Button
+            className={classes.buttonsConfig}
             variant="outlined"
             color="primary"
             disabled={
@@ -645,15 +672,15 @@ export default function ReportsDialog({
           </Dialog>
         </div>
 
-
+        
         {/*Table for ROUTE Reports*/}
         <div
           onScroll={handleScroll}
           style={{ display: `${route.length === 0 ? "none" : "block"}` }}
           className={`scrollbar ${classes.tableReports}`}
         >
-          <TableContainer component={Paper}>
-            <Table>
+          {/* <TableContainer component={Paper}> */}
+            <Table stickyHeader={true}>
               <TableHead>
                 <TableRow>
                   <TableCell>{t("reportDeviceName")}</TableCell>
@@ -682,20 +709,22 @@ export default function ReportsDialog({
                       className={classes.row}
                       onClick={() => handleSelectedPosition(object)}
                     >
-                      <TableCell>{object.deviceId}</TableCell>
-                      <TableCell>{`${Boolean(object.valid)}`}</TableCell>
-                      <TableCell>{object.serverTime}</TableCell>
-                      <TableCell>{object.latitude}</TableCell>
-                      <TableCell>{object.longitude}</TableCell>
+                      <TableCell>{GetDeviceName(object.deviceId)}</TableCell>
+                      <TableCell>{t(`${Boolean(object.valid)}`)}</TableCell>
+                      <TableCell>{getDateTime(object.serverTime)}</TableCell>
+                      <TableCell>{`${object.latitude.toFixed(6)}°`}</TableCell>
+                      <TableCell>{`${object.longitude.toFixed(6)}°`}</TableCell>
                       <TableCell>{object.altitude}</TableCell>
-                      <TableCell>{object.speed}</TableCell>
-                      <TableCell href="">Mostrar Dirección</TableCell>
+                      <TableCell>{`${object.speed.toFixed(1)} Nudos`}</TableCell>
+                      <TableCell >{`${t(`sharedShowAddress`)}`}</TableCell>
                     </TableRow>
                   ))}
               </TableBody>
             </Table>
-          </TableContainer>
+          {/* </TableContainer> */}
         </div>
+
+        
         {/*Table for EVENTS Reports*/}
         <div
           onScroll={handleScroll}

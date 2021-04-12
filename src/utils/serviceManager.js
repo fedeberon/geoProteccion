@@ -90,7 +90,7 @@ const getAvailableTypes = () => {
 };
 
 const getRoutesReports = (from, to, params = "", groups = "") => {
-  return fetch(`api/reports/route?` + `${params}${groups}from=${from}&to=${to}`, {
+  return fetch(`api/reports/route?` + `${params}${groups}from=${from}:00.000Z&to=${to}:00.000Z`, {
     method: "GET",
     headers: { "Accept": "application/json" },
   })

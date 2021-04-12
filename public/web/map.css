@@ -7,9 +7,9 @@ html, body, #root {
   display: grid;
 }
 
-.scrollbar::-webkit-scrollbar {
+/* .scrollbar::-webkit-scrollbar {
   display: none;
-}
+} */
 
 #cell-device-attribute:hover {
   cursor: pointer;
@@ -30,6 +30,15 @@ button {
 
 #ContentServerDialog {
   padding: 8px 10px !important;
+}
+
+#showAddressOnReports{
+  text-decoration: underline;
+  color: #9b7aba;
+}
+
+#showAddressOnReports:hover {
+  cursor: pointer;
 }
 
 .popup-map-div-mobile {
@@ -500,10 +509,9 @@ button {
   .MuiTypography-body1 {
     font-size: 12px !important;
   }
-  /* .MuiContainer-maxWidthLg {
+  #setAccountContainer {
     width: 57% !important;
-  } */
-
+  }
 }
 
 /* ancho de pantalla de menos de 600px* (mobile)*/

@@ -10,9 +10,16 @@ const reportsDialogStyles = makeStyles((theme) => ({
   },
   formControlReportType: {
     margin: "4px",
-    minWidth: 200,
+    minWidth: 150,
+    
     [theme.breakpoints.up("md")]: {
-      top: "15%",
+      marginLeft: '15px',
+    },
+  },
+  buttonsConfig: {
+
+    [theme.breakpoints.up("md")]: {
+      margin: "16px 8px",
     },
   },
   backdrop: {
@@ -50,12 +57,12 @@ const reportsDialogStyles = makeStyles((theme) => ({
     display: "inline-grid",
     top: "8%",
     [theme.breakpoints.up("md")]: {
-      top: "15%",
+      top: "10%",
       display: "flex",
     },
   },
   tableReports: {
-    top: "25%",
+    top: "20%",
     display: "flex",
     position: "absolute",
     width: "100%",
