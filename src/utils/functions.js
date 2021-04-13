@@ -101,13 +101,13 @@ const getDateTime = (dateTime) => {
 
     let newdate = new Date(dateTime);
 
-	return newdate =
+    return newdate =
 		`${newdate.getFullYear()}-${(newdate.getMonth()+1) < 10 ? `0${newdate.getMonth()+1}` :
 		newdate.getMonth()}-${newdate.getDate() < 10 ? `0${newdate.getDate()}` : newdate.getDate()}
-		${newdate.getHours() < 10 ? `0${newdate.getHours()}` :
-		newdate.getHours()}:${newdate.getMinutes() < 10 ? `0${newdate.getMinutes()}` :
+		${newdate.getUTCHours() < 10 ? `0${newdate.getUTCHours()}` :
+		newdate.getUTCHours()}:${newdate.getMinutes() < 10 ? `0${newdate.getMinutes()}` :
 		newdate.getMinutes()}:${newdate.getSeconds() < 10 ? `0${newdate.getSeconds()}` : newdate.getSeconds()}
-		`
+		`    
 }
 
 export {
