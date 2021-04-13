@@ -35,6 +35,7 @@ export default function ReportsConfig({ handleReportsConfig, reportType }) {
   const userId = useSelector((state) => state.session.user.id);
   const classes = useStyles();
   let dateNow = new Date();
+  let week = new Date();
   const [devices, setDevices] = useState([]);
   const [deviceSelected, setDeviceSelected] = useState([]);
   const [listDeviceSelected, setListDeviceSelected] = useState([]);
@@ -110,10 +111,11 @@ export default function ReportsConfig({ handleReportsConfig, reportType }) {
 
   useEffect(()=> {
     console.log(groupsSelected);
-    console.log(period);
+    console.log(deviceSelected);
+    console.log(typeEventSelected);
     console.log(fromDateTime);
     console.log(toDateTime);
-  },[groupsSelected, period, fromDateTime, toDateTime])
+  },[groupsSelected, period, fromDateTime, toDateTime, typeEventSelected, deviceSelected])
 
   const handleChangeTypeEvent = (event) => {
     setTypeEventSelected(event.target.value);
@@ -130,21 +132,50 @@ export default function ReportsConfig({ handleReportsConfig, reportType }) {
   const handleChangePeriod = (event) => {
     setPeriod(event.target.value)
   }
+  
   useEffect(()=> {
-    console.log(dateNow);
+    function previous (date, days){
+      date.setDate(date.getDate() - days);
+      return date;
+    }
+    function forward (date, days){
+      date.setDate(date.getDate() + days);
+      return date;
+    }
     switch(period) {
       case 'today':
+        forward(week, 1);    
         setFromDateTime(`${dateNow.getFullYear()}-${dateNow.getMonth()+1 < 10 ? `0${dateNow.getMonth()+1}` : dateNow.getMonth()+1}-${dateNow.getDate() < 10 ? `0${dateNow.getDate()}` : dateNow.getDate()}T03:00`)
-        setToDateTime(`${dateNow.getFullYear()}-${dateNow.getMonth()+1 < 10 ? `0${dateNow.getMonth()+1}` : dateNow.getMonth()+1}-${dateNow.getDate()+1 < 10 ? `0${dateNow.getDate()+1}` : dateNow.getDate()+1}T03:00`)
+        setToDateTime(`${week.getFullYear()}-${week.getMonth()+1 < 10 ? `0${week.getMonth()+1}` : week.getMonth()+1}-${week.getDate() < 10 ? `0${week.getDate()}` : week.getDate()}T03:00`)
         break;
-      case 'yesterday':        
-        setFromDateTime(`${dateNow.getFullYear()}-${dateNow.getMonth()+1 < 10 ? `0${dateNow.getMonth()+1}` : dateNow.getMonth()+1}-${dateNow.getDate()-1 < 10 ? `0${dateNow.getDate()-1}` : dateNow.getDate()-1}T03:00`)
+      case 'yesterday':
+        previous(week, 1);
+        setFromDateTime(`${week.getFullYear()}-${week.getMonth()+1 < 10 ? `0${week.getMonth()+1}` : `${week.getMonth()+1}`}-${week.getDate() < 10 ? `0${week.getDate()}` : week.getDate()}T03:00`)
         setToDateTime(`${dateNow.getFullYear()}-${dateNow.getMonth()+1 < 10 ? `0${dateNow.getMonth()+1}` : dateNow.getMonth()+1}-${dateNow.getDate() < 10 ? `0${dateNow.getDate()}` : dateNow.getDate()}T03:00`)
         break;
       case 'thisWeek':
-        let startWeek = dateNow.getDate() - dateNow.getDay() + 1;     
-        setFromDateTime(`${dateNow.getFullYear()}-${dateNow.getMonth()+1 < 10 ? `0${dateNow.getMonth()+1}` : dateNow.getMonth()+1}-${startWeek < 10 ? `0${startWeek}` : startWeek}T03:00`)
-        setToDateTime(`${dateNow.getFullYear()}-${dateNow.getMonth()+1 < 10 ? `0${dateNow.getMonth()+1}` : dateNow.getMonth()+1}-${(startWeek + 7) < 10 ? `0${(startWeek + 7)}` : (startWeek + 7)}T03:00`)
+        week.setDate(dateNow.getDate() - dateNow.getDay() + 1);
+        forward(week, 7);
+        dateNow.setDate(dateNow.getDate() - dateNow.getDay() + 1);     
+        setFromDateTime(`${dateNow.getFullYear()}-${dateNow.getMonth()+1 < 10 ? `0${dateNow.getMonth()+1}` : dateNow.getMonth()+1}-${dateNow.getDate() < 10 ? `0${dateNow.getDate()}` : dateNow.getDate()}T03:00`)
+        setToDateTime(`${week.getFullYear()}-${week.getMonth()+1 < 10 ? `0${week.getMonth()+1}` : week.getMonth()+1}-${week.getDate() < 10 ? `0${week.getDate()}` : week.getDate()}T03:00`)
+        break;
+      case 'previousWeek':        
+        week.setDate(dateNow.getDate() - dateNow.getDay() + 1);
+        previous(week, 7);
+        dateNow.setDate(dateNow.getDate() - dateNow.getDay() + 1);
+        setFromDateTime(`${week.getFullYear()}-${week.getMonth()+1 < 10 ? `0${week.getMonth()+1}` : `${week.getMonth()+1}`}-${week.getDate() < 10 ? `0${week.getDate()}` : week.getDate()}T03:00`)
+        setToDateTime(`${dateNow.getFullYear()}-${dateNow.getMonth()+1 < 10 ? `0${dateNow.getMonth()+1}` : dateNow.getMonth()+1}-${dateNow.getDate() < 10 ? `0${dateNow.getDate()}` : dateNow.getDate()}T03:00`)
+        break;
+      case 'thisMonth':
+        week.setMonth(dateNow.getMonth() + 1)
+        setFromDateTime(`${dateNow.getFullYear()}-${dateNow.getMonth()+1 < 10 ? `0${dateNow.getMonth()+1}` : dateNow.getMonth()+1}-01T03:00`)
+        setToDateTime(`${week.getFullYear()}-${week.getMonth()+1 < 10 ? `0${week.getMonth()+1}` : week.getMonth()+1}-01T03:00`)
+        break;
+      case 'previousMonth':
+        week.setDate(dateNow.getDate() - 30)
+        setFromDateTime(`${week.getFullYear()}-${(week.getMonth()+1) < 10 ? `0${(week.getMonth()+1)}` : (week.getMonth()+1)}-01T03:00`)
+        setToDateTime(`${dateNow.getFullYear()}-${dateNow.getMonth()+1 < 10 ? `0${dateNow.getMonth()+1}` : dateNow.getMonth()+1}-01T03:00`)
         break;
       default: 
         break;  
@@ -221,9 +252,9 @@ export default function ReportsConfig({ handleReportsConfig, reportType }) {
                     </div>
                   )}
                 >
-                  {groups.map((device) => (
-                    <MenuItem key={device.name} value={device.name}>
-                      {device.name}
+                  {groups.map((group) => (
+                    <MenuItem key={group.name} value={group.name}>
+                      {group.name}
                     </MenuItem>
                   ))}
                 </Select>
@@ -318,39 +349,39 @@ export default function ReportsConfig({ handleReportsConfig, reportType }) {
             </FormControl>
           </TableCell>
         </TableRow>
-        <TableRow
-          style={{ display: `${reportType === "events" ? "" : "none"}` }}
-        >
+
+        <TableRow style={{ display: `${reportType === "events" ? "" : "none"}` }}>
           <TableCell>{t("sharedSelectEvent")}:</TableCell>
           <TableCell>
-            <FormControl className={classes.formControlDevices}>
-              <InputLabel id="demo-mutiple-checkbox-label">
-                {t("sharedNotifications")}
-              </InputLabel>
-              <Select
-                labelId="demo-mutiple-checkbox-label"
-                id="demo-mutiple-checkbox"
-                multiple
-                value={typeEventSelected}
-                onChange={handleChangeTypeEvent}
-                input={<Input />}
-                renderValue={(selected) => selected.join(", ")}
-                MenuProps={MenuProps}
-              >
-                <MenuItem value="allEvents">{t("eventAll")}</MenuItem>
-                {availableTypes.map((type) => (
-                  <MenuItem key={type.type} value={type.type}>
-                    <Checkbox
-                      checked={typeEventSelected.indexOf(type.type) > -1}
-                    />
-                    <ListItemText primary={type.type} />
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+            <FormControl className={classes.formControlDevices}>              
+                <Select
+                  multiple
+                  id="select-multiple-chip3"
+                  value={typeEventSelected}
+                  onChange={handleChangeTypeEvent}
+                  input={<Input id="select-multiple-chip3" />}
+                  renderValue={(selected) => (
+                    <div className={classes.chips}>
+                      {selected.map((value) => (                        
+                        <Chip key={value} 
+                        label={value === 'allEvents' ? `${t('eventAll')}` : `${t(`${value}`)}`} 
+                        className={classes.chip} />
+                      ))}
+                    </div>
+                  )}
+                >
+                    <MenuItem value="allEvents">{t('eventAll')}</MenuItem>
+                  {availableTypes.map((type) => (
+                    <MenuItem key={type.type} value={type.type}>
+                      {t(`${type.type}`)}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>           
             <br />
           </TableCell>
-        </TableRow>
+        </TableRow> 
+        
         <TableRow style={{ display: `${period === 'custom' ? '' : 'none'}` }}>
           <TableCell>{t("reportFrom")}:</TableCell>
           <TableCell>

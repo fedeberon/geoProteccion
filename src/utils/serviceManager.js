@@ -100,12 +100,8 @@ const getRoutesReports = (from, to, params = "", groups = "") => {
     .then((response) => response.json());
 };
 
-const getEventsReports = (fromDev, toDev, typeDev, paramsDev = "") => {
-  return fetch(
-    `api/reports/events?` +
-      `${paramsDev}` +
-      `${typeDev}` +
-      `from=${fromDev}&to=${toDev}`,
+const getEventsReports = (from, to, params = "", types = "") => {
+  return fetch(`api/reports/events?` + `${params}${types}from=${from}:00.000Z&to=${to}:00.000Z`,
     { method: "GET", headers: { "Accept": "application/json" } }
   )
     .catch(function (error) {

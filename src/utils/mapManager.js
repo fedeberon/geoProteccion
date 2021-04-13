@@ -20,6 +20,42 @@ const loadImage = (url) => {
   });
 };
 
+const element = document.createElement("div");
+element.style.width = "100%";
+element.style.height = "100%";
+
+const map = new mapboxgl.Map({
+  container: element,
+  style: {
+    version: 8,
+    sources: {
+      "raster-tiles": {
+        type: "raster",
+        tiles: [
+          "https://a.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png",
+          "https://b.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png",
+          "https://c.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png",
+          "https://d.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png",
+        ],
+        tileSize: 256,
+        attribution: "",
+      },
+    },
+    glyphs: "https://cdn.traccar.com/map/fonts/{fontstack}/{range}.pbf",
+    layers: [
+      {
+        id: "simple-tiles",
+        type: "raster",
+        source: "raster-tiles",
+        minzoom: 0,
+        maxzoom: 22,
+      },
+    ],
+  },
+  center: [0, 0],
+  zoom: 1,
+});
+
 const loadIcon = (key, background, url) => {
   return loadImage(url).then((image) => {
     const canvas = document.createElement("canvas");
@@ -125,24 +161,28 @@ const addPolygonLayer = (id, source, color) => {
 };
 
 const addLabelLayer = (id, source, text) => {
-  const layer = {
-    id: id,
-    type: "symbol",
-    source: source,
-    layout: {
-      "text-field": text,
-      "text-allow-overlap": true,
-      "text-anchor": "bottom",
-      "text-offset": [0, 0.5],
-      "text-font": ["Roboto Regular"],
-      "text-size": 12,
-    },
-    paint: {
-      "text-halo-color": "white",
-      "text-halo-width": 1,
-    },
-  };
-  map.addLayer(layer);
+  try{
+    const layer = {
+      id: id,
+      type: "symbol",
+      source: source,
+      layout: {
+        "text-field": text,
+        "text-allow-overlap": true,
+        "text-anchor": "bottom",
+        "text-offset": [0, 0.5],
+        "text-font": ["Roboto Regular"],
+        "text-size": 12,
+      },
+      paint: {
+        "text-halo-color": "white",
+        "text-halo-width": 1,
+      },
+    };
+    map.addLayer(layer);
+  } catch(error){
+    console.error(error);
+  }  
 };
 
 const addMarkerLayer = (id, source, course) => {
@@ -187,10 +227,6 @@ const calculateBounds = (features) => {
   }
 };
 
-const element = document.createElement("div");
-element.style.width = "100%";
-element.style.height = "100%";
-
 /*map = new mapboxgl.Map({
   container: this.mapContainer,
   style: 'https://cdn.traccar.com/map/basic.json',
@@ -198,37 +234,6 @@ element.style.height = "100%";
   zoom: 1
 });*/
 
-const map = new mapboxgl.Map({
-  container: element,
-  style: {
-    version: 8,
-    sources: {
-      "raster-tiles": {
-        type: "raster",
-        tiles: [
-          "https://a.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png",
-          "https://b.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png",
-          "https://c.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png",
-          "https://d.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png",
-        ],
-        tileSize: 256,
-        attribution: "",
-      },
-    },
-    glyphs: "https://cdn.traccar.com/map/fonts/{fontstack}/{range}.pbf",
-    layers: [
-      {
-        id: "simple-tiles",
-        type: "raster",
-        source: "raster-tiles",
-        minzoom: 0,
-        maxzoom: 22,
-      },
-    ],
-  },
-  center: [0, 0],
-  zoom: 1,
-});
 
 map.addControl(new mapboxgl.NavigationControl(), "bottom-right");
 

@@ -224,13 +224,9 @@ export default function NotificationsPage() {
               <TableHead>
                 <TableRow>
                   <TableCell align="center">{t("notificationType")}</TableCell>
-                  <TableCell align="center">
-                    {t("notificationAlways")}
-                  </TableCell>
+                  <TableCell align="center">{t("notificationAlways")}</TableCell>
                   <TableCell align="center">{t("eventAlarm")}</TableCell>
-                  <TableCell align="center">
-                    {t("notificationNotificators")}
-                  </TableCell>
+                  <TableCell align="center">{t("notificationNotificators")}</TableCell>
                   <TableCell align="center" />
                 </TableRow>
               </TableHead>

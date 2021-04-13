@@ -39,7 +39,7 @@ import {
 import Backdrop from "@material-ui/core/Backdrop";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { useSelector } from "react-redux";
-import { downloadCsv } from "../utils/functions";
+import { downloadCsv, getCourse } from "../utils/functions";
 import GraphicChart from "./GraphicChart";
 import reportsDialogStyles from "./styles/ReportsDialogStyles";
 import InputLabel from '@material-ui/core/InputLabel';
@@ -95,8 +95,9 @@ export default function ReportsDialog({
     (state) => state.session.deviceAttributes.isViewportDesktop
   );
   const userId = useSelector((state) => state.session.user.id);
+  const server = useSelector((state) => state.session.server);
   const [devices, setDevices] = useState([]);
-  const [showAddress, setShowAddress] = useState(false);
+  const [addressFound, setAddressFound] = useState('');
   // const devices = useSelector((state) => state.devices.items);
   const [open, setOpen] = React.useState(false);
   const [fullscreen, setFullscreen] = useState(false);
@@ -115,20 +116,33 @@ export default function ReportsDialog({
   const [sliceLastIndex, setSliceLastIndex] = useState(15);
   const [sliceFirstIndex, setSliceFirstIndex] = useState(0);
   const [graphicData, setGraphicData] = useState([]);
+  const [positionState, setPositionState] = useState({
+    accuracy: 0, address: null, altitude: 0, 
+    attributes: {
+      alarm: '',
+      distance: '',
+      hours: '',
+      ignition: false,
+      motion: false,
+      totalDistance: ''
+    }, course: 0, deviceId: 0, deviceTime: '', fixTime: '', id: 0, latitude: 0,
+    longitude: 0, network: null, outdated: false, protocol: '', serverTime: '', speed: 0,
+    type: null, valid: false 
+  });
+
   const [chartData, setChartData] = useState({});
-  let address = new String();
   const auxData = [];
   const timeData = [];
   const [reportType, setReportType] = useState();
-  const [newReport, setNewReport] = useState({
-    deviceId: '',
-    type: 'AllEvents',
-    from: '',
-    to: '',
-    page: 0,
-    start: 0,
-    limit: 25
-  })
+  // const [newReport, setNewReport] = useState({
+  //   deviceId: '',
+  //   type: 'AllEvents',
+  //   from: '',
+  //   to: '',
+  //   page: 0,
+  //   start: 0,
+  //   limit: 25
+  // })
 
   const handleChangeReportType = (event) => {
     setReportType(event.target.value);
@@ -223,7 +237,7 @@ export default function ReportsDialog({
     let from = "";
     let to = "";
     let response = "";
-    let type = "";
+    let types = "";
     let positions = "";
     let fromDate = reportConfiguration.fromDate;
     let toDate = reportConfiguration.toDate;
@@ -248,16 +262,21 @@ export default function ReportsDialog({
         setIsLoading(false);
         break;
       case "events":
-        devicesSelected.map((element) => {
+        reportConfiguration.arrayDeviceSelected.map((element) => {
           params = params + "deviceId=" + element + "&";
         });
-        typesSelected.map((element) => {
-          type = type + "type=" + element + "&";
+        reportConfiguration.arrayTypeEventSelected.map((element) => {
+          types = types + "type=" + element + "&";
         });
         from = fromDate + ".000Z";
         to = toDate + ".000Z";
 
-        response = await getEventsReports(from, to, type, params);
+        response = await getEventsReports(
+          reportConfiguration.fromDate, 
+          reportConfiguration.toDate, 
+          params, 
+          types
+        );
         setEvents(response);
 
         response.map((element, index) => {
@@ -397,6 +416,8 @@ export default function ReportsDialog({
 
   const handleSelectedPosition = (position) => {
     setSelectedPosition(position);
+    setAddressFound("");
+    setPositionState(position);
   };
 
   const handleDownloadExcel = () => {
@@ -555,6 +576,22 @@ export default function ReportsDialog({
       }
     });
     return name;
+  };
+
+  const handleClearTables = () => {
+    setRoute([]);
+    setEvents([]);
+    setTrips([]);
+    setStops([]);
+    setSummary([]);
+  };
+
+  const getAddress = async(lat, lon) => {
+    let response = await fetch(`api/server/geocode?latitude=${lat}&longitude=${lon}`, {method: 'GET'})
+          .catch(function (error) { console.log('setCurrentAddress error: ', error)})
+          .then(response => response.text());
+
+    setAddressFound(response);
   }
 
   return (
@@ -632,6 +669,15 @@ export default function ReportsDialog({
           >
             Descargar csv
           </Button>
+          <Button
+            className={classes.buttonsConfig}
+            variant="outlined"
+            color="primary"
+            disabled={!reportType}
+            onClick={handleClearTables}
+          >
+            {t("reportClear")}
+          </Button>
           <Dialog
             open={openConfigModal}
             onClose={handleCloseConfigModal}
@@ -690,7 +736,6 @@ export default function ReportsDialog({
                   <TableCell>{t("positionLongitude")}</TableCell>
                   <TableCell>{t("positionAltitude")}</TableCell>
                   <TableCell>{t("positionSpeed")}</TableCell>
-                  <TableCell>{t("positionAddress")}</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -715,8 +760,7 @@ export default function ReportsDialog({
                       <TableCell>{`${object.latitude.toFixed(6)}°`}</TableCell>
                       <TableCell>{`${object.longitude.toFixed(6)}°`}</TableCell>
                       <TableCell>{object.altitude}</TableCell>
-                      <TableCell>{`${object.speed.toFixed(1)} Nudos`}</TableCell>
-                      <TableCell >{`${t(`sharedShowAddress`)}`}</TableCell>
+                      <TableCell>{`${object.speed.toFixed(1)} ${server && `${server.attributes?.speedUnit}`}`}</TableCell>  
                     </TableRow>
                   ))}
               </TableBody>
@@ -728,11 +772,10 @@ export default function ReportsDialog({
         {/*Table for EVENTS Reports*/}
         <div
           onScroll={handleScroll}
-          style={{ display: `${events.length === 0 ? "none" : "block"}` }}
+          style={{ display: `${events.length === 0 ? "none" : "inline-block"}` }}
           className={`scrollbar ${classes.tableReports}`}
         >
-          <TableContainer component={Paper}>
-            <Table>
+            <Table stickyHeader={true}>
               <TableHead>
                 <TableRow>
                   <TableCell>{t("positionFixTime")}</TableCell>
@@ -756,16 +799,12 @@ export default function ReportsDialog({
                     <TableRow
                       key={object.id}
                       className={classes.row}
-                      onClick={() =>
-                        handleSelectedPosition(
-                          positions.find(
-                            (element) => element.id === object.positionId
-                          )
-                        )
+                      onClick={() => 
+                        handleSelectedPosition(positions.find((element) => element.id === object.positionId))                       
                       }
                     >
-                      <TableCell>{object.serverTime}</TableCell>
-                      <TableCell>{devices[object.deviceId].name}</TableCell>
+                      <TableCell>{getDateTime(object.serverTime)}</TableCell>
+                      <TableCell>{GetDeviceName(object.deviceId)}</TableCell>
                       <TableCell>{t(`${object.type}`)}</TableCell>
                       <TableCell>{object.geofenceId}</TableCell>
                       <TableCell>{object.maintenanceId}</TableCell>
@@ -773,7 +812,94 @@ export default function ReportsDialog({
                   ))}
               </TableBody>
             </Table>
-          </TableContainer>
+        </div>
+        <div
+          onScroll={handleScroll}
+          style={{ display: `${(route.length !== 0 || events.length !== 0) && window.innerWidth > 767 ? "inline-block" : "none"}` }}
+          className={`scrollbar ${classes.tableReportsState}`}
+        >
+            <Table stickyHeader={true} size={"small"}>
+              <TableHead>
+                <TableRow>
+                  <TableCell>{t("stateTitle")}</TableCell>
+                  <TableCell/>
+                </TableRow>
+                <TableRow>
+                  <TableCell>{t("stateName")}</TableCell>
+                  <TableCell>{t("stateValue")}</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody style={{display: !positionState.serverTime ? 'none' : ''}}>
+                  <TableRow className={classes.row}>
+                    <TableCell>Hora</TableCell>
+                    <TableCell>{positionState.serverTime ? getDateTime(positionState.serverTime) : ""}</TableCell>
+                  </TableRow>
+                  <TableRow className={classes.row}>
+                    <TableCell>Latitud</TableCell>
+                    <TableCell>{positionState.latitude.toFixed(6)}°</TableCell>
+                  </TableRow>
+                  <TableRow className={classes.row}>
+                    <TableCell>Longitud</TableCell>
+                    <TableCell>{positionState.longitude.toFixed(6)}°</TableCell>
+                  </TableRow>
+                  <TableRow className={classes.row}>
+                    <TableCell>Válida</TableCell>
+                    <TableCell>{t(`${Boolean(positionState.valid)}`)}</TableCell>
+                  </TableRow>
+                  <TableRow className={classes.row}>
+                    <TableCell>Precisión</TableCell>
+                    <TableCell>{positionState.accuracy.toFixed(2)} {server && `${server.attributes?.distanceUnit}`}</TableCell>
+                  </TableRow>
+                  <TableRow className={classes.row}>
+                    <TableCell>Altitud</TableCell>
+                    <TableCell>{positionState.altitude}</TableCell>
+                  </TableRow>
+                  <TableRow className={classes.row}>
+                    <TableCell>Velocidad</TableCell>
+                    <TableCell>{positionState.speed.toFixed(1)} {server && `${server.attributes?.speedUnit}`}</TableCell>
+                  </TableRow>
+                  <TableRow className={classes.row}>
+                    <TableCell>Curso</TableCell>
+                    <TableCell>{getCourse(positionState.course)}</TableCell>
+                  </TableRow>
+                  <TableRow className={classes.row}>
+                    <TableCell>Dirección</TableCell>
+                    <TableCell style={{color: 'blue', textDecoration: 'underline'}}
+                    disabled={addressFound} onClick={() => getAddress(positionState.latitude, positionState.longitude)}>
+                    {`${addressFound === "" ? `${t("sharedShowAddress")}` : `${addressFound}`}`}
+                    </TableCell>
+                  </TableRow>
+                  <TableRow className={classes.row}>
+                    <TableCell>Alarma</TableCell>
+                    <TableCell>{`${positionState.attributes?.alarm}`}</TableCell>
+                  </TableRow>
+                  <TableRow className={classes.row}>
+                    <TableCell>Distancia</TableCell>
+                    <TableCell>{positionState.attributes?.distance} {server && `${server.attributes?.distanceUnit}`}</TableCell>
+                  </TableRow>
+                  <TableRow className={classes.row}>
+                    <TableCell>Distancia Total</TableCell>
+                    <TableCell>
+                      {(Math.round((positionState.attributes?.totalDistance) / 10)) / 100} {server && `${server.attributes?.distanceUnit}`}</TableCell>
+                  </TableRow>
+                  <TableRow className={classes.row}>
+                    <TableCell>Encendido</TableCell>
+                    <TableCell>{t(`${Boolean(positionState.attributes?.ignition)}`)}</TableCell>
+                  </TableRow>
+                  <TableRow className={classes.row}>
+                    <TableCell>Horas</TableCell>
+                    <TableCell>{positionState.attributes?.hours}</TableCell>
+                  </TableRow>
+                  <TableRow className={classes.row}>
+                    <TableCell>Movimiento</TableCell>
+                    <TableCell>{t(`${Boolean(positionState.attributes?.motion)}`)}</TableCell>
+                  </TableRow>
+                  <TableRow className={classes.row}>
+                    <TableCell>Protocolo</TableCell>
+                    <TableCell>{`${positionState.protocol}`}</TableCell>
+                  </TableRow>
+              </TableBody>
+            </Table>
         </div>
         {/*Table for TRIPS Reports*/}
         <div

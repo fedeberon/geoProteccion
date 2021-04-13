@@ -367,7 +367,7 @@ const DevicePage = () => {
     getGroups();
   }, []);
 
-  const showAddress = async (deviceId, latitude, longitude) => {   
+  const showAddress = async (latitude, longitude) => {   
     let response = await fetch(`api/server/geocode?latitude=${latitude}&longitude=${longitude}`, {method: 'GET'})
       .catch(function (error) { console.log('setCurrentAddress error: ', error)})
       .then(response => response.text());
@@ -752,7 +752,7 @@ const DevicePage = () => {
                         disabled={addressFound}
                         size="small" 
                         color="primary" 
-                        onClick={() => showAddress(device.id, positions[device.id].latitude, positions[device.id].longitude)} 
+                        onClick={() => showAddress(positions[device.id].latitude, positions[device.id].longitude)} 
                       >
                       <p                      
                         style={{display: 'inline', color: 'cadetblue'}}

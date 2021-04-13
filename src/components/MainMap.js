@@ -369,11 +369,17 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource }) => {
           break;
       }
     });
-    mapManager.map.setLayoutProperty(
-      "geozones-labels",
-      "visibility",
-      areGeozonesVisible ? "visible" : "none"
-    );
+    
+    try {
+      mapManager.map.setLayoutProperty(
+        "geozones-labels",
+        "visibility",
+        areGeozonesVisible ? "visible" : "none"
+      );
+    } catch(error){
+      console.error(error)
+    }
+    
   }, [areGeozonesVisible]);
 
   return <div style={style} ref={containerEl} />;
