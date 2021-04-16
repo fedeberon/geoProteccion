@@ -5,7 +5,7 @@ import Select from "@material-ui/core/Select";
 import Input from "@material-ui/core/Input";
 import MenuItem from "@material-ui/core/MenuItem";
 import Checkbox from "@material-ui/core/Checkbox";
-import ListItemText from "@material-ui/core/ListItemText";
+import TableBody from "@material-ui/core/TableBody";
 import TextField from "@material-ui/core/TextField";
 import t from "../common/localization";
 import * as service from "../utils/serviceManager";
@@ -109,13 +109,13 @@ export default function ReportsConfig({ handleReportsConfig, reportType }) {
     handleReportsConfig(configuration);
   };
 
-  useEffect(()=> {
-    console.log(groupsSelected);
-    console.log(deviceSelected);
-    console.log(typeEventSelected);
-    console.log(fromDateTime);
-    console.log(toDateTime);
-  },[groupsSelected, period, fromDateTime, toDateTime, typeEventSelected, deviceSelected])
+  // useEffect(()=> {
+  //   console.log(groupsSelected);
+  //   console.log(deviceSelected);
+  //   console.log(typeEventSelected);
+  //   console.log(fromDateTime);
+  //   console.log(toDateTime);
+  // },[groupsSelected, period, fromDateTime, toDateTime, typeEventSelected, deviceSelected])
 
   const handleChangeTypeEvent = (event) => {
     setTypeEventSelected(event.target.value);
@@ -206,6 +206,7 @@ export default function ReportsConfig({ handleReportsConfig, reportType }) {
   return (
     <div>
       <Table>
+        <TableBody>
         <TableRow>
           <TableCell>{t("sharedSelectDevice")}:</TableCell>
           <TableCell>
@@ -307,7 +308,7 @@ export default function ReportsConfig({ handleReportsConfig, reportType }) {
                 <option value="speed">{t("positionSpeed")}</option>
                 <option value="accuracy">{t("positionAccuracy")}</option>
                 <option value="altitude">{t("positionAltitude")}</option>
-                <option value="index">{t("positionIndex")}</option>
+                {/* <option value="index">{t("positionIndex")}</option>
                 <option value="hdop">{t("positionHdop")}</option>
                 <option value="vdop">{t("positionVdop")}</option>
                 <option value="pdop">{t("positionPdop")}</option>
@@ -343,7 +344,7 @@ export default function ReportsConfig({ handleReportsConfig, reportType }) {
                 </option>
                 <option value="deviceTemp">{t("positionDeviceTemp")}</option>
                 <option value="obdSpeed">{t("positionObdSpeed")}</option>
-                <option value="obdOdometer">{t("positionObdOdometer")}</option>
+                <option value="obdOdometer">{t("positionObdOdometer")}</option> */}
               </Select>
               <FormHelperText>Required</FormHelperText>
             </FormControl>
@@ -391,7 +392,6 @@ export default function ReportsConfig({ handleReportsConfig, reportType }) {
                 value={fromDateTime}
                 onChange={onChangeFromDateTime}
                 type="datetime-local"
-                defaultValue="2020-11-09T00:30"
                 className={classes.textFieldDateTime}
                 InputLabelProps={{
                   shrink: true,
@@ -410,7 +410,6 @@ export default function ReportsConfig({ handleReportsConfig, reportType }) {
                 value={toDateTime}
                 onChange={onChangeToDateTime}
                 type="datetime-local"
-                defaultValue="2020-11-09T00:30"
                 className={classes.textFieldDateTime}
                 InputLabelProps={{
                   shrink: true,
@@ -442,7 +441,8 @@ export default function ReportsConfig({ handleReportsConfig, reportType }) {
             />{" "}
             {t("reportNo")}
           </TableCell>
-        </TableRow>          
+        </TableRow> 
+        </TableBody>         
       </Table>
     </div>
   );

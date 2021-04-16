@@ -9,9 +9,10 @@ const reportsDialogStyles = makeStyles((theme) => ({
     flex: 1,
   },
   formControlReportType: {
+    display: "inline-block",
     margin: "4px",
     minWidth: 150,
-    
+    maxWidth: 150,
     [theme.breakpoints.up("md")]: {
       marginLeft: '15px',
     },
@@ -34,12 +35,11 @@ const reportsDialogStyles = makeStyles((theme) => ({
   },
   graphic: {
     top: "15%",
-    left: "12%",
     height: "50%",
-    margin: "3% !important",
-    display: "flex",
+    margin: "40px 0px !important",
     padding: "25px",
-    position: "absolute",
+    display: "flex",
+    // position: "absolute",
   },
   miniature: {
     width: "25%",
@@ -53,8 +53,8 @@ const reportsDialogStyles = makeStyles((theme) => ({
   positionButton: {
     width: "100%",
     //justifyContent: "center",    
-    position: "absolute",
-    display: "inline-grid",
+    // position: "absolute",
+    display: "inline-block",
     top: "8%",
     [theme.breakpoints.up("md")]: {
       top: "10%",
@@ -66,6 +66,14 @@ const reportsDialogStyles = makeStyles((theme) => ({
     position: "absolute",
     width: "75%",
     height: "80%",
+    overflowY: "auto",
+    paddingBottom: "2.5%",
+  },
+  tableTripsReports: {
+    top: "20%",
+    width: "100%",
+    height: "80%",
+    position: "absolute",
     overflowY: "auto",
     paddingBottom: "2.5%",
   },

@@ -10,11 +10,15 @@ import Slide from "@material-ui/core/Slide";
 import t from "../common/localization";
 import ReportsMap from "./ReportsMap";
 import PropTypes from "prop-types";
-import { Line } from "react-chartjs-2";
+import PermDataSettingIcon from '@material-ui/icons/PermDataSetting';
+import GetAppIcon from '@material-ui/icons/GetApp';
+import CachedIcon from '@material-ui/icons/Cached';
+import MailOutlineIcon from '@material-ui/icons/MailOutline';
 import * as service from "../utils/serviceManager";
 import { getDateTime } from '../utils/functions';
 import Box from "@material-ui/core/Box";
 import ReportsConfig from "./ReportsConfig";
+import ReportsGraphic from "./ReportsGraphic";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
@@ -115,7 +119,7 @@ export default function ReportsDialog({
   const [isLoading, setIsLoading] = useState(false);
   const [sliceLastIndex, setSliceLastIndex] = useState(15);
   const [sliceFirstIndex, setSliceFirstIndex] = useState(0);
-  const [graphicData, setGraphicData] = useState([]);
+  const [graphicData, setGraphicData] = useState([]); 
   const [positionState, setPositionState] = useState({
     accuracy: 0, address: null, altitude: 0, 
     attributes: {
@@ -130,19 +134,10 @@ export default function ReportsDialog({
     type: null, valid: false 
   });
 
-  const [chartData, setChartData] = useState({});
-  const auxData = [];
+  let auxData = [];
   const timeData = [];
   const [reportType, setReportType] = useState();
-  // const [newReport, setNewReport] = useState({
-  //   deviceId: '',
-  //   type: 'AllEvents',
-  //   from: '',
-  //   to: '',
-  //   page: 0,
-  //   start: 0,
-  //   limit: 25
-  // })
+
 
   const handleChangeReportType = (event) => {
     setReportType(event.target.value);
@@ -227,22 +222,15 @@ export default function ReportsDialog({
     setTripsRoutes([]);
     setStops([]);
     setSummary([]);
-    setChartData({});
     setGraphicData([]);
     setSliceFirstIndex(0);
     setSliceLastIndex(15);
     setIsLoading(true);
     let params = "";
     let groups = "";
-    let from = "";
-    let to = "";
     let response = "";
     let types = "";
     let positions = "";
-    let fromDate = reportConfiguration.fromDate;
-    let toDate = reportConfiguration.toDate;
-    let typesSelected = reportConfiguration.arrayTypeEventSelected;
-    console.log(reportConfiguration);
 
     switch (reportType) {
       case "route":
@@ -268,8 +256,6 @@ export default function ReportsDialog({
         reportConfiguration.arrayTypeEventSelected.map((element) => {
           types = types + "type=" + element + "&";
         });
-        from = fromDate + ".000Z";
-        to = toDate + ".000Z";
 
         response = await getEventsReports(
           reportConfiguration.fromDate, 
@@ -294,22 +280,24 @@ export default function ReportsDialog({
         setIsLoading(false);
         break;
       case "trips":
-        devicesSelected.map((element) => {
+        reportConfiguration.arrayDeviceSelected.map((element) => {
           params = params + "deviceId=" + element + "&";
         });
-        typesSelected.map((element) => {
-          type = type + "type=" + element + "&";
+        reportConfiguration.arrayTypeEventSelected.map((element) => {
+          types = types + "type=" + element + "&";
         });
-        from = fromDate + ".000Z";
-        to = toDate + ".000Z";
 
-        response = await getTripsReports(from, to, type, params);
+        response = await getTripsReports(
+          reportConfiguration.fromDate, 
+          reportConfiguration.toDate,  
+          types, 
+          params);
         setTrips(response);
 
         let tripsArray = [...response];
         let tripsRouteArray = [];
 
-        await getPositions(devicesSelected, from, to)
+        await getPositions(reportConfiguration.arrayDeviceSelected, reportConfiguration.fromDate, reportConfiguration.toDate)
           .then((results) => {
             positions = results;
           })
@@ -321,7 +309,7 @@ export default function ReportsDialog({
           let startPositionId = tripsArray[i].startPositionId;
           let endPositionId = tripsArray[i].endPositionId;
 
-          response = positions[devicesSelected.indexOf(deviceId)].filter(
+          response = positions[reportConfiguration.arrayDeviceSelected.indexOf(deviceId)].filter(
             (pos) => pos.id >= startPositionId && pos.id <= endPositionId
           );
           tripsRouteArray.push(response);
@@ -331,13 +319,11 @@ export default function ReportsDialog({
         setIsLoading(false);
         break;
       case "stops":
-        devicesSelected.map((element) => {
+        reportConfiguration.arrayDeviceSelected.map((element) => {
           params = params + "deviceId=" + element + "&";
         });
-        from = fromDate + ":00Z";
-        to = toDate + ":00Z";
 
-        response = await getStopsReports(from, to, params);
+        response = await getStopsReports(reportConfiguration.fromDate, reportConfiguration.toDate, params);
         setStops(response);
 
         response.map((element, index) => {
@@ -355,49 +341,36 @@ export default function ReportsDialog({
         setIsLoading(false);
         break;
       case "summary":
-        devicesSelected.map((element) => {
+        reportConfiguration.arrayDeviceSelected.map((element) => {
           params = params + "deviceId=" + element + "&";
         });
-        from = fromDate + ":00Z";
-        to = toDate + ":00Z";
 
-        response = await getSummaryReports(from, to, params);
+        response = await getSummaryReports(reportConfiguration.fromDate, reportConfiguration.toDate, params);
         setSummary(response);
         setIsLoading(false);
         break;
       case "graphic":
-        devicesSelected.map((element) => {
+        setHidden(true);
+        reportConfiguration.arrayDeviceSelected.map((element) => {
           params = params + "deviceId=" + element + "&";
         });
-        from = fromDate + ":00Z";
-        to = toDate + ":00Z";
 
-        response = await getGraphicData(from, to, params);
-        setGraphicData(response);
-        //
-        // response = response.filter(e => new Date(e.serverTime).getMinutes() > 5 && new Date(e.serverTime).getMinutes() % 5 === 0);
+        response = await getGraphicData(reportConfiguration.fromDate, reportConfiguration.toDate, params);
 
-        response.map((e) => auxData.push(e.speed));
+        // setGraphicData(response);
+        
+        let data = response.map(({index, deviceId, accuracy, speed, altitude, fixTime}) => ({
+          id: deviceId,
+          accuracy: accuracy,
+          altitude: altitude,
+          speed: speed,
+          fixTime: fixTime,
+          index: index,
+         })); 
+        setGraphicData(data);
 
-        // if ( response.length > 20 ) {
-        //   const looper = parseInt(response.length / 20);
-        //   for (let i = looper; i < response.length; i = i + looper) {
-        //     timeData.push(response[i].serverTime.toString());
-        //   }
-        // } else {
-        response.map((e) => timeData.push(e.serverTime));
-        // }
-
-        // setChartData({
-        //   labels: timeData,
-        //   datasets: [
-        //     {
-        //       label: `${reportConfiguration.graphicType}`,
-        //       data: auxData,
-        //       borderWidth: 4
-        //     }
-        //   ],
-        // })
+        // response.map((e) => timeData.push(e.serverTime));
+             
         setIsLoading(false);
         break;
       default:
@@ -419,6 +392,14 @@ export default function ReportsDialog({
     setAddressFound("");
     setPositionState(position);
   };
+
+  const getAddress = async(lat, lon) => {
+    let response = await fetch(`api/server/geocode?latitude=${lat}&longitude=${lon}`, {method: 'GET'})
+          .catch(function (error) { console.log('setCurrentAddress error: ', error)})
+          .then(response => response.text());
+
+    setAddressFound(response);
+  };  
 
   const handleDownloadExcel = () => {
     let columns = [];
@@ -584,15 +565,8 @@ export default function ReportsDialog({
     setTrips([]);
     setStops([]);
     setSummary([]);
-  };
-
-  const getAddress = async(lat, lon) => {
-    let response = await fetch(`api/server/geocode?latitude=${lat}&longitude=${lon}`, {method: 'GET'})
-          .catch(function (error) { console.log('setCurrentAddress error: ', error)})
-          .then(response => response.text());
-
-    setAddressFound(response);
-  }
+    setGraphicData([]);
+  };  
 
   return (
     <div>
@@ -623,61 +597,90 @@ export default function ReportsDialog({
 
 
         {/*Modal Configuration*/}
-        <div className={classes.positionButton}>
+        {/* <div className={classes.positionButton}>
 
           <FormControl required className={classes.formControlReportType}>
-            <InputLabel htmlFor="age-native-required">
-              {t("reportType")}
-            </InputLabel>
-            <Select
-              native
-              value={reportType}
-              onChange={handleChangeReportType}
-              name="Reports"
-              inputProps={{
-                id: "age-native-required",
-              }}
-            >
-              <option value=""/>
-              <option value="route">{t("reportRoute")}</option>
-              <option value="events">{t("reportEvents")}</option>
-              <option value="trips">{t("reportTrips")}</option>
-              <option value="stops">{t("reportStops")}</option>
-              <option value="summary">{t("reportSummary")}</option>
-              <option value="graphic">{t("reportChart")}</option>
-            </Select>            
-          </FormControl>
-
-          <Button
-            className={classes.buttonsConfig}
-            variant="outlined"
-            color="primary"
-            disabled={!reportType}
-            onClick={handleOpenConfigModal}
-          >
-            {t("reportConfigure")}
-          </Button>
-          <Button
-            className={classes.buttonsConfig}
-            variant="outlined"
-            color="primary"
-            disabled={
-              reportType === "graphic" ||
-              !reportType
-            }
-            onClick={handleDownloadExcel}
-          >
-            Descargar csv
-          </Button>
-          <Button
-            className={classes.buttonsConfig}
-            variant="outlined"
-            color="primary"
-            disabled={!reportType}
-            onClick={handleClearTables}
-          >
-            {t("reportClear")}
-          </Button>
+            
+            
+            
+                  
+            </FormControl>
+          </div> */}
+          <Table style={{display: 'block', overflowX: window.innerWidth < 767 ? 'scroll' : ''}}>
+            <TableBody style={{display: 'block', marginLeft: '15px'}}>
+              <TableRow>
+                 <TableCell style={{padding: 0}}>
+                  <Select
+                    native
+                    value={reportType}
+                    onChange={handleChangeReportType}
+                    name="Reports"
+                    inputProps={{
+                      id: "age-native-required",
+                    }}
+                  >
+                    <option value=""/>
+                    <option value="route">{t("reportRoute")}</option>
+                    <option value="events">{t("reportEvents")}</option>
+                    <option value="trips">{t("reportTrips")}</option>
+                    <option value="stops">{t("reportStops")}</option>
+                    <option value="summary">{t("reportSummary")}</option>
+                    <option value="graphic">{t("reportChart")}</option>
+                  </Select>  
+                </TableCell>
+                <TableCell style={{padding: 0}}>
+                  <Button
+                    className={classes.buttonsConfig}
+                    variant="outlined"
+                    color="primary"
+                    disabled={!reportType}
+                    onClick={handleOpenConfigModal}
+                  >
+                    {window.innerWidth < 767 ? <PermDataSettingIcon title={t("reportConfigure")} /> : t("reportConfigure")}
+                  </Button>
+                </TableCell>
+                <TableCell style={{padding: 0}}>
+                <Button
+                  className={classes.buttonsConfig}
+                  variant="outlined"
+                  color="primary"
+                  disabled={
+                    reportType === "graphic" ||
+                    !reportType
+                  }
+                  onClick={handleDownloadExcel}
+                >
+                   {window.innerWidth < 767 ? <GetAppIcon title={t("reportExport")} /> : t("reportExport")}
+                   
+                </Button>
+                </TableCell>
+                <TableCell style={{padding: 0}}>
+                  <Button
+                      className={classes.buttonsConfig}
+                      variant="outlined"
+                      color="primary"
+                      disabled={!reportType}
+                      //onClick={handleOpenConfigModal}
+                    >
+                    {window.innerWidth < 767 ? <MailOutlineIcon title={t("reportEmail")}/> : t("reportEmail")}
+                  </Button>
+                </TableCell>
+                    
+                <TableCell style={{padding: 0}}>
+                <Button
+                  className={classes.buttonsConfig}
+                  variant="outlined"
+                  color="primary"
+                  disabled={!reportType}
+                  onClick={handleClearTables}
+                >
+                  {window.innerWidth < 767 ? <CachedIcon title={t("reportClear")}/> : t("reportClear")}
+                </Button>    
+                </TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+          
           <Dialog
             open={openConfigModal}
             onClose={handleCloseConfigModal}
@@ -716,7 +719,7 @@ export default function ReportsDialog({
               </Button>
             </DialogActions>
           </Dialog>
-        </div>
+        
 
         
         {/*Table for ROUTE Reports*/}
@@ -818,100 +821,101 @@ export default function ReportsDialog({
           style={{ display: `${(route.length !== 0 || events.length !== 0) && window.innerWidth > 767 ? "inline-block" : "none"}` }}
           className={`scrollbar ${classes.tableReportsState}`}
         >
+            {/* <ReportsState positionData={positionState} reportData={reportType}/> */}
             <Table stickyHeader={true} size={"small"}>
-              <TableHead>
-                <TableRow>
-                  <TableCell>{t("stateTitle")}</TableCell>
-                  <TableCell/>
-                </TableRow>
-                <TableRow>
-                  <TableCell>{t("stateName")}</TableCell>
-                  <TableCell>{t("stateValue")}</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody style={{display: !positionState.serverTime ? 'none' : ''}}>
-                  <TableRow className={classes.row}>
-                    <TableCell>Hora</TableCell>
-                    <TableCell>{positionState.serverTime ? getDateTime(positionState.serverTime) : ""}</TableCell>
-                  </TableRow>
-                  <TableRow className={classes.row}>
-                    <TableCell>Latitud</TableCell>
-                    <TableCell>{positionState.latitude.toFixed(6)}°</TableCell>
-                  </TableRow>
-                  <TableRow className={classes.row}>
-                    <TableCell>Longitud</TableCell>
-                    <TableCell>{positionState.longitude.toFixed(6)}°</TableCell>
-                  </TableRow>
-                  <TableRow className={classes.row}>
-                    <TableCell>Válida</TableCell>
-                    <TableCell>{t(`${Boolean(positionState.valid)}`)}</TableCell>
-                  </TableRow>
-                  <TableRow className={classes.row}>
-                    <TableCell>Precisión</TableCell>
-                    <TableCell>{positionState.accuracy.toFixed(2)} {server && `${server.attributes?.distanceUnit}`}</TableCell>
-                  </TableRow>
-                  <TableRow className={classes.row}>
-                    <TableCell>Altitud</TableCell>
-                    <TableCell>{positionState.altitude}</TableCell>
-                  </TableRow>
-                  <TableRow className={classes.row}>
-                    <TableCell>Velocidad</TableCell>
-                    <TableCell>{positionState.speed.toFixed(1)} {server && `${server.attributes?.speedUnit}`}</TableCell>
-                  </TableRow>
-                  <TableRow className={classes.row}>
-                    <TableCell>Curso</TableCell>
-                    <TableCell>{getCourse(positionState.course)}</TableCell>
-                  </TableRow>
-                  <TableRow className={classes.row}>
-                    <TableCell>Dirección</TableCell>
-                    <TableCell style={{color: 'blue', textDecoration: 'underline'}}
-                    disabled={addressFound} onClick={() => getAddress(positionState.latitude, positionState.longitude)}>
-                    {`${addressFound === "" ? `${t("sharedShowAddress")}` : `${addressFound}`}`}
-                    </TableCell>
-                  </TableRow>
-                  <TableRow className={classes.row}>
-                    <TableCell>Alarma</TableCell>
-                    <TableCell>{`${positionState.attributes?.alarm}`}</TableCell>
-                  </TableRow>
-                  <TableRow className={classes.row}>
-                    <TableCell>Distancia</TableCell>
-                    <TableCell>{positionState.attributes?.distance} {server && `${server.attributes?.distanceUnit}`}</TableCell>
-                  </TableRow>
-                  <TableRow className={classes.row}>
-                    <TableCell>Distancia Total</TableCell>
-                    <TableCell>
-                      {(Math.round((positionState.attributes?.totalDistance) / 10)) / 100} {server && `${server.attributes?.distanceUnit}`}</TableCell>
-                  </TableRow>
-                  <TableRow className={classes.row}>
-                    <TableCell>Encendido</TableCell>
-                    <TableCell>{t(`${Boolean(positionState.attributes?.ignition)}`)}</TableCell>
-                  </TableRow>
-                  <TableRow className={classes.row}>
-                    <TableCell>Horas</TableCell>
-                    <TableCell>{positionState.attributes?.hours}</TableCell>
-                  </TableRow>
-                  <TableRow className={classes.row}>
-                    <TableCell>Movimiento</TableCell>
-                    <TableCell>{t(`${Boolean(positionState.attributes?.motion)}`)}</TableCell>
-                  </TableRow>
-                  <TableRow className={classes.row}>
-                    <TableCell>Protocolo</TableCell>
-                    <TableCell>{`${positionState.protocol}`}</TableCell>
-                  </TableRow>
-              </TableBody>
-            </Table>
+                        <TableHead>
+                        <TableRow>
+                            <TableCell>{t("stateTitle")}</TableCell>
+                            <TableCell/>
+                        </TableRow>
+                        <TableRow>
+                            <TableCell>{t("stateName")}</TableCell>
+                            <TableCell>{t("stateValue")}</TableCell>
+                        </TableRow>
+                        </TableHead>
+                        <TableBody style={{display: positionState && !positionState.serverTime ? 'none' : ''}}>
+                            <TableRow className={classes.row}>
+                            <TableCell>Hora</TableCell>
+                            <TableCell>{positionState.serverTime ? getDateTime(positionState.serverTime) : ""}</TableCell>
+                            </TableRow>
+                            <TableRow className={classes.row}>
+                            <TableCell>Latitud</TableCell>
+                            <TableCell>{positionState.latitude.toFixed(6)}°</TableCell>
+                            </TableRow>
+                            <TableRow className={classes.row}>
+                            <TableCell>Longitud</TableCell>
+                            <TableCell>{positionState.longitude.toFixed(6)}°</TableCell>
+                            </TableRow>
+                            <TableRow className={classes.row}>
+                            <TableCell>Válida</TableCell>
+                            <TableCell>{t(`${Boolean(positionState.valid)}`)}</TableCell>
+                            </TableRow>
+                            <TableRow className={classes.row}>
+                            <TableCell>Precisión</TableCell>
+                            <TableCell>{positionState.accuracy.toFixed(2)} {server && `${server.attributes?.distanceUnit}`}</TableCell>
+                            </TableRow>
+                            <TableRow className={classes.row}>
+                            <TableCell>Altitud</TableCell>
+                            <TableCell>{positionState.altitude}</TableCell>
+                            </TableRow>
+                            <TableRow className={classes.row}>
+                            <TableCell>Velocidad</TableCell>
+                            <TableCell>{positionState.speed.toFixed(1)} {server && `${server.attributes?.speedUnit}`}</TableCell>
+                            </TableRow>
+                            <TableRow className={classes.row}>
+                            <TableCell>Curso</TableCell>
+                            <TableCell>{getCourse(positionState.course)}</TableCell>
+                            </TableRow>
+                            <TableRow className={classes.row}>
+                            <TableCell>Dirección</TableCell>
+                            <TableCell style={{color: 'blue', textDecoration: 'underline'}}
+                            disabled={addressFound} onClick={() => getAddress(positionState.latitude, positionState.longitude)}>
+                            {`${addressFound === "" ? `${t("sharedShowAddress")}` : `${addressFound}`}`}
+                            </TableCell>
+                            </TableRow>
+                            <TableRow className={classes.row}>
+                            <TableCell>Alarma</TableCell>
+                            <TableCell>{`${positionState.attributes?.alarm}`}</TableCell>
+                            </TableRow>
+                            <TableRow className={classes.row}>
+                            <TableCell>Distancia</TableCell>
+                            <TableCell>{positionState.attributes?.distance} {server && `${server.attributes?.distanceUnit}`}</TableCell>
+                            </TableRow>
+                            <TableRow className={classes.row}>
+                            <TableCell>Distancia Total</TableCell>
+                            <TableCell>
+                                {(Math.round((positionState.attributes?.totalDistance) / 10)) / 100} {server && `${server.attributes?.distanceUnit}`}</TableCell>
+                            </TableRow>
+                            <TableRow className={classes.row}>
+                            <TableCell>Encendido</TableCell>
+                            <TableCell>{t(`${Boolean(positionState.attributes?.ignition)}`)}</TableCell>
+                            </TableRow>
+                            <TableRow className={classes.row}>
+                            <TableCell>Horas</TableCell>
+                            <TableCell>{positionState.attributes?.hours}</TableCell>
+                            </TableRow>
+                            <TableRow className={classes.row}>
+                            <TableCell>Movimiento</TableCell>
+                            <TableCell>{t(`${Boolean(positionState.attributes?.motion)}`)}</TableCell>
+                            </TableRow>
+                            <TableRow className={classes.row}>
+                            <TableCell>Protocolo</TableCell>
+                            <TableCell>{`${positionState.protocol}`}</TableCell>
+                            </TableRow>
+                        </TableBody>
+                    </Table>
         </div>
         {/*Table for TRIPS Reports*/}
         <div
           onScroll={handleScroll}
           style={{ display: `${trips.length === 0 ? "none" : "block"}` }}
-          className={`scrollbar ${classes.tableReports}`}
+          className={`scrollbar ${classes.tableTripsReports}`}
         >
-          <TableContainer component={Paper}>
-            <Table>
-              <TableHead>
+          {/* <TableContainer component={Paper}> */}
+            <Table stickyHeader={true}>
+              <TableHead >
                 <TableRow>
-                  <TableCell>{t("reportDeviceName")}</TableCell>
+                  <TableCell component="th" scope="row">{t("reportDeviceName")}</TableCell>
                   <TableCell>{t("reportStartTime")}</TableCell>
                   <TableCell>{t("reportEndTime")}</TableCell>
                   <TableCell>{t("reportStartOdometer")}</TableCell>
@@ -928,40 +932,31 @@ export default function ReportsDialog({
               </TableHead>
               <TableBody>
                 {trips
-                  .slice(
-                    sliceFirstIndex < trips.length - 30
-                      ? sliceFirstIndex
-                      : (trips.length - 30) * (trips.length > 30),
-                    sliceLastIndex < trips.length
-                      ? sliceLastIndex
-                      : trips.length
-                  )
                   .map((object) => (
                     <TableRow
                       key={object.id}
                       style={{ padding: "3px", fontSize: "13px" }}
                     >
                       <TableCell>{object.deviceName}</TableCell>
-                      <TableCell>{object.startTime}</TableCell>
-                      <TableCell>{object.endTime}</TableCell>
-                      <TableCell>{object.startOdometer}</TableCell>
+                      <TableCell>{getDateTime(object.startTime)}</TableCell>
+                      <TableCell>{getDateTime(object.endTime)}</TableCell>
+                      <TableCell>{(object.startOdometer / 1000).toFixed(2)} {server && `${server.attributes?.distanceUnit}`}</TableCell>
                       <TableCell>{object.startAddress}</TableCell>
-                      <TableCell>{object.endOdometer}</TableCell>
+                      <TableCell>{(object.endOdometer / 1000).toFixed(2)} {server && `${server.attributes?.distanceUnit}`}</TableCell>
                       <TableCell>{object.endAddress}</TableCell>
-                      <TableCell>{object.distance} Km</TableCell>
-                      <TableCell>{object.averageSpeed}km/h</TableCell>
-                      <TableCell>{object.maxSpeed}km/h</TableCell>
-                      <TableCell>{object.duration}</TableCell>
-                      <TableCell>{object.spentFuel}lts</TableCell>
-                      <TableCell>
-                        {object.driverName ? object.driverName : "null"}
-                      </TableCell>
+                      <TableCell>{((object.distance / 1000).toFixed(2))} {server && `${server.attributes?.distanceUnit}`}</TableCell>
+                      <TableCell>{object.averageSpeed.toFixed(2)} {server && `${server.attributes?.speedUnit}`}</TableCell>
+                      <TableCell>{object.maxSpeed.toFixed(2)} {server && `${server.attributes?.speedUnit}`}</TableCell>
+                      <TableCell>{object.duration} m</TableCell>
+                      <TableCell>{object.spentFuel.toFixed(1)} {server && `${server.attributes?.volumeUnit}`}</TableCell>
+                      <TableCell>{object.driverName ? object.driverName : ""}</TableCell>
                     </TableRow>
                   ))}
               </TableBody>
             </Table>
-          </TableContainer>
+          {/* </TableContainer> */}
         </div>
+        
         {/*Table for STOPS Reports*/}
         <div
           onScroll={handleScroll}
@@ -1067,15 +1062,18 @@ export default function ReportsDialog({
             </Table>
           </TableContainer>
         </div>
+
+
+        {/* Graphic */}
         <div
           className={classes.graphic}
-          style={{
-            width: "70%",
-            display: graphicData.length === 0 ? "none" : "block",
+          style={{display: reportType === 'graphic' ? "block" : "none",
           }}
         >
-          {/*<GraphicChart data={auxData} timeLine={timeData}/>*/}
+          <ReportsGraphic type={reportType} items={graphicData} graphicType={reportConfiguration.graphicType}/>
         </div>
+
+
         <div
           className={`${classes.overflowHidden} ${
             fullscreen ? classes.fullscreen : classes.miniature
@@ -1100,6 +1098,7 @@ export default function ReportsDialog({
             trips={tripsRoutes}
             showMarkers={reportConfiguration.showMarkers}
             selectedPosition={selectedPosition}
+            graphic={route}
           />
         </div>
       </Dialog>

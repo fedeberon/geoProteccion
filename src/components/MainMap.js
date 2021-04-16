@@ -307,11 +307,12 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource }) => {
         type: "geojson",
         data: labels,
       });
-    } catch(error){
-      console.error(error)
-    }    
 
     mapManager.addLabelLayer("geozones-labels", "geozones-labels", "{name}");
+
+    } catch(error){
+      console.error(error)
+    } 
 
     return () => {
       geozones.map((element, index) => {
@@ -334,8 +335,10 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource }) => {
             break;
         }
       });
-      mapManager.map.removeLayer("geozones-labels");
-      mapManager.map.removeSource("geozones-labels");
+      if(mapManager){
+        mapManager.map.removeLayer("geozones-labels");
+        mapManager.map.removeSource("geozones-labels");
+      };      
     };
   }, [geozones]);
 

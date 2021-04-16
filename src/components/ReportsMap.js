@@ -16,7 +16,7 @@ import {
   getRandomHex,
 } from "../utils/mapFunctions";
 
-const ReportsMap = ({geozones,route,events,trips,showMarkers,selectedPosition,}) => {
+const ReportsMap = ({geozones,route,events,trips,showMarkers,selectedPosition,graphic}) => {
   
   const containerEl = useRef(null);
   const [mapReady, setMapReady] = useState(false);
@@ -310,7 +310,7 @@ const ReportsMap = ({geozones,route,events,trips,showMarkers,selectedPosition,})
   }, [mapCenter]);
 
   useEffect(() => {
-    if (route.length > 0) {
+    if (route.length > 0 || graphic.length > 0) {
       let routesIndexes = [];
       let routesFiltered = [];
       route.map((r) => {

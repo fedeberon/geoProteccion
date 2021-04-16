@@ -111,7 +111,7 @@ const getEventsReports = (from, to, params = "", types = "") => {
 };
 
 const getPositionsByDeviceId = (id, from, to) => {
-  return fetch(`api/positions?` + `deviceId=${id}&from=${from}&to=${to}`, {
+  return fetch(`api/positions?` + `deviceId=${id}&from=${from}:00.000Z&to=${to}:00.000Z`, {
     method: "GET",
     headers: { "Accept": "application/json" },
   })
@@ -132,9 +132,9 @@ const getPositionsReports = (ids) => {
     .then((response) => response.json());
 };
 
-const getTripsReports = (from, to, params, type) => {
+const getTripsReports = (from, to, params, types) => {
   return fetch(
-    `api/reports/trips?` + `${params}` + `${type}` + `from=${from}&to=${to}`,
+    `api/reports/trips?` + `${params}` + `${types}` + `from=${from}:00.000Z&to=${to}:00.000Z`,
     { method: "GET", headers: { "Accept": "application/json" } }
   )
     .catch(function (error) {
@@ -144,7 +144,7 @@ const getTripsReports = (from, to, params, type) => {
 };
 
 const getStopsReports = (from, to, params) => {
-  return fetch(`api/reports/stops?` + `${params}` + `from=${from}&to=${to}`, {
+  return fetch(`api/reports/stops?` + `${params}` + `from=${from}:00.000Z&to=${to}:00.000Z`, {
     method: "GET",
     headers: { "Accept": "application/json" },
   })
@@ -155,7 +155,7 @@ const getStopsReports = (from, to, params) => {
 };
 
 const getSummaryReports = (from, to, params) => {
-  return fetch(`api/reports/summary?` + `${params}` + `from=${from}&to=${to}`, {
+  return fetch(`api/reports/summary?` + `${params}` + `from=${from}:00.000Z&to=${to}:00.000Z`, {
     method: "GET",
     headers: { "Accept": "application/json" },
   })
@@ -166,7 +166,7 @@ const getSummaryReports = (from, to, params) => {
 };
 
 const getGraphicData = (from, to, params) => {
-  return fetch(`api/reports/route?` + `${params}from=${from}&to=${to}`, {
+  return fetch(`api/reports/route?` + `${params}from=${from}:00.000Z&to=${to}:00.000Z`, {
     method: "GET",
     headers: { "Accept": "application/json" },
   })

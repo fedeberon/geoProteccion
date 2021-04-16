@@ -244,9 +244,9 @@ map.on("load", () => {
     map.addImage("triangle", image);
   });
 
-  loadImage("images/background.svg").then((background) => {
+  loadImage("web/images/helicopter.svg").then((background) => {
     Promise.all([
-      loadIcon("icon-marker", background, "web/images/default.svg"),
+      loadIcon("icon-marker", background, "web/images/train.svg"),
     ]).then(() => {
       ready = true;
       if (registeredListener) {

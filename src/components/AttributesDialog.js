@@ -168,7 +168,7 @@ const AttributesDialog = ({open, close, savingAttributes, data}) => {
                       title={title}
                       disabled={!newAttribute.name || !newAttribute.value}
                       style={{
-                      backgroundColor: '#82f582', 
+                      backgroundColor: 'rgb(135 137 220)', 
                       minWidth: '40px', 
                       display: 'inline-block', 
                       margin: '7px 2px'
