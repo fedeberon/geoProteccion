@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { sessionActions } from "../store";
 import Button from "@material-ui/core/Button";
 import Drawer from "@material-ui/core/Drawer";
@@ -17,6 +17,7 @@ import mainToolbarStyles from "./styles/MainToolbarStyles";
 const useStyles = mainToolbarStyles;
 
 const MainToolbar = () => {
+  const user = useSelector((state) => state.session.user);
   const history = useHistory();
   const dispatch = useDispatch();
   const [drawer, setDrawer] = useState(true);
@@ -115,6 +116,11 @@ const MainToolbar = () => {
             <ListItem button onClick={() => history.push("/maintenance")}>
               <ListItemText primary={t("sharedMaintenance")} />
             </ListItem>
+            {user && user.administrator &&
+            <ListItem button onClick={() => history.push("/users")}>
+            <ListItemText primary={t("settingsUsers")} />
+            </ListItem>
+            }            
             <Divider />
             <ListItem>
               <Button color="inherit" onClick={handleLogout}>

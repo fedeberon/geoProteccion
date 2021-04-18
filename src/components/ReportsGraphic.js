@@ -12,8 +12,26 @@ import {LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsiv
 //     </g>
 //   );
 // }
+let array = new Array();
 
-const ReportsGraphic = ({ type, items, graphicType }) => {
+const ReportsGraphic = ({ type, items, graphicType, devices }) => {
+
+  // const arrayConstructor = () => {
+  //   if(devices > 1){
+  //     devices.map((device,index) => {
+  //       if(index === 0){
+  //         ({       
+  //           id: device.deviceId,
+  //           accuracy: accuracy,
+  //           altitude: altitude,
+  //           [`speed${index}`]: speed,
+  //           fixTime: fixTime,
+  //           index: index,
+  //         })
+  //       }
+  //     } 
+  //   )}
+  // }
 
   return (
     <Paper>

@@ -435,10 +435,23 @@ button {
   .title-section {
     color: #7b94a2;
     margin-top: 5%;
-  }
+  }  
   .title-section > h2 {
     border: 10px;
     display: inline-grid;
+    padding: 3px;
+    border-radius: 10px;
+    margin-top: 0;
+  }
+  .title-section-users {
+    color: #7b94a2;
+    margin-top: 4.5%;
+    background-color: aliceblue;
+    text-align: center;
+  }  
+  .title-section-users > h2 {
+    border: 10px;
+    display: initial;
     padding: 3px;
     border-radius: 10px;
     margin-top: 0;
@@ -516,6 +529,17 @@ button {
 
 /* ancho de pantalla de menos de 600px* (mobile)*/
 @media only screen and (max-width: 600px) {
+
+  .title-section-users {
+    color: #fafafa;
+    text-align: center;
+    background-color: cornflowerblue;
+  }
+  .title-section-users > h2 {
+    padding: 10px;
+    margin: 0;
+    text-align: center;
+  }
 
   #simple-tab-0 {
     font-size: 11px;
@@ -661,12 +685,13 @@ button {
   .MuiCardHeader-subheader {
     font-size: 10px !important;
   }
-  .title-section {
+  /* .title-section {
     width: 100% !important;
     text-align: center !important;
     padding: 2% !important;
     color: #7b94a2;
-  }
+  } */
+
   .popup-map-div {
     color: white;
   }

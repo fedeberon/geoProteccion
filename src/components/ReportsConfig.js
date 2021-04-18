@@ -235,16 +235,17 @@ export default function ReportsConfig({ handleReportsConfig, reportType }) {
             <br />
           </TableCell>
         </TableRow>
-        <TableRow>
+        {!(reportType === "graphic") && (
+          <TableRow>
           <TableCell>{t("sharedSelectGroup")}:</TableCell>
           <TableCell>
             <FormControl className={classes.formControlDevices}>              
                 <Select
                   multiple
-                  id="select-multiple-chip2"
+                  id="select-multiple-groups"
                   value={listGroupsSelected}
                   onChange={handleChangeGroup}
-                  input={<Input id="select-multiple-chip2" />}
+                  input={<Input id="select-multiple-groups" />}
                   renderValue={(selected) => (
                     <div className={classes.chips}>
                       {selected.map((value) => (
@@ -262,7 +263,8 @@ export default function ReportsConfig({ handleReportsConfig, reportType }) {
               </FormControl>           
             <br />
           </TableCell>
-        </TableRow>       
+        </TableRow> 
+        )}              
 
         <TableRow>
           <TableCell>{t("reportPeriod")}:</TableCell>

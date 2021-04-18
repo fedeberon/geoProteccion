@@ -199,7 +199,7 @@ const AttributesDialog = ({open, close, savingAttributes, data}) => {
                 </TableRow>
               </TableHead>
               <TableBody>                
-                {Object.entries(attributes).map((attribute, index) => (
+                {attributes && Object.entries(attributes).map((attribute, index) => (
                   <TableRow key={attribute[0]}>
                   <TableCell title={`${t('sharedEdit')}`} style={{cursor: 'pointer'}}
                   onClick={() => handleEdit(attribute)}

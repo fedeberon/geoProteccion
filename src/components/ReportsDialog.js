@@ -216,13 +216,9 @@ export default function ReportsDialog({
   };
 
   const handleShowConfig = async () => {
-    setRoute([]);
-    setEvents([]);
-    setTrips([]);
+    setHidden(false);
+    handleClearTables();
     setTripsRoutes([]);
-    setStops([]);
-    setSummary([]);
-    setGraphicData([]);
     setSliceFirstIndex(0);
     setSliceLastIndex(15);
     setIsLoading(true);
@@ -354,19 +350,23 @@ export default function ReportsDialog({
         reportConfiguration.arrayDeviceSelected.map((element) => {
           params = params + "deviceId=" + element + "&";
         });
-
         response = await getGraphicData(reportConfiguration.fromDate, reportConfiguration.toDate, params);
+        let data = [];
 
-        // setGraphicData(response);
-        
-        let data = response.map(({index, deviceId, accuracy, speed, altitude, fixTime}) => ({
-          id: deviceId,
-          accuracy: accuracy,
-          altitude: altitude,
-          speed: speed,
-          fixTime: fixTime,
-          index: index,
-         })); 
+        response.map((item) => {
+          if(item.speed > 0.099){
+            data.push(item);
+          }
+        });
+        console.log(data);
+        // let data = response.map(({index, deviceId, accuracy, speed, altitude, fixTime}) => ({
+        //   id: deviceId,
+        //   accuracy: accuracy,
+        //   altitude: altitude,
+        //   speed: speed,
+        //   fixTime: fixTime,
+        //   index: index,
+        //  })); 
         setGraphicData(data);
 
         // response.map((e) => timeData.push(e.serverTime));
@@ -1070,9 +1070,13 @@ export default function ReportsDialog({
           style={{display: reportType === 'graphic' ? "block" : "none",
           }}
         >
-          <ReportsGraphic type={reportType} items={graphicData} graphicType={reportConfiguration.graphicType}/>
+          <ReportsGraphic 
+            type={reportType} 
+            items={graphicData} 
+            graphicType={reportConfiguration.graphicType}
+            devices={reportConfiguration.arrayDeviceSelected}
+          />
         </div>
-
 
         <div
           className={`${classes.overflowHidden} ${

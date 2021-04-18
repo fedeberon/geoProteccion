@@ -562,6 +562,8 @@ const UserPage = () => {
                     </TableRow>
                   </TableBody>
                 </Table>
+
+                {/* Permission Configurations*/}
             </div>
               <p className={classes.subtitles}>{t("sharedPermissions")}</p>
             <div className={classes.centerItems}>

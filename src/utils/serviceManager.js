@@ -308,6 +308,14 @@ const getCommands = () => {
     .then((response) => response.json());
 };
 
+const getUsers = () => {
+  return fetch(`api/users`, { method: "GET"})
+    .catch(function (error) {
+      console.log("setUsers error: ", error);
+    })
+    .then((response) => response.json());
+} 
+
 export {
   setSession,
   getDeviceByUserId,
@@ -341,5 +349,6 @@ export {
   getGeozonesByGroupId,
   getNotificationsByGroupId,
   getComputedAttributesByGroupId,
-  removeComputedAttribute
+  removeComputedAttribute,
+  getUsers
 };

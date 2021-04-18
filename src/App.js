@@ -7,6 +7,7 @@ import MainPage from "./containers/MainPage";
 import LoginPage from "./containers/LoginPage";
 import RouteReportPage from "./containers/RouteReportPage";
 import UserPage from "./containers/UserPage";
+import UsersPage from "./containers/UsersPage";
 import GroupsPage from "./containers/GroupsPage";
 import DevicePage from "./containers/DevicePage";
 import GeozonesPage from "./containers/GeozonesPage";
@@ -28,13 +29,13 @@ import Validation from './components/Validation';
 
 
 const App = () => {
+  
   const dispatch = useDispatch();  
   const history = useHistory();
   const authenticated = useSelector((state) => state.session.authenticated);
   const server = useSelector((state) => state.session.server);  
-  
+  const [user, setUser] = useState();
   let response;
-
 
   useEffect(() => {
     const isViewportDesktop = isWidthUp(
@@ -57,8 +58,9 @@ const App = () => {
         if(localStorage.token && localStorage.username && localStorage.password){        
         response = await service.setSession(localStorage.username, localStorage.password);
         const user = response.status === 200 ? await response.json() : "";
-        
+        console.log(user);
         if (response.status === 200) {
+          setUser(user);
           dispatch(sessionActions.authenticated(true));
           dispatch(sessionActions.setUser(user));
           let responseServer = await service.getServer();
@@ -148,6 +150,12 @@ const App = () => {
           path="/reports/route"
           isAuthenticated={authenticated}
           component={RouteReportPage}
+        />
+        <PrivateRoute
+          exact
+          path="/users"
+          isAuthenticated={authenticated && (user &&user.administrator)}
+          component={UsersPage}
         />
       </Switch>      
     </>
