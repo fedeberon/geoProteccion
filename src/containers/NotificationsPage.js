@@ -48,44 +48,6 @@ export default function NotificationsPage() {
   const [openEdit, setOpenEdit] = useState(false);
   const [objectNotification, setObjectNotification] = useState("");
 
-  // const typesList = [
-  //   `${t('eventDeviceUnknown')}`,
-  //   `${t('eventDeviceOnline')}`,
-  //   `${t('eventTextMessage')}`,
-  //   `${t('eventDeviceFuelDrop')}`,
-  //   `${t('eventDeviceOverspeed')}`,
-  //   `${t('eventGeofenceEnter')}`,
-  //   `${t('eventGeofenceExit')}`,
-  //   `${t('eventCommandResult')}`,
-  //   `${t('eventMaintenance')}`,
-  //   `${t('eventDriverChanged')}`,
-  //   `${t('eventDeviceOffline')}`,
-  //   `${t('eventIgnitionOff')}`,
-  //   `${t('eventIgnitionOn')}`,
-  //   `${t('eventDeviceMoving')}`,
-  //   `${t('eventDeviceStopped')}`,
-  //   `${t('eventAlarm')}`,
-  // ]
-
-  const typesValues = [
-    "deviceUnknown",
-    "deviceOnline",
-    "textMessage",
-    "deviceFuelDrop",
-    "deviceOverspeed",
-    "geofenceEnter",
-    "geofenceExit",
-    "commandResult",
-    "maintenance",
-    "driverChanged",
-    "deviceOffline",
-    "ignitionOff",
-    "ignitionOn",
-    "deviceMoving",
-    "deviceStopped",
-    "alarm",
-  ];
-
   const handleChangeRadio = () => {
     setAlways(!always);
   };
@@ -198,6 +160,10 @@ export default function NotificationsPage() {
     }
   };
 
+  const capitalize = (value) => {
+    return value.charAt(0).toUpperCase() + value.slice(1);
+  };
+
   return (
     <>
       <div className={classes.root}>
@@ -234,7 +200,7 @@ export default function NotificationsPage() {
                 {notifications.map((notification, index) => (
                   <TableRow key={index}>
                     <TableCell align="center">
-                      {t(`${notification.type}`)}
+                      {t(`event${capitalize(notification.type)}`)}
                     </TableCell>
                     <TableCell align="center">
                       {t(`${Boolean(notification.always)}`)}
@@ -306,11 +272,25 @@ export default function NotificationsPage() {
                             onChange={handleChangeType}
                           >
                             <option aria-label="None" value="" />
-                            {typesValues.map((type, index) => (
-                              <option key={index} value={type}>
-                                {t(`${type}`)}
-                              </option>
-                            ))}
+                            {/* {typesValues.map(([key,value, index]) => ( */}
+                              <option key={1} value={"ignitionOn"}>{t(`eventIgnitionOn`)}</option>
+                              <option key={2} value={"deviceOverSpeed"}>{t(`eventDeviceOverspeed`)}</option>
+                              <option key={3} value={"maintenance"}>{t(`eventMaintenance`)}</option>
+                              <option key={4} value={"geofenceExit"}>{t(`eventGeofenceExit`)}</option>
+                              <option key={5} value={"deviceOnline"}>{t(`eventDeviceOnline`)}</option>
+                              <option key={6} value={"commandResult"}>{t(`eventCommandResult`)}</option>
+                              <option key={7} value={"alarm"}>{t(`eventAlarm`)}</option>
+                              <option key={8} value={"textMessage"}>{t(`eventTextMessage`)}</option>
+                              <option key={9} value={"deviceOffline"}>{t(`eventDeviceOffline`)}</option>
+                              <option key={10} value={"deviceFuelDrop"}>{t(`eventDeviceFuelDrop`)}</option>
+                              <option key={11} value={"deviceStopped"}>{t(`eventDeviceStopped`)}</option>
+                              <option key={12} value={"deviceMoving"}>{t(`eventDeviceMoving`)}</option>
+                              <option key={13} value={"deviceUnknown"}>{t(`eventDeviceUnknown`)}</option>
+                              <option key={14} value={"geofenceEnter"}>{t(`eventGeofenceEnter`)}</option>
+                              <option key={15} value={"ignitionOff"}>{t(`eventIgnitionOff`)}</option>
+                              <option key={16} value={"driverChanged"}>{t(`eventDriverChanged`)}</option>
+                              <option key={17} value={"deviceOnline"}>{t(`eventDeviceOnline`)}</option>
+                            {/* ))} */}
                           </Select>
                         </FormControl>
                       </TableCell>
@@ -355,7 +335,6 @@ export default function NotificationsPage() {
                             <option value="correo">
                               {t("notificatorMail")}
                             </option>
-                            <option value="sms">{t("notificatorSms")}</option>
                           </Select>
                         </FormControl>
                       </TableCell>
@@ -416,12 +395,26 @@ export default function NotificationsPage() {
                             value={type}
                             onChange={handleChangeType}
                           >
-                            <option aria-label="None" value="" />
-                            {typesValues.map((types, index) => (
-                              <option key={index} value={types}>
-                                {t(`${types}`)}
-                              </option>
-                            ))}
+                            {/* <option aria-label="None" value="" />
+                            {typesValues.map((types, index) => ( */}
+                              <option key={1} value={"ignitionOn"}>{t(`eventIgnitionOn`)}</option>
+                              <option key={2} value={"deviceOverSpeed"}>{t(`eventDeviceOverspeed`)}</option>
+                              <option key={3} value={"maintenance"}>{t(`eventMaintenance`)}</option>
+                              <option key={4} value={"geofenceExit"}>{t(`eventGeofenceExit`)}</option>
+                              <option key={5} value={"deviceOnline"}>{t(`eventDeviceOnline`)}</option>
+                              <option key={6} value={"commandResult"}>{t(`eventCommandResult`)}</option>
+                              <option key={7} value={"alarm"}>{t(`eventAlarm`)}</option>
+                              <option key={8} value={"textMessage"}>{t(`eventTextMessage`)}</option>
+                              <option key={9} value={"deviceOffline"}>{t(`eventDeviceOffline`)}</option>
+                              <option key={10} value={"deviceFuelDrop"}>{t(`eventDeviceFuelDrop`)}</option>
+                              <option key={11} value={"deviceStopped"}>{t(`eventDeviceStopped`)}</option>
+                              <option key={12} value={"deviceMoving"}>{t(`eventDeviceMoving`)}</option>
+                              <option key={13} value={"deviceUnknown"}>{t(`eventDeviceUnknown`)}</option>
+                              <option key={14} value={"geofenceEnter"}>{t(`eventGeofenceEnter`)}</option>
+                              <option key={15} value={"ignitionOff"}>{t(`eventIgnitionOff`)}</option>
+                              <option key={16} value={"driverChanged"}>{t(`eventDriverChanged`)}</option>
+                              <option key={17} value={"deviceOnline"}>{t(`eventDeviceOnline`)}</option>
+                            {/* ))} */}
                           </Select>
                         </FormControl>
                       </TableCell>

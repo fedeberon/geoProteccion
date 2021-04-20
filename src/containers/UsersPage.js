@@ -114,7 +114,7 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.up('md')]: {
       width: drawerWidth,
       top: "14.6%",
-      height: "78.3%",
+      height: "85.3%",
     },
   },
   drawerClose: {
@@ -136,7 +136,7 @@ const useStyles = makeStyles((theme) => ({
     paddingTop: "1%",
     backgroundColor: "white",
     [theme.breakpoints.up('md')]: {
-      height: '80%',
+      height: '86%',
       width: '60%', 
       margin: '0 auto',
       paddingTop: 0,
@@ -148,7 +148,7 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 const UsersPage = () => {
-  const user = useSelector((state) => state.session.user.id);
+  const user = useSelector((state) => state.session.user);
   const classes = useStyles();
   // const [variable, setVariable] = useState(false);
   const [users, setUsers] = useState([]);
@@ -211,11 +211,16 @@ const UsersPage = () => {
   const variable = {
     geocerca: "sharedGeofences",
     device: "deviceTitle",
+    group: "settingsGroups",
     notification: "sharedNotifications",
     atrCalculados: "sharedComputedAttributes",
     comGuardados: "sharedSavedCommands",
     mantenimiento: "sharedMaintenance",
   };
+
+  useEffect(()=> {
+    console.log(user);
+  },[user])
 
   return (
          <div className={classes.root}>
@@ -272,7 +277,7 @@ const UsersPage = () => {
                   <LightTooltip title={`${t(`sharedGeofences`)}`}>
                       <ListItem disabled={!userSelected} onClick={() => handleOpenFullDialog(variable.geocerca)} button key={"geofences"}>
                         <ListItemIcon>
-                          <i style={{paddingLeft: "8%"}}className="fas fa-street-view" />
+                          <i style={{paddingLeft: "5%", fontSize: "18px"}} className="fas fa-street-view" />
                         </ListItemIcon>
                         {window.innerWidth > 960 &&
                         <ListItemText primary={`${t(`sharedGeofences`)}`} />}
@@ -281,73 +286,73 @@ const UsersPage = () => {
                     <LightTooltip title={`${t(`deviceTitle`)}`}>
                       <ListItem disabled={!userSelected} onClick={() => handleOpenFullDialog(variable.device)} button key={"devices"}>
                         <ListItemIcon>
-                        <i style={{paddingLeft: "8%"}}className="fas fa-car" />
+                          <i style={{paddingLeft: "5%", fontSize: "18px"}} className="fas fa-car" />
                         </ListItemIcon>
                         {window.innerWidth > 960 &&
                         <ListItemText primary={`${t(`deviceTitle`)}`} />}
                       </ListItem>
                     </LightTooltip> 
-                    <LightTooltip title={`${t(`sharedGeofences`)}`}>
-                      <ListItem disabled={!userSelected} onClick={() => openUsersAssignments()} button key={"geofences"}>
+                    <LightTooltip title={`${t(`settingsGroups`)}`}>
+                      <ListItem disabled={!userSelected} onClick={() => handleOpenFullDialog(variable.group)} button key={"geofences"}>
                         <ListItemIcon>
-                          <DeleteOutlineIcon/>
+                          <i style={{paddingLeft: "5%", fontSize: "18px"}} className="fas fa-object-group"></i>
                         </ListItemIcon>
                         {window.innerWidth > 960 &&
-                        <ListItemText primary={`${t(`sharedGeofences`)}`} />}
+                        <ListItemText primary={`${t(`settingsGroups`)}`} />}
                       </ListItem>
                     </LightTooltip> 
-                    <LightTooltip title={`${t(`sharedGeofences`)}`}>
-                      <ListItem disabled={!userSelected} onClick={() => openUsersAssignments()} button key={"geofences"}>
+                    <LightTooltip title={`${t(`settingsUsers`)}`}>
+                      <ListItem disabled={!userSelected || user.userLimit === 0}  button key={"users"}>
                         <ListItemIcon>
-                          <DeleteOutlineIcon/>
+                        <i style={{paddingLeft: "5%", fontSize: "18px"}} className="fas fa-users"></i>
                         </ListItemIcon>
                         {window.innerWidth > 960 &&
-                        <ListItemText primary={`${t(`sharedGeofences`)}`} />}
+                        <ListItemText primary={`${t(`settingsUsers`)}`} />}
                       </ListItem>
                     </LightTooltip> 
-                    <LightTooltip title={`${t(`sharedGeofences`)}`}>
-                      <ListItem disabled={!userSelected} onClick={() => openUsersAssignments()} button key={"geofences"}>
+                    <LightTooltip title={`${t(`sharedNotifications`)}`}>
+                      <ListItem disabled={!userSelected} onClick={() => handleOpenFullDialog(variable.notification)} button key={"notifications"}>
                         <ListItemIcon>
-                          <DeleteOutlineIcon/>
+                          <i style={{paddingLeft: "5%", fontSize: "18px"}} className="far fa-comment-alt"></i>
                         </ListItemIcon>
                         {window.innerWidth > 960 &&
-                        <ListItemText primary={`${t(`sharedGeofences`)}`} />}
+                        <ListItemText primary={`${t(`sharedNotifications`)}`} />}
                       </ListItem>
                     </LightTooltip> 
-                    <LightTooltip title={`${t(`sharedGeofences`)}`}>
-                      <ListItem disabled={!userSelected} onClick={() => openUsersAssignments()} button key={"geofences"}>
+                    <LightTooltip title={`${t(`sharedCalendars`)}`}>
+                      <ListItem disabled={true} /*!userSelected*/ onClick={() => openUsersAssignments()} button key={"calendars"}>
                         <ListItemIcon>
-                          <DeleteOutlineIcon/>
+                          <i style={{paddingLeft: "5%", fontSize: "18px"}} className="far fa-calendar-alt"></i>
                         </ListItemIcon>
                         {window.innerWidth > 960 &&
-                        <ListItemText primary={`${t(`sharedGeofences`)}`} />}
+                        <ListItemText primary={`${t(`sharedCalendars`)}`} />}
                       </ListItem>
                     </LightTooltip> 
-                    <LightTooltip title={`${t(`sharedGeofences`)}`}>
-                      <ListItem disabled={!userSelected} onClick={() => openUsersAssignments()} button key={"geofences"}>
+                    <LightTooltip title={`${t(`sharedComputedAttributes`)}`}>
+                      <ListItem disabled={true} /*!userSelected*/  button key={"comp-attributes"}>
                         <ListItemIcon>
-                          <DeleteOutlineIcon/>
+                        <i style={{paddingLeft: "5%", fontSize: "18px"}} className="fas fa-tasks"></i>
                         </ListItemIcon>
                         {window.innerWidth > 960 &&
-                        <ListItemText primary={`${t(`sharedGeofences`)}`} />}
+                        <ListItemText primary={`${t(`sharedComputedAttributes`)}`} />}
                       </ListItem>
                     </LightTooltip> 
-                    <LightTooltip title={`${t(`sharedGeofences`)}`}>
-                      <ListItem disabled={!userSelected} onClick={() => openUsersAssignments()} button key={"geofences"}>
+                    <LightTooltip title={`${t(`sharedDrivers`)}`}>
+                      <ListItem disabled={true} /*!userSelected*/  button key={"drivers"}>
                         <ListItemIcon>
-                          <DeleteOutlineIcon/>
+                        <i style={{paddingLeft: "5%", fontSize: "18px"}} className="fas fa-key"></i>
                         </ListItemIcon>
                         {window.innerWidth > 960 &&
-                        <ListItemText primary={`${t(`sharedGeofences`)}`} />}
+                        <ListItemText primary={`${t(`sharedDrivers`)}`} />}
                       </ListItem>
                     </LightTooltip> 
-                    <LightTooltip title={`${t(`sharedGeofences`)}`}>
-                      <ListItem disabled={!userSelected} onClick={() => openUsersAssignments()} button key={"geofences"}>
+                    <LightTooltip title={`${t(`sharedSavedCommands`)}`}>
+                      <ListItem disabled={true} /*!userSelected*/   button key={"savedcommands"}>
                         <ListItemIcon>
-                          <DeleteOutlineIcon/>
+                        <i style={{paddingLeft: "5%", fontSize: "18px"}} className="fas fa-download"></i>
                         </ListItemIcon>
                         {window.innerWidth > 960 &&
-                        <ListItemText primary={`${t(`sharedGeofences`)}`} />}
+                        <ListItemText primary={`${t(`sharedSavedCommands`)}`} />}
                       </ListItem>
                     </LightTooltip> 
                 </List>
@@ -358,6 +363,7 @@ const UsersPage = () => {
                   columns={columns} 
                   pageSize={8} 
                   rowHeight={42}
+                  hideFooterSelectedRowCount={true}
                   checkboxSelection={false}
                   onRowSelected={handleRowSelection}
               />

@@ -75,6 +75,15 @@ const headCellssharedDevices = [
   }
 ];
 
+const headCellssharedGroups = [
+  {
+    id: "name",
+    numeric: false,
+    disablePadding: true,
+    label: `${t("sharedName")}`,
+  },
+];
+
 const headCellssharedNotifications = [
   {
     id: "type",
@@ -166,6 +175,8 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupAssignment, userId
   const dispatch = useDispatch();  
   // const userId = useSelector((state) => state.session.user.id);
   const [devicesByUserId, setDevicesByUserId] = useState([]);
+  const [groupsByUserId, setGroupsByUserId] = useState([]);
+  const [notificationsByUserId, setNotificationsByUserId] = useState([]);
   const [openFull, setOpenFull] = useState(false);
   const [dataReady, setDataReady] = useState(false);
   const [order, setOrder] = useState("asc");
@@ -185,7 +196,6 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupAssignment, userId
   useEffect(() => {
     setOpenFull(open);
   }, [open]);
-
 
   useEffect(() => {
     if (type === "sharedGeofences"){
@@ -240,6 +250,17 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupAssignment, userId
 
           getDevicesByUser(); 
 
+    } else if(type === 'settingsGroups') {
+
+          fetch(`api/groups?all=true`, { method: "GET" })
+          .catch(function (error) {
+            console.log("setDevices error: ", error);
+          })
+          .then((response) => response.json())
+          .then((data) => setAllData(data));
+
+          getGroupsByUser(); 
+
     } else if (type === "sharedNotifications") {      
       if(groupAssignment){
         const getNotificationsByGroupId = async() => {
@@ -247,18 +268,36 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupAssignment, userId
           setNotificationsByGroupId(responseNotifications);
         }       
         getNotificationsByGroupId();
-      } else {
+
+        const getNotifications = async (userId) => {
+          const response = await service.getNotificationsByUserId(userId);
+          setArrayToMap(response);
+        };
+        getNotifications(userId);  
+      } else if(deviceId) {
         const getNotificationsByDeviceId = async() => {
           const responseNotifications = await service.getNotificationsByDeviceId(deviceId);
           setNotificationsByDeviceId(responseNotifications);
         }       
         getNotificationsByDeviceId();
-      }
-      const getNotifications = async (userId) => {
+
+        const getNotifications = async (userId) => {
         const response = await service.getNotificationsByUserId(userId);
         setArrayToMap(response);
-      };
-      getNotifications(userId);    
+        };
+        getNotifications(userId);  
+      } else if(userId) {
+        fetch(`api/notifications?all=true`, { method: "GET" })
+          .catch(function (error) {
+            console.log("setNotifications error: ", error);
+          })
+          .then((response) => response.json())
+          .then((data) => setAllData(data));
+
+          getNotificationsByUser(userId);
+      }
+      
+
     } else if (type === "sharedComputedAttributes") {
       if(groupAssignment){
         const getComputedAttributesByGroup = async() => {
@@ -321,10 +360,40 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupAssignment, userId
     });
   };
 
+  const getGroupsByUser = () => {
+    setSelected([]);
+    fetch(`api/groups?userId=${userId}`, { method: "GET" })
+    .catch(function (error) {
+      console.log("setDevices error: ", error);
+    })
+    .then((response) => response.json())
+    .then((data) => {
+      settingSelectedItems(data);
+      setGroupsByUserId(data);
+    });
+  };
+
+  const getNotificationsByUser = () => {
+    setSelected([]);
+    fetch(`api/notifications?userId=${userId}`, { method: "GET" })
+    .catch(function (error) {
+      console.log("setDevices error: ", error);
+    })
+    .then((response) => response.json())
+    .then((data) => {
+      settingSelectedItems(data);
+      setNotificationsByUserId(data);
+    });
+  };
+
   const settingSelectedItems = (data) => {
     let arrayAux = [];
     data.map((el)=>{
-        arrayAux.push(el.name);      
+      if(type==='sharedNotifications'){
+        arrayAux.push(el.type); 
+      } else {
+        arrayAux.push(el.name); 
+      }             
     })
     setSelected(arrayAux);
   }
@@ -430,12 +499,14 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupAssignment, userId
       } else if(type === "sharedComputedAttributes"){
         permission.attributeId = id;
       }
-    } else {
+    } else if (userId) {
       permission.userId = userId;
       if(type === 'sharedGeofences'){
         permission.geofenceId = id;
       } else if(type === 'deviceTitle') {
         permission.deviceId = id;
+      } else if(type === 'settingsGroups') {
+        permission.groupId = id;
       } else if(type === "sharedNotifications"){
         permission.notificationId = id;
       } else if(type === "sharedComputedAttributes"){
@@ -455,6 +526,10 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupAssignment, userId
           getDevicesByUser();
         } else if(type==='sharedGeofences'){
           getGeozones(userId);
+        } else if(type==='settingsGroups'){
+          getGroupsByUser(userId)
+        } else if(type === "sharedNotifications"){
+          getNotificationsByUser();
         }
         handleClick(name);
       })
@@ -481,12 +556,14 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupAssignment, userId
       } else if(type === "sharedComputedAttributes"){
         permission.attributeId = id;
       }
-    } else {
+    } else if (userId) {
       permission.userId = userId;
       if(type === 'sharedGeofences'){
         permission.geofenceId = id;
       } else if(type === 'deviceTitle') {
         permission.deviceId = id;
+      } else if(type === 'settingsGroups') {
+        permission.groupId = id;
       } else if(type === "sharedNotifications"){
         permission.notificationId = id;
       } else if(type === "sharedComputedAttributes"){
@@ -505,6 +582,10 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupAssignment, userId
           getDevicesByUser();
         } else if(type==='sharedGeofences'){
           getGeozones(userId);
+        } else if(type==='settingsGroups'){
+          getGroupsByUser(userId)
+        } else if(type === "sharedNotifications"){
+          getNotificationsByUser();
         }
         handleClick(name);
       })
@@ -527,6 +608,8 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupAssignment, userId
     setSelected([]);
     setGeofencesByUserId([]);
     setDevicesByUserId([]);
+    setGroupsByUserId([]);
+    setNotificationsByUserId([]);
     close();
   };
 
@@ -599,6 +682,45 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupAssignment, userId
                   <TableCell
                     key={headCell.id}
                     align={"left"}
+                    padding={headCell.disablePadding ? "none" : "default"}
+                    sortDirection={orderBy === headCell.id ? order : false}
+                  >
+                    <TableSortLabel
+                      active={orderBy === headCell.id}
+                      direction={orderBy === headCell.id ? order : "asc"}
+                      onClick={createSortHandler(headCell.id)}
+                    >
+                      {headCell.label}
+                      {orderBy === headCell.id ? (
+                        <span className={classes.visuallyHidden}>
+                          {order === "desc"
+                            ? "sorted descending"
+                            : "sorted ascending"}
+                        </span>
+                      ) : null}
+                    </TableSortLabel>
+                  </TableCell>
+                ))}
+              </TableRow>
+            </TableHead>
+          );
+
+      case "settingsGroups":
+          return (
+            <TableHead
+              style={{
+                display: `${
+                  type === "settingsGroups" ? "table-header-group" : "none"
+                }`,
+              }}
+            >
+              <TableRow>
+                <TableCell padding="checkbox">                
+                </TableCell>
+                {headCellssharedGroups.map((headCell) => (
+                  <TableCell
+                    key={headCell.id}
+                    align={headCell.numeric ? "right" : "left"}
                     padding={headCell.disablePadding ? "none" : "default"}
                     sortDirection={orderBy === headCell.id ? order : false}
                   >
@@ -890,10 +1012,56 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupAssignment, userId
               )}
             </TableBody>
           );
+
+      case "settingsGroups":
+
+          return (  
+             
+            <TableBody>    
+              {stableSort(arrayToMap.length > 0 ? arrayToMap : allData , getComparator(order, orderBy)).map(
+                (row, index) => {                
+                  let isItemSelected = isSelected(row.name);
+                  let labelId = `enhanced-table-checkbox-${index}`;
+  
+                  return (
+                    <TableRow
+                      hover
+                      onClick={function () {                      
+                        if(!isItemSelected){              
+                          handleSetSelectedItem(row.id, row.name);
+                        } else {
+                          handleDeleteSelectedItem(row.id, row.name);
+                        };                      
+                      }}                    
+                      role="checkbox"                  
+                      tabIndex={-1}
+                      key={index}                    
+                    >
+                      <TableCell padding="checkbox">
+                        <Checkbox                     
+                          checked={isItemSelected}
+                          inputProps={{ "aria-labelledby": labelId }}
+                        />
+                      </TableCell>
+                      <TableCell
+                        component="th"
+                        id={labelId}
+                        scope="row"
+                        padding="none"
+                      >
+                        {row.name}
+                      </TableCell>
+                    </TableRow>
+                  );
+              }
+              )}
+            </TableBody>
+          );
+
       case "sharedNotifications":
         return (
           <TableBody>
-            {stableSort(arrayToMap, getComparator(order, orderBy)).map(
+            {stableSort(arrayToMap.length > 0 ? arrayToMap : allData, getComparator(order, orderBy)).map(
               (row, index) => {
                 const isItemSelected = isSelected(row.type);
                 const labelId = `enhanced-table-checkbox-${index}`;
@@ -915,7 +1083,7 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupAssignment, userId
                   >
                     <TableCell padding="checkbox">
                       <Checkbox
-                        checked={selected.includes(row.type) ? true : isItemSelected}
+                        checked={isItemSelected}
                         inputProps={{ "aria-labelledby": labelId }}
                       />
                     </TableCell>
@@ -925,7 +1093,7 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupAssignment, userId
                       padding="none"
                       id={index}
                     >
-                      {t(`${row.type}`)}
+                      {row.type === 'IgnitionOn' ? `${t('eventIgnitionOn')}` : `${t(`${row.type}`)}`}
                     </TableCell>
                     <TableCell align="inherit">
                       {t(`${Boolean(row.always)}`)}
@@ -1090,7 +1258,7 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupAssignment, userId
         <AppBar className={classes.appBar}>
           <Toolbar>          
             <Typography variant="h6" className={classes.title}>
-              {t("deviceTitle")}
+              {userId ? `${t('settingsUsers')}` : `${t('deviceTitle')}`}
             </Typography>
             <IconButton
               edge="start"
