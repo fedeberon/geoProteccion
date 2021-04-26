@@ -1439,6 +1439,7 @@ const DevicePage = () => {
             close={handleCloseFullDialog}
             type={type}
             deviceId={deviceId}
+            currentUserId={userId}
           />
         </div>
       </div>

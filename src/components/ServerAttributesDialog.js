@@ -11,6 +11,7 @@ import t from "../common/localization";
 import { makeStyles } from "@material-ui/core/styles";
 import FormControl from "@material-ui/core/FormControl";
 import * as service from "../utils/serviceManager";
+import { useSelector } from "react-redux";
 import TextField from "@material-ui/core/TextField";
 import Checkbox from "@material-ui/core/Checkbox";
 import Button from "@material-ui/core/Button";
@@ -49,7 +50,7 @@ const useStyles = makeStyles((theme) => ({
 
 
 const ServerAttributesDialog = ({open, close, savingAttributes, data}) => {
-
+    const server = useSelector((state) => state.session.server);
     const classes = useStyles();
     const [openDialog, setOpenDialog] = useState(false);
     const [newAttribute, setNewAttribute] = useState({}); 
@@ -289,7 +290,7 @@ const ServerAttributesDialog = ({open, close, savingAttributes, data}) => {
                           /> 
                           <span style={{verticalAlign: 'middle', 
                           display: newAttribute.name === 'attributeSpeedLimit' ? 'table-cell' : 'none', 
-                          paddingLeft: '5px'}}>Nudos</span>
+                          paddingLeft: '5px'}}>{server && `${server.attributes?.speedUnit}`}</span>
                           </Fragment>                         
                           :
                         <ValueField/>
@@ -300,7 +301,7 @@ const ServerAttributesDialog = ({open, close, savingAttributes, data}) => {
                         title={title}
                         disabled={!newAttribute.name || newAttribute.value === null}
                         style={{
-                        backgroundColor: '#82f582', 
+                        backgroundColor: 'rgb(135 137 220)',
                         minWidth: '40px', 
                         display: 'inline-block', 
                         margin: '7px 2px'
@@ -316,7 +317,7 @@ const ServerAttributesDialog = ({open, close, savingAttributes, data}) => {
                    style={{margin: '0 auto'}} onClick={function() {
                     setEditRow(false);
                     setNewAttribute({name: '', value: ''});
-                  }}>Cancelar Edicion</Button>
+                  }}>{t('sharedCancel')}</Button>
                 </div>      
             </div>
         <DialogContent id="ContentServerDialog">

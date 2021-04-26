@@ -336,8 +336,12 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource }) => {
         }
       });
       if(mapManager){
-        mapManager.map.removeLayer("geozones-labels");
-        mapManager.map.removeSource("geozones-labels");
+        try{
+          mapManager.map.removeLayer("geozones-labels");
+          mapManager.map.removeSource("geozones-labels");
+        } catch(error){
+          console.error(error);
+        }
       };      
     };
   }, [geozones]);

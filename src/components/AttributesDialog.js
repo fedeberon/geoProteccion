@@ -185,7 +185,7 @@ const AttributesDialog = ({open, close, savingAttributes, data}) => {
                    style={{margin: '0 auto'}} onClick={function() {
                     setEditRow(false);
                     setNewAttribute({name: '', value: ''});
-                  }}>Cancelar Edicion</Button>
+                  }}>{t('sharedCancel')}</Button>
                 </div>      
             </div>
         <DialogContent>

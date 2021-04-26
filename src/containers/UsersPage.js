@@ -1,10 +1,4 @@
 import React, {useEffect, useState} from 'react';
-import {TableContainer} from "@material-ui/core";
-import Table from "@material-ui/core/Table";
-import TableRow from "@material-ui/core/TableRow";
-import TableHead from "@material-ui/core/TableHead";
-import TableCell from "@material-ui/core/TableCell";
-import TableBody from "@material-ui/core/TableBody";
 import {makeStyles, withStyles} from "@material-ui/core/styles";
 import Tooltip from '@material-ui/core/Tooltip';
 import clsx from 'clsx';
@@ -16,24 +10,22 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import * as service from "../utils/serviceManager";
+import DialogContentText from '@material-ui/core/DialogContentText';
 import {useSelector} from "react-redux";
 import Drawer from '@material-ui/core/Drawer';
-import AppBar from '@material-ui/core/AppBar';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import Toolbar from '@material-ui/core/Toolbar';
 import List from '@material-ui/core/List';
-import Typography from '@material-ui/core/Typography';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
-import MailIcon from '@material-ui/icons/Mail';
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert from '@material-ui/lab/Alert';
 import Paper from '@material-ui/core/Paper';
 import { DataGrid } from '@material-ui/data-grid';
 import AddIcon from '@material-ui/icons/Add';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 import DeviceConfigFull from "../components/DeviceConfigFull";
+import UsersManagement from "../components/UsersManagement";
 
 const drawerWidth = 285;
 
@@ -45,6 +37,10 @@ const LightTooltip = withStyles((theme) => ({
     fontSize: 11,
   },
 }))(Tooltip);
+
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -62,6 +58,12 @@ const useStyles = makeStyles((theme) => ({
   },
   buttonFunctions: {
     minWidth: '48px !important',
+  },
+  snackbar: {
+    width: '100%',
+    '& > * + *': {
+      marginTop: theme.spacing(2),
+    },
   },
   formControl: {
     width: '229px',
@@ -150,17 +152,43 @@ const useStyles = makeStyles((theme) => ({
 const UsersPage = () => {
   const user = useSelector((state) => state.session.user);
   const classes = useStyles();
-  // const [variable, setVariable] = useState(false);
+  const [userData, setUserData] = useState();
   const [users, setUsers] = useState([]);
   const [userSelected, setUserSelected] = useState(false);
   const [openFullDialog, setOpenFullDialog] = useState(false);
-  const [type, setType] = useState("");
-  const [userIdSelected, setUserIdSelected] = useState();
+  const [type, setType] = useState("");  
+  const [openSnack, setOpenSnack] = React.useState(false);
+  const [openRemoveDialog, setOpenRemoveDialog] = useState(false);
+  const [userIdSelected, setUserIdSelected] = useState({
+    id: 0,
+    userLimit: 0,
+    deviceLimit: 0
+  });
+  const [userManagement, setUserManagement] = useState(false);
   const rows = [];
+
+  const handleOpenRemoveDialog = () => {
+    setOpenRemoveDialog(true);
+  };
+
+  const handleCloseRemoveDialog = () => {
+    setOpenRemoveDialog(false);
+  };
 
   const getUsers = async () => {
     const response = await service.getUsers();
     setUsers(response);
+  };
+
+  const handleOpenSnackBar = () => {
+    setOpenSnack(true);
+  };
+
+  const handleCloseSnackBar = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpenSnack(false);
   };
 
   useEffect(() => {
@@ -172,6 +200,8 @@ const UsersPage = () => {
     { field: 'email', headerName: `${t(`userEmail`)}`, width: 230 },
     { field: 'administrator', headerName: `${t(`userAdmin`)}`, width: 150 },
     { field: 'disabled', headerName: `${t(`sharedDisabled`)}`, width: 150 },
+    // { field: 'userLimit', headerName: `${t(`userUserLimit`)}`, width: 150},
+    // {}
   ];
   
   try {
@@ -181,7 +211,9 @@ const UsersPage = () => {
         name: user.name,
         email: user.email,
         administrator: `${t(`${Boolean(user.administrator)}`)}`,
-        disabled: `${t(`${Boolean(user.disabled)}`)}`
+        disabled: `${t(`${Boolean(user.disabled)}`)}`,
+        userLimit: user.userLimit,
+        deviceLimit: user.deviceLimit,
       });
     });
   } catch (error) {
@@ -189,10 +221,14 @@ const UsersPage = () => {
   };   
 
   const handleRowSelection = (e) => {
-    let selection = rows.find((r) => r.id === e.data.id);
+    let selection = users.find((r) => r.id === e.data.id);
     setUserSelected(true);
-    setUserIdSelected(selection.id);
-    console.log("User selected: ", selection.id);
+    setUserData(selection);
+    setUserIdSelected({
+      id: selection.id,
+      userLimit: selection.userLimit,
+      deviceLimit: selection.deviceLimit
+    });
   }
 
   useEffect(()=> {
@@ -212,15 +248,39 @@ const UsersPage = () => {
     geocerca: "sharedGeofences",
     device: "deviceTitle",
     group: "settingsGroups",
+    user: "settingsUsers",
     notification: "sharedNotifications",
     atrCalculados: "sharedComputedAttributes",
     comGuardados: "sharedSavedCommands",
     mantenimiento: "sharedMaintenance",
+    calendars: "sharedCalendars",
   };
 
   useEffect(()=> {
     console.log(user);
   },[user])
+
+  const openUserManagement = (id) => {
+    setUserManagement(true);
+  }
+
+  const closeUserManagement = () => {
+    setUserManagement(false);
+    getUsers();
+  }
+
+  const handleRemoveUser = async () => {
+    let response = await fetch(`api/users/${userIdSelected.id}`, {
+      method: 'DELETE',
+    }).then(response => response);
+    
+    if(response.status === 204){
+      handleOpenSnackBar();
+    }
+    getUsers();
+    handleCloseRemoveDialog();
+
+  }
 
   return (
          <div className={classes.root}>
@@ -245,7 +305,7 @@ const UsersPage = () => {
                 <Divider />
                 <List>                 
                     <LightTooltip title={`${t(`sharedAdd`)}`}>
-                      <ListItem button key={"add"}>
+                      <ListItem onClick={() => openUserManagement()} button key={"add"}>
                         <ListItemIcon>
                           <AddIcon/>
                         </ListItemIcon>
@@ -254,7 +314,7 @@ const UsersPage = () => {
                       </ListItem>
                     </LightTooltip>
                     <LightTooltip title={`${t(`sharedEdit`)}`}>
-                      <ListItem disabled={!userSelected} button key={"edit"}>
+                      <ListItem onClick={() => openUserManagement(userIdSelected.id)} disabled={!userSelected} button key={"edit"}>
                         <ListItemIcon>
                           <EditIcon/>
                         </ListItemIcon>
@@ -263,7 +323,7 @@ const UsersPage = () => {
                       </ListItem>
                     </LightTooltip>
                     <LightTooltip title={`${t(`sharedRemove`)}`}>
-                      <ListItem disabled={!userSelected} button key={"remove"}>
+                      <ListItem onClick={handleOpenRemoveDialog}disabled={!userSelected} button key={"remove"}>
                         <ListItemIcon>
                           <DeleteOutlineIcon/>
                         </ListItemIcon>
@@ -302,7 +362,8 @@ const UsersPage = () => {
                       </ListItem>
                     </LightTooltip> 
                     <LightTooltip title={`${t(`settingsUsers`)}`}>
-                      <ListItem disabled={!userSelected || user.userLimit === 0}  button key={"users"}>
+                      <ListItem disabled={!userSelected || userIdSelected.userLimit === 0}  
+                          onClick={() => handleOpenFullDialog(variable.user)}  button key={"users"}>
                         <ListItemIcon>
                         <i style={{paddingLeft: "5%", fontSize: "18px"}} className="fas fa-users"></i>
                         </ListItemIcon>
@@ -318,25 +379,34 @@ const UsersPage = () => {
                         {window.innerWidth > 960 &&
                         <ListItemText primary={`${t(`sharedNotifications`)}`} />}
                       </ListItem>
-                    </LightTooltip> 
-                    <LightTooltip title={`${t(`sharedCalendars`)}`}>
-                      <ListItem disabled={true} /*!userSelected*/ onClick={() => openUsersAssignments()} button key={"calendars"}>
-                        <ListItemIcon>
-                          <i style={{paddingLeft: "5%", fontSize: "18px"}} className="far fa-calendar-alt"></i>
-                        </ListItemIcon>
-                        {window.innerWidth > 960 &&
-                        <ListItemText primary={`${t(`sharedCalendars`)}`} />}
-                      </ListItem>
-                    </LightTooltip> 
+                    </LightTooltip>                    
                     <LightTooltip title={`${t(`sharedComputedAttributes`)}`}>
-                      <ListItem disabled={true} /*!userSelected*/  button key={"comp-attributes"}>
+                      <ListItem disabled={!userSelected} onClick={() => handleOpenFullDialog(variable.atrCalculados)} button key={"comp-attributes"}>
                         <ListItemIcon>
                         <i style={{paddingLeft: "5%", fontSize: "18px"}} className="fas fa-tasks"></i>
                         </ListItemIcon>
                         {window.innerWidth > 960 &&
                         <ListItemText primary={`${t(`sharedComputedAttributes`)}`} />}
                       </ListItem>
-                    </LightTooltip> 
+                    </LightTooltip>                    
+                    <LightTooltip title={`${t(`sharedSavedCommands`)}`}>
+                      <ListItem disabled={!userSelected} onClick={() => handleOpenFullDialog(variable.comGuardados)} button key={"savedcommands"}>
+                        <ListItemIcon>
+                        <i style={{paddingLeft: "5%", fontSize: "18px"}} className="fas fa-download"></i>
+                        </ListItemIcon>
+                        {window.innerWidth > 960 &&
+                        <ListItemText primary={`${t(`sharedSavedCommands`)}`} />}
+                      </ListItem>
+                    </LightTooltip>
+                    <LightTooltip title={`${t(`sharedCalendars`)}`}>
+                      <ListItem disabled={true} /*!userSelected*/  button key={"calendars"}>
+                        <ListItemIcon>
+                          <i style={{paddingLeft: "5%", fontSize: "18px"}} className="far fa-calendar-alt"></i>
+                        </ListItemIcon>
+                        {window.innerWidth > 960 &&
+                        <ListItemText primary={`${t(`sharedCalendars`)}`} />}
+                      </ListItem>
+                    </LightTooltip>
                     <LightTooltip title={`${t(`sharedDrivers`)}`}>
                       <ListItem disabled={true} /*!userSelected*/  button key={"drivers"}>
                         <ListItemIcon>
@@ -346,22 +416,14 @@ const UsersPage = () => {
                         <ListItemText primary={`${t(`sharedDrivers`)}`} />}
                       </ListItem>
                     </LightTooltip> 
-                    <LightTooltip title={`${t(`sharedSavedCommands`)}`}>
-                      <ListItem disabled={true} /*!userSelected*/   button key={"savedcommands"}>
-                        <ListItemIcon>
-                        <i style={{paddingLeft: "5%", fontSize: "18px"}} className="fas fa-download"></i>
-                        </ListItemIcon>
-                        {window.innerWidth > 960 &&
-                        <ListItemText primary={`${t(`sharedSavedCommands`)}`} />}
-                      </ListItem>
-                    </LightTooltip> 
+                     
                 </List>
               </Drawer>
               <DataGrid
                   component={Paper}
                   rows={rows} 
                   columns={columns} 
-                  pageSize={8} 
+                  pageSize={10} 
                   rowHeight={42}
                   hideFooterSelectedRowCount={true}
                   checkboxSelection={false}
@@ -376,11 +438,43 @@ const UsersPage = () => {
                   userId={userIdSelected}
                 />
               </div>
-              {/* <div>
-                <UsersAssignments 
-                open={openFullDialog}
-                close={closeUsersAssignments}/>
-              </div> */}
+              <div>
+                <UsersManagement
+                userData={userData && userData || null}
+                open={userManagement}
+                close={closeUserManagement}/>
+              </div>
+              <div>
+              <Dialog
+                open={openRemoveDialog}
+                onClose={handleCloseRemoveDialog}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+              >
+                <DialogTitle id="alert-dialog-remove-user">{t('settingsUser')}</DialogTitle>
+                <DialogContent>
+                  <DialogContentText id="alert-dialog-description">
+                    {t('sharedRemoveConfirm')}
+                  </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={handleCloseRemoveDialog} color="primary">
+                    {t('sharedCancel')}
+                  </Button>
+                  <Button onClick={handleRemoveUser} color="primary" autoFocus>
+                    {t('sharedRemove')}
+                  </Button>
+                </DialogActions>
+              </Dialog>
+              </div>
+              <div className={classes.snackbar}>
+                <Snackbar open={openSnack} autoHideDuration={4000} onClose={handleCloseSnackBar}>
+                  <Alert onClose={handleCloseSnackBar} severity="success">
+                    {`${t('alarmRemoving')}...!`}
+                  </Alert>
+                </Snackbar>
+              </div>
+                
           </div>   
   );
 }

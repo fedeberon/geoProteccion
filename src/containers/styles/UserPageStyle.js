@@ -15,6 +15,12 @@ const userPageStyle = makeStyles((theme) => ({
       marginTop: theme.spacing(2),
     },
   },
+  snackbar: {
+    width: '100%',
+    '& > * + *': {
+      marginTop: theme.spacing(2),
+    },
+  },
   formControl: {
     margin: "13px 0px",
     // minWidth: '90%',
@@ -54,6 +60,27 @@ const userPageStyle = makeStyles((theme) => ({
     textAlign: "center",
     display: "flow-root",
     height: "8%",
+    [theme.breakpoints.up("md")]: {
+
+    },
+  },
+  subtitlesAdd: {
+    fontSize: '19px',
+    fontWeight: 600,    
+    backgroundColor: "cornflowerblue",
+    borderRadius: '20px',
+    padding: "4px",
+    color: "#f7f7f7",
+    alignItems: 'center',
+    textAlign: "center",
+    display: "flow-root",
+    height: "8%",
+    [theme.breakpoints.up("md")]: {
+
+    },
+  },
+  tableContainerAdd: {
+    borderRadius: '20px',
     [theme.breakpoints.up("md")]: {
 
     },

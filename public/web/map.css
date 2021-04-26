@@ -10,6 +10,13 @@ html, body, #root {
 /* .scrollbar::-webkit-scrollbar {
   display: none;
 } */
+#add-new-user {
+  text-align: center;
+  color: white;
+  background-color: cornflowerblue;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+}
 
 #cell-device-attribute:hover {
   cursor: pointer;
@@ -525,10 +532,30 @@ button {
   #setAccountContainer {
     width: 57% !important;
   }
+  #dialogActions-userMan {
+    margin: 0 30px;
+  }
+  #buttonGetMapState {
+    min-width: 45px;
+    height: 36px;
+  }
 }
 
 /* ancho de pantalla de menos de 600px* (mobile)*/
 @media only screen and (max-width: 600px) {
+
+  .MuiButton-root {
+    padding: 0 !important;
+  }
+
+  #buttonGetMapState {
+    min-width: 30px;
+    height: 26px;
+  }
+
+  #dialogActions-userMan {
+    margin: 0px 15px !important;
+  }
 
   .title-section-users {
     color: #fafafa;

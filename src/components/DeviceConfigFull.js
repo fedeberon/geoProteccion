@@ -84,6 +84,15 @@ const headCellssharedGroups = [
   },
 ];
 
+const headCellssharedUsers = [
+  {
+    id: "name",
+    numeric: false,
+    disablePadding: true,
+    label: `${t("settingsUsers")}`,
+  }
+];
+
 const headCellssharedNotifications = [
   {
     id: "type",
@@ -170,15 +179,14 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-const DeviceConfigFull = ({ open, close, type, deviceId, groupAssignment, userId }) => {
+const DeviceConfigFull = ({ open, close, type, deviceId, groupAssignment, userId, currentUserId }) => {
   const classes = useStyles();
-  const dispatch = useDispatch();  
-  // const userId = useSelector((state) => state.session.user.id);
+  const dispatch = useDispatch();
   const [devicesByUserId, setDevicesByUserId] = useState([]);
   const [groupsByUserId, setGroupsByUserId] = useState([]);
   const [notificationsByUserId, setNotificationsByUserId] = useState([]);
   const [openFull, setOpenFull] = useState(false);
-  const [dataReady, setDataReady] = useState(false);
+  const [usersByUserId, setUsersByUserId] = useState([]);
   const [order, setOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState("calories");
   const [selected, setSelected] = useState([]);
@@ -207,7 +215,7 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupAssignment, userId
         getGeozonesByGroup();
 
         const getGeozones = async () => {
-          const response = await service.getGeozonesByUserId(userId);
+          const response = await service.getGeozonesByUserId(currentUserId);
           setArrayToMap(response);
         };
         getGeozones(); 
@@ -216,19 +224,15 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupAssignment, userId
           .catch(function (error) {console.log('setGeofencesByDeviceIderror: ' + error)})
           .then(response => response.json())
           .then((data) => {
-            data.map((el)=>{
-              if(!(selected.includes(el.name))){
-                selected.push(el.name);
-              }             
-            })
+            settingSelectedItems(data);
             setGeofencesByDeviceId(data);
           })    
 
-        const getGeozones = async (userId) => {
-          const response = await service.getGeozonesByUserId(userId);
+        const getGeozones = async () => {
+          const response = await service.getGeozonesByUserId(currentUserId);
           setArrayToMap(response);
         };
-        getGeozones(userId);     
+        getGeozones();     
       } else if (userId){
           fetch(`api/geofences?all=true`, { method: "GET" })
           .catch(function (error) {
@@ -237,7 +241,7 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupAssignment, userId
           .then((response) => response.json())
           .then((data) => setAllData(data));
 
-          getGeozones(userId);
+          getGeozones();
       }    
     } else if(type === "deviceTitle") {
 
@@ -261,6 +265,17 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupAssignment, userId
 
           getGroupsByUser(); 
 
+    } else if(type === 'settingsUsers') {
+
+      fetch(`api/users`, { method: "GET" })
+      .catch(function (error) {
+        console.log("setUsers error: ", error);
+      })
+      .then((response) => response.json())
+      .then((data) => setAllData(data));
+
+      getUsersByUserSelected(); 
+
     } else if (type === "sharedNotifications") {      
       if(groupAssignment){
         const getNotificationsByGroupId = async() => {
@@ -269,11 +284,11 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupAssignment, userId
         }       
         getNotificationsByGroupId();
 
-        const getNotifications = async (userId) => {
-          const response = await service.getNotificationsByUserId(userId);
+        const getNotifications = async () => {
+          const response = await service.getNotificationsByUserId(currentUserId);
           setArrayToMap(response);
         };
-        getNotifications(userId);  
+        getNotifications();  
       } else if(deviceId) {
         const getNotificationsByDeviceId = async() => {
           const responseNotifications = await service.getNotificationsByDeviceId(deviceId);
@@ -281,11 +296,11 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupAssignment, userId
         }       
         getNotificationsByDeviceId();
 
-        const getNotifications = async (userId) => {
-        const response = await service.getNotificationsByUserId(userId);
+        const getNotifications = async () => {
+        const response = await service.getNotificationsByUserId(currentUserId);
         setArrayToMap(response);
         };
-        getNotifications(userId);  
+        getNotifications();  
       } else if(userId) {
         fetch(`api/notifications?all=true`, { method: "GET" })
           .catch(function (error) {
@@ -294,48 +309,75 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupAssignment, userId
           .then((response) => response.json())
           .then((data) => setAllData(data));
 
-          getNotificationsByUser(userId);
-      }
-      
-
+          getNotificationsByUser();
+      }   
     } else if (type === "sharedComputedAttributes") {
-      if(groupAssignment){
-        const getComputedAttributesByGroup = async() => {
-          const responseNotifications = await service.getComputedAttributesByGroupId(deviceId);
-          setComputedAttributesByGroupId(responseNotifications);
-        } 
-        getComputedAttributesByGroup();
-      } else {
-        const getComputedAttributesByDeviceId = async() => {
-          const responseNotifications = await service.getComputedAttributesByDeviceId(deviceId);
-          setComputedAttributesByDeviceId(responseNotifications);
-        } 
-        getComputedAttributesByDeviceId();
-      }      
-      const getComputedAttributes = async () => {
-        const response = await service.getComputedAttributes();
-        setArrayToMap(response);
-      }
-      getComputedAttributes();
-    } else if (type === "sharedSavedCommands") {
-      const getCommands = async () => {
-        const response = await service.getCommands();
-        setArrayToMap(response);
-      }
-      getCommands();
+        if(groupAssignment){
+          const getComputedAttributesByGroup = async() => {
+            const responseNotifications = await service.getComputedAttributesByGroupId(deviceId);
+            setComputedAttributesByGroupId(responseNotifications);
+          } 
+          getComputedAttributesByGroup();
+          const getComputedAttributes = async () => {
+            const response = await service.getComputedAttributes(currentUserId);
+            setArrayToMap(response);
+          }
+          getComputedAttributes();
+        } else if (deviceId) {
+          const getComputedAttributesByDeviceId = async() => {
+            const responseNotifications = await service.getComputedAttributesByDeviceId(deviceId);
+            setComputedAttributesByDeviceId(responseNotifications);
+          } 
+          getComputedAttributesByDeviceId();
+          const getComputedAttributes = async () => {
+            const response = await service.getComputedAttributes(currentUserId);
+            setArrayToMap(response);
+          }
+          getComputedAttributes();
+        } else if (userId) {
+          fetch(`api/attributes/computed?all=true`, { method: "GET" })
+          .catch(function (error) {
+            console.log("setNotifications error: ", error);
+          })
+          .then((response) => response.json())
+          .then((data) => setAllData(data));
 
-    } else if (type === "sharedMaintenance") {
-      const getMaintenances = async () => {
-        const response = await service.getMaintenance();
-        setArrayToMap(response);
-      }
-      getMaintenances();
-    }
-  }, [open===true, type, deviceId, groupAssignment]);
+          getComputedAttributesByUserId();
+        }      
+    } else if (type === "sharedSavedCommands") {
+        if (deviceId) {
+
+
+          // const getCommands = async () => {
+          //   const response = await service.getCommands();
+          //   setArrayToMap(response);
+          // }
+          // getCommands();
+        } else if (userId) {
+          fetch(`api/commands?all=true`, { method: "GET" })
+          .catch(function (error) {
+            console.log("setCommands error: ", error);
+          })
+          .then((response) => response.json())
+          .then((data) => setAllData(data));
+
+          getCommandsByUserId();
+        }
+      } {/*else if (type === "sharedCalendars") {
+          fetch(`api/calendars?all=true`, { method: "GET" })
+          .catch(function (error) {
+            console.log("setCalendars error: ", error);
+          })
+          .then((response) => response.json())
+          .then((data) => setAllData(data));
+
+          getCalendarsByUserId();
+      }*/}
+    }, [open===true, type, deviceId, groupAssignment]);
 
   const getGeozones = () => {
     setSelected([]);
-    fetch(`api/geofences?userId=${userId}`, { method: "GET" })
+    fetch(`api/geofences?userId=${userId.id}`, { method: "GET" })
     .catch(function (error) {
       console.log("setGeofences error: ", error);
     })
@@ -348,7 +390,7 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupAssignment, userId
 
   const getDevicesByUser = () => {
     setSelected([]);
-    fetch(`api/devices?userId=${userId}`, { method: "GET" })
+    fetch(`api/devices?userId=${userId.id}`, { method: "GET" })
     .catch(function (error) {
       console.log("setDevices error: ", error);
     })
@@ -362,9 +404,9 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupAssignment, userId
 
   const getGroupsByUser = () => {
     setSelected([]);
-    fetch(`api/groups?userId=${userId}`, { method: "GET" })
+    fetch(`api/groups?userId=${userId.id}`, { method: "GET" })
     .catch(function (error) {
-      console.log("setDevices error: ", error);
+      console.log("setGroups error: ", error);
     })
     .then((response) => response.json())
     .then((data) => {
@@ -374,10 +416,10 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupAssignment, userId
   };
 
   const getNotificationsByUser = () => {
-    setSelected([]);
-    fetch(`api/notifications?userId=${userId}`, { method: "GET" })
+    // setSelected([]);
+    fetch(`api/notifications?userId=${userId.id}`, { method: "GET" })
     .catch(function (error) {
-      console.log("setDevices error: ", error);
+      console.log("setNotifications error: ", error);
     })
     .then((response) => response.json())
     .then((data) => {
@@ -386,11 +428,60 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupAssignment, userId
     });
   };
 
+  const getUsersByUserSelected = () => {
+    // setSelected([]);
+    fetch(`api/users?userId=${userId.id}`, { method: "GET" })
+    .catch(function (error) {
+      console.log("setUsers error: ", error);
+    })
+    .then((response) => response.json())
+    .then((data) => {
+      settingSelectedItems(data);
+      setUsersByUserId(data);
+    });
+  };
+
+  const getComputedAttributesByUserId = () => {
+    // setSelected([]);
+    fetch(`api/attributes/computed?userId=${userId.id}`, { method: "GET" })
+    .catch(function (error) {
+      console.log("setComputedAttributes error: ", error);
+    })
+    .then((response) => response.json())
+    .then((data) => {
+      settingSelectedItems(data);
+    });
+  };
+
+  const getCommandsByUserId = () => {
+    fetch(`api/commands?userId=${userId.id}`, { method: "GET" })
+    .catch(function (error) {
+      console.log("setSavedCommands error: ", error);
+    })
+    .then((response) => response.json())
+    .then((data) => {
+      settingSelectedItems(data);
+    });
+  };
+
+  // const getCalendarsByUserId = () => {
+  //   fetch(`api/calendars?userId=${userId.id}`, { method: "GET" })
+  //   .catch(function (error) {
+  //     console.log("setCalendars error: ", error);
+  //   })
+  //   .then((response) => response.json())
+  //   .then((data) => {
+  //     settingSelectedItems(data);
+  //   });
+  // };
+
   const settingSelectedItems = (data) => {
     let arrayAux = [];
     data.map((el)=>{
       if(type==='sharedNotifications'){
         arrayAux.push(el.type); 
+      } else if(type ==='sharedComputedAttributes' || type ==='sharedSavedCommands'){
+        arrayAux.push(el.description);
       } else {
         arrayAux.push(el.name); 
       }             
@@ -398,7 +489,7 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupAssignment, userId
     setSelected(arrayAux);
   }
 
-  const handleRequestSort = (event, property) => {
+  const handleRequestSort = (property) => {
     const isAsc = orderBy === property && order === "asc";
     setOrder(isAsc ? "desc" : "asc");
     setOrderBy(property);
@@ -468,7 +559,7 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupAssignment, userId
             selected.push(el.description);
           }             
         })
-      } else {
+      } else if (deviceId) {
         computedAttributesByDeviceId.map((el)=>{
           if(!(selected.some(el2 => el2.description === el.description))){
             selected.push(el.description);
@@ -500,17 +591,21 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupAssignment, userId
         permission.attributeId = id;
       }
     } else if (userId) {
-      permission.userId = userId;
+      permission.userId = userId.id;
       if(type === 'sharedGeofences'){
         permission.geofenceId = id;
       } else if(type === 'deviceTitle') {
         permission.deviceId = id;
       } else if(type === 'settingsGroups') {
         permission.groupId = id;
+      } else if(type === "settingsUsers"){
+        permission.managedUserId = id;
       } else if(type === "sharedNotifications"){
         permission.notificationId = id;
       } else if(type === "sharedComputedAttributes"){
         permission.attributeId = id;
+      } else if(type === "sharedSavedCommands"){
+        permission.commandId = id;
       }
     }
 
@@ -525,11 +620,17 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupAssignment, userId
         if(type==='deviceTitle'){
           getDevicesByUser();
         } else if(type==='sharedGeofences'){
-          getGeozones(userId);
+          getGeozones();
         } else if(type==='settingsGroups'){
-          getGroupsByUser(userId)
+          getGroupsByUser()
         } else if(type === "sharedNotifications"){
           getNotificationsByUser();
+        } else if (type === "settingsUsers"){
+          getUsersByUserSelected();
+        } else if (type === "sharedComputedAttributes"){
+          getComputedAttributesByUserId();
+        } else if (type === "sharedSavedCommands"){
+          getCommandsByUserId();
         }
         handleClick(name);
       })
@@ -557,17 +658,21 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupAssignment, userId
         permission.attributeId = id;
       }
     } else if (userId) {
-      permission.userId = userId;
+      permission.userId = userId.id;
       if(type === 'sharedGeofences'){
         permission.geofenceId = id;
       } else if(type === 'deviceTitle') {
         permission.deviceId = id;
       } else if(type === 'settingsGroups') {
         permission.groupId = id;
+      } else if(type === "settingsUsers"){
+        permission.managedUserId = id;
       } else if(type === "sharedNotifications"){
         permission.notificationId = id;
       } else if(type === "sharedComputedAttributes"){
         permission.attributeId = id;
+      } else if(type === "sharedSavedCommands"){
+        permission.commandId = id;
       }
     }  
 
@@ -581,11 +686,17 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupAssignment, userId
         if(type==='deviceTitle'){
           getDevicesByUser();
         } else if(type==='sharedGeofences'){
-          getGeozones(userId);
+          getGeozones();
         } else if(type==='settingsGroups'){
-          getGroupsByUser(userId)
+          getGroupsByUser()
         } else if(type === "sharedNotifications"){
           getNotificationsByUser();
+        } else if (type === "settingsUsers"){
+          getUsersByUserSelected();
+        } else if (type === "sharedComputedAttributes"){
+          getComputedAttributesByUserId();
+        } else if (type === "sharedSavedCommands"){
+          getCommandsByUserId();
         }
         handleClick(name);
       })
@@ -610,6 +721,7 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupAssignment, userId
     setDevicesByUserId([]);
     setGroupsByUserId([]);
     setNotificationsByUserId([]);
+    setUsersByUserId([]);
     close();
   };
 
@@ -718,6 +830,45 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupAssignment, userId
                 <TableCell padding="checkbox">                
                 </TableCell>
                 {headCellssharedGroups.map((headCell) => (
+                  <TableCell
+                    key={headCell.id}
+                    align={headCell.numeric ? "right" : "left"}
+                    padding={headCell.disablePadding ? "none" : "default"}
+                    sortDirection={orderBy === headCell.id ? order : false}
+                  >
+                    <TableSortLabel
+                      active={orderBy === headCell.id}
+                      direction={orderBy === headCell.id ? order : "asc"}
+                      onClick={createSortHandler(headCell.id)}
+                    >
+                      {headCell.label}
+                      {orderBy === headCell.id ? (
+                        <span className={classes.visuallyHidden}>
+                          {order === "desc"
+                            ? "sorted descending"
+                            : "sorted ascending"}
+                        </span>
+                      ) : null}
+                    </TableSortLabel>
+                  </TableCell>
+                ))}
+              </TableRow>
+            </TableHead>
+          );
+
+      case "settingsUsers":
+          return (
+            <TableHead
+              style={{
+                display: `${
+                  type === "settingsUsers" ? "table-header-group" : "none"
+                }`,
+              }}
+            >
+              <TableRow>
+                <TableCell padding="checkbox">                
+                </TableCell>
+                {headCellssharedUsers.map((headCell) => (
                   <TableCell
                     key={headCell.id}
                     align={headCell.numeric ? "right" : "left"}
@@ -1057,7 +1208,50 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupAssignment, userId
               )}
             </TableBody>
           );
+      case "settingsUsers":
 
+        return (  
+            
+          <TableBody>    
+            {stableSort(arrayToMap.length > 0 ? arrayToMap : allData , getComparator(order, orderBy)).map(
+              (row, index) => {                
+                let isItemSelected = isSelected(row.name);
+                let labelId = `enhanced-table-checkbox-${index}`;
+
+                return (
+                  <TableRow
+                    hover
+                    onClick={function () {                      
+                      if(!isItemSelected){              
+                        handleSetSelectedItem(row.id, row.name);
+                      } else {
+                        handleDeleteSelectedItem(row.id, row.name);
+                      };                      
+                    }}                    
+                    role="checkbox"                  
+                    tabIndex={-1}
+                    key={index}                    
+                  >
+                    <TableCell padding="checkbox">
+                      <Checkbox                     
+                        checked={isItemSelected}
+                        inputProps={{ "aria-labelledby": labelId }}
+                      />
+                    </TableCell>
+                    <TableCell
+                      component="th"
+                      id={labelId}
+                      scope="row"
+                      padding="none"
+                    >
+                      {row.name}
+                    </TableCell>
+                  </TableRow>
+                );
+            }
+            )}
+          </TableBody>
+        );
       case "sharedNotifications":
         return (
           <TableBody>
@@ -1108,7 +1302,7 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupAssignment, userId
         case "sharedComputedAttributes":
         return (
           <TableBody>
-            {stableSort(arrayToMap, getComparator(order, orderBy)).map(
+            {stableSort(arrayToMap.length > 0 ? arrayToMap : allData, getComparator(order, orderBy)).map(
               (row, index) => {
                 const isItemSelected = isSelected(row.description);
                 const labelId = `enhanced-table-checkbox-${index}`;
@@ -1130,7 +1324,7 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupAssignment, userId
                   >
                     <TableCell padding="checkbox">
                       <Checkbox
-                        checked={selected.includes(row.description) ? true : isItemSelected}
+                        checked={isItemSelected}
                         inputProps={{ "aria-labelledby": labelId }}
                       />
                     </TableCell>
@@ -1154,20 +1348,25 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupAssignment, userId
         case "sharedSavedCommands":
         return (
           <TableBody>
-            {stableSort(arrayToMap, getComparator(order, orderBy)).map(
+            {stableSort(arrayToMap.length > 0 ? arrayToMap : allData, getComparator(order, orderBy)).map(
               (row, index) => {
-                const isItemSelected = isSelected(row.id);
+                const isItemSelected = isSelected(row.description);
                 const labelId = `enhanced-table-checkbox-${index}`;
 
                 return (
                   <TableRow
                     hover
-                    onClick={(event) => handleClick(event, row.id)}
+                    onClick={function () {
+                      handleClick(row.description, row.id);
+                      if(!isItemSelected){              
+                        handleSetSelectedItem(row.id);
+                      } else {
+                        handleDeleteSelectedItem(row.id);
+                      }
+                    }} 
                     role="checkbox"
-                    aria-checked={isItemSelected}
                     tabIndex={-1}
                     key={row.id}
-                    selected={isItemSelected}
                   >
                     <TableCell padding="checkbox">
                       <Checkbox
