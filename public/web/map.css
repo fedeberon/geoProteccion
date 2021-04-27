@@ -79,7 +79,7 @@ button {
 }
 
 .mapboxgl-popup-close-button {
-  bottom: 2% !important;
+  top: 88% !important;
   right: 2% !important;
   padding: 0 5px 0 0;
   border-radius: 10px 2px 35px 0 !important;
