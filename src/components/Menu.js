@@ -14,6 +14,7 @@ import menuStyles from "./styles/MenuStyles";
 const useStyles = menuStyles;
 
 export default function Menu({ layout }) {
+  const user = useSelector((state) => state.session.user);
   const history = useHistory();
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
@@ -99,13 +100,15 @@ export default function Menu({ layout }) {
         />
 
         <SpeedDialAction
-          key="calendars"
-          icon={<i className="fas fa-calendar-alt fa-lg" />}
-          tooltipTitle={t("sharedCalendars")}
+          key="users"
+          icon={<i className="fas fa-users fa-lg" />}
+          tooltipTitle={t("settingsUsers")}
           tooltipOpen={!isViewportDesktop}
+          disabled={user && !user.administrator}
           onClick={(e) => {
             e.stopPropagation();
-            // history.push("/calendars");
+            {user && user.administrator &&
+            history.push("/users");}
           }}
           tooltipPlacement={isViewportDesktop ? "right" : "left"}
         />

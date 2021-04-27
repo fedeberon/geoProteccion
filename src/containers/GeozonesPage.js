@@ -269,7 +269,9 @@ export default function GeozonesPages() {
       </Container>
 
       <div className={classes.geozonesContainer}>
-      {geozones.map((geozone, index) => (
+      {geozones.sort((f,s) => {
+                 return f.id - s.id
+               }).map((geozone, index) => (
         <Accordion key={index} className={classes.accordionStyle}>
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
@@ -281,7 +283,7 @@ export default function GeozonesPages() {
                 <strong>{t("sharedName")}</strong>
               </Typography>
               <Typography className={classes.heading}>
-                #{geozone.id} {geozone.name}
+                {geozone.name}
               </Typography>
             </div>
             <div className={classes.column}>
