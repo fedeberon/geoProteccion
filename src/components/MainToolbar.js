@@ -100,27 +100,29 @@ const MainToolbar = () => {
             <ListItem button onClick={() => history.push("/device/list")}>
               <ListItemText primary={t("deviceTitle")} />
             </ListItem>
-            <ListItem button onClick={() => history.push("/groups")}
-            >
+            <ListItem button onClick={() => history.push("/groups")}>
               <ListItemText primary={t("settingsGroups")} />
             </ListItem>
             <ListItem button onClick={() => history.push("/geozones")}>
               <ListItemText primary={t("geozones")} />
             </ListItem>
-            <ListItem button onClick={() => history.push("/notifications")}>
-              <ListItemText primary={t("sharedNotifications")} />
-            </ListItem>
-            <ListItem style={{display: 'none'}} button onClick={() => history.push("/calendars")}>
-              <ListItemText primary={t("sharedCalendars")} />
-            </ListItem>
-            <ListItem button onClick={() => history.push("/maintenance")}>
-              <ListItemText primary={t("sharedMaintenance")} />
+            <ListItem button onClick={() => history.push("/savedcommands")}>
+              <ListItemText primary={t("sharedSavedCommands")} />
             </ListItem>
             {user && user.administrator &&
             <ListItem button onClick={() => history.push("/users")}>
             <ListItemText primary={t("settingsUsers")} />
             </ListItem>
-            }            
+            } 
+            <ListItem button onClick={() => history.push("/notifications")}>
+              <ListItemText primary={t("sharedNotifications")} />
+            </ListItem>
+            {/* <ListItem style={{display: 'none'}} button onClick={() => history.push("/calendars")}>
+              <ListItemText primary={t("sharedCalendars")} />
+            </ListItem> */}
+            {/* <ListItem button onClick={() => history.push("/maintenance")}>
+              <ListItemText primary={t("sharedMaintenance")} />
+            </ListItem> */}                       
             <Divider />
             <ListItem>
               <Button color="inherit" onClick={handleLogout}>

@@ -160,6 +160,10 @@ const SavedCommands = ({open, handleCloseModal, data}) => {
     setUnitTime(e.target.value);
   };
 
+  useEffect(()=> {
+    console.log(newSavedCommand);
+  },[newSavedCommand])
+
   const setAttributePositionPeriod = (e) => {
     e.preventDefault();
     setFlag(false);
@@ -227,6 +231,7 @@ const SavedCommands = ({open, handleCloseModal, data}) => {
             <Typography component="div" style={{marginTop: '15px'}}>
               {t("commandSendSms")}:
               <Radio
+                disabled={true}
                 checked={newSavedCommand.textChannel === true}
                 onChange={() => setNewSavedCommand({
                   ...newSavedCommand,
@@ -239,6 +244,7 @@ const SavedCommands = ({open, handleCloseModal, data}) => {
               />{" "}
               {t("reportYes")}
               <Radio
+                disabled={true}
                 checked={newSavedCommand.textChannel === false}
                 onChange={() => setNewSavedCommand({
                   ...newSavedCommand,
@@ -266,6 +272,7 @@ const SavedCommands = ({open, handleCloseModal, data}) => {
                 value={newSavedCommand.type}
                 onChange={(e) => setNewSavedCommand({
                   ...newSavedCommand,
+                  attributes: {},
                   type: e.target.value,
                 })}
                 label={t("sharedType")}
@@ -305,13 +312,13 @@ const SavedCommands = ({open, handleCloseModal, data}) => {
             />
             <TextField style={{marginBottom: '15px', display: 
             `${newSavedCommand.type === 'custom' || newSavedCommand.type === 'alarmVibration' || newSavedCommand.type === 'alarmClock' ||
-              newSavedCommand.type === 'sendSms' || newSavedCommand.type === 'sendUssd' || newSavedCommand.type === 'setIndicator' ||
+              newSavedCommand.type === 'sendUssd' || newSavedCommand.type === 'setIndicator' ||
               newSavedCommand.type === 'sosNumber' || newSavedCommand.type === 'silenceTime' || newSavedCommand.type === 'configuration' ||
               newSavedCommand.type === 'setPhonebook'|| newSavedCommand.type === 'message' || newSavedCommand.type === 'setOdometer' ||
               newSavedCommand.type === 'voiceMessage' || newSavedCommand.type === 'outputControl' || 
               newSavedCommand.type === 'alarmSpeed' ? 'block' : 'none'}`}}
                       fullWidth
-                      label={newSavedCommand.type === 'sendSms' ||
+                      label={
                       newSavedCommand.type === 'sendUssd' ||
                       newSavedCommand.type === 'sosNumber' ? `${t("commandPhone")}` : 
                       newSavedCommand.type === 'message' ? `${t('commandMessage')}` : `${t("commandData")}` }
@@ -369,6 +376,22 @@ const SavedCommands = ({open, handleCloseModal, data}) => {
                         },
                       })}
             />
+            <TextField style={{marginBottom: '15px', display: 
+            `${newSavedCommand.type === 'sendSms' ? 'block' : 'none'}`}}
+                      fullWidth
+                      label={t("commandPhone")}
+                      name="phone"
+                      autoComplete="off"
+                      variant="outlined"
+                      value={Object.values(newSavedCommand.attributes)[0]}
+                      onChange={(e) => setNewSavedCommand({
+                        ...newSavedCommand,
+                        attributes: {
+                          ...newSavedCommand.attributes,
+                          [`phone`]: e.target.value,
+                        },
+                      })}
+            />  
             <TextField style={{display: 
             `${newSavedCommand.type === 'sendSms' ? 'block' : 'none'}`}}
                       fullWidth
@@ -376,7 +399,7 @@ const SavedCommands = ({open, handleCloseModal, data}) => {
                       name="data"
                       autoComplete="off"
                       variant="outlined"
-                      value={Object.values(newSavedCommand.attributes)[0]}
+                      value={Object.values(newSavedCommand.attributes)[1]}
                       onChange={(e) => setNewSavedCommand({
                         ...newSavedCommand,
                         attributes: {

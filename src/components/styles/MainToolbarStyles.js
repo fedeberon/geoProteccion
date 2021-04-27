@@ -8,7 +8,7 @@ const mainToolbarStyles = makeStyles((theme) => ({
     zIndex: theme.zIndex.drawer + 1,
   },
   list: {
-    width: 150,
+    width: 200,
   },
   menuButton: {
     marginLeft: -12,

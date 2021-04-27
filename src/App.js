@@ -11,6 +11,7 @@ import UsersPage from "./containers/UsersPage";
 import GroupsPage from "./containers/GroupsPage";
 import DevicePage from "./containers/DevicePage";
 import GeozonesPage from "./containers/GeozonesPage";
+import SavedCommandsPage from "./containers/SavedCommandsPage";
 import NotificationsPage from "./containers/NotificationsPage";
 import CalendarsPage from "./containers/CalendarsPage";
 import MaintenancePage from "./containers/MaintenancePage";
@@ -151,6 +152,12 @@ const App = () => {
           isAuthenticated={authenticated}
           component={RouteReportPage}
         />
+        <PrivateRoute
+          exact
+          path="/savedcommands"
+          isAuthenticated={authenticated}
+          component={SavedCommandsPage}
+        />        
         <PrivateRoute
           exact
           path="/users"

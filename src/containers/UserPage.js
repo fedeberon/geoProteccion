@@ -35,13 +35,10 @@ import {DeleteTwoTone} from "@material-ui/icons";
 import EditTwoToneIcon from "@material-ui/icons/EditTwoTone";
 import CloseIcon from "@material-ui/icons/Close";
 import IconButton from "@material-ui/core/IconButton";
-import SavedCommands from '../components/SavedCommands';
 import UserData from '../components/UserData';
 import ServerAttributesDialog from '../components/ServerAttributesDialog';
 import positions from '../common/PositionsAttributes.json'
 import {sessionActions} from "../store";
-import SC from "../common/SavedCommandsTypes.json";
-
 
 const styles = (theme) => ({});
 
@@ -102,13 +99,10 @@ const UserPage = () => {
   const [ dialogAttributes, setDialogAttributes ] = useState(false);
   const [ fromDateTime, setFromDateTime ] = useState("");
   const [ toDateTime, setToDateTime ] = useState("");
-  const [ openModalCommand, setOpenModalCommand ] = useState(false);
   const [ server, setServer ] = useState(storeServer);
   const [ editingComputedAttribute, setEditingComputedAttribute ] = useState(false);
   const [ statistics, setStatistics ] = useState([]);
   const [ computedAttributes, setComputedAttributes ] = useState([]);
-  const [ savedCommands, setSavedCommands ] = useState([]);
-  const [ commandData, setCommandData ] = useState(undefined);
   const [ openModalComputedAttribute, setOpenModalComputedAttribute ] = useState(false);
   const [ newComputedAttribute, setNewComputedAttribute ] = useState({
     description: '',
@@ -186,23 +180,6 @@ const UserPage = () => {
     setShowAdministration(!showAdministration);
   };
 
-  const handleOpenCommandModal = (object) => {
-    setOpenModalCommand(true);
-    if(object && object.id >= 0){
-      setCommandData(object);
-    } else {
-      setCommandData();
-    }
-  };
-
-  const handleCloseCommandModal = (response) => {
-    setOpenModalCommand(false);
-    if(response !== undefined){
-      setTimeout(()=> {
-        getSavedCommands();
-      },1500);      
-    }
-  }
 
   const handleSaveServer = () => {
     const updateServer = async () => {
@@ -222,11 +199,6 @@ const UserPage = () => {
       mapUrl: storeServer.mapUrl.replace(/&amp;/g, "&"),
     });
   }, [storeServer]);
-
-  const getSavedCommands = async () => {
-    const response = await service.getCommands();
-    setSavedCommands(response);
-  }
 
   useEffect(()=> {
     let object = positions.positionsAttributes.find(element => element.key === newComputedAttribute.attribute);
@@ -278,21 +250,6 @@ const UserPage = () => {
     },2000)
   }
 
-  const removeSavedCommands = (id) => {
-    let option = confirm(`${t('sharedRemoveConfirm')}`);
-    if(option){
-      fetch(`api/commands/${id}`, {
-        method: 'DELETE',
-      }).then(response => {
-        if(response.status === 204){
-          getSavedCommands();
-        } else {          
-          alert('error');
-        }
-      })
-    }
-  }
-
   const getAttributeName = (key) => {
     let value = positions.positionsAttributes.find(elem => elem.key === key);
     return value.name;
@@ -313,26 +270,22 @@ const UserPage = () => {
     }
   }
 
-  const getCommandTypeName = (type) => {
-    let object = SC.SC.find((elem) => elem.type === type);
-    if(object)
-    return object.name
-  }
-
   return (
     <div className={classes.root}>
       <div
         className={classes.subtitles}
-        style={{ justifyContent: "space-between", display: "flex" }}
+        style={{ justifyContent: "center", display: "flex" }}
       >
        <p>{t("settingsUser")}</p>
-        <Typography>
+        <Typography style={{position: 'absolute', right: '1%'}}>
           {user.administrator && 
             <Button
+              title={`${t('userAdmin')}`}
               onClick={() => showMenuAdmin()}
               className={classes.adminButton}
             >
-              {t('userAdmin')}
+              {/* {t('userAdmin')} */}
+              <i class="fas fa-tools "></i>
             </Button>
           }
         </Typography>
@@ -351,7 +304,6 @@ const UserPage = () => {
           <Tab label={t('commandServer')} {...a11yProps(0)} />
           <Tab label={t('statisticsTitle')} {...a11yProps(1)} />
           <Tab onClick={showComputedAttributes} label={t('sharedComputedAttributes')} {...a11yProps(2)} />
-          <Tab onClick={getSavedCommands} label={t('sharedSavedCommands')} {...a11yProps(3)} />
         </Tabs>
 
         <TabPanel value={value} index={0} style={{ paddingBottom: "10%" }}>
@@ -363,16 +315,16 @@ const UserPage = () => {
                 color="default"
                 aria-label="text primary button group"
               >
-                <Button style={{backgroundColor: "#e6e6fa", fontSize: '12px', textTransform: 'capitalize'}}
+                <Button style={{backgroundColor: "#e6e6fa", fontSize: '12px', textTransform: 'capitalize', margin: '0 6px'}}
                   onClick={handleModalDialogAttributes}>
                   {t("sharedAttributes")}
                 </Button>
-                <Button style={{backgroundColor: "#e6e6fa", fontSize: '12px', textTransform: 'capitalize'}}>
+                <Button style={{backgroundColor: "#e6e6fa", fontSize: '12px', textTransform: 'capitalize', margin: '0 6px'}}>
                   <i className="fas fa-map-marker-alt" />
                   &nbsp;{t("sharedGetMapState")}
                 </Button>
                 <Button onClick={() => handleSaveServer()}
-                style={{backgroundColor: "#e6e6fa", fontSize: '12px', textTransform: 'capitalize'}}>                  
+                style={{backgroundColor: "#e6e6fa", fontSize: '12px', textTransform: 'capitalize', margin: '0 6px'}}>                  
                   &nbsp;{t("sharedSave")}
                 </Button>
               </ButtonGroup>
@@ -767,53 +719,7 @@ const UserPage = () => {
           </div>
         </TabPanel>
 
-         {/*ADMIN SAVED COMMANDS*/}
-        <TabPanel component={'span'} value={value} index={3}>
-          <Button variant="outlined"
-          onClick={handleOpenCommandModal}>
-            <i className="fas fa-plus" />
-            &nbsp;{t('sharedAdd')}
-          </Button>
-          {/* <Container> */}
-            <Table>
-              <TableHead>
-                <TableRow>
-                <TableCell>{t("sharedDescription")}</TableCell>
-                <TableCell>{t("sharedType")}</TableCell>
-                <TableCell>{t("commandSendSms")}</TableCell>
-                <TableCell align="center"/>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-               {savedCommands.sort((f,s) => {
-                 return f.id - s.id
-               }).map((object,index) => (
-                <TableRow key={index}>
-                  <TableCell>{object.description}</TableCell>
-                  <TableCell>{t(`${getCommandTypeName(object.type)}`)}</TableCell>
-                  <TableCell>{t(`${object.textChannel}`)}</TableCell>
-                  <TableCell style={{display: 'flex', justifyContent: 'center'}} align="center">
-                          <Button title={t('sharedEdit')}
-                                  onClick={() => handleOpenCommandModal(object)}
-                                  >
-                          <EditTwoToneIcon 
-                          style={{fontSize: window.innerWidth > 767 ? '19px' : ''}}
-                          />
-                          </Button>
-                          <Button title={t('sharedRemove')}
-                                  onClick={() => removeSavedCommands(object.id)}
-                                  >
-                          <DeleteTwoTone 
-                          style={{fontSize: window.innerWidth > 767 ? '19px' : ''}}
-                          />
-                          </Button>
-                  </TableCell>
-                </TableRow>                 
-               ))}
-              </TableBody>
-            </Table>
-          {/* </Container> */}
-        </TabPanel>
+         
       </div>
 
       {/*MODAL ATTRIBUTES*/}
@@ -831,14 +737,7 @@ const UserPage = () => {
         <UserData/>
       </div>
 
-      {/*SAVED COMMANDS MODAL-COMPONENT*/}
-      <div>
-        <SavedCommands 
-          open={openModalCommand} 
-          data={commandData} 
-          handleCloseModal={handleCloseCommandModal}
-        />
-      </div>
+      
 
       {/*MODAL ADD COMPUTEDATTRIBUTE*/}
       <div>

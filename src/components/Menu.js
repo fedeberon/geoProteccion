@@ -114,13 +114,13 @@ export default function Menu({ layout }) {
         />
 
         <SpeedDialAction
-          key="maintenance"
-          icon={<i className="fas fa-tools fa-lg" />}
-          tooltipTitle={t("sharedMaintenance")}
+          key="savedcommands"
+          icon={<i className="fas fa-download fa-lg" />}
+          tooltipTitle={t("sharedSavedCommands")}
           tooltipOpen={!isViewportDesktop}
           onClick={(e) => {
             e.stopPropagation();
-            history.push("/maintenance");
+            history.push("/savedcommands");
           }}
           tooltipPlacement={isViewportDesktop ? "right" : "left"}
         />

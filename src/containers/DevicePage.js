@@ -79,7 +79,16 @@ const DevicePage = () => {
   const [availableTypesByDeviceId, setAvailableTypesByDeviceId] = useState([]);
   const [openFullDialog, setOpenFullDialog] = useState(false);
   const [type, setType] = useState("");
-  const [commandToSend, setCommandToSend] = useState("");
+  const [ unitTime, setUnitTime ] = useState('');
+  const [flag, setFlag] = useState();
+  const [commandToSend, setCommandToSend] = useState({
+    attributes: {},
+    description: `${t('sharedNew')}`,
+    deviceId: 0,
+    id: 0,
+    textChannel: false,
+    type: '',
+  });
   const [commandData, setCommandData] = useState("");
   const [openModalAcumulators, setOpenModalAcumulators] = useState(false);
   const [totalDistance, setTotalDistance] = useState(0);
@@ -176,7 +185,22 @@ const DevicePage = () => {
 
   const handleClickAttributes = () => {
     setOpenModalAttributes(!openModalAttributes);
-    setSelectedDevice({ ...selectedDevice, attributes: selectedDevice.attributes });
+    setSel
+    const changeUnitTime = (e) => {
+      setFlag(true);
+      setUnitTime(e.target.value);
+    };
+  
+    const setAttributePositionPeriod = (e) => {
+      e.preventDefault();
+      setFlag(false);
+      setCommandToSend({
+        ...commandToSend,
+        attributes: {
+          [getCommandKey(commandToSend.type)]: (Number(e.target.value) * unitTime)
+        },
+      })
+    };ectedDevice({ ...selectedDevice, attributes: selectedDevice.attributes });
     setNewDevice({ ...newDevice, attributes: attributes });
     let originalAttributes = getOriginalAttributes(selectedDevice.attributes);
     setAttributes(originalAttributes);
@@ -193,15 +217,26 @@ const DevicePage = () => {
     setOpenedMenu(null);
   };
 
-  const handleChangeCommandToSend = (event) => {
-    setCommandToSend(event.target.value)
-  }
-
   const [collapsedIndex, setCollapsedIndex] = useState(-1);
 
   const handleExpandClick = (index) => {
     setCollapsedIndex(collapsedIndex === index ? -1 : index);
-    setAddressFound('');
+    setAdd
+    const changeUnitTime = (e) => {
+      setFlag(true);
+      setUnitTime(e.target.value);
+    };
+  
+    const setAttributePositionPeriod = (e) => {
+      e.preventDefault();
+      setFlag(false);
+      setCommandToSend({
+        ...commandToSend,
+        attributes: {
+          [getCommandKey(commandToSend.type)]: (Number(e.target.value) * unitTime)
+        },
+      })
+    };ressFound('');
   };
 
   const [open, setOpen] = React.useState(false);
@@ -233,9 +268,39 @@ const DevicePage = () => {
     setTotalDistance(event.target.value);
   }
 
-  //Send Commands Functions (4)
+  //Send Commands Functions
+  const changeUnitTime = (e) => {
+    setFlag(true);
+    setUnitTime(e.target.value);
+  };
+
+  const setAttributePositionPeriod = (e) => {
+    e.preventDefault();
+    setFlag(false);
+    setCommandToSend({
+      ...commandToSend,
+      attributes: {
+        [getCommandKey(commandToSend.type)]: (Number(e.target.value) * unitTime)
+      },
+    })
+  };
+
+  const handleChangeCommandToSend = (event) => {
+    setCommandToSend({
+      ...commandToSend,
+      attributes: {},
+      type: event.target.value,
+      deviceId: deviceId,
+    })
+  }
+
   const handleChangeCommandData = (event) => {
-    setCommandData(event.target.value)
+    setCommandToSend({
+      ...commandToSend,
+      attributes: {
+        [getCommandKey(commandToSend.type)]: event.target.value
+      }
+    })
   }
 
   const handleClickCommand = (deviceId) => {
@@ -255,14 +320,6 @@ const DevicePage = () => {
   };
 
   const handleSendCommand = () => {
-    let data = {};
-    data.deviceId = deviceId;
-    data.textChannel = radioValueCommand;
-    data.type = commandToSend;
-    data.description = "Nuevo...";
-    data.attributes = {
-      data: commandData
-    }
 
     // const response = fetch(`api/command/send?deviceId=${deviceId}`, {
     //   method: 'POST',
@@ -425,6 +482,61 @@ const DevicePage = () => {
   useEffect(() => {
     filterDevices();
   }, [devices.length > 0]);
+
+  const getCommandKey = (type) => {
+    let object = command.find((elem) => elem.type === type);
+    if(object)
+    return object.key
+  };
+  
+  const command = [
+    {
+      type: "engineStop",
+      name: "commandEngineStop"
+    },{
+        type: "custom",
+        key: "data",
+        name: "commandCustom",
+        valueType: "string"        
+    }, {
+        type: "deviceIdentification",
+        name: "commandDeviceIdentification"
+    },{
+        type: "positionPeriodic",    
+        key: "frequency",
+        name: "commandPositionPeriodic",
+        valueType: "number",
+        allowDecimals: false,
+        minValue: 0,
+        dataType: "frequency"        
+    }, {
+        type: "positionSingle",
+        name: "commandPositionSingle"
+    }, {
+        type: "requestPhoto",
+        name: "commandRequestPhoto"
+    }, {
+        type: "alarmArm",
+        name: "commandAlarmArm"
+    }, {
+        type: "alarmDisarm",
+        name: "commandAlarmDisarm"
+    }, {
+        type: "positionStop",
+        name: "commandPositionStop"
+    },{
+        type: "engineResume",
+        name: "commandEngineResume"
+    }, 
+  ];
+
+  const capitalize = (value) => {
+    return value.charAt(0).toUpperCase() + value.slice(1);
+  };  
+
+  useEffect(()=> {
+console.log(commandToSend)
+  },[commandToSend])
 
   return (
     <>
@@ -1291,30 +1403,10 @@ const DevicePage = () => {
             </DialogTitle>
             <DialogContent>
               <form>
-                <Typography>
-                  {t('commandSendSms')}:
-                  <Radio
-                    checked={radioValueCommand === true}
-                    onClick={handleChangeRadioCommand}
-                    color="primary"
-                    value={true}
-                    name="radio-button-demo"
-                    inputProps={{ 'aria-label': 'A' }}
-                  />
-                  {t('reportYes')}
-                  <Radio
-                    checked={radioValueCommand === false}
-                    onChange={handleChangeRadioCommand}
-                    color="primary"
-                    value={false}
-                    name="radio-button-demo"
-                    inputProps={{ 'aria-label': 'B' }}
-                  />
-                  {t('reportNo')}
-                </Typography>
                 <FormControl
                   variant="outlined"
                   fullWidth={true}
+                  style={{marginBottom: '15px'}}
                   className={classes.formControl}
                 >
                   <InputLabel htmlFor="outlined-age-native-simple">
@@ -1323,7 +1415,7 @@ const DevicePage = () => {
                   <Select
                     native
                     fullWidth
-                    value={commandToSend}
+                    value={commandToSend.type}
                     onChange={handleChangeCommandToSend}
                     label={t("sharedType")}
                     name="name"
@@ -1336,16 +1428,15 @@ const DevicePage = () => {
                     <option aria-label="None" value="" />
                     {availableTypesByDeviceId.map((type) => (
                       <option key={type.type} value={type.type}>
-                        {type.type}
+                        {t(`command${capitalize(type.type)}`)}
                       </option>
                     ))}
                   </Select>
                 </FormControl>
-                <TextField style={{ display: `${commandToSend === 'custom' ? 'block' : 'none'}` }}
+                <TextField style={{ display: `${commandToSend.type === 'custom' ? 'block' : 'none'}` }}
                   label={t("commandData")}
-                  margin="normal"
                   fullWidth
-                  value={newAttribute.value}
+                  value={commandToSend.value}
                   name="commandData"
                   onChange={handleChangeCommandData}
                   type="text"
@@ -1354,6 +1445,36 @@ const DevicePage = () => {
                     shrink: true,
                   }}
                 />
+                <TextField style={{width: '75%',
+                  display: `${commandToSend.type === 'positionPeriodic' ? 'inline-flex' : 'none'}`}}
+                  label={t(`commandFrequency`)}
+                  name="reportPeriod"
+                  InputProps={{ 
+                    inputProps: { 
+                      min: 0
+                    }
+                  }}                                
+                  type="number"
+                  //value={(e) => e.target.value}
+                  variant="outlined"
+                  error={flag}
+                  disabled={!unitTime}
+                  onChange={(e) => setAttributePositionPeriod(e)}
+                />             
+                <Select style={{width: '23%', float: 'right',
+                  display: `${commandToSend.type === 'positionPeriodic' ? 'flex' : 'none'}`}}
+                    native
+                    value={unitTime}
+                    onChange={(e) => changeUnitTime(e)}                   
+                    name="type"
+                    type="text"
+                    variant="outlined"
+                  >
+                    <option value=""/>
+                    <option value={1}>s</option>
+                    <option value={60}>m</option>
+                    <option value={3600}>h</option>
+                </Select>          
               </form>
             </DialogContent>
             <DialogActions>
