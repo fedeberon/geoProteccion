@@ -523,14 +523,7 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupAssignment, userId
           }             
         })      
       } 
-    }  
-    console.log(geofencesByDeviceId);
-    console.log(arrayToMap)
-    console.log(geofencesByUserId);  
-    console.log(allData);
-    console.log(selected);
-    console.log(type);
-    console.log(devicesByUserId);
+    }
   },[geofencesByDeviceId, type, geofencesByGroupId, geofencesByUserId, allData, arrayToMap, devicesByUserId]);
 
   useEffect(()=> {

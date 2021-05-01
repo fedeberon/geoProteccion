@@ -89,6 +89,8 @@ const DevicePage = () => {
     textChannel: false,
     type: '',
   });
+  const [openG, setOpenG] = React.useState(false);
+  const [open, setOpen] = React.useState(false);
   const [commandData, setCommandData] = useState("");
   const [openModalAcumulators, setOpenModalAcumulators] = useState(false);
   const [totalDistance, setTotalDistance] = useState(0);
@@ -185,22 +187,7 @@ const DevicePage = () => {
 
   const handleClickAttributes = () => {
     setOpenModalAttributes(!openModalAttributes);
-    setSel
-    const changeUnitTime = (e) => {
-      setFlag(true);
-      setUnitTime(e.target.value);
-    };
-  
-    const setAttributePositionPeriod = (e) => {
-      e.preventDefault();
-      setFlag(false);
-      setCommandToSend({
-        ...commandToSend,
-        attributes: {
-          [getCommandKey(commandToSend.type)]: (Number(e.target.value) * unitTime)
-        },
-      })
-    };ectedDevice({ ...selectedDevice, attributes: selectedDevice.attributes });
+    setSelectedDevice({ ...selectedDevice, attributes: selectedDevice.attributes });
     setNewDevice({ ...newDevice, attributes: attributes });
     let originalAttributes = getOriginalAttributes(selectedDevice.attributes);
     setAttributes(originalAttributes);
@@ -221,31 +208,12 @@ const DevicePage = () => {
 
   const handleExpandClick = (index) => {
     setCollapsedIndex(collapsedIndex === index ? -1 : index);
-    setAdd
-    const changeUnitTime = (e) => {
-      setFlag(true);
-      setUnitTime(e.target.value);
-    };
-  
-    const setAttributePositionPeriod = (e) => {
-      e.preventDefault();
-      setFlag(false);
-      setCommandToSend({
-        ...commandToSend,
-        attributes: {
-          [getCommandKey(commandToSend.type)]: (Number(e.target.value) * unitTime)
-        },
-      })
-    };ressFound('');
+    setAddressFound('');
   };
-
-  const [open, setOpen] = React.useState(false);
-
+  
   const handleClickList = () => {
     setOpen(!open);
   };
-
-  const [openG, setOpenG] = React.useState(false);
 
   const handleClickListG = () => {
     setOpenG(!openG);

@@ -10,6 +10,7 @@ import Slide from "@material-ui/core/Slide";
 import t from "../common/localization";
 import ReportsMap from "./ReportsMap";
 import PropTypes from "prop-types";
+import { DataGrid } from '@material-ui/data-grid';
 import PermDataSettingIcon from '@material-ui/icons/PermDataSetting';
 import GetAppIcon from '@material-ui/icons/GetApp';
 import CachedIcon from '@material-ui/icons/Cached';
@@ -102,6 +103,7 @@ export default function ReportsDialog({
   const server = useSelector((state) => state.session.server);
   const [devices, setDevices] = useState([]);
   const [addressFound, setAddressFound] = useState('');
+  const tripsRows = [];
   // const devices = useSelector((state) => state.devices.items);
   const [open, setOpen] = React.useState(false);
   const [fullscreen, setFullscreen] = useState(false);
@@ -263,19 +265,16 @@ export default function ReportsDialog({
 
         response.map((element, index) => {
           if (element.positionId !== 0) {
-            positions =
-              positions +
-              "id=" +
-              element.positionId +
-              `${index !== events.length - 1 ? "&" : ""}`;
+            positions = positions + "id=" + element.positionId + `${index !== events.length - 1 ? "&" : ""}`;
           }
         });
 
-        response = await getPositionsReports(positions);
-        setPositions(response);
+        let responsePositions = await getPositionsReports(positions);
+        setPositions(responsePositions);
         setIsLoading(false);
         break;
       case "trips":
+        setHidden(true);
         reportConfiguration.arrayDeviceSelected.map((element) => {
           params = params + "deviceId=" + element + "&";
         });
@@ -295,6 +294,7 @@ export default function ReportsDialog({
 
         await getPositions(reportConfiguration.arrayDeviceSelected, reportConfiguration.fromDate, reportConfiguration.toDate)
           .then((results) => {
+            setPositions(results);
             positions = results;
           })
           .catch((e) => console.log(e));
@@ -392,6 +392,14 @@ export default function ReportsDialog({
     setAddressFound("");
     setPositionState(position);
   };
+
+  const handleRowTripSelection = (e) => {
+    let selection;    
+    positions.map((value) => {
+      selection = value.find((object) => object.id === e.data.startPositionId)
+    });
+    setSelectedPosition(selection);
+  }
 
   const getAddress = async(lat, lon) => {
     let response = await fetch(`api/server/geocode?latitude=${lat}&longitude=${lon}`, {method: 'GET'})
@@ -566,7 +574,47 @@ export default function ReportsDialog({
     setStops([]);
     setSummary([]);
     setGraphicData([]);
-  };  
+  };
+
+  const tripsColumns = [
+    { field: 'deviceName', headerName: `${t(`reportDeviceName`)}`, width: 260 },
+    { field: 'startTime', headerName: `${t(`reportStartTime`)}`, width: 165 },
+    { field: 'endTime', headerName: `${t(`reportEndTime`)}`, width: 165 },
+    { field: 'startOdometer', headerName: `${t(`reportStartOdometer`)}`, width: 130 },
+    { field: 'startAddress', headerName: `${t(`reportStartAddress`)}`, width: 280 },
+    { field: 'endOdometer', headerName: `${t(`reportEndOdometer`)}`, width: 130 },
+    { field: 'endAddress', headerName: `${t(`reportEndAddress`)}`, width: 280 },
+    { field: 'distance', headerName: `${t(`sharedDistance`)}`, width: 100 },
+    { field: 'averageSpeed', headerName: `${t(`reportAverageSpeed`)}`, width: 100 },
+    { field: 'maxSpeed', headerName: `${t(`reportMaximumSpeed`)}`, width: 100 },
+    { field: 'duration', headerName: `${t(`reportDuration`)}`, width: 130 },
+    { field: 'spentFuel', headerName: `${t(`reportSpentFuel`)}`, width: 100 },
+    { field: 'driverName', headerName: `${t(`sharedDriver`)}`, width: 150 },
+  ];
+
+  try {
+    trips && trips.map((trip,index) => {
+      tripsRows.push({
+        id: index,
+        deviceName: trip.deviceName,
+        startTime: getDateTime(trip.startTime),
+        endTime: getDateTime(trip.endTime),
+        startOdometer: Number((trip.startOdometer/1000).toFixed(2)) + ` ${server && server.attributes?.distanceUnit}`,
+        startAddress: trip.startAddress,
+        endOdometer: Number((trip.endOdometer / 1000).toFixed(2)) + ` ${server && server.attributes?.distanceUnit}`,
+        endAddress: trip.endAddress,
+        distance: Number((trip.distance / 1000).toFixed(2)) + ` ${server && server.attributes?.distanceUnit}`, 
+        averageSpeed: Number(trip.averageSpeed.toFixed(2)) + ` ${server && server.attributes?.speedUnit}`,
+        maxSpeed: Number(trip.maxSpeed.toFixed(2)) + ` ${server && server.attributes?.speedUnit}`,
+        duration: trip.duration,
+        spentFuel: Number(trip.spentFuel.toFixed(1)) + ` ${server && server.attributes?.volumeUnit}`,
+        driverName: trip.driverName ? trip.driverName : "",
+        startPositionId: trip.startPositionId
+      });
+    });
+  } catch (error) {
+    console.error(error);
+  }; 
 
   return (
     <div>
@@ -728,7 +776,6 @@ export default function ReportsDialog({
           style={{ display: `${route.length === 0 ? "none" : "block"}` }}
           className={`scrollbar ${classes.tableReports}`}
         >
-          {/* <TableContainer component={Paper}> */}
             <Table stickyHeader={true}>
               <TableHead>
                 <TableRow>
@@ -768,7 +815,6 @@ export default function ReportsDialog({
                   ))}
               </TableBody>
             </Table>
-          {/* </TableContainer> */}
         </div>
 
         
@@ -776,7 +822,7 @@ export default function ReportsDialog({
         <div
           onScroll={handleScroll}
           style={{ display: `${events.length === 0 ? "none" : "inline-block"}` }}
-          className={`scrollbar ${classes.tableReports}`}
+          className={`scrollbar ${classes.tableEventsReports}`}
         >
             <Table stickyHeader={true}>
               <TableHead>
@@ -802,15 +848,15 @@ export default function ReportsDialog({
                     <TableRow
                       key={object.id}
                       className={classes.row}
-                      onClick={() => 
-                        handleSelectedPosition(positions.find((element) => element.id === object.positionId))                       
-                      }
+                      // onClick={() => 
+                      //   handleSelectedPosition(positions.find((element) => element.id === object.positionId))                       
+                      // }
                     >
                       <TableCell>{getDateTime(object.serverTime)}</TableCell>
                       <TableCell>{GetDeviceName(object.deviceId)}</TableCell>
                       <TableCell>{t(`${object.type}`)}</TableCell>
-                      <TableCell>{object.geofenceId}</TableCell>
-                      <TableCell>{object.maintenanceId}</TableCell>
+                      <TableCell>{object.geofenceId === 0 ? '' : object.geofenceId}</TableCell>
+                      <TableCell>{object.maintenanceId === 0 ? '' : object.maintenanceId}</TableCell>
                     </TableRow>
                   ))}
               </TableBody>
@@ -818,144 +864,110 @@ export default function ReportsDialog({
         </div>
         <div
           onScroll={handleScroll}
-          style={{ display: `${(route.length !== 0 || events.length !== 0) && window.innerWidth > 767 ? "inline-block" : "none"}` }}
-          className={`scrollbar ${classes.tableReportsState}`}
-        >
-            {/* <ReportsState positionData={positionState} reportData={reportType}/> */}
+          style={{ display: `${window.innerWidth > 767 ? "inline-block" : "none"}` }}
+          className={`scrollbar ${classes.tableReportsState}`}>
+            {route.length > 0 &&
             <Table stickyHeader={true} size={"small"}>
-                        <TableHead>
-                        <TableRow>
-                            <TableCell>{t("stateTitle")}</TableCell>
-                            <TableCell/>
-                        </TableRow>
-                        <TableRow>
-                            <TableCell>{t("stateName")}</TableCell>
-                            <TableCell>{t("stateValue")}</TableCell>
-                        </TableRow>
-                        </TableHead>
-                        <TableBody style={{display: positionState && !positionState.serverTime ? 'none' : ''}}>
-                            <TableRow className={classes.row}>
-                            <TableCell>Hora</TableCell>
-                            <TableCell>{positionState.serverTime ? getDateTime(positionState.serverTime) : ""}</TableCell>
-                            </TableRow>
-                            <TableRow className={classes.row}>
-                            <TableCell>Latitud</TableCell>
-                            <TableCell>{positionState.latitude.toFixed(6)}°</TableCell>
-                            </TableRow>
-                            <TableRow className={classes.row}>
-                            <TableCell>Longitud</TableCell>
-                            <TableCell>{positionState.longitude.toFixed(6)}°</TableCell>
-                            </TableRow>
-                            <TableRow className={classes.row}>
-                            <TableCell>Válida</TableCell>
-                            <TableCell>{t(`${Boolean(positionState.valid)}`)}</TableCell>
-                            </TableRow>
-                            <TableRow className={classes.row}>
-                            <TableCell>Precisión</TableCell>
-                            <TableCell>{positionState.accuracy.toFixed(2)} {server && `${server.attributes?.distanceUnit}`}</TableCell>
-                            </TableRow>
-                            <TableRow className={classes.row}>
-                            <TableCell>Altitud</TableCell>
-                            <TableCell>{positionState.altitude}</TableCell>
-                            </TableRow>
-                            <TableRow className={classes.row}>
-                            <TableCell>Velocidad</TableCell>
-                            <TableCell>{positionState.speed.toFixed(1)} {server && `${server.attributes?.speedUnit}`}</TableCell>
-                            </TableRow>
-                            <TableRow className={classes.row}>
-                            <TableCell>Curso</TableCell>
-                            <TableCell>{getCourse(positionState.course)}</TableCell>
-                            </TableRow>
-                            <TableRow className={classes.row}>
-                            <TableCell>Dirección</TableCell>
-                            <TableCell style={{color: 'blue', textDecoration: 'underline'}}
-                            disabled={addressFound} onClick={() => getAddress(positionState.latitude, positionState.longitude)}>
-                            {`${addressFound === "" ? `${t("sharedShowAddress")}` : `${addressFound}`}`}
-                            </TableCell>
-                            </TableRow>
-                            <TableRow className={classes.row}>
-                            <TableCell>Alarma</TableCell>
-                            <TableCell>{`${positionState.attributes?.alarm}`}</TableCell>
-                            </TableRow>
-                            <TableRow className={classes.row}>
-                            <TableCell>Distancia</TableCell>
-                            <TableCell>{positionState.attributes?.distance} {server && `${server.attributes?.distanceUnit}`}</TableCell>
-                            </TableRow>
-                            <TableRow className={classes.row}>
-                            <TableCell>Distancia Total</TableCell>
-                            <TableCell>
-                                {(Math.round((positionState.attributes?.totalDistance) / 10)) / 100} {server && `${server.attributes?.distanceUnit}`}</TableCell>
-                            </TableRow>
-                            <TableRow className={classes.row}>
-                            <TableCell>Encendido</TableCell>
-                            <TableCell>{t(`${Boolean(positionState.attributes?.ignition)}`)}</TableCell>
-                            </TableRow>
-                            <TableRow className={classes.row}>
-                            <TableCell>Horas</TableCell>
-                            <TableCell>{positionState.attributes?.hours}</TableCell>
-                            </TableRow>
-                            <TableRow className={classes.row}>
-                            <TableCell>Movimiento</TableCell>
-                            <TableCell>{t(`${Boolean(positionState.attributes?.motion)}`)}</TableCell>
-                            </TableRow>
-                            <TableRow className={classes.row}>
-                            <TableCell>Protocolo</TableCell>
-                            <TableCell>{`${positionState.protocol}`}</TableCell>
-                            </TableRow>
-                        </TableBody>
-                    </Table>
-        </div>
-        {/*Table for TRIPS Reports*/}
-        <div
-          onScroll={handleScroll}
-          style={{ display: `${trips.length === 0 ? "none" : "block"}` }}
-          className={`scrollbar ${classes.tableTripsReports}`}
-        >
-          {/* <TableContainer component={Paper}> */}
-            <Table stickyHeader={true}>
-              <TableHead >
+              <TableHead>
                 <TableRow>
-                  <TableCell component="th" scope="row">{t("reportDeviceName")}</TableCell>
-                  <TableCell>{t("reportStartTime")}</TableCell>
-                  <TableCell>{t("reportEndTime")}</TableCell>
-                  <TableCell>{t("reportStartOdometer")}</TableCell>
-                  <TableCell>{t("reportStartAddress")}</TableCell>
-                  <TableCell>{t("reportEndOdometer")}</TableCell>
-                  <TableCell>{t("reportEndAddress")}</TableCell>
-                  <TableCell>{t("sharedDistance")}</TableCell>
-                  <TableCell>{t("reportAverageSpeed")}</TableCell>
-                  <TableCell>{t("reportMaximumSpeed")}</TableCell>
-                  <TableCell>{t("reportDuration")}</TableCell>
-                  <TableCell>{t("reportSpentFuel")}</TableCell>
-                  <TableCell>{t("sharedDriver")}</TableCell>
+                    <TableCell>{t("stateTitle")}</TableCell>
+                    <TableCell/>
+                </TableRow>
+                <TableRow>
+                    <TableCell>{t("stateName")}</TableCell>
+                    <TableCell>{t("stateValue")}</TableCell>
                 </TableRow>
               </TableHead>
-              <TableBody>
-                {trips
-                  .map((object) => (
-                    <TableRow
-                      key={object.id}
-                      style={{ padding: "3px", fontSize: "13px" }}
-                    >
-                      <TableCell>{object.deviceName}</TableCell>
-                      <TableCell>{getDateTime(object.startTime)}</TableCell>
-                      <TableCell>{getDateTime(object.endTime)}</TableCell>
-                      <TableCell>{(object.startOdometer / 1000).toFixed(2)} {server && `${server.attributes?.distanceUnit}`}</TableCell>
-                      <TableCell>{object.startAddress}</TableCell>
-                      <TableCell>{(object.endOdometer / 1000).toFixed(2)} {server && `${server.attributes?.distanceUnit}`}</TableCell>
-                      <TableCell>{object.endAddress}</TableCell>
-                      <TableCell>{((object.distance / 1000).toFixed(2))} {server && `${server.attributes?.distanceUnit}`}</TableCell>
-                      <TableCell>{object.averageSpeed.toFixed(2)} {server && `${server.attributes?.speedUnit}`}</TableCell>
-                      <TableCell>{object.maxSpeed.toFixed(2)} {server && `${server.attributes?.speedUnit}`}</TableCell>
-                      <TableCell>{object.duration} m</TableCell>
-                      <TableCell>{object.spentFuel.toFixed(1)} {server && `${server.attributes?.volumeUnit}`}</TableCell>
-                      <TableCell>{object.driverName ? object.driverName : ""}</TableCell>
-                    </TableRow>
-                  ))}
+              <TableBody style={{display: positionState && !positionState.serverTime ? 'none' : ''}}>
+                <TableRow className={classes.row}>
+                <TableCell>Hora</TableCell>
+                <TableCell>{positionState && 
+                            positionState.serverTime ? getDateTime(positionState.serverTime) : ""}</TableCell>
+                </TableRow>
+                <TableRow className={classes.row}>
+                <TableCell>Latitud</TableCell>
+                <TableCell>{positionState && positionState.latitude.toFixed(6)}°</TableCell>
+                </TableRow>
+                <TableRow className={classes.row}>
+                <TableCell>Longitud</TableCell>
+                <TableCell>{positionState && positionState.longitude.toFixed(6)}°</TableCell>
+                </TableRow>
+                <TableRow className={classes.row}>
+                <TableCell>Válida</TableCell>
+                <TableCell>{t(`${Boolean(positionState && positionState.valid)}`)}</TableCell>
+                </TableRow>
+                <TableRow className={classes.row}>
+                <TableCell>Precisión</TableCell>
+                <TableCell>{positionState && positionState.accuracy.toFixed(2)} {server && `${server.attributes?.distanceUnit}`}</TableCell>
+                </TableRow>
+                <TableRow className={classes.row}>
+                <TableCell>Altitud</TableCell>
+                <TableCell>{positionState && positionState.altitude}</TableCell>
+                </TableRow>
+                <TableRow className={classes.row}>
+                <TableCell>Velocidad</TableCell>
+                <TableCell>{positionState && positionState.speed.toFixed(1)} {server && `${server.attributes?.speedUnit}`}</TableCell>
+                </TableRow>
+                <TableRow className={classes.row}>
+                <TableCell>Curso</TableCell>
+                <TableCell>{getCourse(positionState && positionState.course)}</TableCell>
+                </TableRow>
+                <TableRow className={classes.row}>
+                <TableCell>Dirección</TableCell>
+                <TableCell style={{color: 'blue', textDecoration: 'underline'}}
+                disabled={addressFound} onClick={() => getAddress(positionState && positionState.latitude, positionState.longitude)}>
+                {`${addressFound === "" ? `${t("sharedShowAddress")}` : `${addressFound}`}`}
+                </TableCell>
+                </TableRow>
+                <TableRow className={classes.row}>
+                <TableCell>Alarma</TableCell>
+                <TableCell>{`${positionState && positionState.attributes?.alarm}`}</TableCell>
+                </TableRow>
+                <TableRow className={classes.row}>
+                <TableCell>Distancia</TableCell>
+                <TableCell>{positionState && positionState.attributes?.distance} {server && `${server.attributes?.distanceUnit}`}</TableCell>
+                </TableRow>
+                <TableRow className={classes.row}>
+                <TableCell>Distancia Total</TableCell>
+                <TableCell>
+                    {(Math.round(positionState && positionState.attributes?.totalDistance) / 10) / 100} {server && `${server.attributes?.distanceUnit}`}</TableCell>
+                </TableRow>
+                <TableRow className={classes.row}>
+                <TableCell>Encendido</TableCell>
+                <TableCell>{t(`${Boolean(positionState && positionState.attributes?.ignition)}`)}</TableCell>
+                </TableRow>
+                <TableRow className={classes.row}>
+                <TableCell>Horas</TableCell>
+                <TableCell>{positionState && positionState.attributes?.hours}</TableCell>
+                </TableRow>
+                <TableRow className={classes.row}>
+                <TableCell>Movimiento</TableCell>
+                <TableCell>{t(`${Boolean(positionState && positionState.attributes?.motion)}`)}</TableCell>
+                </TableRow>
+                <TableRow className={classes.row}>
+                <TableCell>Protocolo</TableCell>
+                <TableCell>{`${positionState && positionState.protocol}`}</TableCell>
+                </TableRow>
               </TableBody>
             </Table>
-          {/* </TableContainer> */}
+          }
         </div>
+        
+        {/*Table for TRIPS Reports*/}
+        {trips.length > 0 && 
+          <div className={classes.dataGrid}>
+          <DataGrid
+              component={Paper}
+              rows={tripsRows} 
+              columns={tripsColumns} 
+              pageSize={trips.length} 
+              rowHeight={42}
+              hideFooter={true}
+              checkboxSelection={false}
+              onRowSelected={handleRowTripSelection}
+          />
+        </div>
+        }   
         
         {/*Table for STOPS Reports*/}
         <div
@@ -1065,10 +1077,9 @@ export default function ReportsDialog({
 
 
         {/* Graphic */}
+        {reportType === 'graphic' &&         
         <div
           className={classes.graphic}
-          style={{display: reportType === 'graphic' ? "block" : "none",
-          }}
         >
           <ReportsGraphic 
             type={reportType} 
@@ -1076,7 +1087,7 @@ export default function ReportsDialog({
             graphicType={reportConfiguration.graphicType}
             devices={reportConfiguration.arrayDeviceSelected}
           />
-        </div>
+        </div>}
 
         <div
           className={`${classes.overflowHidden} ${

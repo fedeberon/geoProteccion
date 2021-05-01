@@ -160,7 +160,7 @@ const LoginPage = () => {
               label={t("userEmail")}
               name="email"
               value={email}
-              autoComplete={false}
+              autoComplete="false"
               autoFocus
               onChange={handleEmailChange}
               helperText={failed && `${t("loginFailed")}`}
@@ -175,7 +175,7 @@ const LoginPage = () => {
               name="password"
               value={password}
               type="password"
-              autoComplete={false}
+              autoComplete="false"
               onChange={handlePasswordChange}
             />
 

@@ -17,6 +17,21 @@ const reportsDialogStyles = makeStyles((theme) => ({
       marginLeft: '15px',
     },
   },
+  dataGrid: {
+    width: "100%",
+    height: "80%",
+    margin: "0px 40px",
+    padding: "0px 29px",
+    paddingTop: "1%",
+    backgroundColor: "white",
+    [theme.breakpoints.up('md')]: {
+      height: '86%',
+      width: '100%', 
+      margin: '0 auto',
+      paddingTop: 0,
+      padding: 0
+    },
+  },
   buttonsConfig: {
 
     [theme.breakpoints.up("md")]: {
@@ -74,6 +89,14 @@ const reportsDialogStyles = makeStyles((theme) => ({
     width: "100%",
     height: "80%",
     position: "absolute",
+    overflowY: "auto",
+    paddingBottom: "2.5%",
+  },
+  tableEventsReports: {
+    top: "20%",
+    position: "absolute",
+    width: "100%",
+    height: "80%",
     overflowY: "auto",
     paddingBottom: "2.5%",
   },
