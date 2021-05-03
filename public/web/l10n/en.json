@@ -466,5 +466,6 @@
     "geofenceExit": "Leaving geofence",
     "showLess": "Show Less",
     "brand": "Brand",
-    "updatedInfo": "Successfully Updated"
+    "updatedInfo": "Successfully Updated",
+    "positionDate": "Date"
 }

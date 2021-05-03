@@ -6,6 +6,19 @@ const reportsRouteStyles = makeStyles((theme) => ({
     minWidth: 120,
     maxWidth: 300,
   },
+  dataGrid: {
+    width: "100%",
+    height: "85vh",
+    paddingTop: "1%",
+    backgroundColor: "white",
+    [theme.breakpoints.up('md')]: {
+      height: '80vh',
+      width: '100%', 
+      margin: '0 auto',
+      paddingTop: 0,
+      padding: 0
+    },
+  },
   noLabel: {
     marginTop: theme.spacing(3),
   },

@@ -251,14 +251,18 @@ const UserPage = () => {
   }
 
   const getAttributeName = (key) => {
-    let value = positions.positionsAttributes.find(elem => elem.key === key);
-    return value.name;
+    try{
+      let value = positions.positionsAttributes.find(elem => elem.key === key);
+      return value.name;
+    } catch (error) {
+      console.error(error);
+    }    
   }
 
   const getAttributeType = (type) => {
     let value = positions.positionsAttributes.find(elem => elem.valueType === type);
 
-    switch (value.valueType) {
+    switch (value.valueType){
       case "number":
         return "sharedTypeNumber";
       case "string":
@@ -285,7 +289,7 @@ const UserPage = () => {
               className={classes.adminButton}
             >
               {/* {t('userAdmin')} */}
-              <i class="fas fa-tools "></i>
+              <i className="fas fa-tools "></i>
             </Button>
           }
         </Typography>
@@ -688,7 +692,7 @@ const UserPage = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {computedAttributes.sort((f,s) => {
+                {computedAttributes && computedAttributes.sort((f,s) => {
                  return f.id - s.id
                }).map((el) => (
                   <TableRow className="computedAtribRows" hover key={el.id}>

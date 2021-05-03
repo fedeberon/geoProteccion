@@ -10,13 +10,12 @@ import Slide from "@material-ui/core/Slide";
 import t from "../common/localization";
 import ReportsMap from "./ReportsMap";
 import PropTypes from "prop-types";
-import { DataGrid } from '@material-ui/data-grid';
 import PermDataSettingIcon from '@material-ui/icons/PermDataSetting';
 import GetAppIcon from '@material-ui/icons/GetApp';
 import CachedIcon from '@material-ui/icons/Cached';
 import MailOutlineIcon from '@material-ui/icons/MailOutline';
 import * as service from "../utils/serviceManager";
-import { getDateTime } from '../utils/functions';
+import { getDateTime, getHoursMinutes } from '../utils/functions';
 import Box from "@material-ui/core/Box";
 import ReportsConfig from "./ReportsConfig";
 import ReportsGraphic from "./ReportsGraphic";
@@ -47,9 +46,8 @@ import { useSelector } from "react-redux";
 import { downloadCsv, getCourse } from "../utils/functions";
 import GraphicChart from "./GraphicChart";
 import reportsDialogStyles from "./styles/ReportsDialogStyles";
-import InputLabel from '@material-ui/core/InputLabel';
-import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
+import ReportsTrips from './ReportsTrips';
 
 const useStyles = reportsDialogStyles;
 
@@ -103,14 +101,13 @@ export default function ReportsDialog({
   const server = useSelector((state) => state.session.server);
   const [devices, setDevices] = useState([]);
   const [addressFound, setAddressFound] = useState('');
-  const tripsRows = [];
-  // const devices = useSelector((state) => state.devices.items);
   const [open, setOpen] = React.useState(false);
   const [fullscreen, setFullscreen] = useState(false);
   const [hidden, setHidden] = useState(false);
   const [openConfigModal, setOpenConfigModal] = useState(false);
   const [reportConfiguration, setReportConfiguration] = useState({});
   const [route, setRoute] = useState([]);
+  const [reportType, setReportType] = useState();
   const [selectedPosition, setSelectedPosition] = useState({});
   const [events, setEvents] = useState([]);
   const [trips, setTrips] = useState([]);
@@ -135,11 +132,6 @@ export default function ReportsDialog({
     longitude: 0, network: null, outdated: false, protocol: '', serverTime: '', speed: 0,
     type: null, valid: false 
   });
-
-  let auxData = [];
-  const timeData = [];
-  const [reportType, setReportType] = useState();
-
 
   const handleChangeReportType = (event) => {
     setReportType(event.target.value);
@@ -248,6 +240,7 @@ export default function ReportsDialog({
         setIsLoading(false);
         break;
       case "events":
+        setHidden(true);
         reportConfiguration.arrayDeviceSelected.map((element) => {
           params = params + "deviceId=" + element + "&";
         });
@@ -392,14 +385,6 @@ export default function ReportsDialog({
     setAddressFound("");
     setPositionState(position);
   };
-
-  const handleRowTripSelection = (e) => {
-    let selection;    
-    positions.map((value) => {
-      selection = value.find((object) => object.id === e.data.startPositionId)
-    });
-    setSelectedPosition(selection);
-  }
 
   const getAddress = async(lat, lon) => {
     let response = await fetch(`api/server/geocode?latitude=${lat}&longitude=${lon}`, {method: 'GET'})
@@ -576,46 +561,6 @@ export default function ReportsDialog({
     setGraphicData([]);
   };
 
-  const tripsColumns = [
-    { field: 'deviceName', headerName: `${t(`reportDeviceName`)}`, width: 260 },
-    { field: 'startTime', headerName: `${t(`reportStartTime`)}`, width: 165 },
-    { field: 'endTime', headerName: `${t(`reportEndTime`)}`, width: 165 },
-    { field: 'startOdometer', headerName: `${t(`reportStartOdometer`)}`, width: 130 },
-    { field: 'startAddress', headerName: `${t(`reportStartAddress`)}`, width: 280 },
-    { field: 'endOdometer', headerName: `${t(`reportEndOdometer`)}`, width: 130 },
-    { field: 'endAddress', headerName: `${t(`reportEndAddress`)}`, width: 280 },
-    { field: 'distance', headerName: `${t(`sharedDistance`)}`, width: 100 },
-    { field: 'averageSpeed', headerName: `${t(`reportAverageSpeed`)}`, width: 100 },
-    { field: 'maxSpeed', headerName: `${t(`reportMaximumSpeed`)}`, width: 100 },
-    { field: 'duration', headerName: `${t(`reportDuration`)}`, width: 130 },
-    { field: 'spentFuel', headerName: `${t(`reportSpentFuel`)}`, width: 100 },
-    { field: 'driverName', headerName: `${t(`sharedDriver`)}`, width: 150 },
-  ];
-
-  try {
-    trips && trips.map((trip,index) => {
-      tripsRows.push({
-        id: index,
-        deviceName: trip.deviceName,
-        startTime: getDateTime(trip.startTime),
-        endTime: getDateTime(trip.endTime),
-        startOdometer: Number((trip.startOdometer/1000).toFixed(2)) + ` ${server && server.attributes?.distanceUnit}`,
-        startAddress: trip.startAddress,
-        endOdometer: Number((trip.endOdometer / 1000).toFixed(2)) + ` ${server && server.attributes?.distanceUnit}`,
-        endAddress: trip.endAddress,
-        distance: Number((trip.distance / 1000).toFixed(2)) + ` ${server && server.attributes?.distanceUnit}`, 
-        averageSpeed: Number(trip.averageSpeed.toFixed(2)) + ` ${server && server.attributes?.speedUnit}`,
-        maxSpeed: Number(trip.maxSpeed.toFixed(2)) + ` ${server && server.attributes?.speedUnit}`,
-        duration: trip.duration,
-        spentFuel: Number(trip.spentFuel.toFixed(1)) + ` ${server && server.attributes?.volumeUnit}`,
-        driverName: trip.driverName ? trip.driverName : "",
-        startPositionId: trip.startPositionId
-      });
-    });
-  } catch (error) {
-    console.error(error);
-  }; 
-
   return (
     <div>
       <Backdrop className={classes.backdrop} open={isLoading}>
@@ -645,15 +590,6 @@ export default function ReportsDialog({
 
 
         {/*Modal Configuration*/}
-        {/* <div className={classes.positionButton}>
-
-          <FormControl required className={classes.formControlReportType}>
-            
-            
-            
-                  
-            </FormControl>
-          </div> */}
           <Table style={{display: 'block', overflowX: window.innerWidth < 767 ? 'scroll' : ''}}>
             <TableBody style={{display: 'block', marginLeft: '15px'}}>
               <TableRow>
@@ -781,7 +717,7 @@ export default function ReportsDialog({
                 <TableRow>
                   <TableCell>{t("reportDeviceName")}</TableCell>
                   <TableCell>{t("positionValid")}</TableCell>
-                  <TableCell>{t("positionFixTime")}</TableCell>
+                  <TableCell>{t("positionDate")}</TableCell>
                   <TableCell>{t("positionLatitude")}</TableCell>
                   <TableCell>{t("positionLongitude")}</TableCell>
                   <TableCell>{t("positionAltitude")}</TableCell>
@@ -827,7 +763,7 @@ export default function ReportsDialog({
             <Table stickyHeader={true}>
               <TableHead>
                 <TableRow>
-                  <TableCell>{t("positionFixTime")}</TableCell>
+                  <TableCell>{t("positionDate")}</TableCell>
                   <TableCell>{t("reportDeviceName")}</TableCell>
                   <TableCell>{t("sharedType")}</TableCell>
                   <TableCell>{t("sharedGeofence")}</TableCell>
@@ -920,17 +856,13 @@ export default function ReportsDialog({
                 </TableCell>
                 </TableRow>
                 <TableRow className={classes.row}>
-                <TableCell>Alarma</TableCell>
-                <TableCell>{`${positionState && positionState.attributes?.alarm}`}</TableCell>
-                </TableRow>
-                <TableRow className={classes.row}>
                 <TableCell>Distancia</TableCell>
-                <TableCell>{positionState && positionState.attributes?.distance} {server && `${server.attributes?.distanceUnit}`}</TableCell>
+                <TableCell>{positionState && (positionState.attributes?.distance /1000).toFixed(2)} {server && `${server.attributes?.distanceUnit}`}</TableCell>
                 </TableRow>
                 <TableRow className={classes.row}>
                 <TableCell>Distancia Total</TableCell>
                 <TableCell>
-                    {(Math.round(positionState && positionState.attributes?.totalDistance) / 10) / 100} {server && `${server.attributes?.distanceUnit}`}</TableCell>
+                    {(Math.round(positionState && positionState.attributes?.totalDistance) / 1000).toFixed(2)} {server && `${server.attributes?.distanceUnit}`}</TableCell>
                 </TableRow>
                 <TableRow className={classes.row}>
                 <TableCell>Encendido</TableCell>
@@ -938,7 +870,7 @@ export default function ReportsDialog({
                 </TableRow>
                 <TableRow className={classes.row}>
                 <TableCell>Horas</TableCell>
-                <TableCell>{positionState && positionState.attributes?.hours}</TableCell>
+                <TableCell>{positionState && getHoursMinutes(positionState.attributes?.hours)}</TableCell>
                 </TableRow>
                 <TableRow className={classes.row}>
                 <TableCell>Movimiento</TableCell>
@@ -953,21 +885,10 @@ export default function ReportsDialog({
           }
         </div>
         
-        {/*Table for TRIPS Reports*/}
-        {trips.length > 0 && 
-          <div className={classes.dataGrid}>
-          <DataGrid
-              component={Paper}
-              rows={tripsRows} 
-              columns={tripsColumns} 
-              pageSize={trips.length} 
-              rowHeight={42}
-              hideFooter={true}
-              checkboxSelection={false}
-              onRowSelected={handleRowTripSelection}
-          />
+        {/*TRIPS Reports*/}
+        <div>
+          <ReportsTrips dataPositions={positions} dataTrips={trips} selected={handleSelectedPosition}/>
         </div>
-        }   
         
         {/*Table for STOPS Reports*/}
         <div

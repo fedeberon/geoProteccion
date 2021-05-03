@@ -464,5 +464,6 @@
     "brand": "Marca",
     "true": "Sí",
     "false": "No",
-    "updatedInfo": "Información actualizada"
+    "updatedInfo": "Información actualizada",
+    "positionDate": "Fecha"
 }

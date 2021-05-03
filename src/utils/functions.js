@@ -101,13 +101,24 @@ const getDateTime = (dateTime) => {
 
     let newdate = new Date(dateTime);
 
-    return newdate =
-		`${newdate.getFullYear()}-${(newdate.getMonth()+1) < 10 ? `0${newdate.getMonth()+1}` :
-		newdate.getMonth()}-${newdate.getDate() < 10 ? `0${newdate.getDate()}` : newdate.getDate()}
+    newdate =
+		`${newdate.getFullYear()}-${(newdate.getUTCMonth()+1) < 10 ? `0${newdate.getUTCMonth()+1}` :
+		newdate.getUTCMonth()}-${newdate.getUTCDate() < 10 ? `0${newdate.getUTCDate()}` : newdate.getUTCDate()}
 		${newdate.getUTCHours() < 10 ? `0${newdate.getUTCHours()}` :
 		newdate.getUTCHours()}:${newdate.getMinutes() < 10 ? `0${newdate.getMinutes()}` :
 		newdate.getMinutes()}:${newdate.getSeconds() < 10 ? `0${newdate.getSeconds()}` : newdate.getSeconds()}
-		`    
+		`
+
+    return newdate;
+    
+}
+
+const getHoursMinutes = (data) => {
+
+  let hours = Math.trunc(data/(3600*1000));
+  let minutes = Math.round((((data/(3600*1000) - Math.trunc(hours)).toFixed(2)) * 60));
+
+  return `${hours} h ${minutes} m`
 }
 
 export {
@@ -118,4 +129,5 @@ export {
   getOriginalAttributes,
   getDate,
   getDateTime,
+  getHoursMinutes,
 };
