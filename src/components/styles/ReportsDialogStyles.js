@@ -101,7 +101,8 @@ const reportsDialogStyles = makeStyles((theme) => ({
     paddingBottom: "2.5%",
   },
   tableReportsState: {
-    top: "20%",
+    top: "19.5%",
+    borderTop: 'outset',
     justifyContent: "end",
     right: 0,
     position: "absolute",

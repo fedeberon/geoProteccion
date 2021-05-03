@@ -48,6 +48,7 @@ import GraphicChart from "./GraphicChart";
 import reportsDialogStyles from "./styles/ReportsDialogStyles";
 import Select from '@material-ui/core/Select';
 import ReportsTrips from './ReportsTrips';
+import ReportsStops from './ReportsStops';
 
 const useStyles = reportsDialogStyles;
 
@@ -802,7 +803,7 @@ export default function ReportsDialog({
           onScroll={handleScroll}
           style={{ display: `${window.innerWidth > 767 ? "inline-block" : "none"}` }}
           className={`scrollbar ${classes.tableReportsState}`}>
-            {route.length > 0 &&
+            {(route.length > 0 || stops.length > 0) &&
             <Table stickyHeader={true} size={"small"}>
               <TableHead>
                 <TableRow>
@@ -890,8 +891,11 @@ export default function ReportsDialog({
           <ReportsTrips dataPositions={positions} dataTrips={trips} selected={handleSelectedPosition}/>
         </div>
         
-        {/*Table for STOPS Reports*/}
-        <div
+        {/*STOPS Reports*/}
+        <div>
+          <ReportsStops dataPositions={positions} dataStops={stops} selected={handleSelectedPosition}/>
+        </div>
+        {/* <div
           onScroll={handleScroll}
           style={{ display: `${stops.length === 0 ? "none" : "block"}` }}
           className={`scrollbar ${classes.tableReports}`}
@@ -945,7 +949,9 @@ export default function ReportsDialog({
               </TableBody>
             </Table>
           </TableContainer>
-        </div>
+        </div> */}
+
+
         {/*Table for SUMMARY Reports*/}
         <div
           onScroll={handleScroll}
