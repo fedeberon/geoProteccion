@@ -109,14 +109,6 @@ export default function ReportsConfig({ handleReportsConfig, reportType }) {
     handleReportsConfig(configuration);
   };
 
-  // useEffect(()=> {
-  //   console.log(groupsSelected);
-  //   console.log(deviceSelected);
-  //   console.log(typeEventSelected);
-  //   console.log(fromDateTime);
-  //   console.log(toDateTime);
-  // },[groupsSelected, period, fromDateTime, toDateTime, typeEventSelected, deviceSelected])
-
   const handleChangeTypeEvent = (event) => {
     setTypeEventSelected(event.target.value);
   };  

@@ -222,16 +222,21 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource }) => {
             properties: { ...properties },
           });
 
-          mapManager.map.addSource(`circles-${index}`, {
-            type: "geojson",
-            data: circle,
-          });
-          mapManager.addPolygonLayer(
-            `circles-${index}`,
-            `circles-${index}`,
-            attributes.color,
-            "{name}"
-          );
+          try{
+            mapManager.map.addSource(`circles-${index}`, {
+              type: "geojson",
+              data: circle,
+            });
+            mapManager.addPolygonLayer(
+              `circles-${index}`,
+              `circles-${index}`,
+              attributes.color,
+              "{name}"
+            );
+          } catch (error){
+            console.error(error);
+          }
+          
           break;
         case "POLYGON":
           attributes = getPolygonAttributes(element, attributes);
@@ -251,16 +256,20 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource }) => {
             properties: { ...properties },
           });
 
-          mapManager.map.addSource(`polygons-${index}`, {
-            type: "geojson",
-            data: polygon,
-          });
-          mapManager.addPolygonLayer(
-            `polygons-${index}`,
-            `polygons-${index}`,
-            attributes.color,
-            "{name}"
-          );
+          try{
+            mapManager.map.addSource(`polygons-${index}`, {
+              type: "geojson",
+              data: polygon,
+            });
+            mapManager.addPolygonLayer(
+              `polygons-${index}`,
+              `polygons-${index}`,
+              attributes.color,
+              "{name}"
+            );
+          } catch(error){
+            console.error(error);
+          }
 
           attributes.coordinates = [];
           break;
@@ -282,16 +291,20 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource }) => {
             properties: { ...properties },
           });
 
-          mapManager.map.addSource(`polylines-${index}`, {
-            type: "geojson",
-            data: polyline,
-          });
-          mapManager.addLineLayer(
-            `polylines-${index}`,
-            `polylines-${index}`,
-            attributes.color,
-            "{name}"
-          );
+          try{
+            mapManager.map.addSource(`polylines-${index}`, {
+              type: "geojson",
+              data: polyline,
+            });
+            mapManager.addLineLayer(
+              `polylines-${index}`,
+              `polylines-${index}`,
+              attributes.color,
+              "{name}"
+            );
+          } catch (error){
+            console.error(error)
+          }          
 
           attributes.coordinates = [];
           break;
@@ -320,17 +333,29 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource }) => {
 
         switch (geozoneType) {
           case "CIRCLE":
-            mapManager.map.removeLayer(`circles-${index}`);
-            mapManager.map.removeSource(`circles-${index}`);
-            break;
+            try{
+              mapManager.map.removeLayer(`circles-${index}`);
+              mapManager.map.removeSource(`circles-${index}`);
+              break;
+            } catch (error){
+              console.error(error);
+            }
           case "POLYGON":
-            mapManager.map.removeLayer(`polygons-${index}`);
-            mapManager.map.removeSource(`polygons-${index}`);
-            break;
+            try{
+              mapManager.map.removeLayer(`polygons-${index}`);
+              mapManager.map.removeSource(`polygons-${index}`);
+              break;
+            } catch (error){
+              console.error(error);
+            }
           case "LINESTRING":
-            mapManager.map.removeLayer(`polylines-${index}`);
-            mapManager.map.removeSource(`polylines-${index}`);
-            break;
+            try{
+              mapManager.map.removeLayer(`polylines-${index}`);
+              mapManager.map.removeSource(`polylines-${index}`);
+              break;
+            } catch (error){
+              console.error(error);
+            }          
           default:
             break;
         }

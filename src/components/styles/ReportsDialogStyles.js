@@ -50,11 +50,18 @@ const reportsDialogStyles = makeStyles((theme) => ({
   },
   graphic: {
     top: "15%",
+    width: "100%",
     height: "50%",
-    margin: "40px 0px !important",
-    padding: "25px",
-    display: "flex",
-    // position: "absolute",
+    margin: "5px -17px !important",
+    padding: "15px 0px",
+    display: "block",
+    [theme.breakpoints.up("md")]: {
+      top: "15%",
+      width: "75%",
+      height: "50%",
+      margin: "40px 0px !important",
+      padding: "25px",
+    },
   },
   miniature: {
     width: "25%",

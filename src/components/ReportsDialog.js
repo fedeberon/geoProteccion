@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Fragment } from "react";
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 import AppBar from "@material-ui/core/AppBar";
@@ -28,8 +28,6 @@ import TableRow from "@material-ui/core/TableRow";
 import TableHead from "@material-ui/core/TableHead";
 import TableCell from "@material-ui/core/TableCell";
 import TableBody from "@material-ui/core/TableBody";
-import TableContainer from "@material-ui/core/TableContainer";
-import Paper from "@material-ui/core/Paper";
 import {
   getRoutesReports,
   getEventsReports,
@@ -49,45 +47,14 @@ import reportsDialogStyles from "./styles/ReportsDialogStyles";
 import Select from '@material-ui/core/Select';
 import ReportsTrips from './ReportsTrips';
 import ReportsStops from './ReportsStops';
+import ReportsSummary from './ReportsSummary';
+
 
 const useStyles = reportsDialogStyles;
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
-
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`full-width-tabpanel-${index}`}
-      aria-labelledby={`full-width-tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box p={6}>
-          <Typography>{children}</Typography>
-        </Box>
-      )}
-    </div>
-  );
-}
-
-TabPanel.propTypes = {
-  children: PropTypes.node,
-  index: PropTypes.any.isRequired,
-  value: PropTypes.any.isRequired,
-};
-
-function a11yProps(index) {
-  return {
-    id: `full-width-tab-${index}`,
-    "aria-controls": `full-width-tabpanel-${index}`,
-  };
-}
 
 export default function ReportsDialog({
   geozones,
@@ -331,6 +298,7 @@ export default function ReportsDialog({
         setIsLoading(false);
         break;
       case "summary":
+        setHidden(true);
         reportConfiguration.arrayDeviceSelected.map((element) => {
           params = params + "deviceId=" + element + "&";
         });
@@ -340,30 +308,39 @@ export default function ReportsDialog({
         setIsLoading(false);
         break;
       case "graphic":
-        setHidden(true);
+        if(window.innerWidth < 767){
+          setHidden(true);
+        };
         reportConfiguration.arrayDeviceSelected.map((element) => {
           params = params + "deviceId=" + element + "&";
         });
         response = await getGraphicData(reportConfiguration.fromDate, reportConfiguration.toDate, params);
         let data = [];
-
+        let auxItem = {};
         response.map((item) => {
           if(item.speed > 0.099){
-            data.push(item);
+            auxItem = {
+              name: GetDeviceName(item.deviceId),
+              speed: Number(item.speed.toFixed(2)),
+              altitude: item.altitude,
+              accuracy: item.accuracy,
+              latitude: item.latitude,
+              longitude: item.longitude,
+              deviceId: item.deviceId,
+              fixTime: item.fixTime,
+              course: item.course,
+              attributes: item.attributes,
+              id: item.id,
+              serverTime: item.serverTime,
+              protocol: item.protocol,
+              valid: item.valid,              
+            }
+            data.push(auxItem);
           }
         });
         console.log(data);
-        // let data = response.map(({index, deviceId, accuracy, speed, altitude, fixTime}) => ({
-        //   id: deviceId,
-        //   accuracy: accuracy,
-        //   altitude: altitude,
-        //   speed: speed,
-        //   fixTime: fixTime,
-        //   index: index,
-        //  })); 
-        setGraphicData(data);
 
-        // response.map((e) => timeData.push(e.serverTime));
+        setGraphicData(data);
              
         setIsLoading(false);
         break;
@@ -799,11 +776,13 @@ export default function ReportsDialog({
               </TableBody>
             </Table>
         </div>
+
+        {(route.length > 0 || stops.length > 0 || graphicData.length > 0) &&
         <div
           onScroll={handleScroll}
           style={{ display: `${window.innerWidth > 767 ? "inline-block" : "none"}` }}
           className={`scrollbar ${classes.tableReportsState}`}>
-            {(route.length > 0 || stops.length > 0) &&
+            
             <Table stickyHeader={true} size={"small"}>
               <TableHead>
                 <TableRow>
@@ -883,8 +862,8 @@ export default function ReportsDialog({
                 </TableRow>
               </TableBody>
             </Table>
-          }
         </div>
+          }        
         
         {/*TRIPS Reports*/}
         <div>
@@ -895,120 +874,18 @@ export default function ReportsDialog({
         <div>
           <ReportsStops dataPositions={positions} dataStops={stops} selected={handleSelectedPosition}/>
         </div>
-        {/* <div
-          onScroll={handleScroll}
-          style={{ display: `${stops.length === 0 ? "none" : "block"}` }}
-          className={`scrollbar ${classes.tableReports}`}
-        >
-          <TableContainer component={Paper}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>{t("reportDeviceName")}</TableCell>
-                  <TableCell>{t("reportStartTime")}</TableCell>
-                  <TableCell>{t("reportEndTime")}</TableCell>
-                  <TableCell>{t("positionOdometer")}</TableCell>
-                  <TableCell>{t("positionAddress")}</TableCell>
-                  <TableCell>{t("reportDuration")}</TableCell>
-                  <TableCell>{t("reportEngineHours")}</TableCell>
-                  <TableCell>{t("reportSpentFuel")}</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {stops
-                  .slice(
-                    sliceFirstIndex < stops.length - 30
-                      ? sliceFirstIndex
-                      : (stops.length - 30) * (stops.length > 30),
-                    sliceLastIndex < stops.length
-                      ? sliceLastIndex
-                      : stops.length
-                  )
-                  .map((object) => (
-                    <TableRow
-                      key={object.id}
-                      className={classes.row}
-                      onClick={() =>
-                        handleSelectedPosition(
-                          positions.find(
-                            (element) => element.id === object.positionId
-                          )
-                        )
-                      }
-                    >
-                      <TableCell>{object.deviceName}</TableCell>
-                      <TableCell>{object.startTime}</TableCell>
-                      <TableCell>{object.endTime}</TableCell>
-                      <TableCell>{object.startOdometer}</TableCell>
-                      <TableCell>{object.Address}</TableCell>
-                      <TableCell>{object.duration}</TableCell>
-                      <TableCell>{object.engineHours}</TableCell>
-                      <TableCell>{object.spentFuel}lts</TableCell>
-                    </TableRow>
-                  ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </div> */}
 
-
-        {/*Table for SUMMARY Reports*/}
-        <div
-          onScroll={handleScroll}
-          style={{ display: `${summary.length === 0 ? "none" : "block"}` }}
-          className={`scrollbar ${classes.tableReports}`}
-        >
-          <TableContainer component={Paper}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>{t("reportDeviceName")}</TableCell>
-                  <TableCell>{t("sharedDistance")}</TableCell>
-                  <TableCell>{t("reportStartOdometer")}</TableCell>
-                  <TableCell>{t("reportEndOdometer")}</TableCell>
-                  <TableCell>{t("reportAverageSpeed")}</TableCell>
-                  <TableCell>{t("reportMaximumSpeed")}</TableCell>
-                  <TableCell>{t("reportEngineHours")}</TableCell>
-                  <TableCell>{t("reportSpentFuel")}</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {summary
-                  .slice(
-                    sliceFirstIndex < summary.length - 30
-                      ? sliceFirstIndex
-                      : (summary.length - 30) * (summary.length > 30),
-                    sliceLastIndex < summary.length
-                      ? sliceLastIndex
-                      : summary.length
-                  )
-                  .map((object) => (
-                    <TableRow
-                      key={object.id}
-                      style={{ padding: "3px", fontSize: "13px" }}
-                    >
-                      <TableCell>{object.deviceName}</TableCell>
-                      <TableCell>{object.distance} Km</TableCell>
-                      <TableCell>{object.startOdometer}</TableCell>
-                      <TableCell>{object.endOdometer}</TableCell>
-                      <TableCell>{object.averageSpeed}</TableCell>
-                      <TableCell>{object.maxSpeed}</TableCell>
-                      <TableCell>{object.engineHours}</TableCell>
-                      <TableCell>{object.spentFuel}lts</TableCell>
-                    </TableRow>
-                  ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+        {/*SUMMARY Reports*/}
+        <div>
+          <ReportsSummary dataSummary={summary}/>
         </div>
 
-
-        {/* Graphic */}
+        {/*GRAPHIC Reports */}
         {reportType === 'graphic' &&         
         <div
-          className={classes.graphic}
-        >
+          className={classes.graphic}>
           <ReportsGraphic 
+            selected={handleSelectedPosition}
             type={reportType} 
             items={graphicData} 
             graphicType={reportConfiguration.graphicType}
@@ -1016,11 +893,11 @@ export default function ReportsDialog({
           />
         </div>}
 
+        {/*POSITIONS Reports */}
         <div
           className={`${classes.overflowHidden} ${
             fullscreen ? classes.fullscreen : classes.miniature
-          } ${hidden ? classes.hidden : classes.visible}`}
-        >
+          } ${hidden ? classes.hidden : classes.visible}`}>
           <i
             className={`fas ${fullscreen ? "fa-compress" : "fa-expand"} fa-lg ${
               classes.fullscreenToggler
@@ -1040,7 +917,7 @@ export default function ReportsDialog({
             trips={tripsRoutes}
             showMarkers={reportConfiguration.showMarkers}
             selectedPosition={selectedPosition}
-            graphic={route}
+            graphic={graphicData}
           />
         </div>
       </Dialog>
