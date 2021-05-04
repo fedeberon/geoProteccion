@@ -58,7 +58,7 @@ const ReportsGraphic = ({ type, items, graphicType, devices, selected }) => {
     if (active) {
       return (
         <div className="custom-tooltip">
-          <p className="label">{payload[0].payload?.name}</p>
+          <p className="label">{payload && payload[0].payload?.name}</p>
           <p className="label">{`${t(`position${capitalize(graphicType)}`)} : ${payload[0].value} ${getUnit(graphicType)}`}</p>
           <p className="desc" >
             {`${t('positionDate')}: ${graphicType === 'speed' ? getDatefromData(payload[0].value) : getDatefromData(payload[0].payload?.id)}`}
@@ -78,7 +78,7 @@ const ReportsGraphic = ({ type, items, graphicType, devices, selected }) => {
       <Box height={390}>
         <ResponsiveContainer>
           <LineChart data={items} onClick={(e) => selectedPoint(e)}>
-            <XAxis dataKey={`${deviceData && deviceData.fixTime}`} height={60} >
+            <XAxis dataKey="" height={60} >
               <Label value={`${deviceData && deviceData.name}`} offset={0} position="insideBottom"/>
             </XAxis>
             <YAxis 
