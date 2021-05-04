@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { Box, Paper } from '@material-ui/core';
 import t from "../common/localization";
 import {LineChart, Line, XAxis, YAxis, Label, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
@@ -10,6 +10,7 @@ const ReportsGraphic = ({ type, items, graphicType, devices, selected }) => {
 
   const server = useSelector((state) => state.session.server);
   let deviceData; 
+
 
   const capitalize = (value) => {
     return value.charAt(0).toUpperCase() + value.slice(1);
@@ -55,7 +56,7 @@ const ReportsGraphic = ({ type, items, graphicType, devices, selected }) => {
 
   function CustomTooltip({ payload, active}) {
 
-    if (active) {
+    if (active && payload) {
       return (
         <div className="custom-tooltip">
           <p className="label">{payload && payload[0].payload?.name}</p>
@@ -74,19 +75,22 @@ const ReportsGraphic = ({ type, items, graphicType, devices, selected }) => {
   };
 
   return (
-    <Paper>
+    
+    <Paper
+      style={{marginBottom: '20px'}}
+    >
       <Box height={390}>
         <ResponsiveContainer>
           <LineChart data={items} onClick={(e) => selectedPoint(e)}>
             <XAxis dataKey="" height={60} >
-              <Label value={`${deviceData && deviceData.name}`} offset={0} position="insideBottom"/>
+              <Label value={`${deviceData && deviceData.name || ''}`} offset={0} position="insideBottom"/>
             </XAxis>
             <YAxis 
               label={{ value: `${getUnit(graphicType)}`, angle: -90, position: 'insideLeft' }}
               domain={graphicType === 'speed' ? [0, 'auto'] : [-1.5, dataMax => (dataMax + 1.5)]} />
             <CartesianGrid strokeDasharray="3 3" />
             <Tooltip  content={<CustomTooltip/>}/>
-            <Legend />            
+            {/* <Legend />*/}
                 <Line  dataKey={`${graphicType}`}/>
           </LineChart>
         </ResponsiveContainer>

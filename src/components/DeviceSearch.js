@@ -130,7 +130,7 @@ function DeviceSearch(deviceId) {
             >
               <ListItemAvatar>
                 <Avatar className={classes.MuiAvatarRoot}>
-                  <i className="fas fa-truck-moving" />
+                  <img src={`./web/images/${device.category}.svg`}></img>
                 </Avatar>
               </ListItemAvatar>
               <ListItemText>

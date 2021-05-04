@@ -204,6 +204,7 @@ export default function ReportsDialog({
           params,
           groups
         );
+        console.log(response);
         setRoute(response);
         setIsLoading(false);
         break;
