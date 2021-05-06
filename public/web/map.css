@@ -48,13 +48,7 @@ button {
   cursor: pointer;
 }
 
-.popup-map-div-mobile {
-  padding-left: 8%;
-  padding-right: 8%;
-  padding-top: 3%;
-  color: white;
-  font-size: 13px;
-}
+
 .computedAtribRows:hover {
   cursor: pointer;
 }
@@ -78,46 +72,29 @@ button {
   background-color: #878eb7 !important;
 }
 
-.mapboxgl-popup-close-button {
-  top: 88% !important;
-  right: 2% !important;
-  padding: 0 5px 0 0;
-  border-radius: 10px 2px 35px 0 !important;
-  border-top: 1px !important;
-  border-left: 1px !important;
-  border-right: none !important;
-  border-bottom: none !important;
-  height: 29px;
-  width: 30px;
-  box-shadow: 0 0 3px 0 rgba(102, 97, 102, 0.8) !important;
-  font-size: 19px;
-  background-color: #1d193e !important;
-  color: white !important;
-}
-
 .button-black {
   width: 75%;
   margin-left: 10%;
   border-radius: 6px;
-  background-color: #1d193e;
+  background-color: transparent;
   text-transform: uppercase;
   color: white;
   margin-bottom: 7px;
   padding: 7px;
   font-family: system-ui;
   font-size: 13px;
-  border: solid 1px #333;
+  border-color: white;
+  border: solid 1px;
 }
 
 .button-black-mobile {
-  width: 80%;
   border-radius: 6px;
   margin-top: 6px;
   margin-bottom: 6px;
   background-color: transparent;
   border-color: white;
   padding: 6px;
-  font-size: 14px;
+  font-size: 11px;
   text-transform: uppercase;
   color: white;
   border: solid 1px;
@@ -133,7 +110,7 @@ button {
 .head-list {
   text-align: left;
   list-style-type: none;
-  padding-left: 33px;
+  padding-left: 13px;
   margin-left: auto;
   margin-right: auto;
   font-size: 12px;
@@ -148,6 +125,7 @@ button {
   text-align: left;
   padding: 10px 5px;
   list-style-type: none;
+  line-height: 15px;
 }
 
 .popup-map-header {
@@ -183,6 +161,7 @@ button {
   z-index: 2000 !important;
 }
 
+
 .mapboxgl-popup-content {
   background-color: white !important;
   background-image: linear-gradient( 25deg, #77F9D3 0%, #5CD2F8 50%, #5A79FF 100%) !important;
@@ -208,7 +187,7 @@ button {
 }
 
 .status-online {
-  color: #cef9ce;
+  color: #00ff00;
   font-size: 12px;
 }
 
@@ -407,10 +386,44 @@ button {
   }
 }
 
+.mapboxgl-popup-close-button {
+  top: 3% !important;
+  right: 3% !important;
+  padding: 0;
+  border-radius: 0px 19px 0px 13px !important;
+  border-top: 1px !important;
+  border-left: 1px !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  height: 29px;
+  width: 30px;
+  box-shadow: 0 0 3px 0 rgba(102, 97, 102, 0.8) !important;
+  font-size: 25px;
+  background-color: transparent !important;
+  color: white !important;
+}
+
 /* ancho de pantalla de mas de 960px (desktop-notebook)*/
 @media only screen and (min-width: 960px){
   /* .MuiDialog-paperWidthSm {
     max-width: 300px !important;
+  } */
+
+  /* .mapboxgl-popup-close-button {
+    top: 88% !important;
+    right: 2% !important;
+    padding: 0 5px 0 0;
+    border-radius: 10px 2px 35px 0 !important;
+    border-top: 1px !important;
+    border-left: 1px !important;
+    border-right: none !important;
+    border-bottom: none !important;
+    height: 29px;
+    width: 30px;
+    box-shadow: 0 0 3px 0 rgba(102, 97, 102, 0.8) !important;
+    font-size: 19px;
+    background-color: #1d193e !important;
+    color: white !important;
   } */
 
   #addressShown:hover {
@@ -549,6 +562,27 @@ button {
 /* ancho de pantalla de menos de 600px* (mobile)*/
 @media only screen and (max-width: 600px) {
 
+  .popup-map-div-mobile {
+    padding: 3% 8%;
+    padding-top: 3%;
+    color: white;
+    font-size: 12px;
+    line-height: normal;
+  }
+
+  #client-snackbar{
+    font-size: 12px;
+  }
+
+  .title-section > h2 {
+    text-align: center;
+    margin: 0;
+    border-bottom: solid 0.1px;
+    padding: 2px 0px;
+    background-color: #d8d8ff;
+    color: #7979ef;
+  }
+
   .MuiButton-root {
     padding: 0 !important;
   }
@@ -595,15 +629,11 @@ button {
     text-transform: capitalize;
     flex-shrink: 1;
   }
- 
 
   .MuiBox-root{
     padding: 0 !important;
   }
-
-  .mapboxgl-popup-content {
-    position: sticky !important;
-  }
+  
   #addressdevices {
     max-width: 300px !important;
   }
@@ -645,13 +675,16 @@ button {
     line-height: 1 !important;
     font-size: 11px !important;
   }
+  
   .MuiToolbar-regular {
     min-height: 35px !important;
   }
+
   .MuiAppBar-colorPrimary {
     background-image: linear-gradient(25deg, #77F9D3 0%, #5CD2F8 50%, #5A79FF 100%);
   }
-  .mapboxgl-popup-close-button {
+
+  /* .mapboxgl-popup-close-button {
     top: 3% !important;
     right: 3% !important;
     padding: 0;
@@ -665,10 +698,20 @@ button {
     box-shadow: 0 0 3px 0 rgba(102, 97, 102, 0.8) !important;
     font-size: 25px;
     background-color: transparent !important;
-  }
+  } */
 
   .mapboxgl-popup-content {
-    top: 42% !important;
+    top: 27% !important;
+    margin: 0 auto;
+    position: sticky !important;
+    background-color: white !important;
+    background-image: linear-gradient( 25deg, #77F9D3 0%, #5CD2F8 50%, #5A79FF 100%) !important;
+    border-radius: 35px !important;
+    padding: 0 12px !important;
+    width: 90%;
+    -webkit-box-shadow: 0px 0px 20px 1px rgba(102, 97, 102, 0.8) !important;
+    -moz-box-shadow: 0px 0px 20px 1px rgba(102, 97, 102, 0.8) !important;
+    box-shadow: 0px 0px 20px 1px rgba(102, 97, 102, 0.8) !important;
   }
 
   .MuiListItemAvatar-root {

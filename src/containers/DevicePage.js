@@ -512,7 +512,7 @@ console.log(commandToSend)
         <h2>{t("deviceTitle")}</h2>
         <Divider />
       </div>
-      <Container style={{display: `${window.innerWidth < 767 ? 'block' : 'inline-flex'}`, justifyContent: 'center'}}>
+      <Container style={{paddingBottom: '5px', display: `${window.innerWidth < 767 ? 'block' : 'inline-flex'}`, justifyContent: 'center'}}>
         <Button
           className={classes.buttonAddNewDevice}
           type="button"

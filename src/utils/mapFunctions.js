@@ -112,7 +112,7 @@ const createFeature = (devices, position, isViewportDesktop) => {
                         <div class="popup-map-header" id="header-${device.id}">
                             <ul class="head-list">
                                 <li>
-                                    <p style="${desktopView ? 'font-size: 16px' : 'font-size: 20px'}"><strong  class="bold">${carPlate + '</strong> - ' + name} </p>
+                                    <p style="${desktopView ? 'font-size: 16px' : 'font-size: 17px'}"><strong  class="bold">${carPlate + '</strong> - ' + name} </p>
                                 </li>
                                 <li>
                                     <p>${getDateTime(position.deviceTime)}</p>
@@ -198,14 +198,6 @@ const createFeature = (devices, position, isViewportDesktop) => {
                                     </th>
                                     <td>
                                         ${getCourse(position.course)}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th>
-                                        ${t("positionAddress")}
-                                    </th>
-                                    <td>
-                                        ${t("deviceStatusUnknown")}
                                     </td>
                                 </tr>
                                 <tr>
@@ -319,7 +311,7 @@ const createFeature = (devices, position, isViewportDesktop) => {
                             </table>
                         </div>
                         <div class="footer-sp">
-                            <button class="${desktopView ? 'button-black' : 'button-black-mobile'}" href="#/device/${device.id}">
+                            <button id="circuitBraker" class="${desktopView ? 'button-black' : 'button-black-mobile'}" href="#/device/${device.id}">
                                 ${t("activateCircuitBreaker")}
                             </button>
                             <button id="buttonShowMore" class="${desktopView ? 'button-black' : 'button-black-mobile'}" onClick="showDetails(${device.id})">

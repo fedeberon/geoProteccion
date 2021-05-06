@@ -55,11 +55,11 @@ const MainToolbar = () => {
             variant="contained"
             onClick={() => history.push("/")}
             color="primary"
-            size="small"
+            size="medium"
             className={classes.button}
             startIcon={<MapIcon />}
           >
-            {t('mapTitle')}
+            &nbsp;{t('mapTitle')}
           </Button>
         </div>
         <div style={{ display: "flex" }}>
@@ -70,11 +70,11 @@ const MainToolbar = () => {
             style={{ display: "contents" }}
             variant="contained"
             color="primary"
-            size="small"
+            size="medium"
             className={classes.button}
             startIcon={<HomeIcon />}
           >
-            Menu
+            &nbsp;Menu
           </Button>
         </div>
       </div>

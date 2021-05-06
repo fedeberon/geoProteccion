@@ -16,7 +16,7 @@ export default function SuccessSnackbar() {
   const [type, setType] = useState("");
 
   const Transition = React.forwardRef(function Transition(props, ref) {
-    return <Slide direction="right" ref={ref} {...props} />;
+    return <Slide direction="down" ref={ref} {...props} />;
   });
 
   function handleClose() {
@@ -35,14 +35,16 @@ export default function SuccessSnackbar() {
   }, [devices]);
 
   return (
-    <Snackbar
+    <>
+    {!successSnackbarOpen &&
+      <Snackbar
       style={{ zIndex: `${successSnackbarOpen ? "1400" : "-1"}` }}
       anchorOrigin={{
-        vertical: "bottom",
+        vertical: "top",
         horizontal: "right",
       }}
       open={successSnackbarOpen}
-      autoHideDuration={4000}
+      autoHideDuration={54000}
       onClose={handleClose}
       aria-describedby="client-snackbar"
       TransitionComponent={Transition}
@@ -57,5 +59,7 @@ export default function SuccessSnackbar() {
         </Button>
       }
     />
+    }
+    </>    
   );
 }

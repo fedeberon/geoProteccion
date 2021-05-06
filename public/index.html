@@ -32,7 +32,8 @@
         let detailsElement = document.getElementById("details-" + deviceId);
         let buttonText = document.getElementById("buttonShowMore");
         let buttonTextLess = document.getElementById("buttonShowLess");
-        
+        let contentStyle = document.getElementById("mapboxgl-popup-content");
+        let circuitbrakerButton = document.getElementById("circuitBraker");
 
         if (detailsElement.getAttribute('style') === 'display: none;') {
           headerElement.style = 'display: none;';
@@ -40,6 +41,8 @@
           detailsElement.style = '';
           buttonText.style.display = 'none';
           buttonTextLess.style = 'display: block';
+          contentStyle.style = 'top: 18% !important';
+          circuitbrakerButton.style.display = 'none';
 
         } else {
           headerElement.style = '';
@@ -47,6 +50,8 @@
           detailsElement.style = 'display: none;';
           buttonText.style.display = '';
           buttonTextLess.style.display = 'none';
+          contentStyle.style = 'top: 27% !important';
+          circuitbrakerButton.style.display = 'block';
         }
       }
     </script>

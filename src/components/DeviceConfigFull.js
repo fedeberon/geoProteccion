@@ -193,11 +193,8 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupAssignment, userId
   const [arrayToMap, setArrayToMap] = useState([]);
   const [allData, setAllData] = useState([]);
   const [geofencesByUserId, setGeofencesByUserId] = useState([]);
-  const [geofencesByDeviceId, setGeofencesByDeviceId] = useState([]);
   const [geofencesByGroupId, setGeofencesByGroupId] = useState([]);
-  const [notificationsByDeviceId, setNotificationsByDeviceId] = useState([]);
   const [notificationsByGroupId, setNotificationsByGroupId] = useState([]);
-  const [computedAttributesByDeviceId, setComputedAttributesByDeviceId] = useState([]);
   const [computedAttributesByGroupId, setComputedAttributesByGroupId] = useState([]);
   let asd = [];
 
@@ -220,20 +217,16 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupAssignment, userId
         };
         getGeozones(); 
       } else if (deviceId) {
-          fetch(`api/geofences?deviceId=${deviceId}`, {method: 'GET'})
-          .catch(function (error) {console.log('setGeofencesByDeviceIderror: ' + error)})
-          .then(response => response.json())
-          .then((data) => {
-            settingSelectedItems(data);
-            setGeofencesByDeviceId(data);
-          })    
 
-        const getGeozones = async () => {
-          const response = await service.getGeozonesByUserId(currentUserId);
-          setArrayToMap(response);
-        };
-        getGeozones();     
+          getGeozonesByDeviceId();
+
+          const getGeozones = async () => {
+            const response = await service.getGeozonesByUserId(currentUserId);
+            setArrayToMap(response);
+          };
+          getGeozones();     
       } else if (userId){
+
           fetch(`api/geofences?all=true`, { method: "GET" })
           .catch(function (error) {
             console.log("setGeofences error: ", error);
@@ -290,10 +283,7 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupAssignment, userId
         };
         getNotifications();  
       } else if(deviceId) {
-        const getNotificationsByDeviceId = async() => {
-          const responseNotifications = await service.getNotificationsByDeviceId(deviceId);
-          setNotificationsByDeviceId(responseNotifications);
-        }       
+             
         getNotificationsByDeviceId();
 
         const getNotifications = async () => {
@@ -324,11 +314,9 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupAssignment, userId
           }
           getComputedAttributes();
         } else if (deviceId) {
-          const getComputedAttributesByDeviceId = async() => {
-            const responseNotifications = await service.getComputedAttributesByDeviceId(deviceId);
-            setComputedAttributesByDeviceId(responseNotifications);
-          } 
+          
           getComputedAttributesByDeviceId();
+
           const getComputedAttributes = async () => {
             const response = await service.getComputedAttributes(currentUserId);
             setArrayToMap(response);
@@ -346,8 +334,6 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupAssignment, userId
         }      
     } else if (type === "sharedSavedCommands") {
         if (deviceId) {
-
-
           // const getCommands = async () => {
           //   const response = await service.getCommands();
           //   setArrayToMap(response);
@@ -375,6 +361,8 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupAssignment, userId
       }*/}
     }, [open===true, type, deviceId, groupAssignment]);
 
+
+  //Funcion solo para configuracion desde UserConfig
   const getGeozones = () => {
     setSelected([]);
     fetch(`api/geofences?userId=${userId.id}`, { method: "GET" })
@@ -383,13 +371,35 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupAssignment, userId
     })
     .then((response) => response.json())
     .then((data) => {
-      settingSelectedItems(data);
-      setGeofencesByUserId(data);
+        settingSelectedItems(data);
+        setGeofencesByUserId(data);  
     });  
   }
 
+  //Funcion solo para configuracion desde DevicesPage
+  const getGeozonesByDeviceId = async() => {
+    await fetch(`api/geofences?deviceId=${deviceId}`, {method: 'GET'})
+    .catch(function (error) {console.log('setGeofencesByDeviceIderror: ' + error)})
+    .then(response => response.json())
+    .then((data) => {
+      settingSelectedItems(data);
+    })   
+  };
+
+  //Funcion solo para configuracion desde DevicesPage
+  const getNotificationsByDeviceId = async() => {
+    let data = await service.getNotificationsByDeviceId(deviceId);
+    settingSelectedItems(data);
+  };
+
+  //Funcion solo para configuracion desde DevicesPage
+  const getComputedAttributesByDeviceId = async() => {
+    let data = await service.getComputedAttributesByDeviceId(deviceId);
+    settingSelectedItems(data);
+  } 
+
+  //Funcion solo para configuracion desde UserConfig
   const getDevicesByUser = () => {
-    setSelected([]);
     fetch(`api/devices?userId=${userId.id}`, { method: "GET" })
     .catch(function (error) {
       console.log("setDevices error: ", error);
@@ -403,7 +413,6 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupAssignment, userId
   };
 
   const getGroupsByUser = () => {
-    setSelected([]);
     fetch(`api/groups?userId=${userId.id}`, { method: "GET" })
     .catch(function (error) {
       console.log("setGroups error: ", error);
@@ -415,18 +424,20 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupAssignment, userId
     });
   };
 
+  //Funcion solo para configuracion desde UserConfig
   const getNotificationsByUser = () => {
-    // setSelected([]);
+
     fetch(`api/notifications?userId=${userId.id}`, { method: "GET" })
     .catch(function (error) {
       console.log("setNotifications error: ", error);
     })
     .then((response) => response.json())
     .then((data) => {
-      settingSelectedItems(data);
-      setNotificationsByUserId(data);
+        settingSelectedItems(data);
+        setNotificationsByUserId(data);
     });
   };
+
 
   const getUsersByUserSelected = () => {
     // setSelected([]);
@@ -514,54 +525,6 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupAssignment, userId
     setSelected(newSelected);
   };
 
-  useEffect(()=> {
-    if(open){
-      if(groupAssignment){
-        geofencesByGroupId.map((el)=>{
-          if(!(selected.some(el2 => el2.name === el.name))){
-            selected.push(el.name);
-          }             
-        })      
-      } 
-    }
-  },[geofencesByDeviceId, type, geofencesByGroupId, geofencesByUserId, allData, arrayToMap, devicesByUserId]);
-
-  useEffect(()=> {
-    if(open){
-      if(groupAssignment){
-        notificationsByGroupId.map((el)=>{
-          if(!(selected.some(el2 => el2.type === el.type))){
-            selected.push(el.type);
-          }             
-        })
-      } else {
-        notificationsByDeviceId.map((el)=>{
-          if(!(selected.some(el2 => el2.type === el.type))){
-            selected.push(el.type);
-          }             
-        })
-      }      
-    }    
-  },[notificationsByDeviceId, notificationsByGroupId])
-
-  useEffect(()=> {
-    if(open){
-      if(groupAssignment){
-        computedAttributesByGroupId.map((el)=>{
-          if(!(selected.some(el2 => el2.description === el.description))){
-            selected.push(el.description);
-          }             
-        })
-      } else if (deviceId) {
-        computedAttributesByDeviceId.map((el)=>{
-          if(!(selected.some(el2 => el2.description === el.description))){
-            selected.push(el.description);
-          }             
-        })
-      }      
-    }    
-  },[computedAttributesByDeviceId, computedAttributesByGroupId])
-
   const handleSetSelectedItem = (id, name) => {
     let permission = {};
 
@@ -613,15 +576,27 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupAssignment, userId
         if(type==='deviceTitle'){
           getDevicesByUser();
         } else if(type==='sharedGeofences'){
-          getGeozones();
+          if(deviceId){
+            getGeozonesByDeviceId();            
+          } else {
+            getGeozones();
+          }          
         } else if(type==='settingsGroups'){
           getGroupsByUser()
         } else if(type === "sharedNotifications"){
-          getNotificationsByUser();
+          if(deviceId){
+            getNotificationsByDeviceId();
+          } else { 
+            getNotificationsByUser();
+          }
         } else if (type === "settingsUsers"){
           getUsersByUserSelected();
         } else if (type === "sharedComputedAttributes"){
-          getComputedAttributesByUserId();
+          if(deviceId){
+            getComputedAttributesByDeviceId();
+          } else {
+            getComputedAttributesByUserId();
+          } 
         } else if (type === "sharedSavedCommands"){
           getCommandsByUserId();
         }
@@ -679,15 +654,27 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupAssignment, userId
         if(type==='deviceTitle'){
           getDevicesByUser();
         } else if(type==='sharedGeofences'){
-          getGeozones();
+          if(deviceId){
+            getGeozonesByDeviceId();            
+          } else {
+            getGeozones();
+          } 
         } else if(type==='settingsGroups'){
           getGroupsByUser()
         } else if(type === "sharedNotifications"){
-          getNotificationsByUser();
+          if(deviceId){
+            getNotificationsByDeviceId();
+          } else { 
+            getNotificationsByUser();
+          }
         } else if (type === "settingsUsers"){
           getUsersByUserSelected();
         } else if (type === "sharedComputedAttributes"){
-          getComputedAttributesByUserId();
+          if(deviceId){
+            getComputedAttributesByDeviceId();
+          } else {
+            getComputedAttributesByUserId();
+          }          
         } else if (type === "sharedSavedCommands"){
           getCommandsByUserId();
         }
