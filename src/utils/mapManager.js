@@ -244,9 +244,9 @@ map.on("load", () => {
     map.addImage("triangle", image);
   });
 
-  loadImage("web/images/helicopter.svg").then((background) => {
+  loadImage("web/images/plane.svg").then((background) => {
     Promise.all([
-      loadIcon("icon-helicopter", background, "web/images/helicopter.svg"),
+      loadIcon("icon-plane", background, "web/images/plane.svg"),
     ]).then(() => {
       ready = true;
       if (registeredListener) {
@@ -255,9 +255,46 @@ map.on("load", () => {
       }
     });
   });
-  loadImage("web/images/train.svg").then((background) => {
+
+  loadImage("web/images/car.svg").then((background) => {
     Promise.all([
-      loadIcon("icon-train", background, "web/images/train.svg"),
+      loadIcon("icon-car", background, "web/images/car.svg"),
+    ]).then(() => {
+      ready = true;
+      if (registeredListener) {
+        registeredListener();
+        registeredListener = null;
+      }
+    });
+  });
+
+  loadImage("web/images/truck.svg").then((background) => {
+    Promise.all([
+      loadIcon("icon-truck", background, "web/images/truck.svg"),
+    ]).then(() => {
+      ready = true;
+      if (registeredListener) {
+        registeredListener();
+        registeredListener = null;
+      }
+    });
+  });
+
+  loadImage("web/images/offroad.svg").then((background) => {
+    Promise.all([
+      loadIcon("icon-offroad", background, "web/images/offroad.svg"),
+    ]).then(() => {
+      ready = true;
+      if (registeredListener) {
+        registeredListener();
+        registeredListener = null;
+      }
+    });
+  });
+
+  loadImage("web/images/bicycle.svg").then((background) => {
+    Promise.all([
+      loadIcon("icon-bicycle", background, "web/images/bicycle.svg"),
     ]).then(() => {
       ready = true;
       if (registeredListener) {

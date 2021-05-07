@@ -112,7 +112,31 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource }) => {
 
   useEffect(() => {
     if (mapReady) {
-      mapManager.addLayer("device-icon", "places", "icon-helicopter", "{name}");
+      let positionsByType = [];
+
+      positions.features.map((feature, index) => {
+        let positionsB = {
+          type: "FeatureCollection",
+          features: [{...feature}]
+        };
+        let featureType = feature.properties.description.match(regexVehicleType)[1];
+        let positionFound = positionsByType.find(pos => pos.type === featureType);
+
+        if (positionFound) {
+          positionFound.position.features = [...positionFound.position.features, feature];
+        } else {
+          positionsByType.push({ type: featureType, position: positionsB });
+        }
+      });
+
+      positionsByType.map(pos => {
+        mapManager.map.addSource(pos.type, {
+          type: "geojson",
+          data: pos.position,
+        });
+        mapManager.addLayer(`device-${pos.type}`, pos.type, `icon-${pos.type}`, "{name}");
+      });
+
       mapManager.map.scrollZoom.setWheelZoomRate(2);
 
       if (mapManager.map.getSource("raster-tiles") && rasterSource !== "") {
@@ -120,15 +144,18 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource }) => {
       }
 
       return () => {
-        mapManager.map.removeLayer("device-icon");
-        mapManager.map.removeSource("places");
+        positions.features.map(feature => {
+          let featureType = feature.properties.description.match(regexVehicleType)[1];
+
+          if (mapManager.map.getLayer(`device-${featureType}`)) {
+            mapManager.map.removeLayer(`device-${featureType}`);
+          }
+          if (mapManager.map.getSource(featureType)) {
+            mapManager.map.removeSource(featureType);
+          }
+        });
       };
     }
-    positions.features.map((ft)=> {
-      console.log(ft.properties?.description.match(regexVehicleType)[1])
-
-    })
-    console.log(positions.features[0].properties.description.match(regexVehicleType)[1])
   }, [mapReady]);
 
   useEffect(() => {
@@ -149,10 +176,33 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource }) => {
       }
     }
 
-    const source = mapManager.map.getSource("places");
-    if (source) {
-      source.setData(positions);
-    }
+    let positionsByType = [];
+
+    positions.features.map((feature, index) => {
+      let positionsB = {
+        type: "FeatureCollection",
+        features: [{...feature}]
+      };
+      let featureType = feature.properties.description.match(regexVehicleType)[1];
+      let positionFound = positionsByType.find(pos => pos.type === featureType);
+
+      if (positionFound) {
+        positionFound.position.features = [...positionFound.position.features, feature];
+      } else {
+        positionsByType.push({ type: featureType, position: positionsB });
+      }
+    });
+
+    positions.features.map(feature => {
+      let featureType = feature.properties.description.match(regexVehicleType)[1];
+      if (mapManager.map.getSource(featureType)) {
+        const source = mapManager.map.getSource(featureType);
+        let positionFound = positionsByType.find(pos => pos.type === featureType);
+        if (source && positionFound) {
+          source.setData(positionsByType.find(positionFound));
+        }
+      }
+    });
   }, []);
 
   const style = {
@@ -179,16 +229,30 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource }) => {
   };
 
   useEffect(() => {
-    mapManager.map.on("click", "device-icon", createPopup);
+    let features = [];
+    positions.features.map(feature => {
+      let featureType = feature.properties.description.match(regexVehicleType)[1];
 
-    mapManager.map.on("mouseenter", "device-icon", cursorPointer);
-
-    mapManager.map.on("mouseleave", "device-icon", cursorDefault);
+      if (features.indexOf(featureType) === -1) {
+        mapManager.map.on("click", `device-${featureType}`, createPopup);
+        mapManager.map.on("mouseenter", `device-${featureType}`, cursorPointer);
+        mapManager.map.on("mouseleave", `device-${featureType}`, cursorDefault);
+      }
+      features.push(featureType);
+    });
 
     return () => {
-      mapManager.map.off("click", "device-icon", createPopup);
-      mapManager.map.off("mouseenter", "device-icon", cursorPointer);
-      mapManager.map.off("mouseleave", "device-icon", cursorDefault);
+      let features = [];
+      positions.features.map(feature => {
+        let featureType = feature.properties.description.match(regexVehicleType)[1];
+
+        if (features.indexOf(featureType) === -1) {
+          mapManager.map.off("click", `device-${featureType}`, createPopup);
+          mapManager.map.off("mouseenter", `device-${featureType}`, cursorPointer);
+          mapManager.map.off("mouseleave", `device-${featureType}`, cursorDefault);
+        }
+        features.push(featureType);
+      });
     };
   }, [mapManager.map]);
 
