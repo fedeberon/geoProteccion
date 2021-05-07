@@ -111,6 +111,7 @@ button {
   text-align: left;
   list-style-type: none;
   padding-left: 13px;
+  padding-right: 23px;
   margin-left: auto;
   margin-right: auto;
   font-size: 12px;
@@ -403,28 +404,29 @@ button {
   color: white !important;
 }
 
+.custom-tooltip{
+  border-radius: 12px !important;
+  background-color: white !important;
+  opacity: 0.8 !important;
+  border: 1px solid rgb(70, 67, 255) !important;
+  padding: 5px !important;
+  color: rgb(12, 49, 76) !important;
+  font-family: sans-serif !important;
+}
+
+.MuiAvatar-colorDefault {
+  background-color: #dedddd !important;
+}
+
 /* ancho de pantalla de mas de 960px (desktop-notebook)*/
 @media only screen and (min-width: 960px){
   /* .MuiDialog-paperWidthSm {
     max-width: 300px !important;
   } */
 
-  /* .mapboxgl-popup-close-button {
-    top: 88% !important;
-    right: 2% !important;
-    padding: 0 5px 0 0;
-    border-radius: 10px 2px 35px 0 !important;
-    border-top: 1px !important;
-    border-left: 1px !important;
-    border-right: none !important;
-    border-bottom: none !important;
-    height: 29px;
-    width: 30px;
-    box-shadow: 0 0 3px 0 rgba(102, 97, 102, 0.8) !important;
-    font-size: 19px;
-    background-color: #1d193e !important;
-    color: white !important;
-  } */
+  .MuiListItemAvatar-root {
+    min-width: 45px !important;
+  }
 
   #addressShown:hover {
     text-decoration: underline;

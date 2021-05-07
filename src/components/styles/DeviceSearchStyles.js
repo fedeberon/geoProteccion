@@ -42,14 +42,14 @@ const deviceSearchStyles = makeStyles((theme) => ({
     },
   },
   MuiAvatarRoot: {
-    width: "25px",
-    height: "25px",
+    width: "28px",
+    height: "28px",
     fontSize: "12px",
     display: "inline-flex",
     left: "-10px",
     [theme.breakpoints.up("md")]: {
-      width: "40px",
-      height: "40px",
+      width: "33px",
+      height: "33px",
       fontSize: "1.25rem",
       display: "flex",
     },

@@ -113,6 +113,22 @@ const getDateTime = (dateTime) => {
     
 }
 
+const getDateTimeDevices = (dateTime) => {
+
+  let newdate = new Date(dateTime);
+
+  newdate =
+  `${newdate.getFullYear()}-${(newdate.getUTCMonth()+1) < 10 ? `0${newdate.getUTCMonth()+1}` :
+  newdate.getUTCMonth()}-${newdate.getUTCDate() < 10 ? `0${newdate.getUTCDate()}` : newdate.getUTCDate()}
+  ${newdate.getHours() < 10 ? `0${newdate.getHours()}` :
+  newdate.getHours()}:${newdate.getMinutes() < 10 ? `0${newdate.getMinutes()}` :
+  newdate.getMinutes()}:${newdate.getSeconds() < 10 ? `0${newdate.getSeconds()}` : newdate.getSeconds()}
+  `
+
+  return newdate;
+  
+}
+
 const getHoursMinutes = (data) => {
 
   let hours = Math.trunc(data/(3600*1000));
@@ -130,4 +146,5 @@ export {
   getDate,
   getDateTime,
   getHoursMinutes,
+  getDateTimeDevices,
 };

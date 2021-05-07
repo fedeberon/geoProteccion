@@ -89,7 +89,7 @@ const ReportsGraphic = ({ type, items, graphicType, devices, selected }) => {
               label={{ value: `${getUnit(graphicType)}`, angle: -90, position: 'insideLeft' }}
               domain={graphicType === 'speed' ? [0, 'auto'] : [-1.5, dataMax => (dataMax + 1.5)]} />
             <CartesianGrid strokeDasharray="3 3" />
-            <Tooltip  content={<CustomTooltip/>}/>
+            <Tooltip cursor={{fill: '#8884d8'}} content={<CustomTooltip/>}/>
             {/* <Legend />*/}
                 <Line  dataKey={`${graphicType}`}/>
           </LineChart>

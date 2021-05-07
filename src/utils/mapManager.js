@@ -246,7 +246,18 @@ map.on("load", () => {
 
   loadImage("web/images/helicopter.svg").then((background) => {
     Promise.all([
-      loadIcon("icon-marker", background, "web/images/train.svg"),
+      loadIcon("icon-helicopter", background, "web/images/helicopter.svg"),
+    ]).then(() => {
+      ready = true;
+      if (registeredListener) {
+        registeredListener();
+        registeredListener = null;
+      }
+    });
+  });
+  loadImage("web/images/train.svg").then((background) => {
+    Promise.all([
+      loadIcon("icon-train", background, "web/images/train.svg"),
     ]).then(() => {
       ready = true;
       if (registeredListener) {

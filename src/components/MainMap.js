@@ -108,13 +108,11 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource }) => {
     mapManager.registerListener(() => setMapReady(true));
   }, []);
 
+  const regexVehicleType = /[<]img class[=]["]vehicule[-]type["] src[=]["][.][/]web[/]images[/]([a-zA-Z]+)[.]svg["][>]/;
+
   useEffect(() => {
     if (mapReady) {
-      mapManager.map.addSource("places", {
-        type: "geojson",
-        data: positions,
-      });
-      mapManager.addLayer("device-icon", "places", "icon-marker", "{name}");
+      mapManager.addLayer("device-icon", "places", "icon-helicopter", "{name}");
       mapManager.map.scrollZoom.setWheelZoomRate(2);
 
       if (mapManager.map.getSource("raster-tiles") && rasterSource !== "") {
@@ -126,6 +124,11 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource }) => {
         mapManager.map.removeSource("places");
       };
     }
+    positions.features.map((ft)=> {
+      console.log(ft.properties?.description.match(regexVehicleType)[1])
+
+    })
+    console.log(positions.features[0].properties.description.match(regexVehicleType)[1])
   }, [mapReady]);
 
   useEffect(() => {

@@ -29,7 +29,7 @@ import ExpandLess from "@material-ui/icons/ExpandLess";
 import ExpandMore from "@material-ui/icons/ExpandMore";
 import StarBorder from "@material-ui/icons/StarBorder";
 import Divider from "@material-ui/core/Divider";
-import { getCourse, getOriginalAttributes, getDateTime } from "../utils/functions";
+import { getCourse, getOriginalAttributes, getDateTime, getDateTimeDevices } from "../utils/functions";
 import AddIcon from "@material-ui/icons/Add";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
@@ -287,14 +287,17 @@ const DevicePage = () => {
     setDeviceId("");
   };
 
+  useEffect(()=> {
+    console.log(commandToSend);
+  }, [commandToSend]);
+
   const handleSendCommand = () => {
 
-    // const response = fetch(`api/command/send?deviceId=${deviceId}`, {
-    //   method: 'POST',
-    //   body: data,
-    // }).then(response => response)
+    const response = fetch(`api/commands/send?deviceId=${deviceId}`, {
+      method: 'POST',
+      body: commandToSend,
+    }).then(response => response)
 
-    console.log("fetch done, but desactivated");
     handleCloseModalCommand();
   }
   //End Send Commands Functions
@@ -577,7 +580,7 @@ console.log(commandToSend)
                 </div>
               }
               title={`${device.attributes.carPlate} - ${device.name}`}
-              subheader={getDateTime(device.lastUpdate)}
+              subheader={getDateTimeDevices(device.lastUpdate)}
             />
             <Menu
               id={device.id}
@@ -719,7 +722,7 @@ console.log(commandToSend)
                         {t("sharedHour")}:&nbsp;
                       </strong>
                       {positions && positions[device.id]
-                        ? getDateTime(positions[device.id].deviceTime)
+                        ? getDateTimeDevices(positions[device.id].deviceTime)
                         : "Undefined"}
                     </ListItemText>
                   </ListItem>
@@ -1404,6 +1407,7 @@ console.log(commandToSend)
                 <TextField style={{ display: `${commandToSend.type === 'custom' ? 'block' : 'none'}` }}
                   label={t("commandData")}
                   fullWidth
+                  autoComplete="off"
                   value={commandToSend.value}
                   name="commandData"
                   onChange={handleChangeCommandData}

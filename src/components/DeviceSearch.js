@@ -17,6 +17,7 @@ import t from "../common/localization";
 import { useHistory } from "react-router-dom";
 import deviceSearchStyles from "./styles/DeviceSearchStyles";
 import { getDateTime } from '../utils/functions';
+import { getSVG } from '../utils/svgGetter';
 
 const useStyles = deviceSearchStyles;
 
@@ -24,6 +25,7 @@ function DeviceSearch(deviceId) {
   const dispatch = useDispatch();
   const history = useHistory();
   const classes = useStyles();
+  const [valueColor, setValueColor] = useState('#ffa2ad');
   const devices = useSelector(
     (state) => Object.values(state.devices.items),
     shallowEqual
@@ -130,7 +132,8 @@ function DeviceSearch(deviceId) {
             >
               <ListItemAvatar>
                 <Avatar className={classes.MuiAvatarRoot}>
-                  <img src={`./web/images/${device.category}.svg`}></img>
+                  {/* <img src={`./web/images/${device.category}.svg`}></img>*/}
+                  {getSVG(device.category, device.status)}
                 </Avatar>
               </ListItemAvatar>
               <ListItemText>
