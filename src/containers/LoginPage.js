@@ -120,17 +120,21 @@ const LoginPage = () => {
     if (history.location === "/logout") {
       dispatch(sessionActions.authenticated(false));
       dispatch(sessionActions.setUser({}));
+      localStorage.username = "";
+      localStorage.password = "";
+      localStorage.checkbox = false;
+      localStorage.token = "";
     }
 
-    if (
-      localStorage.checkbox === "true" &&
-      localStorage.username !== email &&
-      localStorage.password !== password
-    ) {
-      setEmail(localStorage.username);
-      setPassword(localStorage.password);
-      setIsChecked(localStorage.checkbox === "true");
-    }
+    // if (
+    //   localStorage.checkbox === "true" &&
+    //   localStorage.username !== email &&
+    //   localStorage.password !== password
+    // ) {
+    //   setEmail(localStorage.username);
+    //   setPassword(localStorage.password);
+    //   setIsChecked(localStorage.checkbox === "true");
+    // }
   });
 
 
@@ -160,7 +164,7 @@ const LoginPage = () => {
               label={t("userEmail")}
               name="email"
               value={email}
-              autoComplete="false"
+              autoComplete="off"
               autoFocus
               onChange={handleEmailChange}
               helperText={failed && `${t("loginFailed")}`}
@@ -175,7 +179,7 @@ const LoginPage = () => {
               name="password"
               value={password}
               type="password"
-              autoComplete="false"
+              autoComplete="off"
               onChange={handlePasswordChange}
             />
 

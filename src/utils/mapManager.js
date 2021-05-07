@@ -1,5 +1,6 @@
 import "mapbox-gl/dist/mapbox-gl.css";
 import mapboxgl from "mapbox-gl";
+import {getSVG} from "./svgGetter";
 
 let ready = false;
 let registeredListener = null;
@@ -244,9 +245,57 @@ map.on("load", () => {
     map.addImage("triangle", image);
   });
 
-  loadImage("web/images/plane.svg").then((background) => {
+  loadImage("web/images/animal.svg").then((background) => {
     Promise.all([
-      loadIcon("icon-plane", background, "web/images/plane.svg"),
+      loadIcon("icon-animal", background, "web/images/animal.svg"),
+    ]).then(() => {
+      ready = true;
+      if (registeredListener) {
+        registeredListener();
+        registeredListener = null;
+      }
+    });
+  });
+
+  loadImage("web/images/arrow.svg").then((background) => {
+    Promise.all([
+      loadIcon("icon-arrow", background, "web/images/arrow.svg"),
+    ]).then(() => {
+      ready = true;
+      if (registeredListener) {
+        registeredListener();
+        registeredListener = null;
+      }
+    });
+  });
+
+  loadImage("web/images/bicycle.svg").then((background) => {
+    Promise.all([
+      loadIcon("icon-bicycle", background, "web/images/bicycle.svg"),
+    ]).then(() => {
+      ready = true;
+      if (registeredListener) {
+        registeredListener();
+        registeredListener = null;
+      }
+    });
+  });
+
+  loadImage("web/images/boat.svg").then((background) => {
+    Promise.all([
+      loadIcon("icon-boat", background, "web/images/boat.svg"),
+    ]).then(() => {
+      ready = true;
+      if (registeredListener) {
+        registeredListener();
+        registeredListener = null;
+      }
+    });
+  });
+
+  loadImage("web/images/bus.svg").then((background) => {
+    Promise.all([
+      loadIcon("icon-bus", background, "web/images/bus.svg"),
     ]).then(() => {
       ready = true;
       if (registeredListener) {
@@ -268,9 +317,45 @@ map.on("load", () => {
     });
   });
 
-  loadImage("web/images/truck.svg").then((background) => {
+  loadImage("web/images/crane.svg").then((background) => {
     Promise.all([
-      loadIcon("icon-truck", background, "web/images/truck.svg"),
+      loadIcon("icon-crane", background, "web/images/crane.svg"),
+    ]).then(() => {
+      ready = true;
+      if (registeredListener) {
+        registeredListener();
+        registeredListener = null;
+      }
+    });
+  });
+
+  loadImage("web/images/default.svg").then((background) => {
+    Promise.all([
+      loadIcon("icon-default", background, "web/images/default.svg"),
+    ]).then(() => {
+      ready = true;
+      if (registeredListener) {
+        registeredListener();
+        registeredListener = null;
+      }
+    });
+  });
+  
+  loadImage("web/images/helicopter.svg").then((background) => {
+    Promise.all([
+      loadIcon("icon-helicopter", background, "web/images/helicopter.svg"),
+    ]).then(() => {
+      ready = true;
+      if (registeredListener) {
+        registeredListener();
+        registeredListener = null;
+      }
+    });
+  });
+
+  loadImage("web/images/motorcycle.svg").then((background) => {
+    Promise.all([
+      loadIcon("icon-motorcycle", background, "web/images/motorcycle.svg"),
     ]).then(() => {
       ready = true;
       if (registeredListener) {
@@ -292,9 +377,9 @@ map.on("load", () => {
     });
   });
 
-  loadImage("web/images/bicycle.svg").then((background) => {
+  loadImage("web/images/person.svg").then((background) => {
     Promise.all([
-      loadIcon("icon-bicycle", background, "web/images/bicycle.svg"),
+      loadIcon("icon-person", background, "web/images/person.svg"),
     ]).then(() => {
       ready = true;
       if (registeredListener) {
@@ -303,6 +388,140 @@ map.on("load", () => {
       }
     });
   });
+
+  loadImage("web/images/person.svg").then((background) => {
+    Promise.all([
+      loadIcon("icon-person", background, "web/images/person.svg"),
+    ]).then(() => {
+      ready = true;
+      if (registeredListener) {
+        registeredListener();
+        registeredListener = null;
+      }
+    });
+  });
+
+  loadImage("web/images/pickup.svg").then((background) => {
+    Promise.all([
+      loadIcon("icon-pickup", background, "web/images/pickup.svg"),
+    ]).then(() => {
+      ready = true;
+      if (registeredListener) {
+        registeredListener();
+        registeredListener = null;
+      }
+    });
+  });
+
+  loadImage("web/images/plane.svg").then((background) => {
+    Promise.all([
+      loadIcon("icon-plane", background, "web/images/plane.svg"),
+    ]).then(() => {
+      ready = true;
+      if (registeredListener) {
+        registeredListener();
+        registeredListener = null;
+      }
+    });
+  });
+
+  loadImage("web/images/scooter.svg").then((background) => {
+    Promise.all([
+      loadIcon("icon-scooter", background, "web/images/scooter.svg"),
+    ]).then(() => {
+      ready = true;
+      if (registeredListener) {
+        registeredListener();
+        registeredListener = null;
+      }
+    });
+  });
+
+  loadImage("web/images/ship.svg").then((background) => {
+    Promise.all([
+      loadIcon("icon-ship", background, "web/images/ship.svg"),
+    ]).then(() => {
+      ready = true;
+      if (registeredListener) {
+        registeredListener();
+        registeredListener = null;
+      }
+    });
+  });
+
+  loadImage("web/images/tractor.svg").then((background) => {
+    Promise.all([
+      loadIcon("icon-tractor", background, "web/images/tractor.svg"),
+    ]).then(() => {
+      ready = true;
+      if (registeredListener) {
+        registeredListener();
+        registeredListener = null;
+      }
+    });
+  });
+
+  loadImage("web/images/train.svg").then((background) => {
+    Promise.all([
+      loadIcon("icon-train", background, "web/images/train.svg"),
+    ]).then(() => {
+      ready = true;
+      if (registeredListener) {
+        registeredListener();
+        registeredListener = null;
+      }
+    });
+  });
+
+  loadImage("web/images/tram.svg").then((background) => {
+    Promise.all([
+      loadIcon("icon-tram", background, "web/images/tram.svg"),
+    ]).then(() => {
+      ready = true;
+      if (registeredListener) {
+        registeredListener();
+        registeredListener = null;
+      }
+    });
+  });
+
+  loadImage("web/images/trolleybus.svg").then((background) => {
+    Promise.all([
+      loadIcon("icon-trolleybus", background, "web/images/trolleybus.svg"),
+    ]).then(() => {
+      ready = true;
+      if (registeredListener) {
+        registeredListener();
+        registeredListener = null;
+      }
+    });
+  });
+
+  loadImage("web/images/truck.svg").then((background) => {
+    Promise.all([
+      loadIcon("icon-truck", background, "web/images/truck.svg"),
+    ]).then(() => {
+      ready = true;
+      if (registeredListener) {
+        registeredListener();
+        registeredListener = null;
+      }
+    });
+  });
+
+  loadImage("web/images/van.svg").then((background) => {
+    Promise.all([
+      loadIcon("icon-van", background, "web/images/van.svg"),
+    ]).then(() => {
+      ready = true;
+      if (registeredListener) {
+        registeredListener();
+        registeredListener = null;
+      }
+    });
+  });
+
+  
 });
 
 export default {

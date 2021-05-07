@@ -40,8 +40,8 @@ export default function SuccessSnackbar() {
       <Snackbar
       style={{ zIndex: `${successSnackbarOpen ? "1400" : "-1"}` }}
       anchorOrigin={{
-        vertical: "top",
-        horizontal: "right",
+        vertical: "bottom",
+        horizontal: "center",
       }}
       open={successSnackbarOpen}
       autoHideDuration={54000}
