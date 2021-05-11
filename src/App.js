@@ -35,7 +35,7 @@ const App = () => {
   const history = useHistory();
   const authenticated = useSelector((state) => state.session.authenticated);
   const server = useSelector((state) => state.session.server);  
-  const [user, setUser] = useState();
+  let userData;
   let response;
 
   useEffect(() => {
@@ -52,22 +52,22 @@ const App = () => {
   });
 
   useEffect(()=> {
+    userData
         if(localStorage.token){          
           history.push("/validation");      
         }
         const autoLogin = async () => {           
         if(localStorage.token && localStorage.username && localStorage.password){        
         response = await service.setSession(localStorage.username, localStorage.password);
-        const user = response.status === 200 ? await response.json() : "";
-        console.log(user);
+        let userData = response.status === 200 ? await response.json() : "";
+
         if (response.status === 200) {
-          setUser(user);
           dispatch(sessionActions.authenticated(true));
-          dispatch(sessionActions.setUser(user));
+          dispatch(sessionActions.setUser(userData));
           let responseServer = await service.getServer();
           dispatch(sessionActions.setServer(responseServer));                   
         }        
-        if(server && user){
+        if(server && userData){
           setTimeout(()=> {
             history.push("/"); 
           },2000)                   
@@ -161,7 +161,7 @@ const App = () => {
         <PrivateRoute
           exact
           path="/users"
-          isAuthenticated={authenticated && (user &&user.administrator)}
+          isAuthenticated={authenticated}
           component={UsersPage}
         />
       </Switch>      

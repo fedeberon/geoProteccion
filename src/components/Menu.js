@@ -6,7 +6,7 @@ import SpeedDialAction from "@material-ui/lab/SpeedDialAction";
 import MenuIcon from "@material-ui/icons/Menu";
 import CloseIcon from "@material-ui/icons/Close";
 import t from "../common/localization";
-
+import { sessionActions } from "../store";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import menuStyles from "./styles/MenuStyles";
@@ -17,6 +17,7 @@ export default function Menu({ layout }) {
   const user = useSelector((state) => state.session.user);
   const history = useHistory();
   const classes = useStyles();
+  const dispatch = useDispatch();
   const [open, setOpen] = React.useState(false);
   const [hidden, setHidden] = React.useState(false);
   const isViewportDesktop = useSelector(
@@ -106,9 +107,8 @@ export default function Menu({ layout }) {
           tooltipOpen={!isViewportDesktop}
           disabled={user && !user.administrator}
           onClick={(e) => {
-            e.stopPropagation();
-            {user && user.administrator &&
-            history.push("/users");}
+            e.stopPropagation();            
+            history.push("/users");
           }}
           tooltipPlacement={isViewportDesktop ? "right" : "left"}
         />
@@ -132,7 +132,12 @@ export default function Menu({ layout }) {
           tooltipOpen={!isViewportDesktop}
           onClick={(e) => {
             e.stopPropagation();
-            history.push("/logout");
+            dispatch(sessionActions.authenticated(false));
+            localStorage.username = "";
+            localStorage.password = "";
+            localStorage.checkbox = false;
+            localStorage.token = "";
+            history.go(0);
           }}
           tooltipPlacement={isViewportDesktop ? "right" : "left"}
         />

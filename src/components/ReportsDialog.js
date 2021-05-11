@@ -686,9 +686,10 @@ export default function ReportsDialog({
 
         
         {/*Table for ROUTE Reports*/}
+        {route.length > 0 && reportType === 'route' &&
         <div
           onScroll={handleScroll}
-          style={{ display: `${route.length === 0 ? "none" : "block"}` }}
+          // style={{ display: `${route.length === 0 ? "none" : "block"}` }}
           className={`scrollbar ${classes.tableReports}`}
         >
             <Table stickyHeader={true}>
@@ -731,6 +732,7 @@ export default function ReportsDialog({
               </TableBody>
             </Table>
         </div>
+        }
 
         
         {/*Table for EVENTS Reports*/}
@@ -882,7 +884,7 @@ export default function ReportsDialog({
         </div>
 
         {/*GRAPHIC Reports */}
-        {reportType === 'graphic' &&         
+        {graphicData.length > 0 && reportType === 'graphic' &&         
         <div
           className={classes.graphic}>
           <ReportsGraphic 

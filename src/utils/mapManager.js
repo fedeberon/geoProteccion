@@ -1,6 +1,5 @@
 import "mapbox-gl/dist/mapbox-gl.css";
 import mapboxgl from "mapbox-gl";
-import {getSVG} from "./svgGetter";
 
 let ready = false;
 let registeredListener = null;
@@ -194,7 +193,7 @@ const addMarkerLayer = (id, source, course) => {
     layout: {
       "icon-image": "triangle",
       "icon-allow-overlap": true,
-      "icon-size": 0.02,
+      "icon-size": 0.04,
       "icon-rotate": {
         type: "identity",
         property: course,

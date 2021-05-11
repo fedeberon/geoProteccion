@@ -55,12 +55,17 @@ const UserData = () => {
     poiLayer: user.porLayer,
     disabled: user.disabled,
     administrator: user.administrator,
-    readOnly: user.readOnly,
-    deviceReadOnly: user.deviceReadOnly,
+    readonly: user.readonly,
+    deviceReadonly: user.deviceReadonly,
     limitCommands: user.limitCommands,
     expirationTime: user.expirationTime === null ? '' : user.expirationTime,
     deviceLimit: user.deviceLimit,
-    userLimit: user.userLimit
+    userLimit: user.userLimit,
+    attributes: user.attributes,
+    id: user.id,
+    login: user.login,
+    poiLayer: user.poiLayer,
+    token: user.token,
   });
 
 
@@ -92,10 +97,10 @@ const UserData = () => {
     });
   }, [storeServer]);
 
-  const getSavedCommands = async () => {
-    const response = await service.getCommands();
-    setSavedCommands(response);
-  };
+  // const getSavedCommands = async () => {
+  //   const response = await service.getCommands();
+  //   setSavedCommands(response);
+  // };
 
   return (
 
@@ -204,7 +209,7 @@ const UserData = () => {
                   onChange={(e) =>
                     setSession({
                       ...session,
-                      latitude: e.target.value
+                      latitude: Number(e.target.value)
                     })
                   }
                   type="number"
@@ -219,7 +224,7 @@ const UserData = () => {
                   onChange={(e) =>
                     setSession({
                       ...session,
-                      longitude: e.target.value
+                      longitude: Number(e.target.value)
                     })
                   }
                   type="number"
@@ -233,7 +238,7 @@ const UserData = () => {
                   onChange={(e) =>
                     setSession({
                       ...session,
-                      zoom: e.target.value
+                      zoom: Number(e.target.value)
                     })
                   }
                   type="number"
@@ -307,6 +312,7 @@ const UserData = () => {
                 <TableCell>{t('sharedDisabled')}:</TableCell>
                 <TableCell>
                   <Checkbox
+                    disabled={!user.administrator}
                     checked={session.disabled}
                     onChange={() => setSession({
                       ...session,
@@ -321,6 +327,7 @@ const UserData = () => {
                 <TableCell>{t('userAdmin')}:</TableCell>
                 <TableCell>
                   <Checkbox
+                    disabled={!user.administrator}
                     checked={session.administrator}
                     onChange={() => setSession({
                       ...session,
@@ -335,6 +342,7 @@ const UserData = () => {
                 <TableCell>{t('serverReadonly')}:</TableCell>
                 <TableCell>
                   <Checkbox
+                    disabled={!user.administrator}
                     checked={session.readOnly}
                     onChange={() => setSession({
                       ...session,
@@ -349,6 +357,7 @@ const UserData = () => {
                 <TableCell>{t('userDeviceReadonly')}:</TableCell>
                 <TableCell>
                   <Checkbox
+                    disabled={!user.administrator}
                     checked={session.deviceReadOnly}
                     onChange={() => setSession({
                       ...session,
@@ -363,6 +372,7 @@ const UserData = () => {
                 <TableCell>{t('userLimitCommands')}:</TableCell>
                 <TableCell>
                   <Checkbox
+                    disabled={!user.administrator}
                     checked={session.limitCommands}
                     color="primary"
                     inputProps={{ "aria-label": "secondary checkbox" }}
@@ -378,6 +388,7 @@ const UserData = () => {
                 <TableCell>
                   <form className={classes.containerDateTime} noValidate>
                     <TextField
+                      disabled={!user.administrator}
                       value={session.expirationTime}
                       fullWidth
                       type="date"
@@ -392,6 +403,7 @@ const UserData = () => {
               <TableRow>
                 <TableCell>{t("userDeviceLimit")}:</TableCell>
                 <TableCell><TextField
+                  disabled={!user.administrator}
                   fullWidth
                   value={session.deviceLimit}
                   type="number"
@@ -404,6 +416,7 @@ const UserData = () => {
               <TableRow>
                 <TableCell>{t("userUserLimit")}:</TableCell>
                 <TableCell><TextField
+                  disabled={!user.administrator}
                   fullWidth
                   value={session.userLimit}
                   onChange={(event) => setSession({

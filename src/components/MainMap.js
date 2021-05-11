@@ -1,6 +1,7 @@
 import React, { useRef, useLayoutEffect, useEffect, useState } from "react";
 import mapManager from "../utils/mapManager";
 import {useSelector} from "react-redux";
+import { getCourse } from "../utils/functions";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   calculatePolygonCenter,
@@ -56,6 +57,7 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource }) => {
     type: "FeatureCollection",
     features: Object.values(state.positions.items).map((position) => ({
       type: "Feature",
+      course: position.course,
       geometry: {
         type: "Point",
         coordinates: [position.longitude, position.latitude],
@@ -113,12 +115,15 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource }) => {
   useEffect(() => {
     if (mapReady) {
       let positionsByType = [];
-
+      
       positions.features.map((feature, index) => {
+
         let positionsB = {
           type: "FeatureCollection",
-          features: [{...feature}]
+          features: [{...feature}],
+          couse: feature.couse
         };
+        
         let featureType = feature.properties.description.match(regexVehicleType)[1];
         let positionFound = positionsByType.find(pos => pos.type === featureType);
 
@@ -129,7 +134,7 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource }) => {
         }
       });
 
-      positionsByType.map(pos => {
+      positionsByType.map((pos)=> {
         mapManager.map.addSource(pos.type, {
           type: "geojson",
           data: pos.position,

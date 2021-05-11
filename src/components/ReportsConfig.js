@@ -420,10 +420,11 @@ export default function ReportsConfig({ handleReportsConfig, reportType }) {
         </TableRow>      
         <TableRow>
           <TableCell>{t("reportShowMarkers")}:</TableCell>
-          <TableCell>
+          <TableCell >
             <Radio
               checked={showMarkers === true}
               onClick={handleChangeRadio}
+              disabled={reportType === 'graphic'}
               color="primary"
               value={true}
               name="radio-button-demo"
@@ -432,6 +433,7 @@ export default function ReportsConfig({ handleReportsConfig, reportType }) {
             {t("reportYes")}
             <Radio
               checked={showMarkers === false}
+              disabled={reportType === 'graphic'}
               onChange={handleChangeRadio}
               color="primary"
               value={false}

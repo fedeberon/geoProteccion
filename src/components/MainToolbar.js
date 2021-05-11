@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { sessionActions } from "../store";
 import Button from "@material-ui/core/Button";
@@ -6,7 +6,6 @@ import Drawer from "@material-ui/core/Drawer";
 import List from "@material-ui/core/List";
 import Divider from "@material-ui/core/Divider";
 import ListItem from "@material-ui/core/ListItem";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import MapIcon from "@material-ui/icons/Map";
 import t from "../common/localization";
@@ -20,7 +19,6 @@ const MainToolbar = () => {
   const user = useSelector((state) => state.session.user);
   const history = useHistory();
   const dispatch = useDispatch();
-  const [drawer, setDrawer] = useState(true);
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(undefined);
   const openMenu = Boolean(anchorEl);
@@ -33,17 +31,17 @@ const MainToolbar = () => {
     fetch("/api/session", { method: "DELETE" }).then((response) => {
       if (response.ok) {
         dispatch(sessionActions.authenticated(false));
-        history.push("/login");
+        localStorage.username = "";
+        localStorage.password = "";
+        localStorage.checkbox = false;
+        localStorage.token = "";
+        history.go(0);
       }
     });
   };
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(undefined);
   };
 
   return (
