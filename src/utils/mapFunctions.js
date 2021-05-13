@@ -107,6 +107,7 @@ const createFeature = (devices, position, isViewportDesktop) => {
     const showData = '';
 
     return {
+      type: device.category,
       name: device ? `${name} ${speed} Km/h` : '',
       description: `<div class="${desktopView ? 'popup-map-div' : 'popup-map-div-mobile'}">
                         <div class="popup-map-header" id="header-${device.id}">

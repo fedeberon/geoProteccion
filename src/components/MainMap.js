@@ -110,8 +110,6 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource }) => {
     mapManager.registerListener(() => setMapReady(true));
   }, []);
 
-  const regexVehicleType = /[<]img class[=]["]vehicule[-]type["] src[=]["][.][/]web[/]images[/]([a-zA-Z]+)[.]svg["][>]/;
-
   useEffect(() => {
     if (mapReady) {
       let positionsByType = [];
@@ -124,7 +122,7 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource }) => {
           couse: feature.couse
         };
         
-        let featureType = feature.properties.description.match(regexVehicleType)[1];
+        let featureType = feature.properties.type;
         let positionFound = positionsByType.find(pos => pos.type === featureType);
 
         if (positionFound) {
@@ -188,7 +186,7 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource }) => {
         type: "FeatureCollection",
         features: [{...feature}]
       };
-      let featureType = feature.properties.description.match(regexVehicleType)[1];
+      let featureType = feature.properties.type;
       let positionFound = positionsByType.find(pos => pos.type === featureType);
 
       if (positionFound) {
@@ -199,7 +197,7 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource }) => {
     });
 
     positions.features.map(feature => {
-      let featureType = feature.properties.description.match(regexVehicleType)[1];
+      let featureType = feature.properties.type;
       if (mapManager.map.getSource(featureType)) {
         const source = mapManager.map.getSource(featureType);
         let positionFound = positionsByType.find(pos => pos.type === featureType);
@@ -236,7 +234,7 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource }) => {
   useEffect(() => {
     let features = [];
     positions.features.map(feature => {
-      let featureType = feature.properties.description.match(regexVehicleType)[1];
+      let featureType = feature.properties.type;
 
       if (features.indexOf(featureType) === -1) {
         mapManager.map.on("click", `device-${featureType}`, createPopup);
@@ -249,7 +247,7 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource }) => {
     return () => {
       let features = [];
       positions.features.map(feature => {
-        let featureType = feature.properties.description.match(regexVehicleType)[1];
+        let featureType = feature.properties.type;
 
         if (features.indexOf(featureType) === -1) {
           mapManager.map.off("click", `device-${featureType}`, createPopup);
