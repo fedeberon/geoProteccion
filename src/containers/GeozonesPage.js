@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useTheme } from "@material-ui/core/styles";
 import clsx from "clsx";
-import Accordion from "@material-ui/core/Accordion";
-import AccordionDetails from "@material-ui/core/AccordionDetails";
-import AccordionSummary from "@material-ui/core/AccordionSummary";
-import AccordionActions from "@material-ui/core/AccordionActions";
 import Typography from "@material-ui/core/Typography";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from "@material-ui/core/DialogTitle";
 import Button from "@material-ui/core/Button";
 import Divider from "@material-ui/core/Divider";
 import t from "../common/localization";
@@ -14,14 +14,15 @@ import Container from "@material-ui/core/Container";
 import * as service from "../utils/serviceManager";
 import { useDispatch, useSelector } from "react-redux";
 import ListItem from "@material-ui/core/ListItem";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import StarBorder from "@material-ui/icons/StarBorder";
-import ListItemText from "@material-ui/core/ListItemText";
+import Table from "@material-ui/core/Table";
+import TableBody from "@material-ui/core/TableBody";
+import TableCell from "@material-ui/core/TableCell";
+import TableHead from "@material-ui/core/TableHead";
+import TableRow from "@material-ui/core/TableRow";
+import { DeleteTwoTone } from "@material-ui/icons";
+import EditTwoToneIcon from "@material-ui/icons/EditTwoTone";
 import List from "@material-ui/core/List";
-import Fab from "@material-ui/core/Fab";
 import AddIcon from "@material-ui/icons/Add";
-import EditIcon from "@material-ui/icons/Edit";
-import Dialog from "@material-ui/core/Dialog";
 import MuiDialogTitle from "@material-ui/core/DialogTitle";
 import MuiDialogContent from "@material-ui/core/DialogContent";
 import MuiDialogActions from "@material-ui/core/DialogActions";
@@ -65,39 +66,6 @@ const styles = (theme) => ({
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
-
-const DialogTitle = withStyles(styles)((props) => {
-  const { children, classes, onClose, ...other } = props;
-  return (
-    <MuiDialogTitle disableTypography className={classes.root2} {...other}>
-      <Typography variant="h6">{children}</Typography>
-      {onClose ? (
-        <IconButton
-          aria-label="close"
-          className={classes.closeButton}
-          onClick={onClose}
-        >
-          <CloseIcon />
-        </IconButton>
-      ) : null}
-    </MuiDialogTitle>
-  );
-});
-
-const DialogContent = withStyles((theme) => ({
-  root: {
-    padding: theme.spacing(2),
-  },
-}))(MuiDialogContent);
-
-const DialogActions = withStyles((theme) => ({
-  root: {
-    margin: 0,
-    padding: theme.spacing(1),
-  },
-}))(MuiDialogActions);
-
-
 export default function GeozonesPages() {
   const classes = useStyles();
   const [ geozones, setGeozones ] = useState([]);
@@ -113,12 +81,19 @@ export default function GeozonesPages() {
   const [ color, setColor ] = useState("#000000");
   const [ openPer, setOpenPer ] = React.useState(true);
   const [ geozone, setGeozone ] = useState({
-    id: null,
+    
     name: "",
     description: "",
     area: "",
     attributes: {},
   });
+  const [objectId, setObjectId] = useState('');
+  const [openRemoveDialog, setOpenRemoveDialog] = useState(false);
+
+  const handleOpenRemoveDialog = (objectId) => {
+    setOpenRemoveDialog(true);
+    setObjectId(objectId)
+  };
 
   const handleDrawerShow = () => {
     setOpenPer(!openPer);
@@ -139,7 +114,6 @@ export default function GeozonesPages() {
   const handleClickOpen = () => {
     setOpen(true);
     setGeozone({
-      id: null,
       name: "",
       description: "",
       area: "",
@@ -223,19 +197,22 @@ export default function GeozonesPages() {
     handleClose();
   };
 
-  const handleRemove = (id) => {
-    let option = confirm("¿Eliminar Geozona N°" + id + "?");
-    if (option) {
-      fetch(`/api/geofences/${id}`, { method: "DELETE" }).then((response) => {
-        if (response.ok) {
-          const getGeozones = async (userId) => {
-            const response = await service.getGeozonesByUserId(userId);
-            setGeozones(response);
-          };
-          getGeozones(userId);
-        }
-      });
-    }
+  const handleRemove = () => {
+    fetch(`/api/geofences/${objectId}`, { method: "DELETE" }).then((response) => {
+      if (response.ok) {
+        const getGeozones = async (userId) => {
+          const response = await service.getGeozonesByUserId(userId);
+          setGeozones(response);
+        };
+        getGeozones(userId);
+      }
+    });
+    handleCloseRemoveDialog();
+  };
+
+  const handleCloseRemoveDialog = () => {
+    setOpenRemoveDialog(false);
+    setObjectId('');
   };
 
   const handleGeozoneProperties = (property, data, attribute = false) => {
@@ -267,94 +244,43 @@ export default function GeozonesPages() {
           {t("sharedAdd")}
         </Button>
       </Container>
-
-      <div className={classes.geozonesContainer}>
-      {geozones.sort((f,s) => {
+      <div>
+            <Table>
+              <TableHead>
+                <TableRow>
+                <TableCell>{t("sharedName")}</TableCell>
+                <TableCell>{t("sharedDescription")}</TableCell>
+                <TableCell align="center"/>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+              {geozones.sort((f,s) => {
                  return f.id - s.id
                }).map((geozone, index) => (
-        <Accordion key={index} className={classes.accordionStyle}>
-          <AccordionSummary
-            expandIcon={<ExpandMoreIcon />}
-            aria-controls="panel1c-content"
-            id="panel1c-header"
-          >
-            <div className={classes.column}>
-              <Typography className={classes.heading}>
-                <strong>{t("sharedName")}</strong>
-              </Typography>
-              <Typography className={classes.heading}>
-                {geozone.name}
-              </Typography>
-            </div>
-            <div className={classes.column}>
-              <Typography className={classes.heading}>
-                <strong>{t("sharedDescription")}</strong>
-              </Typography>
-              <Typography className={classes.secondaryHeading}>
-                {`${geozone.description ? geozone.description : "Undefined"}`}
-              </Typography>
-            </div>
-            <div className={classes.column}></div>
-          </AccordionSummary>
-          <AccordionDetails>
-            <div className={clsx(classes.column, classes.helper)}>
-              <Typography className={classes.heading}>
-                <strong>{t("sharedAttributes")}</strong>
-              </Typography>
-              <Typography variant="caption" className={classes.heading}>
-                <List component="div" disablePadding>
-                  {Object.entries(geozone.attributes).map(([key, value]) => (
-                    <ListItem
-                      key={key}
-                      style={{ paddingLeft: 0 }}
-                      className={classes.nested}
-                    >
-                      <ListItemIcon style={{ minWidth: "30px" }}>
-                        <StarBorder style={{ fontSize: "15px" }} />
-                      </ListItemIcon>
-                      <ListItemText
-                        disableTypography={true}
-                        className={classes.attributesStyles}
-                        primary={key}
-                        secondary={value}
-                      />
-                    </ListItem>
-                  ))}
-                </List>
-              </Typography>
-            </div>
-          </AccordionDetails>
-          <Divider />
-          <AccordionActions>
-            <Fab
-              style={{ height: "25px" }}
-              size="small"
-              variant="extended"
-              color="default"
-              aria-label="edit"
-              onClick={() => handleClickOpenEditModal(geozone)}
-            >
-              <EditIcon className={classes.extendedIcon} />
-              {t("sharedEdit")}
-            </Fab>
-            <Fab
-              style={{ height: "25px" }}
-              size="small"
-              variant="extended"
-              color="default"
-              aria-label="edit"
-              onClick={() => handleRemove(geozone.id)}
-            >
-              <AddIcon
-                style={{ transform: "rotateZ(45deg)", fontSize: "33px" }}
-                className={classes.extendedIcon}
-              />
-              {t("sharedRemove")}
-            </Fab>
-          </AccordionActions>
-        </Accordion>
-      ))}
-      </div>
+                <TableRow key={index}>
+                  <TableCell>{geozone.name}</TableCell>
+                  <TableCell>{`${geozone.description ? geozone.description : "Undefined"}`}</TableCell>
+                  <TableCell style={{display: 'flex', justifyContent: 'center'}} align="center">
+                          <Button title={t('sharedEdit')}
+                                  onClick={() => handleClickOpenEditModal(geozone)}
+                                  >
+                          <EditTwoToneIcon 
+                          style={{fontSize: window.innerWidth > 767 ? '19px' : ''}}
+                          />
+                          </Button>
+                          <Button title={t('sharedRemove')}
+                                  onClick={() => handleOpenRemoveDialog(geozone.id)}                                  
+                                  >
+                          <DeleteTwoTone 
+                          style={{fontSize: window.innerWidth > 767 ? '19px' : ''}}
+                          />
+                          </Button>
+                  </TableCell>
+                </TableRow>                 
+               ))}
+              </TableBody>
+            </Table>
+        </div>
 
       {/*Modal Add New Geozone*/}
       <Dialog
@@ -364,10 +290,18 @@ export default function GeozonesPages() {
       >
         <DialogTitle id="customized-dialog-title" onClose={handleClose}>
           {` Agregar nueva Geozona `}
+          <IconButton
+            aria-label="close"
+            className={classes.closeButton}
+            onClick={handleClose}
+          >
+            <CloseIcon />
+          </IconButton>
         </DialogTitle>
         <DialogContent dividers>
           <form className={classes.rootmodal} noValidate autoComplete="off">
             <TextField
+              style={{display: 'none'}}
               id="outlined-basic"
               value={`${geozones.length + 1}`}
               label="Id"
@@ -427,6 +361,13 @@ export default function GeozonesPages() {
       >
         <DialogTitle id="customized-dialog-title" onClose={handleClose}>
           {t("sharedEdit")}
+          <IconButton
+            aria-label="close"
+            className={classes.closeButton}
+            onClick={handleClose}
+          >
+            <CloseIcon />
+          </IconButton>
         </DialogTitle>
         <DialogContent dividers>
           <form className={classes.rootmodal} noValidate autoComplete="off">
@@ -493,7 +434,7 @@ export default function GeozonesPages() {
                         autoFocus
                         style={{ flex: "1" }}
                         color="inherit"
-                        onClick={() => handleEdit(geozone.id)}
+                        onClick={handleCloseModalMap}
                       >
                         {t("sharedSave")}
                       </Button>
@@ -567,42 +508,13 @@ export default function GeozonesPages() {
                             <MenuItem>
                               <CirclePicker
                                 width="220px"
-                                colors={[
-                                  "#000000",
-                                  "#993300",
-                                  "#333300",
-                                  "#003300",
-                                  "#003366",
-                                  "#000080",
-                                  "#333399",
-                                  "#333333",
-                                  "#800000",
-                                  "#FF6600",
-                                  "#808000",
-                                  "#008000",
-                                  "#008080",
-                                  "#0000FF",
-                                  "#666699",
-                                  "#808080",
-                                  "#FF0000",
-                                  "#FF9900",
-                                  "#99CC00",
-                                  "#339966",
-                                  "#33CCCC",
-                                  "#3366FF",
-                                  "#800080",
-                                  "#969696",
-                                  "#FF00FF",
-                                  "#FFCC00",
-                                  "#FFFF00",
-                                  "#00FF00",
-                                  "#00FFFF",
-                                  "#00CCFF",
-                                  "#993366",
-                                  "#C0C0C0",
-                                  "#FF99CC",
-                                  "#FFCC99",
-                                  "#FFFF99",
+                                colors={["#000000", "#993300", "#333300", "#003300",
+                                  "#003366", "#000080", "#333399", "#333333", "#FF6600",
+                                  "#808000", "#008000", "#008080", "#0000FF", "#666699",
+                                  "#808080", "#FF0000", "#FF9900", "#99CC00", "#33CCCC",
+                                  "#3366FF", "#800080", "#969696", "#FF00FF", "#FFCC00",
+                                  "#FFFF00", "#00FF00", "#00FFFF", "#00CCFF", "#993366",
+                                  "#C0C0C0", "#FF99CC", "#FFCC99", "#FFFF99",
                                 ]}
                                 colorSize={35}
                                 onChangeComplete={(color) => {
@@ -630,7 +542,7 @@ export default function GeozonesPages() {
                           onChange={(event) =>
                             handleGeozoneProperties(
                               "speedLimit",
-                              event.target.value,
+                              Number(event.target.value),
                               true
                             )
                           }
@@ -647,7 +559,7 @@ export default function GeozonesPages() {
                           onChange={(event) =>
                             handleGeozoneProperties(
                               "polylineDistance",
-                              event.target.value,
+                              Number(event.target.value),
                               true
                             )
                           }
@@ -875,6 +787,29 @@ export default function GeozonesPages() {
             </div>
           </div>
         </Dialog>
+      </div>
+      <div>
+            <Dialog
+            open={openRemoveDialog}
+            onClose={handleCloseRemoveDialog}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+            >
+            <DialogTitle id="alert-dialog-remove-user">{t('settingsUser')}</DialogTitle>
+            <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                {t('sharedRemoveConfirm')}
+                </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={handleCloseRemoveDialog} color="primary">
+                {t('sharedCancel')}
+                </Button>
+                <Button onClick={handleRemove} color="primary" autoFocus>
+                {t('sharedRemove')}
+                </Button>
+            </DialogActions>
+            </Dialog>
       </div>
     </div>
   );

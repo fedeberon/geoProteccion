@@ -780,10 +780,10 @@ export default function ReportsDialog({
             </Table>
         </div>
 
-        {(route.length > 0 || stops.length > 0 || graphicData.length > 0) &&
+        {window.innerWidth > 767 &&
         <div
           onScroll={handleScroll}
-          style={{ display: `${window.innerWidth > 767 ? "inline-block" : "none"}` }}
+          style={{ display: `${((route.length > 0 || stops.length > 0 || graphicData.length > 0) && window.innerWidth > 767) ? "inline-block" : "none"}` }}
           className={`scrollbar ${classes.tableReportsState}`}>
             
             <Table stickyHeader={true} size={"small"}>
@@ -868,22 +868,22 @@ export default function ReportsDialog({
         </div>
           }        
         
-        {/*TRIPS Reports*/}
+        {/*Trips reports*/}
         <div>
           <ReportsTrips dataPositions={positions} dataTrips={trips} selected={handleSelectedPosition}/>
         </div>
         
-        {/*STOPS Reports*/}
+        {/*Stops reports*/}
         <div>
           <ReportsStops dataPositions={positions} dataStops={stops} selected={handleSelectedPosition}/>
         </div>
 
-        {/*SUMMARY Reports*/}
+        {/*Summary reports*/}
         <div>
           <ReportsSummary dataSummary={summary}/>
         </div>
 
-        {/*GRAPHIC Reports */}
+        {/*Graphic reports */}
         {graphicData.length > 0 && reportType === 'graphic' &&         
         <div
           className={classes.graphic}>

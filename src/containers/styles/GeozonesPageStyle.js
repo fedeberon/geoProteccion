@@ -4,8 +4,9 @@ const drawerWidth = 240;
 
 const geozonesPageStyle = makeStyles((theme) => ({
   root: {
+    overflowY: "scroll",
     height: "100%",   
-    paddingBottom: "10%",
+    paddingBottom: "5%",
     [theme.breakpoints.up("md")]: {
       width: "100%",
       height: "100%",          
@@ -22,6 +23,12 @@ const geozonesPageStyle = makeStyles((theme) => ({
     [theme.breakpoints.up("md")]: {
       paddingBottom: "4%",
     },
+  },
+  closeButton: {
+    position: "absolute",
+    right: theme.spacing(1),
+    top: theme.spacing(1),
+    color: theme.palette.grey[500],
   },
   formControl: {
     margin: theme.spacing(1),

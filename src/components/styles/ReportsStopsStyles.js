@@ -1,6 +1,6 @@
 import { makeStyles } from "@material-ui/core/styles";
 
-const reportsRouteStyles = makeStyles((theme) => ({
+const reportsStopsStyles = makeStyles((theme) => ({
   formControlDevices: {
     margin: theme.spacing(1),
     minWidth: 120,
@@ -33,4 +33,4 @@ const reportsRouteStyles = makeStyles((theme) => ({
   },
 })); 
 
-export default reportsRouteStyles;
+export default reportsStopsStyles;

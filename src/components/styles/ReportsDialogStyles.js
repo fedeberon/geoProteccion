@@ -84,12 +84,17 @@ const reportsDialogStyles = makeStyles((theme) => ({
     },
   },
   tableReports: {
-    top: "20%",
+    top: "18%",
     position: "absolute",
-    width: "75%",
+    width: "100%",
     height: "80%",
     overflowY: "auto",
     paddingBottom: "2.5%",
+    [theme.breakpoints.up("md")]: {
+      top: "20%",
+      display: "flex",
+      width: "75%",
+    },
   },
   tableTripsReports: {
     top: "20%",

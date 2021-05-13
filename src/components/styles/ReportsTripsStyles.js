@@ -26,7 +26,6 @@ const reportsRouteStyles = makeStyles((theme) => ({
     backgroundColor: "white",
     [theme.breakpoints.up('md')]: {
       height: '80vh',
-      width: '75%',
       paddingTop: 0,
       padding: 0
     },
