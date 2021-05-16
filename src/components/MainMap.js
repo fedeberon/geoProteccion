@@ -148,7 +148,7 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource }) => {
 
       return () => {
         positions.features.map(feature => {
-          let featureType = feature.properties.description.match(regexVehicleType)[1];
+          let featureType = feature.properties.type;
 
           if (mapManager.map.getLayer(`device-${featureType}`)) {
             mapManager.map.removeLayer(`device-${featureType}`);
