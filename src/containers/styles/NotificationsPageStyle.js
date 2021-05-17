@@ -5,11 +5,12 @@ const notificationsPageStyle = makeStyles((theme) => ({
     overflowY: "scroll",
     height: "100%",
     overflowX: "hidden",
-    paddingBottom: "5%",
+    paddingBottom: "15%",
     [theme.breakpoints.up("md")]: {
       width: "100%",
       height: "100%",
       overflowY: "scroll",
+      paddingBottom: "5%",
       flexGrow: 1,
       backgroundColor: theme.palette.background.paper,
     },

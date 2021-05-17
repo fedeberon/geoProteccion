@@ -5,7 +5,6 @@ import { Switch, Route } from "react-router-dom";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import MainPage from "./containers/MainPage";
 import LoginPage from "./containers/LoginPage";
-import RouteReportPage from "./containers/RouteReportPage";
 import UserPage from "./containers/UserPage";
 import UsersPage from "./containers/UsersPage";
 import GroupsPage from "./containers/GroupsPage";
@@ -24,10 +23,7 @@ import { sessionActions } from "./store";
 import DeviceDetail from "./components/DeviceDetail";
 import SocketController from "./components/SocketController";
 import * as service from "./utils/serviceManager";
-
 import Validation from './components/Validation';
-
-
 
 const App = () => {
   
@@ -145,12 +141,6 @@ const App = () => {
           path="/maintenance"
           isAuthenticated={authenticated}
           component={MaintenancePage}
-        />
-        <PrivateRoute
-          exact
-          path="/reports/route"
-          isAuthenticated={authenticated}
-          component={RouteReportPage}
         />
         <PrivateRoute
           exact

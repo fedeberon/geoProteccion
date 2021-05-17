@@ -60,6 +60,7 @@ const devicePageStyle = makeStyles((theme) => ({
     overflowY: "scroll",
     display: "inherit",
     flexWrap: "wrap",
+    paddingBottom: "50%",
     [theme.breakpoints.up("md")]: {
       width: "100%",
       marginLeft: "auto",

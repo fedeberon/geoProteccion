@@ -6,10 +6,11 @@ const geozonesPageStyle = makeStyles((theme) => ({
   root: {
     overflowY: "scroll",
     height: "100%",   
-    paddingBottom: "5%",
+    paddingBottom: "15%",
     [theme.breakpoints.up("md")]: {
       width: "100%",
-      height: "100%",          
+      height: "100%",   
+      paddingBottom: "5%",
     },
   },
   geozonesContainer: {
@@ -158,7 +159,7 @@ const geozonesPageStyle = makeStyles((theme) => ({
   contentPer: {
     flexGrow: 1,
     height: "100vh",
-    width: "100vh",
+    width: "100vw",
     transition: theme.transitions.create("margin", {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
