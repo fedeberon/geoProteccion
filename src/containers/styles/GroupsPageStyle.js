@@ -21,7 +21,6 @@ const groupsPageStyle = makeStyles((theme) => ({
     width: "auto",
     height: "450px",
     overflow: "auto",
-    // marginLeft: "5%",
     overflowY: "scroll",
     display: "inherit",
     flexWrap: "wrap",

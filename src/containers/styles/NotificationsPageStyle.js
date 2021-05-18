@@ -2,22 +2,29 @@ import { makeStyles } from "@material-ui/core/styles";
 
 const notificationsPageStyle = makeStyles((theme) => ({
   root: {
-    overflowY: "scroll",
+    //overflowY: "scroll",
     height: "100%",
-    overflowX: "hidden",
     paddingBottom: "15%",
     [theme.breakpoints.up("md")]: {
       width: "100%",
       height: "100%",
-      overflowY: "scroll",
       paddingBottom: "5%",
       flexGrow: 1,
       backgroundColor: theme.palette.background.paper,
     },
   },
-  // table: {
-  //   minWidth: 650,
-  // },
+  notificationContainer: {
+    width: "auto",
+    height: "450px",
+    overflow: "auto",
+    overflowY: "scroll",
+    display: "inherit",
+    flexWrap: "wrap",
+    paddingBottom: "20%",
+    [theme.breakpoints.up("md")]: {
+      paddingBottom: "4%",
+    },
+  },
   formControlType: {
     margin: theme.spacing(1),
     minWidth: 120,

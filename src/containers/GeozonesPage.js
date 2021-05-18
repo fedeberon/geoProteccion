@@ -23,14 +23,9 @@ import { DeleteTwoTone } from "@material-ui/icons";
 import EditTwoToneIcon from "@material-ui/icons/EditTwoTone";
 import List from "@material-ui/core/List";
 import AddIcon from "@material-ui/icons/Add";
-import MuiDialogTitle from "@material-ui/core/DialogTitle";
-import MuiDialogContent from "@material-ui/core/DialogContent";
-import MuiDialogActions from "@material-ui/core/DialogActions";
 import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
-import { withStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
-import { useHistory, useParams } from "react-router-dom";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Slide from "@material-ui/core/Slide";
@@ -243,8 +238,9 @@ export default function GeozonesPages() {
           <AddIcon color="primary" />
           {t("sharedAdd")}
         </Button>
+        <Divider />
       </Container>
-      <div>
+      <div className={classes.geozonesContainer}>
             <Table>
               <TableHead>
                 <TableRow>

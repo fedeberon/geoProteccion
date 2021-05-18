@@ -27,11 +27,13 @@ import {DeleteTwoTone, MoreVert} from "@material-ui/icons";
 import DeviceConfigFull from "../components/DeviceConfigFull";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
+import { useSelector } from "react-redux";
 
 const useStyles = groupsPageStyle;
 
 const GroupsPage = () => {
   const classes = useStyles();
+  const userId = useSelector((state) => state.session.user.id);
   const [groups, setGroups] = useState([]);
   const [openAddGroup, setOpenAddGroup] = useState(false);
   const [extraData, setExtraData] = useState(false);
@@ -159,9 +161,8 @@ const GroupsPage = () => {
   const handleOpenFullDialog = (parametro, groupId) => {
     setOpenFullDialog(true);
     setType(parametro);
-    if (groupId) {
-      setGroupId(groupId);
-    }
+    setGroupId(groupId);
+
     handleCloseMenuMore();
   };
 
@@ -200,7 +201,9 @@ const GroupsPage = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {groups.map((group, index)=> (
+              {groups.sort((f,s) => {
+                 return f.id - s.id
+               }).map((group, index)=> (
                 <TableRow key={index} hover>
                   <TableCell>{group.name}</TableCell>
                   <TableCell align="right">
@@ -235,19 +238,20 @@ const GroupsPage = () => {
                       <MenuItem onClick={() => handleOpenFullDialog(variable.geocerca, group.id)}>
                         {t("sharedGeofences")}
                       </MenuItem>
-                      <MenuItem onClick={() => handleOpenFullDialog(variable.notification, group.id)}>
-                        {t("sharedNotifications")}
-                      </MenuItem>
                       <MenuItem onClick={() => handleOpenFullDialog(variable.atrCalculados, group.id)}>
                         {t("sharedComputedAttributes")}
                       </MenuItem>
-                      <MenuItem style={{display: 'none'}} onClick={() => handleOpenFullDialog(variable.comGuardados, device.id)}>
+                      <MenuItem onClick={() => handleOpenFullDialog(variable.comGuardados, group.id)}>
                         {t("sharedSavedCommands")}
                       </MenuItem>
-                      <MenuItem style={{display: 'none'}} onClick={() => handleOpenFullDialog(variable.mantenimiento, device.id)}>
+                      <MenuItem onClick={() => handleOpenFullDialog(variable.notification, group.id)}>
+                        {t("sharedNotifications")}
+                      </MenuItem>                     
+                      
+                      <MenuItem style={{display: 'none'}} onClick={() => handleOpenFullDialog(variable.mantenimiento, group.id)}>
                         {t("sharedMaintenance")}
                       </MenuItem>
-                      <MenuItem style={{display: 'none'}}  onClick={() => handleOpenAcumulators(device.id)}>
+                      <MenuItem style={{display: 'none'}}  onClick={() => handleOpenAcumulators(group.id)}>
                         {t("sharedDeviceAccumulators")}
                       </MenuItem>
                     </Menu>
@@ -356,8 +360,9 @@ const GroupsPage = () => {
             open={openFullDialog}
             close={handleCloseFullDialog}
             type={type}
-            deviceId={groupId}
+            groupId={groupId}
             groupAssignment={groupAssignment}
+            currentUserId={userId}
           />
         </div>
     </div>

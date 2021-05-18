@@ -184,7 +184,7 @@ export default function NotificationsPage() {
           </Button>
         </Container>
         {/*<TabPanel value={value} index={0}>*/}
-        <div>
+        <div className={classes.notificationContainer}>
           <TableContainer component={Paper}>
             <Table className={classes.table} aria-label="simple table">
               <TableHead>
@@ -197,7 +197,9 @@ export default function NotificationsPage() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {notifications.map((notification, index) => (
+                {notifications.sort((f,s) => {
+                 return f.id - s.id
+               }).map((notification, index) => (
                   <TableRow key={index}>
                     <TableCell align="center">
                       {t(`event${capitalize(notification.type)}`)}

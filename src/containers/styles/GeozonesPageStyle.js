@@ -4,7 +4,7 @@ const drawerWidth = 240;
 
 const geozonesPageStyle = makeStyles((theme) => ({
   root: {
-    overflowY: "scroll",
+    //overflowY: "scroll",
     height: "100%",   
     paddingBottom: "15%",
     [theme.breakpoints.up("md")]: {
@@ -15,9 +15,9 @@ const geozonesPageStyle = makeStyles((theme) => ({
   },
   geozonesContainer: {
     width: "auto",
-    height: "100%",
+    height: "450px",
     overflow: "auto",
-    // marginLeft: "5%",
+    paddingBottom: "20%",
     overflowY: "scroll",
     display: "inherit",
     flexWrap: "wrap",

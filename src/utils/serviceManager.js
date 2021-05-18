@@ -308,6 +308,14 @@ const getCommands = () => {
     .then((response) => response.json());
 };
 
+const getSavedCommandsByGroupId = (id) => {
+  return fetch(`api/commands?groupId=${id}`, { method: "GET" })
+    .catch(function (error) {
+      console.log("setCommands error: ", error);
+    })
+    .then((response) => response.json());
+}
+
 const getUsers = () => {
   return fetch(`api/users`, { method: "GET"})
     .catch(function (error) {
@@ -350,5 +358,6 @@ export {
   getNotificationsByGroupId,
   getComputedAttributesByGroupId,
   removeComputedAttribute,
-  getUsers
+  getUsers,
+  getSavedCommandsByGroupId
 };
