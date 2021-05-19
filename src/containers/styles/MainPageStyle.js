@@ -11,12 +11,12 @@ const mainPageStyle = makeStyles((theme) => ({
     overflow: "hidden",
     display: "flex",
     flexDirection: "row",
-    [theme.breakpoints.down("xs")]: {
-      flexDirection: "column-reverse",
-      flexGrow: 1,
-      overflow: "hidden",
-      display: "flex",
-    },
+    // [theme.breakpoints.down("xs")]: {
+    //   flexDirection: "row",
+    //   flexGrow: 1,
+    //   overflow: "hidden",
+    //   display: "flex",
+    // },
   },
   drawerPaper: {
     position: "right",
