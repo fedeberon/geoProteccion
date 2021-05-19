@@ -10,9 +10,12 @@ const mainPageStyle = makeStyles((theme) => ({
     flexGrow: 1,
     overflow: "hidden",
     display: "flex",
-    flexDirection: "column-reverse",
-    [theme.breakpoints.up("md")]: {
-      flexDirection: "row",
+    flexDirection: "row",
+    [theme.breakpoints.down("xs")]: {
+      flexDirection: "column-reverse",
+      flexGrow: 1,
+      overflow: "hidden",
+      display: "flex",
     },
   },
   drawerPaper: {
