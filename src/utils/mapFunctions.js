@@ -1,6 +1,6 @@
 import t from "../common/localization";
 import circleToPolygon from "circle-to-polygon";
-import { getCourse, getDateTime } from "./functions";
+import { getCourse, getDateTime, getDateTimeDevices } from "./functions";
 
 const typeRegEx = /(\w*)[ ]?[(]/;
 const circlePositionRegEx = /[(](.*) (.*)[,]/;
@@ -116,7 +116,7 @@ const createFeature = (devices, position, isViewportDesktop) => {
                                     <p style="${desktopView ? 'font-size: 16px' : 'font-size: 17px'}"><strong  class="bold">${carPlate + '</strong> - ' + name} </p>
                                 </li>
                                 <li>
-                                    <p>${getDateTime(position.deviceTime)}</p>
+                                    <p>${getDateTimeDevices(device.lastUpdate)}</p>
                                 </li>
                                 <!--
                                 <li><p>${brand + ' ' + model + ' ' + year}</p></li>
@@ -127,9 +127,9 @@ const createFeature = (devices, position, isViewportDesktop) => {
                                         <p><strong>${t("currentAddress")+':'}</strong>
                                         <p style="display: none" id="device-${device.id}">${t("deviceStatusUnknown")}</p></p>
                                     </tr>
-                                    <li>
-                                    
+                                    <li>                                    
                                         <li style="color: blue" id="addressShown" onClick="showAddress(${device.id},${position.latitude},${position.longitude})">${t("sharedShowAddress")}</li>
+                                        <li id="buttonShowMore" onClick="showDetails(${device.id})">${t(`showMore`)}</li>
                                     </li>
                                 </li>
                             </ul>
@@ -142,7 +142,7 @@ const createFeature = (devices, position, isViewportDesktop) => {
                                         ${t("sharedHour")}
                                     </th>
                                     <td>
-                                        ${getDateTime(position.deviceTime)}
+                                        ${getDateTimeDevices(device.lastUpdate)}
                                     </td>
                                 </tr>
                                 <tr>
@@ -150,7 +150,7 @@ const createFeature = (devices, position, isViewportDesktop) => {
                                         ${t("positionLatitude")}
                                     </th>
                                     <td>
-                                        ${position.latitude}°
+                                        ${position.latitude.toFixed(6)}°
                                     </td>
                                 </tr>
                                 <tr>
@@ -158,7 +158,7 @@ const createFeature = (devices, position, isViewportDesktop) => {
                                         ${t("positionLongitude")}
                                     </th>
                                     <td>
-                                        ${position.longitude}°
+                                        ${position.longitude.toFixed(6)}°
                                     </td>
                                 </tr>
                                 <tr>
@@ -248,13 +248,13 @@ const createFeature = (devices, position, isViewportDesktop) => {
                                     <td>
                                         ${t(`${position.attributes.motion}`)}                                        
                                     </td>
-                                </tr>
+                                </tr>                               
                             </table>
                         </div>
 
                         <div class="popup-map-body" id="main-data-${device.id}">
                         
-                            <img class="vehicule-type" src="./web/images/${device.category}.svg"></img>
+                            <img class="vehicle-type" src="./web/images/${device.category}.svg"></img>
                             <table class="body-list">
                                 <tr>
                                     <td><i class="icon-fa fas fa-map-marker-alt"/></td>
@@ -312,15 +312,14 @@ const createFeature = (devices, position, isViewportDesktop) => {
                             </table>
                         </div>
                         <div class="footer-sp">
-                            <button id="circuitBraker" class="${desktopView ? 'button-black' : 'button-black-mobile'}" href="#/device/${device.id}">
+                            
+                            <li id="buttonShowLess" style="color: blue; display: none"  onClick="showDetails(${device.id})">${t(`showLess`)}</li>
+                            
+                            <button id="circuitBraker" onClick="goToDeviceRemoteControl(${device.id})"
+                            class="${desktopView ? 'button-black' : 'button-black-mobile'}">
                                 ${t("activateCircuitBreaker")}
                             </button>
-                            <button id="buttonShowMore" class="${desktopView ? 'button-black' : 'button-black-mobile'}" onClick="showDetails(${device.id})">
-                                ${t(`showMore`)}
-                            </button>
-                            <button id="buttonShowLess" style="display: none"class="${desktopView ? 'button-black' : 'button-black-mobile'}" onClick="showDetails(${device.id})">
-                                ${t(`showLess`)}
-                            </button>
+                            
                         </div>
                     </div>`
     }

@@ -16,7 +16,7 @@ import { devicesActions } from "../store";
 import t from "../common/localization";
 import { useHistory } from "react-router-dom";
 import deviceSearchStyles from "./styles/DeviceSearchStyles";
-import { getDateTime } from '../utils/functions';
+import { getDateTimeDevices } from '../utils/functions';
 import { getSVG } from '../utils/svgGetter';
 
 const useStyles = deviceSearchStyles;
@@ -25,6 +25,7 @@ function DeviceSearch(deviceId) {
   const dispatch = useDispatch();
   const history = useHistory();
   const classes = useStyles();
+  const server = useSelector((state) => state.session.server);
   const [valueColor, setValueColor] = useState('#ffa2ad');
   const devices = useSelector(
     (state) => Object.values(state.devices.items),
@@ -143,7 +144,7 @@ function DeviceSearch(deviceId) {
                     {device.name}
                   </p>
                   <div className={classes.devsearchSd}>
-                    {getDateTime(device.lastUpdate)}
+                    {getDateTimeDevices(device.lastUpdate)}
                     <p
                       className={`status-${device.status} ${classes.devsearchSdP}`}
                     >
@@ -159,7 +160,7 @@ function DeviceSearch(deviceId) {
                   {positions && positions[device.id]
                     ? positions[device.id].speed.toFixed(0)
                     : "0"}{" "}
-                  Km/h
+                  {server && `${server.attributes?.speedUnit}`}
                 </p>
                 <i
                   className={`far fa-circle fa-2x device-icon-${device.status} status-${device.status}`}
@@ -173,6 +174,7 @@ function DeviceSearch(deviceId) {
 
               <ListItemSecondaryAction>
                 <IconButton
+                  id={`device-information-${device.id}`}
                   style={{ color: "#1d193e" }}
                   title={t("sharedInfoTitle")}
                   onClick={(e) => {

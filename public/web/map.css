@@ -140,7 +140,7 @@ button {
   margin-right: auto;
 }
 
-.vehicule-type {
+.vehicle-type {
   font-size: 25px;
   color: #716a77;
   left: 78%;
@@ -433,6 +433,23 @@ button {
     cursor: pointer;
   }
 
+  #buttonShowMore:hover {
+    text-decoration: underline;
+    cursor: pointer;
+    color: blue;
+  }
+
+  #buttonShowLess {
+    text-align: center;
+    margin-bottom: 10px;
+  }
+
+  #buttonShowLess:hover {
+    text-decoration: underline;
+    cursor: pointer;
+    color: blue;
+  }
+
   .card-device-detail:hover {
     background-color:rgb(95, 133, 202);
     cursor: pointer !important;
@@ -460,8 +477,9 @@ button {
     right: 5px !important;
   }
   .title-section {
-    color: #7b94a2;
+    color: #155477;
     margin-top: 5%;
+    text-align: center;
   }  
   .title-section > h2 {
     border: 10px;
@@ -563,6 +581,17 @@ button {
 
 /* ancho de pantalla de menos de 600px* (mobile)*/
 @media only screen and (max-width: 600px) {
+
+  #buttonShowLess {
+    text-align: center;
+    margin-bottom: 10px;
+  }
+
+  #buttonShowLess:hover {
+    text-decoration: underline;
+    cursor: pointer;
+    color: blue;
+  }
 
   .popup-map-div-mobile {
     padding: 3% 8%;

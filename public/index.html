@@ -54,6 +54,12 @@
           circuitbrakerButton.style.display = 'block';
         }
       }
+
+      function goToDeviceRemoteControl (id) {
+        let deviceSelected = document.getElementById(`device-information-${id}`);
+        deviceSelected.click();
+      }
+
     </script>
   </head>
   <body style="margin: 0; padding: 0;">
