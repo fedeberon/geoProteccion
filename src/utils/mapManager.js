@@ -519,8 +519,6 @@ map.on("load", () => {
       }
     });
   });
-
-  
 });
 
 export default {

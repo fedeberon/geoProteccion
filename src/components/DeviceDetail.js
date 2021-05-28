@@ -1,5 +1,5 @@
-import React, { useEffect, useLayoutEffect, useState } from "react";
-import { shallowEqual, useSelector } from "react-redux";
+import React, { useEffect, useState } from "react";
+import { shallowEqual, useSelector, useDispatch } from "react-redux";
 import * as service from "../utils/serviceManager";
 import t from "../common/localization";
 import Divider from "@material-ui/core/Divider";
@@ -17,6 +17,7 @@ import IconButton from "@material-ui/core/IconButton";
 import { useParams } from "react-router-dom";
 import deviceDetailStyles from "./styles/DeviceDetailStyles";
 import CloseIcon from "@material-ui/icons/Close";
+import { devicesActions } from "../store";
 
 const useStyles = deviceDetailStyles;
 
@@ -25,46 +26,59 @@ const DeviceDetail = (props) => {
   const devices = useSelector((state) => Object.values(state.devices.items),
     shallowEqual
   );
+  const userId = useSelector((state) => state.session.user.id);
+  const dispatch = useDispatch();
   const positions = useSelector((state) => state.positions.items, shallowEqual);
   const classes = useStyles();
   const [deviceFound, setDeviceFound] = useState({});
   const [availableTypesByDeviceId, setAvailableTypesByDeviceId] = useState([]);
   const [availableFunction, setAvailableFunction] = useState(false);
-  const [circuitBraker, setCircuitBraker] = useState(false);
+  const [circuitBreaker, setCircuitBreaker] = useState(false);
   const [open, setOpen] = useState(false);
   const [openAlarm, setOpenAlarm] = useState(false);
   const [alarmActivated, setAlarmActivated] = useState(false);
+  let deviceUpdated = deviceFound;
 
   useEffect(() => {
     const result = devices.find((el) => el.id === parseInt(id));
     setDeviceFound(result);
-  }, []);
+  }, [devices]);
+
+  useEffect(()=> {
+    if (deviceFound.attributes?.circuitBreaker && deviceFound.attributes?.circuitBreaker === 'on'){
+      setCircuitBreaker(true);
+    } else if (deviceFound.attributes?.circuitBreaker && deviceFound.attributes?.circuitBreaker === 'off'){
+      setCircuitBreaker(false);
+    } else {
+      setCircuitBreaker(false);
+    }
+    
+    if (deviceFound.attributes?.alarm && deviceFound.attributes?.alarm === 'on'){
+      setAlarmActivated(true);
+    } else if (deviceFound.attributes?.alarm && deviceFound.attributes?.alarm === 'off'){
+      setAlarmActivated(false);
+    } else {
+      setAlarmActivated(false);
+    }
+
+  },[deviceFound])
 
   useEffect(() => {
-    const searchType = () => {
-      if (availableTypesByDeviceId.length > 1) {
-        setAvailableFunction(true);
-      } else {
-        setAvailableFunction(false);
-      }
+    if(deviceFound.id !== null){
+      const getCommandTypes = async () => {
+        const response = await service.getCommandTypes(deviceFound.id);
+        setAvailableTypesByDeviceId(response);
+        if (response.length > 1) {
+          setAvailableFunction(true);
+        } else {
+          setAvailableFunction(false);
+        }
+      };
+      getCommandTypes();
+    }
+  }, [deviceFound])
 
-    };
-    searchType();
-
-  }, [availableTypesByDeviceId])
-
-
-  useEffect(() => {
-    const getCommandTypes = async () => {
-      const response = await service.getCommandTypes(id);
-
-      setAvailableTypesByDeviceId(response);
-      console.log(availableTypesByDeviceId);
-    };
-    getCommandTypes();
-  }, [])
-
-  const handleConfirmCircuitBraker = () => {
+  const handleConfirmcircuitBreaker = () => {
     handleClickOpen();
   }
 
@@ -84,79 +98,133 @@ const DeviceDetail = (props) => {
     setOpen(false);
     setOpenAlarm(false);
   };
+
+  const updateDeviceAttributes = (object) => {
+    console.log(object)
+    let request = fetch(`/api/devices/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(object),
+    }).then(response => response.json())
+      .then(response => {        
+          const getDevicesByUser = async (userId) => {
+            let response = await service.getDeviceByUserId(userId);
+            dispatch(devicesActions.update(response));
+          }
+          getDevicesByUser(userId);        
+      })
+  }
         
-  const handleSetCircuitBraker = () => {
+  const handlesetCircuitBreaker = () => {
     
-    if(circuitBraker === false){
-      const param = {};
-      param.type = 'engineStop';
+    if(!circuitBreaker){
 
-      console.log(param)
-      // const response = fetch(`api/commands/send?deviceId=${id}`, {
-      //   method: 'POST',
-      //   headers: {'Content-Type': 'application/json',
-      //           'Accept': 'application/json',},
-      //   body: JSON.stringify(param),})
-      //   .then(response => console.log(response))
+      const response = fetch(`api/commands/send`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json',
+                'Accept': 'application/json',},
+        body: JSON.stringify({
+          attributes: {},
+          description: `${t('sharedNew')}`,
+          id: 0,
+          textChannel: false,
+          deviceId: Number(id),
+          type: 'engineStop',
+        })
+      }).then(response => response.json())
+        .then(response => {
+          deviceUpdated = {
+            ...deviceFound,
+            attributes: {
+              ...deviceFound.attributes,
+              circuitBreaker: 'on'
+            }
+          }
+          setCircuitBreaker(true);   
+          updateDeviceAttributes(deviceUpdated);          
+        })        
+    } else {
 
-      //   if(response.ok)
-          setCircuitBraker(true);   
-              
-      } else {
-        const param = {};
-        param.type = 'engineResume';
-
-        console.log(param)
-        // const response = fetch(`api/commands/send?deviceId=${id}`, {
-        //   method: 'POST',
-        //   headers: {'Content-Type': 'application/json',
-        //           'Accept': 'application/json',},
-        //   body: JSON.stringify(param),})
-        //   .then(response => console.log(response))
-  
-        //   if(response.ok){
-            setCircuitBraker(false);
-        //   } else{
-        //     console.log('error')
-        //   }
-      }
-      handleClose(); 
+      const response = fetch(`api/commands/send`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json',
+                'Accept': 'application/json',},
+        body: JSON.stringify({
+          attributes: {},
+          description: `${t('sharedNew')}`,
+          id: 0,
+          textChannel: false,
+          deviceId: Number(id),
+          type: 'engineResume',
+        })
+      }).then(response => response.json())
+        .then(response => {
+          deviceUpdated = {
+            ...deviceFound,
+            attributes: {
+              ...deviceFound.attributes,
+              circuitBreaker: 'off'
+            }
+          }
+          setCircuitBreaker(true);   
+          updateDeviceAttributes(deviceUpdated);          
+        }) 
+    }
+    handleClose(); 
   }
 
   const handleSetAlarm = () => {
     
-    if(alarmActivated === false){
-      const param = {};
-      param.type = 'alarmArm';
+    if(!alarmActivated){
 
-      console.log(param)
-      // const response = fetch(`api/commands/send?deviceId=${id}`, {
-      //   method: 'POST',
-      //   headers: {'Content-Type': 'application/json',
-      //           'Accept': 'application/json',},
-      //   body: JSON.stringify(param),})
-      //   .then(response => console.log(response))
-
-      //   if(response.ok)
-          setAlarmActivated(true);   
-              
+      const response = fetch(`api/commands/send`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json',
+                'Accept': 'application/json',},
+        body: JSON.stringify({
+          attributes: {},
+          description: `${t('sharedNew')}`,
+          id: 0,
+          textChannel: false,
+          deviceId: Number(id),
+          type: 'alarmArm',
+        })}).then(response => response.json())
+            .then(response => {
+              deviceUpdated = {
+                ...deviceFound,
+                attributes: {
+                  ...deviceFound.attributes,
+                  alarm: 'on'
+                }
+              }
+              setAlarmActivated(true);   
+              updateDeviceAttributes(deviceUpdated);          
+            })
       } else {
-        const param = {};
-        param.type = 'alarmDisarm';
 
-        console.log(param)
-        // const response = fetch(`api/commands/send?deviceId=${id}`, {
-        //   method: 'POST',
-        //   headers: {'Content-Type': 'application/json',
-        //           'Accept': 'application/json',},
-        //   body: JSON.stringify(param),})
-        //   .then(response => console.log(response))
-  
-        //   if(response.ok){
-            setAlarmActivated(false);
-        //   } else{
-        //     console.log('error')
-        //   }
+        const response = fetch(`api/commands/send`, {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json',
+                  'Accept': 'application/json',},
+          body: JSON.stringify({
+            attributes: {},
+            description: `${t('sharedNew')}`,
+            id: 0,
+            textChannel: false,
+            deviceId: Number(id),
+            type: 'alarmDisarm',
+          })}).then(response => response.json())
+              .then(response => {
+                deviceUpdated = {
+                  ...deviceFound,
+                  attributes: {
+                    ...deviceFound.attributes,
+                    alarm: 'off'
+                  }
+                }
+                setAlarmActivated(false);   
+                updateDeviceAttributes(deviceUpdated);          
+              })
       }
       handleClose(); 
   }
@@ -197,7 +265,7 @@ const DeviceDetail = (props) => {
               <Button style={{ display: 'none' }}>View All</Button>
             </div>
             <div className={classes.divCards}>
-              <Button onClick={() => handleConfirmAlarm()}
+              <Button component="div" onClick={() => handleConfirmAlarm()}
               className={classes.buttonsCards} disabled={!availableFunction}>
                 <Card style={{backgroundColor: `${alarmActivated ? '#54ff54' : 'white'}`}}
                   className={classes.root}
@@ -227,16 +295,18 @@ const DeviceDetail = (props) => {
                     >
                       Enviar SMS:
                   </Typography> */}
-                  <Typography style={{ marginTop: '25px' }} className={classes.pos} color="textSecondary">
+                  <Typography style={{textAlign: 'center', marginTop: '25px' }} className={classes.pos} color="textSecondary">
                       {`${alarmActivated ? `${t("commandEnable")}` : `${t("sharedDisabled")}`}`}
                     </Typography>
 
                   </CardContent>
                 </Card>
               </Button>
-              <Button onClick={() => handleConfirmCircuitBraker()}
+
+              {/* Botton para activar o desactivar cortacorriente */}
+              <Button component="div" onClick={() => handleConfirmcircuitBreaker()}
                 className={classes.buttonsCards} disabled={!availableFunction}>
-                <Card style={{backgroundColor: `${circuitBraker ? '#54ff54' : 'white'}`}}
+                <Card style={{backgroundColor: `${circuitBreaker ? '#54ff54' : 'white'}`}}
                 className={classes.root} variant="outlined">
                   <CardContent className="card-device-detail">
                     <IconButton style={{ backgroundColor: "cornflowerblue" }}>
@@ -254,10 +324,10 @@ const DeviceDetail = (props) => {
                       variant="h6"
                       component="h4"
                     >
-                      {t('activateCircuitBreaker')}
+                      {t("circuitBreaker")}
                     </Typography>
-                    <Typography style={{ marginTop: '45px' }} className={classes.pos} color="textSecondary">
-                      {`${circuitBraker ? `${t("commandEnable")}` : `${t("sharedDisabled")}`}`}
+                    <Typography style={{textAlign: 'center', marginTop: '45px' }} className={classes.pos} color="textSecondary">
+                      {`${circuitBreaker ? `${t("commandEnable")}` : `${t("sharedDisabled")}`}`}
                     </Typography>
                   </CardContent>
                 </Card>
@@ -265,7 +335,7 @@ const DeviceDetail = (props) => {
             </div>
           </div>
 
-           {/*Dialog Confirm CircuitBraker */}
+           {/*Dialog Confirm circuitBreaker */}
           <div>           
             <Dialog
               open={open}
@@ -287,14 +357,14 @@ const DeviceDetail = (props) => {
               </DialogTitle>
               <DialogContent>
                 <DialogContentText id="alert-dialog-description">
-                  {`¿${t('activateCircuitBreaker')}?`}
+                  {!circuitBreaker ? `¿${t('activateCircuitBreaker')}?` : `¿${t('desactivateCircuitBreaker')}?`}
                 </DialogContentText>
               </DialogContent>
               <DialogActions>
                 <Button onClick={handleClose} color="primary">
                   {t('sharedCancel')}
           </Button>
-                <Button onClick={() => handleSetCircuitBraker()} color="primary" autoFocus>
+                <Button onClick={() => handlesetCircuitBreaker()} color="primary" autoFocus>
                   {t('sharedSet')}
           </Button>
               </DialogActions>
@@ -312,7 +382,7 @@ const DeviceDetail = (props) => {
             >
               <DialogTitle 
               style={{marginRight: '50px'}}
-              id="alert-dialog-title">Alarma
+              id="alert-dialog-title">{t('eventAlarm')}
                 <IconButton
                   aria-label="close"
                   className={classes.closeButton}
@@ -323,7 +393,7 @@ const DeviceDetail = (props) => {
               </DialogTitle>
               <DialogContent>
                 <DialogContentText id="alert-dialog-description">
-                  ¿Armar/Desarmar Alamar?
+                  {alarmActivated ? `¿${t('commandAlarmDisarm')}?` : `¿${t('commandAlarmArm')}?`}
                 </DialogContentText>
               </DialogContent>
               <DialogActions>

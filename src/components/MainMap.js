@@ -110,7 +110,7 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource }) => {
     mapManager.registerListener(() => setMapReady(true));
   }, []);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (mapReady) {
       let positionsByType = [];
       
@@ -132,15 +132,18 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource }) => {
         }
       });
 
-      positionsByType.map((pos)=> {
-        mapManager.map.addSource(pos.type, {
-          type: "geojson",
-          data: pos.position,
+      if(positionsByType){  
+        positionsByType.map((pos)=> {
+          mapManager.map.addSource(pos.type, {
+            type: "geojson",
+            data: pos.position,
+          });
+          mapManager.addLayer(`device-${pos.type}`, pos.type, `icon-${pos.type}`, "{name}");
         });
-        mapManager.addLayer(`device-${pos.type}`, pos.type, `icon-${pos.type}`, "{name}");
-      });
+      }
 
-      mapManager.map.scrollZoom.setWheelZoomRate(2);
+      mapManager.map.scrollZoom.setWheelZoomRate(1.5);
+      mapManager.map.scrollZoom.enable({ around: 'center'});
 
       if (mapManager.map.getSource("raster-tiles") && rasterSource !== "") {
         mapManager.map.getSource("raster-tiles").tiles = [rasterSource];
@@ -164,7 +167,8 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource }) => {
   useEffect(() => {
     mapManager.map.easeTo({
       center: mapCenter,
-      zoom: zoom,
+      duration: 1000,
+      zoom: 15,
     });
   }, [mapCenter]);
 

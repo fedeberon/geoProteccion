@@ -129,7 +129,7 @@ const createFeature = (devices, position, isViewportDesktop) => {
                                     </tr>
                                     <li>                                    
                                         <li style="color: blue" id="addressShown" onClick="showAddress(${device.id},${position.latitude},${position.longitude})">${t("sharedShowAddress")}</li>
-                                        <li id="buttonShowMore" onClick="showDetails(${device.id})">${t(`showMore`)}</li>
+                                        <li style="color: blue" id="buttonShowMore" onClick="showDetails(${device.id})">${t(`showMore`)}</li>
                                     </li>
                                 </li>
                             </ul>
@@ -305,7 +305,8 @@ const createFeature = (devices, position, isViewportDesktop) => {
                                     <th>${t("circuitBreaker")}</th>
                                     <td>
                                         <td>
-                                            <p class="${desktopView ? 'status-inactive' : 'status-inactive-mobile'}">Desactivado</p>
+                                            <p class="${desktopView ? 'status-inactive' : 'status-inactive-mobile'}">
+                                              ${device.attributes?.circuitBreaker === 'on' ? t('commandEnable') : t('sharedDisabled')}</p>
                                         </td>
                                     </td>
                                 </tr>
@@ -317,7 +318,7 @@ const createFeature = (devices, position, isViewportDesktop) => {
                             
                             <button id="circuitBraker" onClick="goToDeviceRemoteControl(${device.id})"
                             class="${desktopView ? 'button-black' : 'button-black-mobile'}">
-                                ${t("activateCircuitBreaker")}
+                                ${t("circuitBreaker")}
                             </button>
                             
                         </div>

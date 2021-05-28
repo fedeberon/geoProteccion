@@ -5,6 +5,7 @@ const { reducer, actions } = createSlice({
   initialState: {
     items: {},
     selectedId: null,
+    selectedDevice: null,
   },
   reducers: {
     update(state, action) {
@@ -13,23 +14,29 @@ const { reducer, actions } = createSlice({
           (state.items[item["id"]] = {
             id: item.id,
             attributes: {
-              brand: item.attributes.MARCA
-                ? item.attributes.MARCA
+              circuitBreaker: item.attributes.circuitBreaker 
+                ? item.attributes.circuitBreaker 
                 : "undefined",
-              model: item.attributes.MODELO
-                ? item.attributes.MODELO
+              alarm: item.attributes.alarm 
+                ? item.attributes.alarm 
                 : "undefined",
-              carPlate: item.attributes.PATENTE
-                ? item.attributes.PATENTE
+              brand: item.attributes.brand
+                ? item.attributes.brand
                 : "undefined",
-              year: item.attributes.ANO ? item.attributes.ANO : "undefined",
-              schema: item.attributes.SCHEMA
-                ? item.attributes.SCHEMA
+              model: item.attributes.model
+                ? item.attributes.model
                 : "undefined",
-              type: item.attributes.TYPE ? item.attributes.TYPE : "undefined",
-              auth: item.attributes.AUTH ? item.attributes.AUTH : "undefined",
-              iccid: item.attributes.ICCID
-                ? item.attributes.ICCID
+              carPlate: item.attributes.carPlate
+                ? item.attributes.carPlate
+                : "undefined",
+              year: item.attributes.year ? item.attributes.year : "undefined",
+              schema: item.attributes.schema
+                ? item.attributes.schema
+                : "undefined",
+              type: item.attributes.type ? item.attributes.type : "undefined",
+              auth: item.attributes.auth ? item.attributes.auth : "undefined",
+              iccid: item.attributes.iccid
+                ? item.attributes.iccid
                 : "undefined",
             },
             groupId: item.groupId,
@@ -42,13 +49,16 @@ const { reducer, actions } = createSlice({
             phone: item.phone,
             model: item.model,
             contact: item.contact,
-            category: item.category,
+            category: item.category === null ? 'default' : item.category,
             disabled: item.disabled,
           })
       );
     },
     select(state, action) {
       state.selectedId = action.payload.id;
+    },
+    selectedDevice(state, action) {
+      state.selectedDevice = action.payload
     },
     remove(state, action) {
       delete state.items[action.payload];

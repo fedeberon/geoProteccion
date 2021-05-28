@@ -8,6 +8,7 @@ import t from "../common/localization";
 
 export default function SuccessSnackbar() {
   const dispatch = useDispatch();
+  const isViewportDesktop = useSelector((state) => state.session.deviceAttributes.isViewportDesktop);
   const { successSnackbarMessage, successSnackbarOpen } = useSelector(
     (state) => state.notification
   );
@@ -38,13 +39,13 @@ export default function SuccessSnackbar() {
     <>
     
       <Snackbar
-      style={{ zIndex: `${successSnackbarOpen ? "1400" : "-1"}` }}
+      style={{display: isViewportDesktop ? 'flex' : 'none',  zIndex: `${successSnackbarOpen ? "1400" : "-1"}` }}
       anchorOrigin={{
         vertical: "bottom",
-        horizontal: "center",
+        horizontal: "right",
       }}
       open={successSnackbarOpen}
-      autoHideDuration={54000}
+      autoHideDuration={4000}
       onClose={handleClose}
       aria-describedby="client-snackbar"
       TransitionComponent={Transition}
@@ -59,7 +60,6 @@ export default function SuccessSnackbar() {
         </Button>
       }
     />
-
     </>    
   );
 }

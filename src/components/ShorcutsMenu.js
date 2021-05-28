@@ -13,6 +13,7 @@ const useStyles = shortcutsMenuStyles;
 export default function ShortcutsMenu({
   toggleGeozones,
   showReportDialog,
+  setDeviceFollow,
   showNotificationsDialog,
 }) {
   const dispatch = useDispatch();
@@ -23,6 +24,8 @@ export default function ShortcutsMenu({
   const notifications = useSelector((state) => state.notification.items);
   const [showShortcutMenu, setShowShortcutMenu] = useState(isViewportDesktop);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+  const [onFollow, setOnFollow] = useState(false);
+  const deviceSelected = useSelector((state) => state.devices.selectedDevice);
 
   const handleShowShortcutMenu = () => {
     setShowShortcutMenu(!showShortcutMenu);
@@ -65,6 +68,21 @@ export default function ShortcutsMenu({
               open={false}
             />
           )}
+          <SpeedDial
+            ariaLabel="deviceFollow"
+            title={onFollow ? t("") : t("deviceFollow")}
+            className={classes.speedDial}
+            icon={<i style={{color: onFollow ? '#ff2121' : ''}} className="fas fa-search-location fa-lg"></i>}
+            direction={isViewportDesktop ? "down" : "up"}
+            open={false}            
+            onClick={() => {
+              if(deviceSelected !== null){
+                setOnFollow(!onFollow);
+                setDeviceFollow(deviceSelected, onFollow);
+              } else {
+              }             
+            }}
+          />
           <SpeedDial
             ariaLabel="Reports"
             title={t("reportTitle")}

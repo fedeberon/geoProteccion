@@ -437,6 +437,7 @@
     "circuitBreaker": "Corta Corriente",
     "mileage": "Kilometraje",
     "activateCircuitBreaker": "Activar Corta Corriente",
+    "desactivateCircuitBreaker": "Desactivar Corta Corriente",
     "geozones": "Geozonas",
     "sharedSelectGroup": "Seleccione Grupo",
     "sharedSelectEvent": "Seleccione Evento(s)",

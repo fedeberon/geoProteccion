@@ -33,7 +33,7 @@ function DeviceSearch(deviceId) {
   );
   const positions = useSelector((state) => state.positions.items, shallowEqual);
   const [deviceList, setDeviceList] = useState([]);
-  const [showDeviceList, setShowDeviceList] = useState(false);
+  const [showDeviceList, setShowDeviceList] = useState(true);
 
   const toggleDeviceList = () => {
     setShowDeviceList(!showDeviceList);
@@ -41,6 +41,7 @@ function DeviceSearch(deviceId) {
 
   const dispatchDevice = (device) => {
     dispatch(devicesActions.select(device));
+    dispatch(devicesActions.selectedDevice(device));
     toggleDeviceList();  
     
     setTimeout(()=> {
@@ -174,13 +175,13 @@ function DeviceSearch(deviceId) {
 
               <ListItemSecondaryAction>
                 <IconButton
-                  id={`device-information-${device.id}`}
+                  id={`device-info-${device.id}`}
                   style={{ color: "#1d193e" }}
                   title={t("sharedInfoTitle")}
                   onClick={(e) => {
                     e.stopPropagation();
                     history.push(`/device/${device.id}`);
-                  }}
+                  }}                  
                 >
                   <i className="fas fa-info-circle" />
                 </IconButton>

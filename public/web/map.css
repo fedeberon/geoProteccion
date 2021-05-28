@@ -7,6 +7,10 @@ html, body, #root {
   display: grid;
 }
 
+.MuiSnackbar-content-root {
+  background-color: #155477 !important;
+}
+
 /* .scrollbar::-webkit-scrollbar {
   display: none;
 } */
@@ -602,7 +606,7 @@ button {
   }
 
   #client-snackbar{
-    font-size: 12px;
+    font-size: 10px;
   }
 
   .title-section > h2 {

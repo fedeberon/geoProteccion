@@ -13,6 +13,7 @@ import ShortcutsMenu from "../components/ShorcutsMenu";
 import ReportsDialog from "../components/ReportsDialog";
 import NotificationList from "../components/NotificationList";
 import mainPageStyle from "./styles/MainPageStyle";
+import { devicesActions } from "../store";
 
 const useStyles = mainPageStyle;
 
@@ -24,6 +25,7 @@ const MainPage = ({ width }) => {
   const open = useSelector((state) => state.modals.items.search);
   const user = useSelector((state) => state.session.user);
   const server = useSelector((state) => state.session.server);
+  const deviceSelected = useSelector((state) => state.devices.selectedDevice);
   const [areGeozonesVisible, setAreGeozonesVisible] = useState(true);
   const [showReports, setShowReports] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
@@ -49,6 +51,15 @@ const MainPage = ({ width }) => {
   const handleReports = (value = true) => {
     setShowReports(value);
   };
+
+  const handleFollow = (deviceSelected, state) => {    
+    if(deviceSelected !== null && !state){
+      dispatch(devicesActions.select(deviceSelected));
+    } else {
+      dispatch(devicesActions.select(""));
+      dispatch(devicesActions.selectedDevice(null));
+    }
+  }
 
   const handleNotifications = () => {
     setShowNotifications(!showNotifications);
@@ -93,6 +104,7 @@ const MainPage = ({ width }) => {
       <ShortcutsMenu
         toggleGeozones={handleGeozones}
         showReportDialog={handleReports}
+        setDeviceFollow={handleFollow}
         showNotificationsDialog={handleNotifications}
       />
       <Menu />

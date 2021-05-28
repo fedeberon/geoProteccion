@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import t from "../common/localization";
 import { getDateTime, getHoursMinutes } from '../utils/functions';
 import { DataGrid } from '@material-ui/data-grid';
-import reportsStopsStyles from "./styles/ReportsTripsStyles";
+import reportsStopsStyles from "./styles/ReportsStopsStyles";
 import Paper from "@material-ui/core/Paper";
 import { useSelector } from "react-redux";
 

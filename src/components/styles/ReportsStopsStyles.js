@@ -13,8 +13,7 @@ const reportsStopsStyles = makeStyles((theme) => ({
     backgroundColor: "white",
     [theme.breakpoints.up('md')]: {
       height: '80vh',
-      width: '100%', 
-      margin: '0 auto',
+      width: '75%', 
       paddingTop: 0,
       padding: 0
     },

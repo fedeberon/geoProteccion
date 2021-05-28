@@ -436,6 +436,7 @@
     "circuitBreaker": "Circut Breaker",
     "mileage": "Mileage",
     "activateCircuitBreaker": "Activate Circuit Breaker",
+    "desactivateCircuitBreaker": "Desactivate Circuit Breaker",
     "geozones": "Geozones",
     "sharedCircle": "Circle",
     "sharedPolygon": "Polygon",

@@ -200,19 +200,30 @@ const AttributesDialog = ({open, close, savingAttributes, data}) => {
               </TableHead>
               <TableBody>                
                 {attributes && Object.entries(attributes).map((attribute, index) => (
-                  <TableRow key={attribute[0]}>
-                  <TableCell title={`${t('sharedEdit')}`} style={{cursor: 'pointer'}}
-                  onClick={() => handleEdit(attribute)}
+                  <TableRow key={attribute[0]} >
+                  <TableCell title={`${t('sharedEdit')}`} style={{cursor: attribute[0] === 'circuitBreaker' || attribute[0] === 'alarm' ? '' : 'pointer'}}
+                  onClick={() => {
+                    if(!(attribute[0] === 'circuitBreaker' || attribute[0] === 'alarm'))
+                    handleEdit(attribute)}
+                  }
                   >{attribute[0]}
                   </TableCell>
-                  <TableCell title={`${t('sharedEdit')}`} style={{cursor: 'pointer'}}
-                  onClick={() => handleEdit(attribute)}
+                  <TableCell title={`${t('sharedEdit')}`} style={{cursor: attribute[0] === 'circuitBreaker' || attribute[0] === 'alarm' ? '' : 'pointer'}}
+                  onClick={() => {
+                    if(!(attribute[0] === 'circuitBreaker' || attribute[0] === 'alarm'))
+                    handleEdit(attribute)}
+                  }
                   >{attribute[1]}
                   </TableCell>
                   <TableCell align="right">
-                    <Button title={t('sharedRemove')}>
+                    <Button title={t('sharedRemove')} disabled={attribute[0] === 'circuitBreaker' || attribute[0] === 'alarm'}>
                       <DeleteTwoTone title={`${t('sharedRemove')}`} 
-                      id="rmv-button"onClick={() => removeAttribute(attribute)}/>
+                      id="rmv-button"
+                      onClick={() => {
+                        if(!(attribute[0] === 'circuitBreaker' || attribute[0] === 'alarm'))
+                        removeAttribute(attribute)}
+                      }
+                      />
                     </Button> 
                   </TableCell>
                 </TableRow>
