@@ -287,10 +287,6 @@ const DevicePage = () => {
     setDeviceId("");
   };
 
-  useEffect(()=> {
-    console.log(commandToSend);
-  }, [commandToSend]);
-
   const handleSendCommand = () => {
 
     const response = fetch(`api/commands/send?deviceId=${deviceId}`, {
@@ -304,10 +300,7 @@ const DevicePage = () => {
 
   const getCommandTypes = async (idDevice) => {
     const response = await service.getCommandTypes(idDevice);
-
     setAvailableTypesByDeviceId(response);
-    console.log(availableTypesByDeviceId);
-
   };
 
   const handleSave = (id) => {
@@ -361,8 +354,6 @@ const DevicePage = () => {
       });
     };
     setNewAttribute({ name: null, value: null });
-    console.log(attributes)
-    console.log(devices)
   };
 
   const handleRemove = (deviceId) => {
@@ -504,10 +495,6 @@ const DevicePage = () => {
   const capitalize = (value) => {
     return value.charAt(0).toUpperCase() + value.slice(1);
   };  
-
-  useEffect(()=> {
-console.log(commandToSend)
-  },[commandToSend])
 
   return (
     <>

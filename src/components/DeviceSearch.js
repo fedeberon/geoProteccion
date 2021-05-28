@@ -181,7 +181,7 @@ function DeviceSearch(deviceId) {
                   onClick={(e) => {
                     e.stopPropagation();
                     history.push(`/device/${device.id}`);
-                  }}                  
+                  }}
                 >
                   <i className="fas fa-info-circle" />
                 </IconButton>

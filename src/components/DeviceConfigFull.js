@@ -200,7 +200,6 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupId, groupAssignmen
 
   useEffect(() => {
     setOpenFull(open);
-    console.log(groupId)
   }, [open]);
 
   useEffect(() => {

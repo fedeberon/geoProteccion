@@ -204,7 +204,6 @@ export default function ReportsDialog({
           params,
           groups
         );
-        console.log(response);
         setRoute(response);
         setIsLoading(false);
         break;
@@ -339,7 +338,6 @@ export default function ReportsDialog({
             data.push(auxItem);
           }
         });
-        console.log(data);
 
         setGraphicData(data);
              

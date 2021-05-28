@@ -100,7 +100,6 @@ const DeviceDetail = (props) => {
   };
 
   const updateDeviceAttributes = (object) => {
-    console.log(object)
     let request = fetch(`/api/devices/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },

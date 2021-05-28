@@ -180,11 +180,6 @@ export default function ReportsConfig({ handleReportsConfig, reportType }) {
     getAvailableGroups();
   }, [userId]);
 
-  useEffect(()=> {
-    console.log(fromDateTime);
-    console.log(toDateTime);
-  },[fromDateTime, toDateTime])
-
   const getDevices = async (userId) => {
     const response = await service.getDeviceByUserId(userId);
     setDevices(response);

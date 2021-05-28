@@ -160,10 +160,6 @@ const SavedCommands = ({open, handleCloseModal, data}) => {
     setUnitTime(e.target.value);
   };
 
-  useEffect(()=> {
-    console.log(newSavedCommand);
-  },[newSavedCommand])
-
   const setAttributePositionPeriod = (e) => {
     e.preventDefault();
     setFlag(false);

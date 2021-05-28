@@ -111,8 +111,6 @@ const GroupsPage = () => {
     object.groupId = newGroup.groupId;
     object.attributes = newGroup.attributes;
 
-    console.log(object)
-
     if(newGroup.id){
       await fetch(`api/groups/${newGroup.id}`, {
         method: 'PUT',
