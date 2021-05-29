@@ -18,6 +18,7 @@ import { useParams } from "react-router-dom";
 import deviceDetailStyles from "./styles/DeviceDetailStyles";
 import CloseIcon from "@material-ui/icons/Close";
 import { devicesActions } from "../store";
+import Icon from '@material-ui/core/Icon';
 
 const useStyles = deviceDetailStyles;
 
@@ -25,6 +26,9 @@ const DeviceDetail = (props) => {
   let { id } = useParams();
   const devices = useSelector((state) => Object.values(state.devices.items),
     shallowEqual
+  );
+  const isViewportDesktop = useSelector(
+    (state) => state.session.deviceAttributes.isViewportDesktop
   );
   const userId = useSelector((state) => state.session.user.id);
   const dispatch = useDispatch();
@@ -99,8 +103,8 @@ const DeviceDetail = (props) => {
     setOpenAlarm(false);
   };
 
-  const updateDeviceAttributes = (object) => {
-    let request = fetch(`/api/devices/${id}`, {
+  const updateDeviceAttributes = async (object) => {
+    let request = await fetch(`/api/devices/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(object),
@@ -114,11 +118,11 @@ const DeviceDetail = (props) => {
       })
   }
         
-  const handlesetCircuitBreaker = () => {
+  const handlesetCircuitBreaker = async () => {
     
     if(!circuitBreaker){
 
-      const response = fetch(`api/commands/send`, {
+      const response = await fetch(`api/commands/send`, {
         method: 'POST',
         headers: {'Content-Type': 'application/json',
                 'Accept': 'application/json',},
@@ -144,7 +148,7 @@ const DeviceDetail = (props) => {
         })        
     } else {
 
-      const response = fetch(`api/commands/send`, {
+      const response = await fetch(`api/commands/send`, {
         method: 'POST',
         headers: {'Content-Type': 'application/json',
                 'Accept': 'application/json',},
@@ -172,11 +176,11 @@ const DeviceDetail = (props) => {
     handleClose(); 
   }
 
-  const handleSetAlarm = () => {
+  const handleSetAlarm = async () => {
     
     if(!alarmActivated){
 
-      const response = fetch(`api/commands/send`, {
+      const response = await fetch(`api/commands/send`, {
         method: 'POST',
         headers: {'Content-Type': 'application/json',
                 'Accept': 'application/json',},
@@ -201,7 +205,7 @@ const DeviceDetail = (props) => {
             })
       } else {
 
-        const response = fetch(`api/commands/send`, {
+        const response = await fetch(`api/commands/send`, {
           method: 'POST',
           headers: {'Content-Type': 'application/json',
                   'Accept': 'application/json',},
@@ -239,27 +243,29 @@ const DeviceDetail = (props) => {
               <Divider />
             </div>
             <div>
+            <p style={{ fontSize: "16px", color: "#6f6060", textAlign: 'center', marginTop: 12 }}>
+                {/* {t('reportDeviceName')}: */}
+                <strong>{deviceFound.name} </strong>
+              {/* <span style={{ color: "Black" }} className={`${classes.pos} deviceDetailStatus`}>
+                  &nbsp;
+                </span> */}
+              </p>
               <img
                 className={classes.dashImg}
                 alt=""
                 src="https://i.pinimg.com/originals/ef/f2/91/eff29127abbf0d8e5e99cda29401fa7f.png"
               />
             </div>
-            <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <p style={{ fontSize: "14px", color: "darkgray" }}>
+            <div style={{ display: 'block', textAlign: 'center' }}>
+              <p style={{ fontSize: "15px", color: "darkgray", margin: 0 }}>
                 {t("deviceStatus")}:{" "}
-                <span className={`status-${deviceFound.status}`}>
-                  {deviceFound.status}
+                <span className={`status-${deviceFound.status} deviceDetailStatus`}>
+                  {deviceFound.status} <i className="fas fa-globe-europe"></i>
                 </span>
               </p>
-              <p style={{ fontSize: "14px", color: "darkgray" }}>
-                {t('reportDeviceName')}:
-              <span style={{ color: "Black" }} className={classes.pos}>
-                  &nbsp;{deviceFound.name}
-                </span>
-              </p>
+              
             </div>
-            <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <div style={{ display: "flex", justifyContent: "center" }}>
               <h3>{t('sharedInfoTitle')}</h3>
               <Button style={{ display: 'none' }}>View All</Button>
             </div>
@@ -338,7 +344,8 @@ const DeviceDetail = (props) => {
           <div>           
             <Dialog
               open={open}
-              maxWidth="xs"
+              maxWidth="sm"
+              fullWidth={!isViewportDesktop}
               onClose={handleClose}
               aria-labelledby="alert-dialog-title"
               aria-describedby="alert-dialog-description"
@@ -359,13 +366,17 @@ const DeviceDetail = (props) => {
                   {!circuitBreaker ? `¿${t('activateCircuitBreaker')}?` : `¿${t('desactivateCircuitBreaker')}?`}
                 </DialogContentText>
               </DialogContent>
-              <DialogActions>
-                <Button onClick={handleClose} color="primary">
+              <DialogActions className={classes.actionsButtons}>
+                <Button 
+                variant='outlined'
+                className={classes.buttonsRemoteControl} onClick={handleClose} color="primary">
                   {t('sharedCancel')}
-          </Button>
-                <Button onClick={() => handlesetCircuitBreaker()} color="primary" autoFocus>
-                  {t('sharedSet')}
-          </Button>
+                </Button>
+                <Button 
+                variant='outlined'
+                className={classes.buttonsRemoteControl} onClick={() => handlesetCircuitBreaker()} color="primary" autoFocus>
+                  {t('commandSend')}
+                </Button>
               </DialogActions>
             </Dialog>
           </div>
@@ -374,7 +385,8 @@ const DeviceDetail = (props) => {
            <div>           
             <Dialog
               open={openAlarm}
-              maxWidth="xs"
+              maxWidth="sm"
+              fullWidth={!isViewportDesktop}
               onClose={handleClose}
               aria-labelledby="alert-dialog-title"
               aria-describedby="alert-dialog-description"
@@ -390,18 +402,22 @@ const DeviceDetail = (props) => {
                   <CloseIcon />
                 </IconButton>
               </DialogTitle>
-              <DialogContent>
+              <DialogContent >
                 <DialogContentText id="alert-dialog-description">
                   {alarmActivated ? `¿${t('commandAlarmDisarm')}?` : `¿${t('commandAlarmArm')}?`}
                 </DialogContentText>
               </DialogContent>
-              <DialogActions>
-                <Button onClick={handleClose} color="primary">
+              <DialogActions className={classes.actionsButtons}>
+                <Button 
+                variant='outlined'
+                className={classes.buttonsRemoteControl} onClick={handleClose} color="primary">
                   {t('sharedCancel')}
-          </Button>
-                <Button onClick={() => handleSetAlarm()} color="primary" autoFocus>
-                  {t('sharedSet')}
-          </Button>
+                </Button>
+                <Button 
+                variant='outlined'
+                className={classes.buttonsRemoteControl} onClick={() => handleSetAlarm()} color="primary" autoFocus>
+                  {t('commandSend')}
+                </Button>
               </DialogActions>
             </Dialog>
           </div>

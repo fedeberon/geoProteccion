@@ -230,8 +230,7 @@ const UserPage = () => {
         } else {
           console.log('saveComputedAttribute error');
         }
-      })    
-    console.log(response);
+      })
     handleCloseComputedAttributes();
   }
 

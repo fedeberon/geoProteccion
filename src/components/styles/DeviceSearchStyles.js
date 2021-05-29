@@ -2,7 +2,7 @@ import { makeStyles } from '@material-ui/core/styles';
 
 const deviceSearchStyles = makeStyles((theme) => ({
   paper: {
-    padding: "4px 4px",
+    padding: "4px 0px",
     display: "grid",
     alignItems: "center",
     width: "74%",

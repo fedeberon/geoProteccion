@@ -68,7 +68,9 @@ const UserData = () => {
     token: user.token,
   });
 
-
+  useEffect(()=> {
+    console.log(session)
+  },[session])
 
   const handleCloseSnack = (event, reason) => {
     if (reason === 'clickaway') {
@@ -175,7 +177,7 @@ const UserData = () => {
                 <TableCell>{t('sharedPhone')}</TableCell>
                 <TableCell><TextField
                   fullWidth
-                  value={session.phone}
+                  value={session.phone ? session.phone : ''}
                   onChange={(e) => setSession({
                     ...session,
                     phone: e.target.value
@@ -293,7 +295,7 @@ const UserData = () => {
                 <TableCell>{t("mapPoiLayer")}:</TableCell>
                 <TableCell><TextField
                   fullWidth
-                  value={session.poiLayer}
+                  value={session.poiLayer ? session.poiLayer : ''}
                   onChange={(event) => setSession({
                     ...session,
                     poiLayer: (event.target.value)
@@ -430,7 +432,7 @@ const UserData = () => {
                 <TableCell>{t("userToken")}:</TableCell>
                 <TableCell><TextField
                   fullWidth
-                  value={user.token}
+                  value={session.token ? session.token : ''}
                   type="text"
                 /></TableCell>
               </TableRow>

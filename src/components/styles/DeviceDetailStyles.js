@@ -10,6 +10,10 @@ const deviceDetailStyles = makeStyles((theme) => ({
     borderColor: "gainsboro",
     margin: "2px 1px",
     display: 'inline-grid',
+    minHeight: 185,
+    maxHeight: 185,
+    minWidth: 145,
+    maxWidth: 145,
     [theme.breakpoints.up("md")]: {
       minWidth: 230,
       maxWidth: 230,
@@ -18,10 +22,29 @@ const deviceDetailStyles = makeStyles((theme) => ({
       display: 'inline-grid',
     },
   },
+  actionsButtons: {
+    justifyContent: 'space-between',
+    display: 'flex',
+    padding: '10px 20px',
+    [theme.breakpoints.up("md")]: {
+      
+    },
+  },
+  buttonsRemoteControl: {
+    backgroundColor: '#b4b0d8 !important',
+    width: '100px !important',
+    padding: '10px !important',
+    color: 'white',
+    border: '1px solid #ecf1eb !important',
+    [theme.breakpoints.up("md")]: {
+      
+    },
+  },
   buttonsCards: {
-    padding: '6px 6px !important',
+    padding: '6px 12px !important',
     [theme.breakpoints.up("md")]: {
       display: 'inline-block',
+      padding: '6px 6px !important',
     },
   },
   buttonTypogra: {
@@ -45,8 +68,9 @@ const deviceDetailStyles = makeStyles((theme) => ({
     overflowY: 'auto',
   },
   divCards:{
+    width: '100%',
     display: 'inline-block',
-    // width: '360px',
+    textAlign: 'center',
     [theme.breakpoints.up("md")]: {
       width: '490px',
       display: 'block',
@@ -55,8 +79,6 @@ const deviceDetailStyles = makeStyles((theme) => ({
   containerdev:{
     width: "100%",
     margin: "0 auto",
-    marginTop: "5%",
-    padding: '0px 10px',
     paddingBottom: '15%',
       [theme.breakpoints.up("md")]: {
         width: "39%",
@@ -100,8 +122,8 @@ const deviceDetailStyles = makeStyles((theme) => ({
     },
   },
   dashImg: {
-    height: "100px",
-    margin: "17px 37px",
+    height: "105px",
+    margin: "15px 37px",
     [theme.breakpoints.up("md")]: {
       height: "170px",
       margin: "10px 61px",

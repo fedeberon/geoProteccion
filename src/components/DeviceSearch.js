@@ -176,7 +176,7 @@ function DeviceSearch(deviceId) {
               <ListItemSecondaryAction>
                 <IconButton
                   id={`device-info-${device.id}`}
-                  style={{ color: "#1d193e" }}
+                  style={{ color: "#8680bb" }}
                   title={t("sharedInfoTitle")}
                   onClick={(e) => {
                     e.stopPropagation();

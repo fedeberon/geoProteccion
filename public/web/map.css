@@ -192,7 +192,7 @@ button {
 }
 
 .status-online {
-  color: #00ff00;
+  color: #009400;
   font-size: 12px;
 }
 
@@ -581,10 +581,17 @@ button {
     min-width: 45px;
     height: 36px;
   }
+  .deviceDetailStatus {
+    font-size: 15px !important;
+  }
 }
 
 /* ancho de pantalla de menos de 600px* (mobile)*/
 @media only screen and (max-width: 600px) {
+
+  .deviceDetailStatus {
+    font-size: 15px !important;
+  }
 
   #buttonShowLess {
     text-align: center;
@@ -613,7 +620,7 @@ button {
     text-align: center;
     margin: 0;
     border-bottom: solid 0.1px;
-    padding: 2px 0px;
+    padding: 6px 0px;
     background-color: #d8d8ff;
     color: #7979ef;
   }
