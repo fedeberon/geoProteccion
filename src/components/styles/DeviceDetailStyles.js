@@ -110,8 +110,13 @@ const deviceDetailStyles = makeStyles((theme) => ({
     marginBottom: 1,
     fontSize: '11px',
     color: 'black',
+    display: 'flex',
+    bottom: '10%',
+    position: 'absolute',
+    justifyContent: 'center',
+    width: '70%',
     [theme.breakpoints.up("md")]: {
-      
+      width: '85%',
     },
   },
   container: {

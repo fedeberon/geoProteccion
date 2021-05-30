@@ -183,7 +183,7 @@ function DeviceSearch(deviceId) {
                     history.push(`/device/${device.id}`);
                   }}
                 >
-                  <i className="fas fa-info-circle" />
+                  <i className="fas fa-upload"></i>
                 </IconButton>
               </ListItemSecondaryAction>
             </ListItem>

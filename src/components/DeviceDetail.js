@@ -68,7 +68,7 @@ const DeviceDetail = (props) => {
   },[deviceFound])
 
   useEffect(() => {
-    if(deviceFound.id !== null){
+    if(deviceFound.id !== undefined){
       const getCommandTypes = async () => {
         const response = await service.getCommandTypes(deviceFound.id);
         setAvailableTypesByDeviceId(response);
@@ -278,10 +278,10 @@ const DeviceDetail = (props) => {
                 >
                   <CardContent
                     className="card-device-detail">
-                    <IconButton style={{ backgroundColor: "cornflowerblue" }}>
+                    <IconButton style={{ backgroundColor: "cornflowerblue", width: '42px', height: '42px' }}>
                       <i
-                        style={{ color: "whitesmoke" }}
-                        className="fas fa-car-battery"
+                        style={{ color: "whitesmoke", fontSize: '30px' }}
+                        className={alarmActivated ? `fas fa-lock` : `fas fa-unlock`}
                       />
                     </IconButton>
                     <p className={classes.messageCard}
@@ -314,10 +314,10 @@ const DeviceDetail = (props) => {
                 <Card style={{backgroundColor: `${circuitBreaker ? '#54ff54' : 'white'}`}}
                 className={classes.root} variant="outlined">
                   <CardContent className="card-device-detail">
-                    <IconButton style={{ backgroundColor: "cornflowerblue" }}>
+                    <IconButton style={{ backgroundColor: "cornflowerblue", width: '42px', height: '42px' }}>
                       <i
-                        style={{ color: "whitesmoke" }}
-                        className="fas fa-tachometer-alt"
+                        style={{ color: "whitesmoke", fontSize: '30px' }}
+                        className="fas fa-car-battery"
                       />
                     </IconButton>
                     <p className={classes.messageCard}
@@ -375,7 +375,7 @@ const DeviceDetail = (props) => {
                 <Button 
                 variant='outlined'
                 className={classes.buttonsRemoteControl} onClick={() => handlesetCircuitBreaker()} color="primary" autoFocus>
-                  {t('commandSend')}
+                  {t('sharedAccept')}
                 </Button>
               </DialogActions>
             </Dialog>
@@ -416,7 +416,7 @@ const DeviceDetail = (props) => {
                 <Button 
                 variant='outlined'
                 className={classes.buttonsRemoteControl} onClick={() => handleSetAlarm()} color="primary" autoFocus>
-                  {t('commandSend')}
+                  {t('sharedAccept')}
                 </Button>
               </DialogActions>
             </Dialog>

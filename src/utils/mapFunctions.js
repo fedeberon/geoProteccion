@@ -128,8 +128,8 @@ const createFeature = (devices, position, isViewportDesktop) => {
                                         <p style="display: none" id="device-${device.id}">${t("deviceStatusUnknown")}</p></p>
                                     </tr>
                                     <li>                                    
-                                        <li style="color: blue" id="addressShown" onClick="showAddress(${device.id},${position.latitude},${position.longitude})">${t("sharedShowAddress")}</li>
-                                        <li style="color: blue" id="buttonShowMore" onClick="showDetails(${device.id})">${t(`showMore`)}</li>
+                                        <li style="color: blue; margin: 5px 0px;" id="addressShown" onClick="showAddress(${device.id},${position.latitude},${position.longitude})">${t("sharedShowAddress")}</li>
+                                        <li style="color: blue; margin: 5px 0px;" id="buttonShowMore" onClick="showDetails(${device.id})">${t(`showMore`)}</li>
                                     </li>
                                 </li>
                             </ul>
@@ -257,7 +257,7 @@ const createFeature = (devices, position, isViewportDesktop) => {
                             <img class="vehicle-type" src="./web/images/${device.category}.svg"></img>
                             <table class="body-list">
                                 <tr>
-                                    <td><i class="icon-fa fas fa-map-marker-alt"/></td>
+                                    <td><i class="icon-fa fas fa-key"/></td>
                                     <th>${t("deviceContact")}</th>
                                     <td>
                                         <td>
