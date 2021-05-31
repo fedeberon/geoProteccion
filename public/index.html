@@ -56,6 +56,10 @@
       }
 
       function goToDeviceRemoteControl (id) {
+        let idSpeedDial = document.getElementById("showShortcut");
+        if(idSpeedDial && !idSpeedDial.className.includes('speedDialOpen')){
+          idSpeedDial.click();
+        }
         let deviceSelected = document.getElementById(`device-info-${id}`);
         deviceSelected.click();
       }

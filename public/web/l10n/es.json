@@ -466,5 +466,7 @@
     "true": "Sí",
     "false": "No",
     "updatedInfo": "Información actualizada",
-    "positionDate": "Fecha"
+    "positionDate": "Fecha",
+    "on": "Encedido",
+    "off": "Apagado"
 }

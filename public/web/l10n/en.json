@@ -468,5 +468,7 @@
     "showLess": "Show Less",
     "brand": "Brand",
     "updatedInfo": "Successfully Updated",
-    "positionDate": "Date"
+    "positionDate": "Date",
+    "on": "On",
+    "off": "Off"
 }

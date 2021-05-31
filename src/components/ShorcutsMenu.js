@@ -93,8 +93,8 @@ export default function ShortcutsMenu({
             onClick={() => showReportDialog()}
           />
           <SpeedDial
-            ariaLabel="Geofences"
             title={t("geozones")}
+            ariaLabel="Geozones"
             className={classes.speedDial}
             icon={<i className="fas fa-draw-polygon fa-lg" />}
             direction={isViewportDesktop ? "down" : "up"}
@@ -107,6 +107,8 @@ export default function ShortcutsMenu({
 
       {!isViewportDesktop && (
         <SpeedDial
+          id="showShortcut"
+          open={false}
           ariaLabel="Notifications"
           title={t("sharedNotifications")}
           className={

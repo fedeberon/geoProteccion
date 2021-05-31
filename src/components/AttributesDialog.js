@@ -205,15 +205,17 @@ const AttributesDialog = ({open, close, savingAttributes, data}) => {
                   onClick={() => {
                     if(!(attribute[0] === 'circuitBreaker' || attribute[0] === 'alarm'))
                     handleEdit(attribute)}
-                  }
-                  >{attribute[0]}
+                  }>
+                    {attribute[0]}
+                    {/* {t(`${attribute[0]}`)} */}
                   </TableCell>
                   <TableCell title={`${t('sharedEdit')}`} style={{cursor: attribute[0] === 'circuitBreaker' || attribute[0] === 'alarm' ? '' : 'pointer'}}
                   onClick={() => {
                     if(!(attribute[0] === 'circuitBreaker' || attribute[0] === 'alarm'))
                     handleEdit(attribute)}
-                  }
-                  >{attribute[1]}
+                  }>
+                    {attribute[1]}
+                    {/* {t(`${attribute[1]}`)} */}
                   </TableCell>
                   <TableCell align="right">
                     <Button title={t('sharedRemove')} disabled={attribute[0] === 'circuitBreaker' || attribute[0] === 'alarm'}>
