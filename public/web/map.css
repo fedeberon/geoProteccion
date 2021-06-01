@@ -584,10 +584,26 @@ button {
   .deviceDetailStatus {
     font-size: 15px !important;
   }
+  .MuiDataGrid-footer {
+    justify-content: center !important;
+  }
+  #buttonActionsAtReports{
+    justify-content: space-between !important;
+    padding: 8px 24px !important;
+  }
 }
 
 /* ancho de pantalla de menos de 600px* (mobile)*/
 @media only screen and (max-width: 600px) {
+
+  #buttonActionsAtReports{
+    justify-content: space-between !important;
+    padding: 8px 24px !important;
+  }
+
+  .MuiDataGrid-footer {
+    justify-content: flex-start !important;
+  }
 
   .deviceDetailStatus {
     font-size: 15px !important;

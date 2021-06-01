@@ -1,6 +1,6 @@
 import { makeStyles } from "@material-ui/core/styles";
 
-const reportsEventsStyles = makeStyles((theme) => ({
+const reportsRoutesStyles = makeStyles((theme) => ({
   formControlDevices: {
     margin: theme.spacing(1),
     minWidth: 120,
@@ -12,6 +12,7 @@ const reportsEventsStyles = makeStyles((theme) => ({
     backgroundColor: "white",
     [theme.breakpoints.up('md')]: {
       height: '80vh',
+      width: '75%', 
       paddingTop: 0,
       padding: 0
     },
@@ -30,4 +31,4 @@ const reportsEventsStyles = makeStyles((theme) => ({
   },
 })); 
 
-export default reportsEventsStyles;
+export default reportsRoutesStyles;

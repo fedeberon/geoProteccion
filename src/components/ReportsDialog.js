@@ -48,6 +48,8 @@ import Select from '@material-ui/core/Select';
 import ReportsTrips from './ReportsTrips';
 import ReportsStops from './ReportsStops';
 import ReportsSummary from './ReportsSummary';
+import ReportsRoutes from './ReportsRoutes';
+import ReportsEvents from './ReportsEvents';
 
 
 const useStyles = reportsDialogStyles;
@@ -144,7 +146,6 @@ export default function ReportsDialog({
     showReportsDialog(false);
   };
 
-  //Abrir y cerrar Modal de configuracion
   const handleOpenConfigModal = () => {
     setOpenConfigModal(true);
   };
@@ -152,12 +153,19 @@ export default function ReportsDialog({
   const handleCloseConfigModal = () => {
     setOpenConfigModal(false);
   };
-  //Fin
 
   const handleFullscreen = () => {
-    if (hidden) {
-      setHidden(false);
-    }
+    if(!isViewportDesktop){
+      if (hidden) {
+        setHidden(false);
+      } else {
+        setHidden(true);
+      }
+    } else {
+      if (hidden) {
+        setHidden(false);
+      }
+    }   
     setFullscreen(!fullscreen);
   };
 
@@ -206,6 +214,10 @@ export default function ReportsDialog({
         );
         setRoute(response);
         setIsLoading(false);
+        if(!isViewportDesktop){
+          setHidden(true);
+        }
+        
         break;
       case "events":
         setHidden(true);
@@ -224,14 +236,14 @@ export default function ReportsDialog({
         );
         setEvents(response);
 
-        response.map((element, index) => {
-          if (element.positionId !== 0) {
-            positions = positions + "id=" + element.positionId + `${index !== events.length - 1 ? "&" : ""}`;
-          }
-        });
+        // response.map((element, index) => {
+        //   if (element.positionId !== 0) {
+        //     positions = positions + "id=" + element.positionId + `${index !== events.length - 1 ? "&" : ""}`;
+        //   }
+        // });
 
-        let responsePositions = await getPositionsReports(positions);
-        setPositions(responsePositions);
+        // let responsePositions = await getPositionsReports(positions);
+        // setPositions(responsePositions);
         setIsLoading(false);
         break;
       case "trips":
@@ -276,6 +288,9 @@ export default function ReportsDialog({
         setIsLoading(false);
         break;
       case "stops":
+        if(!isViewportDesktop){
+          setHidden(true);
+        }
         reportConfiguration.arrayDeviceSelected.map((element) => {
           params = params + "deviceId=" + element + "&";
         });
@@ -361,6 +376,10 @@ export default function ReportsDialog({
     setSelectedPosition(position);
     setAddressFound("");
     setPositionState(position);
+    if(!isViewportDesktop){
+      setFullscreen(!fullscreen);
+      setHidden(false);
+    }   
   };
 
   const getAddress = async(lat, lon) => {
@@ -669,71 +688,33 @@ export default function ReportsDialog({
             </Toolbar>
             <Divider />
             <DialogContent>
-              <ReportsConfig reportType={reportType} handleReportsConfig={handleReportsConfig} />
+              <ReportsConfig reportType={reportType} handleReportsConfig={handleReportsConfig} />  {/* Reports CONFIG */}
             </DialogContent>
-            <DialogActions>
-              <Button onClick={handleResetConfig} color="primary">
+            <DialogActions id="buttonActionsAtReports"> 
+              <Button style={{padding: '4px 11px !Important'}} onClick={handleResetConfig} variant='outlined' color="primary">
                 {t("sharedCancel")}
               </Button>
-              <Button onClick={handleShowConfig} color="primary" autoFocus>
+              <Button style={{padding: '4px 11px !Important'}} onClick={handleShowConfig} variant='outlined' color="primary" autoFocus>
                 {t("reportShow")}
               </Button>
             </DialogActions>
           </Dialog>
         
-
-        
-        {/*Table for ROUTE Reports*/}
+        {/*Routes reports*/}
         {route.length > 0 && reportType === 'route' &&
-        <div
-          onScroll={handleScroll}
-          // style={{ display: `${route.length === 0 ? "none" : "block"}` }}
-          className={`scrollbar ${classes.tableReports}`}
-        >
-            <Table stickyHeader={true}>
-              <TableHead>
-                <TableRow>
-                  <TableCell>{t("reportDeviceName")}</TableCell>
-                  <TableCell>{t("positionValid")}</TableCell>
-                  <TableCell>{t("positionDate")}</TableCell>
-                  <TableCell>{t("positionLatitude")}</TableCell>
-                  <TableCell>{t("positionLongitude")}</TableCell>
-                  <TableCell>{t("positionAltitude")}</TableCell>
-                  <TableCell>{t("positionSpeed")}</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {route
-                  .slice(
-                    sliceFirstIndex < route.length - 30
-                      ? sliceFirstIndex
-                      : (route.length - 30) * (route.length > 30),
-                    sliceLastIndex < route.length
-                      ? sliceLastIndex
-                      : route.length
-                  )
-                  .map((object) => (
-                    <TableRow
-                      key={object.id}
-                      className={classes.row}
-                      onClick={() => handleSelectedPosition(object)}
-                    >
-                      <TableCell>{GetDeviceName(object.deviceId)}</TableCell>
-                      <TableCell>{t(`${Boolean(object.valid)}`)}</TableCell>
-                      <TableCell>{getDateTime(object.serverTime)}</TableCell>
-                      <TableCell>{`${object.latitude.toFixed(6)}°`}</TableCell>
-                      <TableCell>{`${object.longitude.toFixed(6)}°`}</TableCell>
-                      <TableCell>{object.altitude}</TableCell>
-                      <TableCell>{`${object.speed.toFixed(1)} ${server && `${server.attributes?.speedUnit}`}`}</TableCell>  
-                    </TableRow>
-                  ))}
-              </TableBody>
-            </Table>
+          <div className={classes.tableReports}>
+            <ReportsRoutes dataRoutes={route} selected={handleSelectedPosition}/>
         </div>
         }
 
-        
-        {/*Table for EVENTS Reports*/}
+        {/*Events reports*/}
+        {events.length > 0 && reportType === 'events' &&
+          <div className={classes.tableEventsReports}>
+            <ReportsEvents dataEvents={events}/>
+        </div>
+        }        
+
+        {/* Table for EVENTS Reports
         <div
           onScroll={handleScroll}
           style={{ display: `${events.length === 0 ? "none" : "inline-block"}` }}
@@ -776,7 +757,7 @@ export default function ReportsDialog({
                   ))}
               </TableBody>
             </Table>
-        </div>
+        </div> */}
 
         {window.innerWidth > 767 &&
         <div
@@ -867,19 +848,25 @@ export default function ReportsDialog({
           }        
         
         {/*Trips reports*/}
-        <div>
-          <ReportsTrips dataPositions={positions} dataTrips={trips} selected={handleSelectedPosition}/>
-        </div>
+        {trips.length > 0 && reportType === 'trips' &&
+          <div className={classes.tableReports}>
+            <ReportsTrips dataPositions={positions} dataTrips={trips} selected={handleSelectedPosition}/>
+          </div>
+        }
         
         {/*Stops reports*/}
-        <div>
-          <ReportsStops dataPositions={positions} dataStops={stops} selected={handleSelectedPosition}/>
-        </div>
+        {stops.length > 0 && reportType === 'stops' &&
+          <div className={classes.tableReports}>
+            <ReportsStops dataPositions={positions} dataStops={stops} selected={handleSelectedPosition}/>
+          </div>
+        }       
 
         {/*Summary reports*/}
-        <div>
-          <ReportsSummary dataSummary={summary}/>
-        </div>
+        {summary.length > 0 && reportType === 'summary' &&
+          <div className={classes.tableReports}>
+            <ReportsSummary dataSummary={summary}/>
+          </div>
+        }
 
         {/*Graphic reports */}
         {graphicData.length > 0 && reportType === 'graphic' &&         

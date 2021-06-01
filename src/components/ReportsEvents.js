@@ -1,85 +1,79 @@
 import React, { useEffect, useState } from "react";
-import Typography from "@material-ui/core/Typography";
-import { withStyles } from "@material-ui/core/styles";
-import MuiAccordion from "@material-ui/core/Accordion";
-import MuiAccordionSummary from "@material-ui/core/AccordionSummary";
-import MuiAccordionDetails from "@material-ui/core/AccordionDetails";
-import Container from "@material-ui/core/Container";
-import Table from "@material-ui/core/Table";
-import TableHead from "@material-ui/core/TableHead";
-import TableBody from "@material-ui/core/TableBody";
-import TableRow from "@material-ui/core/TableRow";
-import TableCell from "@material-ui/core/TableCell";
-import ReportsConfig from "./ReportsConfig";
+import t from "../common/localization";
+import { GetDeviceName, getDateTime, getHoursMinutes } from '../utils/functions';
+import { DataGrid } from '@material-ui/data-grid';
 import reportsEventsStyles from "./styles/ReportsEventsStyles";
-
-const Accordion = withStyles({
-  root: {
-    border: "1px solid rgba(0, 0, 0, .125)",
-    boxShadow: "none",
-    "&:not(:last-child)": {
-      borderBottom: 0,
-    },
-    "&:before": {
-      display: "none",
-    },
-    "&$expanded": {
-      margin: "auto",
-    },
-  },
-  expanded: {},
-})(MuiAccordion);
+import Paper from "@material-ui/core/Paper";
+import { useSelector, shallowEqual } from "react-redux";
 
 const useStyles = reportsEventsStyles;
 
-const AccordionSummary = withStyles({
-  root: {
-    backgroundColor: "rgba(0, 0, 0, .03)",
-    borderBottom: "1px solid rgba(0, 0, 0, .125)",
-    marginBottom: -1,
-    minHeight: 56,
-    "&$expanded": {
-      minHeight: 56,
-    },
-  },
-  content: {
-    "&$expanded": {
-      margin: "12px 0",
-    },
-  },
-  expanded: {},
-})(MuiAccordionSummary);
+const ReportsEvents = ({dataEvents}) => {
 
-const AccordionDetails = withStyles((theme) => ({
-  root: {
-    padding: theme.spacing(1),
-  },
-}))(MuiAccordionDetails);
+const eventsRows = [];
+const classes = useStyles();
+const [events, setEvents] = useState([]);
+const devices = useSelector((state) => Object.values(state.devices.items),
+    shallowEqual
+  );
 
-export default function ReportsEvents() {
-  const [expanded, setExpanded] = React.useState("panel1");
+useEffect(()=> {
+  setEvents(dataEvents);
+  console.log(dataEvents)
+},[dataEvents]);
 
-  const handleChange = (panel) => (event, newExpanded) => {
-    setExpanded(newExpanded ? panel : false);
-  };
+const GetDeviceName = (id) => {
 
-  // const getReportEvents = async () => {
-  //   await fetch(
-  //     `api/reports/events?deviceId=${[deviceNameSelected]}&type=${[typeNameSelected]}&from=${fromDateTime}:00Z&to=${toDateTime}:00Z`, {
-  //     method: 'GET',
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //       'Accept': 'application/json',
-  //     }})
-  //     .then(response => console.log(response))
-  // }
+    let name;
+    devices && devices.map((dev) => {
+        if(dev.id === id){
+            name = dev.name;
+        }
+    })
+    return name;
+}
 
-  return (
-    <div>
-      {/*<Button onClick={() => getSomething()}>GET</Button>*/}
-      <div>
-        <ReportsConfig />
-      </div>
-    </div>
+const eventsColumns = [
+{ field: 'date', headerName: `${t(`positionDate`)}`, width: 200 },
+{ field: 'deviceName', headerName: `${t("reportDeviceName")}`, width: 260 },    
+{ field: 'type', headerName: `${t(`sharedType`)}`, width: 200 },
+{ field: 'geofence', headerName: `${t(`sharedGeofence`)}`, width: 150 },
+{ field: 'maintenance', headerName: `${t(`sharedMaintenance`)}`, width: 150 },
+];
+
+try {
+  events && events.map((event,index) => {
+    eventsRows.push({
+    id: index,
+    date: getDateTime(event.serverTime),
+    deviceName: GetDeviceName(event.deviceId),        
+    type: t(`${event.type}`),
+    geofence: event.geofenceId === 0 ? '' : event.geofenceId,
+    maintenance: event.maintenance === 0 ? '' : event.maintenance,
+    positionId: event.id
+    });
+});
+} catch (error) {
+console.error(error);
+};
+
+return (
+    <>
+        {events.length > 0 && 
+        <div className={classes.dataGrid}>
+        <DataGrid
+            component={Paper}
+            rows={eventsRows} 
+            columns={eventsColumns} 
+            pageSize={eventsRows.length} 
+            rowHeight={47}
+            hideFooter={false}
+            checkboxSelection={false}            
+        />
+        </div>
+    }   
+    </>
   );
 }
+
+export default ReportsEvents;

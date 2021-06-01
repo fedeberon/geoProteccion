@@ -470,5 +470,7 @@
     "updatedInfo": "Successfully Updated",
     "positionDate": "Date",
     "on": "On",
-    "off": "Off"
+    "off": "Off",
+    "true": "Yes",
+    "false": "No"
 }

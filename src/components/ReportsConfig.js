@@ -39,7 +39,7 @@ export default function ReportsConfig({ handleReportsConfig, reportType }) {
   const [devices, setDevices] = useState([]);
   const [deviceSelected, setDeviceSelected] = useState([]);
   const [listDeviceSelected, setListDeviceSelected] = useState([]);
-  const [typeEventSelected, setTypeEventSelected] = useState([]);
+  const [typeEventSelected, setTypeEventSelected] = useState(['allEvents']);
   const [fromDateTime, setFromDateTime] = useState("");
   const [toDateTime, setToDateTime] = useState("");
   const [groups, setGroups] = useState([]);
