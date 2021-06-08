@@ -19,7 +19,6 @@ const devices = useSelector((state) => Object.values(state.devices.items),
 
 useEffect(()=> {
   setEvents(dataEvents);
-  console.log(dataEvents)
 },[dataEvents]);
 
 const GetDeviceName = (id) => {
@@ -45,7 +44,7 @@ try {
   events && events.map((event,index) => {
     eventsRows.push({
     id: index,
-    date: getDateTime(event.serverTime),
+    date: getDateTime(event.eventTime),
     deviceName: GetDeviceName(event.deviceId),        
     type: t(`${event.type}`),
     geofence: event.geofenceId === 0 ? '' : event.geofenceId,
@@ -65,8 +64,9 @@ return (
             component={Paper}
             rows={eventsRows} 
             columns={eventsColumns} 
-            pageSize={eventsRows.length} 
+            pageSize={100} 
             rowHeight={47}
+            hideFooterSelectedRowCount={true}
             hideFooter={false}
             checkboxSelection={false}            
         />

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import t from "../common/localization";
-import { GetDeviceName, getDateTime, getHoursMinutes } from '../utils/functions';
+import { GetDeviceName, getDateTime, getHoursMinutes, getDateTimeDevices } from '../utils/functions';
 import { DataGrid } from '@material-ui/data-grid';
 import reportsRoutesStyles from "./styles/ReportsRoutesStyles";
 import Paper from "@material-ui/core/Paper";
@@ -52,7 +52,7 @@ routes && routes.map((route,index) => {
     id: index,
     deviceName: GetDeviceName(route.deviceId),
     valid: t(`${Boolean(route.valid)}`),
-    date: route.deviceTime,
+    date: getDateTime(route.deviceTime),
     latitude: route.latitude.toFixed(6) + '°',
     longitude: route.longitude.toFixed(6) + '°',      
     altitude: route.altitude,
@@ -77,9 +77,10 @@ return (
             component={Paper}
             rows={routesRows} 
             columns={routesColumns} 
-            pageSize={routesRows.length} 
+            pageSize={100} 
             rowHeight={47}
             hideFooter={false}
+            hideFooterSelectedRowCount={true}
             checkboxSelection={false}
             onRowSelected={handleRowStopSelection}
         />

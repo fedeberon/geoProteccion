@@ -473,9 +473,8 @@ const ReportsMap = ({geozones,route,events,trips,showMarkers,selectedPosition,gr
     if (selectedPosition && selectedPosition.id) {
       mapManager.map.easeTo({
         center: [selectedPosition.longitude, selectedPosition.latitude],
-        zoom: 13,
+        zoom: 18,
       });
-
       if (!showMarkers) {
         if (mapManager.map.getLayer("markers")) {
           mapManager.map.removeLayer(`markers`);

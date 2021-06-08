@@ -79,8 +79,7 @@ export default function ShortcutsMenu({
               if(deviceSelected !== null){
                 setOnFollow(!onFollow);
                 setDeviceFollow(deviceSelected, onFollow);
-              } else {
-              }             
+              }           
             }}
           />
           <SpeedDial

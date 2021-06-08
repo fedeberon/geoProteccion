@@ -1,12 +1,11 @@
 import React, { useRef, useLayoutEffect, useEffect, useState } from "react";
 import mapManager from "../utils/mapManager";
-import {useSelector} from "react-redux";
-import { getCourse } from "../utils/functions";
+import {useSelector, shallowEqual} from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   calculatePolygonCenter,
-  createFeature,
   createLabels,
+  createFeature,
   createPolygon,
   createPolyline,
   createCircle,
@@ -16,10 +15,13 @@ import {
   getPolylineAttributes,
 } from "../utils/mapFunctions";
 
-const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource }) => {
+const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource}) => {
+
   const containerEl = useRef(null);
   const [mapReady, setMapReady] = useState(false); 
-
+  const isViewportDesktop = useSelector((state) => state.session.deviceAttributes.isViewportDesktop);  
+  const devices = useSelector((state) => Object.values(state.devices.items)); 
+  const server = useSelector((state) => state.session.server);  
   const mapCenter = useSelector((state) => {
     if (state.devices.selectedId) {
       const position = state.positions.items[state.devices.selectedId] || null;
@@ -30,33 +32,11 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource }) => {
     return null;
   });
 
-  let states = {
-    check_coutries: {
-      name: "country=",
-      values: [],
-    },
-    check_species: {
-      name: "species=",
-      values: [],
-    },
-  };
-
-  const useStyles = makeStyles((theme) => ({
-    root: {
-      width: "100%",
-      maxWidth: 360,
-      backgroundColor: theme.palette.background.paper,
-    },
-  }));
-
-  const isViewportDesktop = useSelector(
-    (state) => state.session.deviceAttributes.isViewportDesktop
-  );
-
   const positions = useSelector((state) => ({
     type: "FeatureCollection",
     features: Object.values(state.positions.items).map((position) => ({
       type: "Feature",
+      id: position.id,
       course: position.course,
       geometry: {
         type: "Point",
@@ -65,10 +45,19 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource }) => {
       properties: createFeature(
         state.devices.items,
         position,
-        isViewportDesktop
-      ),
+        isViewportDesktop,
+        server
+      ),      
     })),
   }));
+
+  useEffect(() => {
+      mapManager.map.easeTo({
+        center: mapCenter,
+        duration: 500,
+        zoom: mapManager.map.getZoom(),
+      });
+  },[mapCenter]); 
 
   var markerHeight = 0,
     markerRadius = 0,
@@ -114,66 +103,70 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource }) => {
     if (mapReady) {
       let positionsByType = [];
       
-      positions.features.map((feature, index) => {
-
+      // console.log(positions)
+      // console.log(devices);
+      positions.features.map((feature) => {
         let positionsB = {
           type: "FeatureCollection",
           features: [{...feature}],
-          couse: feature.couse
         };
-        
         let featureType = feature.properties.type;
-        let positionFound = positionsByType.find(pos => pos.type === featureType);
-
-        if (positionFound) {
-          positionFound.position.features = [...positionFound.position.features, feature];
-        } else {
-          positionsByType.push({ type: featureType, position: positionsB });
-        }
+        positionsByType.push({ type: featureType, position: positionsB });
       });
-
+      
       if(positionsByType){  
-        positionsByType.map((pos)=> {
-          mapManager.map.addSource(pos.type, {
+        positionsByType.map((pos,index)=> {
+          mapManager.map.addSource(`places-${index}`, {
             type: "geojson",
-            data: pos.position,
-          });
-          mapManager.addLayer(`device-${pos.type}`, pos.type, `icon-${pos.type}`, "{name}");
-        });
+            data: {...pos.position},
+            });
+              mapManager.addLayer(`device-${pos.type}-${pos.position.features[0]?.id}`, `places-${index}`, `icon-${pos.type}`, "{name}", 
+              pos.position.features[0].properties?.status, pos.position.features[0].properties?.course);
+        })
       }
 
       mapManager.map.scrollZoom.setWheelZoomRate(1.5);
-      mapManager.map.scrollZoom.enable({ around: 'center'});
 
       if (mapManager.map.getSource("raster-tiles") && rasterSource !== "") {
         mapManager.map.getSource("raster-tiles").tiles = [rasterSource];
       }
-
+      // console.log(positionsByType)
       return () => {
-        positions.features.map(feature => {
-          let featureType = feature.properties.type;
-
-          if (mapManager.map.getLayer(`device-${featureType}`)) {
-            mapManager.map.removeLayer(`device-${featureType}`);
-          }
-          if (mapManager.map.getSource(featureType)) {
-            mapManager.map.removeSource(featureType);
-          }
+        positionsByType.map((pos,index)=> {          
+          let featureType = pos.type;          
+          mapManager.map.removeLayer(`device-${featureType}-${pos.position.features[0]?.id}`);        
+          mapManager.map.removeSource(`places-${index}`);
         });
       };
     }
-  }, [mapReady]);
+  },[mapReady, mapManager.map]);
+
+  useEffect(()=> {
+    if(mapReady && positions){
+      positions.features.map((pos, index) => {
+       let sourceData = mapManager.map.getSource(`places-${index}`);
+          if(pos.properties.status !== sourceData?._data.features[0].properties.status){
+            if(mapManager.map.getLayer(`device-${pos.properties.type}-${pos.id}`)){
+              mapManager.map.removeLayer(`device-${pos.properties.type}-${pos.id}`); 
+              sourceData.setData({
+                type: "FeatureCollection",
+                features: [{...pos}]
+              }); 
+              mapManager.addLayer(
+                `device-${pos.properties.type}-${pos.id}`, 
+                `places-${index}`, 
+                `icon-${pos.properties.type}`, 
+                "{name}", 
+                pos.properties.status, pos.properties.course
+              );
+            }
+          }
+       })
+    }
+ },[positions])
 
   useEffect(() => {
-    mapManager.map.easeTo({
-      center: mapCenter,
-      duration: 1000,
-      zoom: 15,
-    });
-  }, [mapCenter]);
-
-  useEffect(() => {
-    if (!mapCenter) {
+    if (!mapReady) {
       const bounds = mapManager.calculateBounds(positions.features);
       if (bounds) {
         mapManager.map.fitBounds(bounds, {
@@ -185,32 +178,22 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource }) => {
 
     let positionsByType = [];
 
-    positions.features.map((feature, index) => {
-      let positionsB = {
-        type: "FeatureCollection",
-        features: [{...feature}]
-      };
-      let featureType = feature.properties.type;
-      let positionFound = positionsByType.find(pos => pos.type === featureType);
-
-      if (positionFound) {
-        positionFound.position.features = [...positionFound.position.features, feature];
-      } else {
+      positions.features.map((feature) => {
+        let positionsB = {
+          type: "FeatureCollection",
+          features: [{...feature}],
+        }; 
+        let featureType = feature.properties.type;
         positionsByType.push({ type: featureType, position: positionsB });
-      }
+      });
+    
+    positionsByType.map((pos,index) => {
+        const source = mapManager.map.getSource(`places-${index}`);
+        if (source) {
+          source.setData(pos.position);
+        }             
     });
-
-    positions.features.map(feature => {
-      let featureType = feature.properties.type;
-      if (mapManager.map.getSource(featureType)) {
-        const source = mapManager.map.getSource(featureType);
-        let positionFound = positionsByType.find(pos => pos.type === featureType);
-        if (source && positionFound) {
-          source.setData(positionsByType.find(positionFound));
-        }
-      }
-    });
-  }, []);
+  }, [positions]);
 
   const style = {
     width: "100%",
@@ -237,28 +220,26 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource }) => {
 
   useEffect(() => {
     let features = [];
-    positions.features.map(feature => {
-      let featureType = feature.properties.type;
-
-      if (features.indexOf(featureType) === -1) {
-        mapManager.map.on("click", `device-${featureType}`, createPopup);
-        mapManager.map.on("mouseenter", `device-${featureType}`, cursorPointer);
-        mapManager.map.on("mouseleave", `device-${featureType}`, cursorDefault);
+      positions.features.map((feature, index) => {
+        let featureType = feature.properties.type;
+      if (features.indexOf(`${featureType}-${index}`) === -1) {
+        mapManager.map.on("click", `device-${featureType}-${feature.id}`, createPopup);
+        mapManager.map.on("mouseenter", `device-${featureType}-${feature.id}`, cursorPointer);
+        mapManager.map.on("mouseleave", `device-${featureType}-${feature.id}`, cursorDefault);
       }
-      features.push(featureType);
+      features.push(`${featureType}-${index}`);
     });
 
     return () => {
       let features = [];
-      positions.features.map(feature => {
+      positions.features.map((feature, index) => {
         let featureType = feature.properties.type;
-
-        if (features.indexOf(featureType) === -1) {
-          mapManager.map.off("click", `device-${featureType}`, createPopup);
-          mapManager.map.off("mouseenter", `device-${featureType}`, cursorPointer);
-          mapManager.map.off("mouseleave", `device-${featureType}`, cursorDefault);
+        if (features.indexOf(`${featureType}-${index}`) === -1) {
+          mapManager.map.off("click", `device-${featureType}-${feature.id}`, createPopup);
+          mapManager.map.off("mouseenter", `device-${featureType}-${feature.id}`, cursorPointer);
+          mapManager.map.off("mouseleave", `device-${featureType}-${feature.id}`, cursorDefault);
         }
-        features.push(featureType);
+        features.push(`${featureType}-${index}`);
       });
     };
   }, [mapManager.map]);

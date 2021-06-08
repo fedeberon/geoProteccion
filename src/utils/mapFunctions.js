@@ -90,240 +90,241 @@ const calculateFurthestPoints = (coordinates) => {
     [east, north],
   ];
 };
+const createFeature = (devices, position, isViewportDesktop, server) => {
+    
+  const device = devices[position.deviceId] || null;
+  const name = device.name;
+  const model = device.attributes.model;
+  const carPlate = device.attributes.carPlate;
+  const brand = device.attributes.brand;
+  const year = device.attributes.year;
+  const status = device.status;
+  const lastUpdate = device.lastUpdate;
+  const protocol = position.protocol;
+  const speed = position.speed;
+  const kilometers = position.attributes.totalDistance;
+  const desktopView = isViewportDesktop;
+  const showData = '';
 
-const createFeature = (devices, position, isViewportDesktop) => {
-    const device = devices[position.deviceId] || null;
-    const name = device.name;
-    const model = device.attributes.model;
-    const carPlate = device.attributes.carPlate;
-    const brand = device.attributes.brand;
-    const year = device.attributes.year;
-    const status = device.status;
-    const lastUpdate = device.lastUpdate;
-    const protocol = position.protocol;
-    const speed = position.speed;
-    const kilometers = position.attributes.totalDistance;
-    const desktopView = isViewportDesktop;
-    const showData = '';
+  return {
+    type: device.category,
+    course: position.course,
+    status: device.status,
+    name: device ? `${name}` : '',
+    description: `<div class="${desktopView ? 'popup-map-div' : 'popup-map-div-mobile'}">
+                      <div class="popup-map-header" id="header-${device.id}">
+                          <ul class="head-list">
+                              <li>
+                                  <p style="${desktopView ? 'font-size: 16px' : 'font-size: 17px'}"><strong  class="bold">${carPlate + '</strong> - ' + name} </p>
+                              </li>
+                              <li>
+                                  <p>${getDateTimeDevices(device.lastUpdate)}</p>
+                              </li>
+                              <!--
+                              <li><p>${brand + ' ' + model + ' ' + year}</p></li>
+                              <li><p>${protocol}</p></li>
+                              -->
+                              <li>
+                                  <tr>
+                                      <p><strong>${t("currentAddress")+':'}</strong>
+                                      <p style="display: none" id="device-${device.id}">${t("deviceStatusUnknown")}</p></p>
+                                  </tr>
+                                  <li>
+                                      <li style="color: blue; margin: 5px 0px;" id="addressShown" onClick="showAddress(${device.id},${position.latitude},${position.longitude})">${t("sharedShowAddress")}</li>
+                                      <li style="color: blue; margin: 5px 0px;" id="buttonShowMore" onClick="showDetails(${device.id})">${t(`showMore`)}</li>
+                                  </li>
+                              </li>
+                          </ul>
+                      </div>
 
-    return {
-      type: device.category,
-      name: device ? `${name} ${speed} Km/h` : '',
-      description: `<div class="${desktopView ? 'popup-map-div' : 'popup-map-div-mobile'}">
-                        <div class="popup-map-header" id="header-${device.id}">
-                            <ul class="head-list">
-                                <li>
-                                    <p style="${desktopView ? 'font-size: 16px' : 'font-size: 17px'}"><strong  class="bold">${carPlate + '</strong> - ' + name} </p>
-                                </li>
-                                <li>
-                                    <p>${getDateTimeDevices(device.lastUpdate)}</p>
-                                </li>
-                                <!--
-                                <li><p>${brand + ' ' + model + ' ' + year}</p></li>
-                                <li><p>${protocol}</p></li>
-                                -->
-                                <li>
-                                    <tr>
-                                        <p><strong>${t("currentAddress")+':'}</strong>
-                                        <p style="display: none" id="device-${device.id}">${t("deviceStatusUnknown")}</p></p>
-                                    </tr>
-                                    <li>                                    
-                                        <li style="color: blue; margin: 5px 0px;" id="addressShown" onClick="showAddress(${device.id},${position.latitude},${position.longitude})">${t("sharedShowAddress")}</li>
-                                        <li style="color: blue; margin: 5px 0px;" id="buttonShowMore" onClick="showDetails(${device.id})">${t(`showMore`)}</li>
-                                    </li>
-                                </li>
-                            </ul>
-                        </div>
+                      <div id="details-${device.id}" style="display: none;">
+                          <table class="body-list">
+                              <tr>
+                                  <th>
+                                      ${t("sharedHour")}
+                                  </th>
+                                  <td>
+                                      ${getDateTimeDevices(device.lastUpdate)}
+                                  </td>
+                              </tr>
+                              <tr>
+                                  <th>
+                                      ${t("positionLatitude")}
+                                  </th>
+                                  <td>
+                                      ${position.latitude.toFixed(6)}°
+                                  </td>
+                              </tr>
+                              <tr>
+                                  <th>
+                                      ${t("positionLongitude")}
+                                  </th>
+                                  <td>
+                                      ${position.longitude.toFixed(6)}°
+                                  </td>
+                              </tr>
+                              <tr>
+                                  <th>
+                                      ${t("positionValid")}
+                                  </th>
+                                  <td>
+                                      ${t(`${position.valid}`)}
+                                  </td>
+                              </tr>
+                              <tr>
+                                  <th>
+                                      ${t("positionAccuracy")}
+                                  </th>
+                                  <td>
+                                      ${Math.expm1((position.accuracy)/1000).toFixed(2) } Km
+                                  </td>
+                              </tr>
+                              <tr>
+                                  <th>
+                                      ${t("positionAltitude")}
+                                  </th>
+                                  <td>
+                                      ${position.altitude}
+                                  </td>
+                              </tr>
+                              <tr>
+                                  <th>
+                                      ${t("positionSpeed")}
+                                  </th>
+                                  <td>
+                                      ${position.speed.toFixed(0)}  ${server && server.attributes?.speedUnit}
+                                  </td>
+                              </tr>
+                              <tr>
+                                  <th>
+                                      ${t("positionCourse")}
+                                  </th>
+                                  <td>
+                                      ${getCourse(position.course)}
+                                  </td>
+                              </tr>
+                              <tr>
+                                  <th>
+                                      ${t("positionProtocol")}
+                                  </th>
+                                  <td>
+                                      ${position.protocol}
+                                  </td>
+                              </tr>
+                              <tr>
+                                  <th>
+                                      ${t("positionIgnition")}
+                                  </th>
+                                  <td>
+                                      ${t(`${position.attributes.ignition}`)}
+                                  </td>
+                              </tr>
+                              <tr>
+                                  <th>
+                                      ${t("positionStatus")}
+                                  </th>
+                                  <td>
+                                      ${status}
+                                  </td>
+                              </tr>
+                              <tr>
+                                  <th>
+                                      ${t("positionDistance")}
+                                  </th>
+                                  <td>
+                                      ${position.attributes.distance} Km
+                                  </td>
+                              </tr>
+                              <tr>
+                                  <th>
+                                      ${t("deviceTotalDistance")}
+                                  </th>
+                                  <td>
+                                      ${(Math.round((position.attributes.totalDistance.toFixed(2)) / 10)) / 100} Km
+                                  </td>
+                              </tr>
+                              <tr>
+                                  <th>
+                                      ${t("positionMotion")}
+                                  </th>
+                                  <td>
+                                      ${t(`${position.attributes.motion}`)}
+                                  </td>
+                              </tr>
+                          </table>
+                      </div>
 
-                        <div id="details-${device.id}" style="display: none;">
-                            <table class="body-list">
-                                <tr>
-                                    <th>
-                                        ${t("sharedHour")}
-                                    </th>
-                                    <td>
-                                        ${getDateTimeDevices(device.lastUpdate)}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th>
-                                        ${t("positionLatitude")}
-                                    </th>
-                                    <td>
-                                        ${position.latitude.toFixed(6)}°
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th>
-                                        ${t("positionLongitude")}
-                                    </th>
-                                    <td>
-                                        ${position.longitude.toFixed(6)}°
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th>
-                                        ${t("positionValid")}
-                                    </th>
-                                    <td>
-                                        ${t(`${position.valid}`)}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th>
-                                        ${t("positionAccuracy")}
-                                    </th>
-                                    <td>                                       
-                                        ${Math.expm1((position.accuracy)/1000).toFixed(2) } Km
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th>
-                                        ${t("positionAltitude")}
-                                    </th>
-                                    <td>
-                                        ${position.altitude}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th>
-                                        ${t("positionSpeed")}
-                                    </th>
-                                    <td>
-                                        ${position.speed} Km/h
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th>
-                                        ${t("positionCourse")}
-                                    </th>
-                                    <td>
-                                        ${getCourse(position.course)}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th>
-                                        ${t("positionProtocol")}
-                                    </th>
-                                    <td>
-                                        ${position.protocol}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th>
-                                        ${t("positionIgnition")}
-                                    </th>
-                                    <td>
-                                        ${t(`${position.attributes.ignition}`)}  
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th>
-                                        ${t("positionStatus")}
-                                    </th>
-                                    <td>
-                                        ${status}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th>
-                                        ${t("positionDistance")}
-                                    </th>
-                                    <td>
-                                        ${position.attributes.distance} Km
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th>
-                                        ${t("deviceTotalDistance")}
-                                    </th>
-                                    <td>                                        
-                                        ${(Math.round((position.attributes.totalDistance.toFixed(2)) / 10)) / 100} Km
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th>
-                                        ${t("positionMotion")}
-                                    </th>
-                                    <td>
-                                        ${t(`${position.attributes.motion}`)}                                        
-                                    </td>
-                                </tr>                               
-                            </table>
-                        </div>
+                      <div class="popup-map-body" id="main-data-${device.id}">
 
-                        <div class="popup-map-body" id="main-data-${device.id}">
-                        
-                            <img class="vehicle-type" src="./web/images/${device.category}.svg"></img>
-                            <table class="body-list">
-                                <tr>
-                                    <td><i class="icon-fa fas fa-key"/></td>
-                                    <th>${t("deviceContact")}</th>
-                                    <td>
-                                        <td>
-                                            <p class="${desktopView ? 'status-inactive' : 'status-inactive-mobile'}">
-                                            ${t(`${position.attributes.ignition}`)}
-                                            </p>
-                                        </td>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td><i class="icon-fa fas fa-car-alt"/></td>
-                                    <th>${t("currentStatus")}</th>
-                                    <td>
-                                        <td>
-                                            <p class="${desktopView ? 'status-inactive' : 'status-inactive-mobile'}">
-                                            <span class="display-flex status-${status}"><strong>${status}</strong></span>
-                                            </p>
-                                        </td>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td><i class="icon-fa fas fa-tachometer-alt"/></td>
-                                    <th>${t("positionSpeed")}</th>
-                                    <td>
-                                        <td>
-                                            <p class="${desktopView ? 'status-inactive' : 'status-inactive-mobile'}">
-                                            ${speed} Km/h
-                                            </p>
-                                        </td>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td><i class="icon-fa fas fa-road"/></td>
-                                    <th>${t("mileage")}</th>
-                                    <td>
-                                        <td>
-                                            <p class="${desktopView ? 'status-inactive' : 'status-inactive-mobile'}">                                           
-                                            ${(Math.round((kilometers.toFixed(2)) / 10)) / 100} Km
-                                            </p>
-                                        </td>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td><i class="icon-fa fas fa-bolt"/></td>
-                                    <th>${t("circuitBreaker")}</th>
-                                    <td>
-                                        <td>
-                                            <p class="${desktopView ? 'status-inactive' : 'status-inactive-mobile'}">
-                                              ${device.attributes?.circuitBreaker === 'on' ? t('commandEnable') : t('sharedDisabled')}</p>
-                                        </td>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                        <div class="footer-sp">
-                            
-                            <li id="buttonShowLess" style="color: blue; display: none"  onClick="showDetails(${device.id})">${t(`showLess`)}</li>
-                            
-                            <button id="circuitBraker" onClick="goToDeviceRemoteControl(${device.id})"
-                            class="${desktopView ? 'button-black' : 'button-black-mobile'}">
-                                ${t("circuitBreaker")}
-                            </button>
-                            
-                        </div>
-                    </div>`
-    }
+                          <table class="body-list">
+                              <tr>
+                                  <td><i class="icon-fa fas fa-key"/></td>
+                                  <th>${t("deviceContact")}</th>
+                                  <td>
+                                      <td>
+                                          <p class="${desktopView ? 'status-inactive' : 'status-inactive-mobile'}">
+                                          ${t(`${position.attributes.ignition}`)}
+                                          </p>
+                                      </td>
+                                  </td>
+                              </tr>
+                              <tr>
+                                  <td><i class="icon-fa fas fa-car-alt"/></td>
+                                  <th>${t("currentStatus")}</th>
+                                  <td>
+                                      <td>
+                                          <p class="${desktopView ? 'status-inactive' : 'status-inactive-mobile'}">
+                                          <span class="display-flex status-${status}"><strong>${status}</strong></span>
+                                          </p>
+                                      </td>
+                                  </td>
+                              </tr>
+                              <tr>
+                                  <td><i class="icon-fa fas fa-tachometer-alt"/></td>
+                                  <th>${t("positionSpeed")}</th>
+                                  <td>
+                                      <td>
+                                          <p class="${desktopView ? 'status-inactive' : 'status-inactive-mobile'}">
+                                          ${speed} Km/h
+                                          </p>
+                                      </td>
+                                  </td>
+                              </tr>
+                              <tr>
+                                  <td><i class="icon-fa fas fa-road"/></td>
+                                  <th>${t("mileage")}</th>
+                                  <td>
+                                      <td>
+                                          <p class="${desktopView ? 'status-inactive' : 'status-inactive-mobile'}">                                           
+                                          ${(Math.round((kilometers.toFixed(2)) / 10)) / 100} Km
+                                          </p>
+                                      </td>
+                                  </td>
+                              </tr>
+                              <tr>
+                                  <td><i class="icon-fa fas fa-bolt"/></td>
+                                  <th>${t("circuitBreaker")}</th>
+                                  <td>
+                                      <td>
+                                          <p class="${desktopView ? 'status-inactive' : 'status-inactive-mobile'}">
+                                            ${device.attributes?.circuitBreaker === 'on' ? t('commandEnable') : t('sharedDisabled')}</p>
+                                      </td>
+                                  </td>
+                              </tr>
+                          </table>
+                      </div>
+                      <div class="footer-sp">
+                          
+                          <li id="buttonShowLess" style="color: blue; display: none"  onClick="showDetails(${device.id})">${t(`showLess`)}</li>
+                          
+                          <button id="circuitBraker" onClick="goToDeviceRemoteControl(${device.id})"
+                          class="${desktopView ? 'button-black' : 'button-black-mobile'}">
+                              ${t("circuitBreaker")}
+                          </button>
+                          
+                      </div>
+                  </div>`
+  }
 };
 
 const createMarkers = (positions) => {

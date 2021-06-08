@@ -30,6 +30,8 @@ const MainPage = ({ width }) => {
   const [showReports, setShowReports] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [mapZoom, setMapZoom] = useState(0);
+  const [selectedState, setSelectedState] = useState(false);
+
 
   const handleVisibilityModal = (name) => {
     dispatch(modalsActions.show(name));
@@ -52,7 +54,8 @@ const MainPage = ({ width }) => {
     setShowReports(value);
   };
 
-  const handleFollow = (deviceSelected, state) => {    
+  const handleFollow = (deviceSelected, state) => {  
+    setSelectedState(state)  
     if(deviceSelected !== null && !state){
       dispatch(devicesActions.select(deviceSelected));
     } else {
@@ -91,6 +94,7 @@ const MainPage = ({ width }) => {
                 <ContainerDimensions>
                   <MainMap
                     geozones={geozones}
+                    selected={selectedState}
                     areGeozonesVisible={areGeozonesVisible}
                     zoom={mapZoom}
                     rasterSource={server.mapUrl.replace(/&amp;/g, "&")}

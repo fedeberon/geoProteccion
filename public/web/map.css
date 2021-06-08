@@ -144,13 +144,6 @@ button {
   margin-right: auto;
 }
 
-.vehicle-type {
-  font-size: 25px;
-  color: #716a77;
-  left: 78%;
-  position: absolute;
-  top: 47%;
-}
 
 .popup-map-div > a {
   text-decoration: none;
