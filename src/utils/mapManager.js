@@ -93,7 +93,7 @@ const addLineLayer = (id, source, color) => {
     },
     paint: {
       "line-color": color,
-      "line-width": 2,
+      "line-width": 5,
     },
   };
   map.addLayer(layer);
@@ -158,10 +158,20 @@ const addPolygonLayer = (id, source, color) => {
     layout: {},
     paint: {
       "fill-color": color,
-      "fill-opacity": 0.5,
+      "fill-opacity": 0.2,
     },
   };
   map.addLayer(layer);
+  map.addLayer({
+    id: 'outline',
+    type: 'line',
+    source: source,
+    layout: {},
+    paint: {
+      "line-color": color,
+      "line-width": 4
+    }
+  })
 };
 
 const addLabelLayer = (id, source, text) => {
@@ -189,6 +199,7 @@ const addLabelLayer = (id, source, text) => {
   }  
 };
 
+//markers generated from reports
 const addMarkerLayer = (id, source, course) => {
   const layer = {
     id: id,
@@ -545,9 +556,9 @@ map.on("load", () => {
     });
   });
 
-  loadImage("web/images/pickup.svg").then((background) => {
+  loadImage("web/images/offline/pickup.svg").then((background) => {
     Promise.all([
-      loadIcon("icon-pickup", background, "web/images/pickup.svg"),
+      loadIcon("icon-pickup", background, "web/images/offline/pickup.svg"),
     ]).then(() => {
       ready = true;
       if (registeredListener) {

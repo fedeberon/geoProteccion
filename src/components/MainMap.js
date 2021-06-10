@@ -52,11 +52,19 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource}) => {
   }));
 
   useEffect(() => {
-      mapManager.map.easeTo({
-        center: mapCenter,
-        duration: 500,
-        zoom: mapManager.map.getZoom(),
-      });
+      // mapManager.map.easeTo({
+      //   center: mapCenter,
+      //   duration: 500,
+      //   zoom: mapManager.map.getZoom(),
+      // });
+      mapManager.map.panTo(
+        mapCenter, 
+        {
+          duration: 1000, 
+          animate: true, 
+          essential: true
+        }
+      );
   },[mapCenter]); 
 
   var markerHeight = 0,
@@ -120,7 +128,7 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource}) => {
             type: "geojson",
             data: {...pos.position},
             });
-              mapManager.addLayer(`device-${pos.type}-${pos.position.features[0]?.id}`, `places-${index}`, `icon-${pos.type}`, "{name}", 
+              mapManager.addLayer(`device-${pos.type}-${pos.position.features[0]?.properties.deviceId}`, `places-${index}`, `icon-${pos.type}`, "{name}", 
               pos.position.features[0].properties?.status, pos.position.features[0].properties?.course);
         })
       }
@@ -130,11 +138,10 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource}) => {
       if (mapManager.map.getSource("raster-tiles") && rasterSource !== "") {
         mapManager.map.getSource("raster-tiles").tiles = [rasterSource];
       }
-      // console.log(positionsByType)
       return () => {
         positionsByType.map((pos,index)=> {          
           let featureType = pos.type;          
-          mapManager.map.removeLayer(`device-${featureType}-${pos.position.features[0]?.id}`);        
+          mapManager.map.removeLayer(`device-${featureType}-${pos.position.features[0]?.properties.deviceId}`);        
           mapManager.map.removeSource(`places-${index}`);
         });
       };
@@ -145,22 +152,23 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource}) => {
     if(mapReady && positions){
       positions.features.map((pos, index) => {
        let sourceData = mapManager.map.getSource(`places-${index}`);
-          if(pos.properties.status !== sourceData?._data.features[0].properties.status){
-            if(mapManager.map.getLayer(`device-${pos.properties.type}-${pos.id}`)){
-              mapManager.map.removeLayer(`device-${pos.properties.type}-${pos.id}`); 
+          // if(pos.properties.status !== sourceData?._data.features[0].properties.status){
+            let layer = mapManager.map.getLayer(`device-${pos.properties.type}-${pos.properties.deviceId}`);
+            if(layer){
+              mapManager.map.removeLayer(`device-${pos.properties.type}-${pos.properties.deviceId}`); 
               sourceData.setData({
                 type: "FeatureCollection",
                 features: [{...pos}]
               }); 
               mapManager.addLayer(
-                `device-${pos.properties.type}-${pos.id}`, 
+                `device-${pos.properties.type}-${pos.properties.deviceId}`, 
                 `places-${index}`, 
                 `icon-${pos.properties.type}`, 
                 "{name}", 
                 pos.properties.status, pos.properties.course
               );
             }
-          }
+          // }
        })
     }
  },[positions])
@@ -177,7 +185,6 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource}) => {
     }
 
     let positionsByType = [];
-
       positions.features.map((feature) => {
         let positionsB = {
           type: "FeatureCollection",
@@ -186,9 +193,10 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource}) => {
         let featureType = feature.properties.type;
         positionsByType.push({ type: featureType, position: positionsB });
       });
-    
+    // console.log(positionsByType)
     positionsByType.map((pos,index) => {
         const source = mapManager.map.getSource(`places-${index}`);
+        // console.log(source);
         if (source) {
           source.setData(pos.position);
         }             
@@ -210,8 +218,41 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource}) => {
     popup.setLngLat(coordinates).setHTML(description).addTo(mapManager.map);
   };
 
-  const cursorPointer = () => {
+  const refreshPopup = (e) => {
+    let coordinates = e.geometry.coordinates.slice();
+    let description = e.properties.description;
 
+    popup.setLngLat(coordinates).setHTML(description).addTo(mapManager.map);
+  };
+
+  useEffect(()=> {
+    devices.map((device, index) => {
+      let deviceData = document.getElementById(`header-${device.id}`)
+      let domElement = document.getElementsByClassName('mapboxgl-popup');
+      let positionsByType = [];
+
+      positions.features.map((feature) => {
+        let positionsB = {
+          type: "FeatureCollection",
+          features: [{...feature}],
+        }; 
+        let featureType = feature.properties.type;
+        positionsByType.push({ type: featureType, position: positionsB });
+      });
+      let sourceData = mapManager.map.getSource(`places-${index}`);
+      
+      if(deviceData && sourceData){
+          let pos = positions.features.find(el => el.properties.name === device.name);  
+          // if(device.status !== sourceData?._data.features[0].properties.status){
+            // console.log(`${device.name} cambio su estado de ${sourceData?._data.features[0].properties.status} a ${device.status}`)
+            domElement[0].remove();
+            refreshPopup(pos);
+          // }
+      }
+    })
+  },[devices, positions])
+
+  const cursorPointer = () => {
     mapManager.map.getCanvas().style.cursor = "pointer";    
   };
   const cursorDefault = () => {
@@ -223,9 +264,9 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource}) => {
       positions.features.map((feature, index) => {
         let featureType = feature.properties.type;
       if (features.indexOf(`${featureType}-${index}`) === -1) {
-        mapManager.map.on("click", `device-${featureType}-${feature.id}`, createPopup);
-        mapManager.map.on("mouseenter", `device-${featureType}-${feature.id}`, cursorPointer);
-        mapManager.map.on("mouseleave", `device-${featureType}-${feature.id}`, cursorDefault);
+        mapManager.map.on("click", `device-${featureType}-${feature.properties.deviceId}`, createPopup);
+        mapManager.map.on("mouseenter", `device-${featureType}-${feature.properties.deviceId}`, cursorPointer);
+        mapManager.map.on("mouseleave", `device-${featureType}-${feature.properties.deviceId}`, cursorDefault);
       }
       features.push(`${featureType}-${index}`);
     });
@@ -235,9 +276,9 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource}) => {
       positions.features.map((feature, index) => {
         let featureType = feature.properties.type;
         if (features.indexOf(`${featureType}-${index}`) === -1) {
-          mapManager.map.off("click", `device-${featureType}-${feature.id}`, createPopup);
-          mapManager.map.off("mouseenter", `device-${featureType}-${feature.id}`, cursorPointer);
-          mapManager.map.off("mouseleave", `device-${featureType}-${feature.id}`, cursorDefault);
+          mapManager.map.off("click", `device-${featureType}-${feature.properties.deviceId}`, createPopup);
+          mapManager.map.off("mouseenter", `device-${featureType}-${feature.properties.deviceId}`, cursorPointer);
+          mapManager.map.off("mouseleave", `device-${featureType}-${feature.properties.deviceId}`, cursorDefault);
         }
         features.push(`${featureType}-${index}`);
       });
