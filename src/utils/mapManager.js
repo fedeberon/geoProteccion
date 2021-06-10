@@ -162,16 +162,16 @@ const addPolygonLayer = (id, source, color) => {
     },
   };
   map.addLayer(layer);
-  map.addLayer({
-    id: 'outline',
-    type: 'line',
-    source: source,
-    layout: {},
-    paint: {
-      "line-color": color,
-      "line-width": 4
-    }
-  })
+  // map.addLayer({
+  //   id: 'outline',
+  //   type: 'line',
+  //   source: source,
+  //   layout: {},
+  //   paint: {
+  //     "line-color": color,
+  //     "line-width": 4
+  //   }
+  // })
 };
 
 const addLabelLayer = (id, source, text) => {

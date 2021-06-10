@@ -149,6 +149,24 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource}) => {
   },[mapReady, mapManager.map]);
 
   useEffect(()=> {
+    devices.map((device, index) => {
+      let deviceData = document.getElementById(`header-${device.id}`)
+      let domElement = document.getElementsByClassName('mapboxgl-popup');
+      let sourceData = mapManager.map.getSource(`places-${index}`);
+      
+      if(deviceData && sourceData){
+        
+          let pos = positions.features.find(el => el.properties.name === device.name);  
+          if(device.positionId !== sourceData?._data.features[0].id){
+            //console.log(`${device.name} cambio su estado de ${sourceData?._data.features[0].properties.status} a ${device.status}`)
+            refreshPopup(pos);
+            domElement[0].remove();
+          }
+      }
+    })
+  },[devices])
+
+  useEffect(()=> {
     if(mapReady && positions){
       positions.features.map((pos, index) => {
        let sourceData = mapManager.map.getSource(`places-${index}`);
@@ -172,6 +190,8 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource}) => {
        })
     }
  },[positions])
+
+ 
 
   useEffect(() => {
     if (!mapReady) {
@@ -224,33 +244,6 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource}) => {
 
     popup.setLngLat(coordinates).setHTML(description).addTo(mapManager.map);
   };
-
-  useEffect(()=> {
-    devices.map((device, index) => {
-      let deviceData = document.getElementById(`header-${device.id}`)
-      let domElement = document.getElementsByClassName('mapboxgl-popup');
-      let positionsByType = [];
-
-      positions.features.map((feature) => {
-        let positionsB = {
-          type: "FeatureCollection",
-          features: [{...feature}],
-        }; 
-        let featureType = feature.properties.type;
-        positionsByType.push({ type: featureType, position: positionsB });
-      });
-      let sourceData = mapManager.map.getSource(`places-${index}`);
-      
-      if(deviceData && sourceData){
-          let pos = positions.features.find(el => el.properties.name === device.name);  
-          // if(device.status !== sourceData?._data.features[0].properties.status){
-            // console.log(`${device.name} cambio su estado de ${sourceData?._data.features[0].properties.status} a ${device.status}`)
-            domElement[0].remove();
-            refreshPopup(pos);
-          // }
-      }
-    })
-  },[devices, positions])
 
   const cursorPointer = () => {
     mapManager.map.getCanvas().style.cursor = "pointer";    
