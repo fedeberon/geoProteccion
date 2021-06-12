@@ -1,4 +1,4 @@
-import React, { useRef, useLayoutEffect, useEffect, useState } from "react";
+import React, { useRef, useLayoutEffect, useEffect, useState, useMemo, useCallback } from "react";
 import mapManager from "../utils/mapManager";
 import {useSelector, shallowEqual} from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
@@ -16,7 +16,7 @@ import {
 } from "../utils/mapFunctions";
 
 const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource}) => {
-
+  let buttons = document.getElementById(`updatePopupInfo`);
   const containerEl = useRef(null);
   const [mapReady, setMapReady] = useState(false); 
   const isViewportDesktop = useSelector((state) => state.session.deviceAttributes.isViewportDesktop);  
@@ -52,19 +52,11 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource}) => {
   }));
 
   useEffect(() => {
-      // mapManager.map.easeTo({
-      //   center: mapCenter,
-      //   duration: 500,
-      //   zoom: mapManager.map.getZoom(),
-      // });
-      mapManager.map.panTo(
-        mapCenter, 
-        {
-          duration: 1000, 
-          animate: true, 
-          essential: true
-        }
-      );
+      mapManager.map.easeTo({
+        center: mapCenter,
+        duration: 750,
+        zoom: mapManager.map.getZoom(),
+      });
   },[mapCenter]); 
 
   var markerHeight = 0,
@@ -149,24 +141,6 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource}) => {
   },[mapReady, mapManager.map]);
 
   useEffect(()=> {
-    devices.map((device, index) => {
-      let deviceData = document.getElementById(`header-${device.id}`)
-      let domElement = document.getElementsByClassName('mapboxgl-popup');
-      let sourceData = mapManager.map.getSource(`places-${index}`);
-      
-      if(deviceData && sourceData){
-        
-          let pos = positions.features.find(el => el.properties.name === device.name);  
-          if(device.positionId !== sourceData?._data.features[0].id){
-            //console.log(`${device.name} cambio su estado de ${sourceData?._data.features[0].properties.status} a ${device.status}`)
-            refreshPopup(pos);
-            domElement[0].remove();
-          }
-      }
-    })
-  },[devices])
-
-  useEffect(()=> {
     if(mapReady && positions){
       positions.features.map((pos, index) => {
        let sourceData = mapManager.map.getSource(`places-${index}`);
@@ -190,8 +164,6 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource}) => {
        })
     }
  },[positions])
-
- 
 
   useEffect(() => {
     if (!mapReady) {
@@ -222,6 +194,30 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource}) => {
         }             
     });
   }, [positions]);
+
+  const updatePopup = (object, position) => {
+    if(object[0]){
+      object[0].remove();
+      refreshPopup(position);
+    }  
+  }
+
+  //Update device data on popup function
+  useEffect(()=> {
+    positions.features.map((position, index) => {
+      let deviceData = document.getElementById(`header-${position.properties.deviceId}`)
+      let mapboxPopup = document.getElementsByClassName('mapboxgl-popup');
+      let sourceData = mapManager.map.getSource(`places-${index}`);
+      
+      if(deviceData && sourceData){  
+        if(buttons){
+          buttons.addEventListener("click", function(){   
+          updatePopup(mapboxPopup, position);
+          })
+        }
+      }   
+    })
+  },[devices])
 
   const style = {
     width: "100%",
@@ -424,6 +420,7 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource}) => {
           case "CIRCLE":
             try{
               mapManager.map.removeLayer(`circles-${index}`);
+              mapManager.map.removeLayer(`circles-${index}-outline`);
               mapManager.map.removeSource(`circles-${index}`);
               break;
             } catch (error){
@@ -432,6 +429,7 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource}) => {
           case "POLYGON":
             try{
               mapManager.map.removeLayer(`polygons-${index}`);
+              mapManager.map.removeLayer(`polygons-${index}-outline`);
               mapManager.map.removeSource(`polygons-${index}`);
               break;
             } catch (error){

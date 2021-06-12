@@ -26,6 +26,27 @@ html, body, #root {
   cursor: pointer;
 }
 
+.vehicle-type {
+  font-size: 17px;
+  color: #716a77;
+  left: 88%;
+  position: absolute;
+  top: 16%;
+  padding: 4px;
+  border-radius: 10px !important;
+  border-top: 1px !important;
+  border-left: 1px !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  box-shadow: 0 0 3px 0 rgba(102, 97, 102, 0.8) !important;
+  background-color: transparent !important;
+  color: white !important;
+}
+
+.vehicle-type:hover {
+    cursor: pointer;
+}
+
 li {
   list-style: none;
 }

@@ -281,6 +281,7 @@ function createFeature (devices, position, isViewportDesktop, server) {
                                   <li>
                                       <li style="color: blue; margin: 5px 0px;" id="addressShown" onClick="showAddress(${device.id},${position.latitude},${position.longitude})">${t("sharedShowAddress")}</li>
                                       <li style="color: blue; margin: 5px 0px;" id="buttonShowMore" onClick="showDetails(${device.id})">${t(`showMore`)}</li>
+                                      <i title="Update information" id="updatePopupInfo" type="button" class="fas fa-sync-alt vehicle-type"></i>
                                   </li>
                               </li>
                           </ul>

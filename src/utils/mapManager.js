@@ -66,6 +66,9 @@ const loadIcon = (key, background, url) => {
     const context = canvas.getContext("2d");
     context.drawImage(background, 0, 0, canvas.width, canvas.height);
 
+    // const iconRatio = 0.7;
+    // const imageWidth = canvas.width * iconRatio;
+    // const imageHeight = canvas.height * iconRatio;
     const imageWidth = image.width * window.devicePixelRatio;
     const imageHeight = image.height * window.devicePixelRatio;
     context.drawImage(
@@ -77,7 +80,7 @@ const loadIcon = (key, background, url) => {
     );
 
     map.addImage(key, context.getImageData(0, 0, canvas.width, canvas.height), {
-      pixelRatio: window.devicePixelRatio,
+      pixelRatio: window.devicePixelRatio
     });
   });
 };
@@ -128,8 +131,11 @@ const addLayer = (id, source, icon, text, status, course) => {
     },
     layout: {
       "icon-image": status === 'offline' ? `${icon}-${status}` : icon,
-      "icon-allow-overlap": true,
-      "icon-rotate": ['get', 'course']   
+      "icon-allow-overlap": false,
+      "icon-rotate": ['get', 'course'],
+      "icon-rotation-alignment": "map",
+      "icon-keep-upright": true,
+      // "symbol-placement": 'point',
     },
   };
   if (text) {
@@ -162,16 +168,16 @@ const addPolygonLayer = (id, source, color) => {
     },
   };
   map.addLayer(layer);
-  // map.addLayer({
-  //   id: 'outline',
-  //   type: 'line',
-  //   source: source,
-  //   layout: {},
-  //   paint: {
-  //     "line-color": color,
-  //     "line-width": 4
-  //   }
-  // })
+  map.addLayer({
+    id: `${id}-outline`,
+    type: 'line',
+    source: source,
+    layout: {},
+    paint: {
+      "line-color": color,
+      "line-width": 5
+    }
+  })
 };
 
 const addLabelLayer = (id, source, text) => {
