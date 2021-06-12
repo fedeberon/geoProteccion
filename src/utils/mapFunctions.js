@@ -1,6 +1,6 @@
 import t from "../common/localization";
 import circleToPolygon from "circle-to-polygon";
-import { getCourse, getDateTime, getDateTimeDevices } from "./functions";
+import { getCourse, getDateTime, getDateTimeDevices, speedConverter } from "./functions";
 
 const typeRegEx = /(\w*)[ ]?[(]/;
 const circlePositionRegEx = /[(](.*) (.*)[,]/;
@@ -342,7 +342,7 @@ function createFeature (devices, position, isViewportDesktop, server) {
                                       ${t("positionSpeed")}
                                   </th>
                                   <td>
-                                      ${position.speed.toFixed(0)}  ${server && server.attributes?.speedUnit}
+                                      ${(speed * speedConverter(server && server.attributes?.speedUnit)).toFixed(0)}  ${server && server.attributes?.speedUnit}
                                   </td>
                               </tr>
                               <tr>
@@ -435,7 +435,7 @@ function createFeature (devices, position, isViewportDesktop, server) {
                                   <td>
                                       <td>
                                           <p class="${desktopView ? 'status-inactive' : 'status-inactive-mobile'}">
-                                          ${speed.toFixed(0)}  ${server && server.attributes?.speedUnit}
+                                          ${(speed * speedConverter(server && server.attributes?.speedUnit)).toFixed(0)}  ${server && server.attributes?.speedUnit}
                                           </p>
                                       </td>
                                   </td>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import t from "../common/localization";
-import { GetDeviceName, getDateTime, getHoursMinutes, getDateTimeDevices } from '../utils/functions';
+import { GetDeviceName, getDateTime, getHoursMinutes, getDateTimeDevices, speedConverter } from '../utils/functions';
 import { DataGrid } from '@material-ui/data-grid';
 import reportsRoutesStyles from "./styles/ReportsRoutesStyles";
 import Paper from "@material-ui/core/Paper";
@@ -56,7 +56,7 @@ routes && routes.map((route,index) => {
     latitude: route.latitude.toFixed(6) + '°',
     longitude: route.longitude.toFixed(6) + '°',      
     altitude: route.altitude,
-    speed: route.speed.toFixed(2) + ` ${server && server.attributes?.speedUnit}`,
+    speed: (route.speed * speedConverter(server && server.attributes?.speedUnit)).toFixed(0) + ` ${server && server.attributes?.speedUnit}`,
     positionId: route.id
     });
 });

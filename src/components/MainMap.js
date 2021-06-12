@@ -469,10 +469,20 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource}) => {
             "visibility",
             areGeozonesVisible ? "visible" : "none"
           );
+          mapManager.map.setLayoutProperty(
+            `circles-${index}-outline`,
+            "visibility",
+            areGeozonesVisible ? "visible" : "none"
+          );
           break;
         case "POLYGON":
           mapManager.map.setLayoutProperty(
             `polygons-${index}`,
+            "visibility",
+            areGeozonesVisible ? "visible" : "none"
+          );
+          mapManager.map.setLayoutProperty(
+            `polygons-${index}-outline`,
             "visibility",
             areGeozonesVisible ? "visible" : "none"
           );

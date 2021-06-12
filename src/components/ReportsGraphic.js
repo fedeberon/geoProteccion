@@ -3,7 +3,7 @@ import { Box, Paper } from '@material-ui/core';
 import t from "../common/localization";
 import {LineChart, Line, XAxis, YAxis, Label, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { useSelector } from "react-redux";
-import { getDateTime } from '../utils/functions';
+import { getDateTime, speedConverter } from '../utils/functions';
 
 
 const ReportsGraphic = ({ type, items, graphicType, devices, selected }) => {
@@ -60,7 +60,7 @@ const ReportsGraphic = ({ type, items, graphicType, devices, selected }) => {
       return (
         <div className="custom-tooltip">
           <p className="label">{payload && payload[0].payload?.name}</p>
-          <p className="label">{`${t(`position${capitalize(graphicType)}`)} : ${payload[0].value} ${getUnit(graphicType)}`}</p>
+          <p className="label">{`${t(`position${capitalize(graphicType)}`)} : ${(payload[0].value * speedConverter(getUnit(graphicType))).toFixed(0)} ${getUnit(graphicType)}`}</p>
           <p className="desc" >
             {`${t('positionDate')}: ${graphicType === 'speed' ? getDatefromData(payload[0].value) : getDatefromData(payload[0].payload?.id)}`}
           </p>

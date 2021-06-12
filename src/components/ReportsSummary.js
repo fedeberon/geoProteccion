@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import t from "../common/localization";
-import { getHoursMinutes } from '../utils/functions';
+import { getHoursMinutes, speedConverter } from '../utils/functions';
 import { DataGrid } from '@material-ui/data-grid';
 import reportsSummaryStyles from "./styles/ReportsSummaryStyles";
 import Paper from "@material-ui/core/Paper";
@@ -38,8 +38,8 @@ const ReportsStops = ({dataSummary}) => {
         distance: Number((summary.distance / 1000).toFixed(2)) + ` ${server && server.attributes?.distanceUnit}`,        
         startOdometer: Number((summary.startOdometer/1000).toFixed(2)) + ` ${server && server.attributes?.distanceUnit}`,
         endOdometer: Number((summary.endOdometer / 1000).toFixed(2)) + ` ${server && server.attributes?.distanceUnit}`,
-        averageSpeed: Number(summary.averageSpeed.toFixed(2)) + ` ${server && server.attributes?.speedUnit}`,
-        maxSpeed: Number(summary.maxSpeed.toFixed(2)) + ` ${server && server.attributes?.speedUnit}`,
+        averageSpeed: Number((summary.averageSpeed * speedConverter(server && server.attributes?.speedUnit)).toFixed(0)) + ` ${server && server.attributes?.speedUnit}`,
+        maxSpeed: Number((summary.maxSpeed * speedConverter(server && server.attributes?.speedUnit)).toFixed(2)) + ` ${server && server.attributes?.speedUnit}`,
         engineHours: getHoursMinutes(summary.engineHours),
         spentFuel: Number(summary.spentFuel.toFixed(1)) + ` ${server && server.attributes?.volumeUnit}`,
       });

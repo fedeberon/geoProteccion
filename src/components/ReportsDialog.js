@@ -15,7 +15,7 @@ import GetAppIcon from '@material-ui/icons/GetApp';
 import CachedIcon from '@material-ui/icons/Cached';
 import MailOutlineIcon from '@material-ui/icons/MailOutline';
 import * as service from "../utils/serviceManager";
-import { getDateTime, getHoursMinutes } from '../utils/functions';
+import { getDateTime, getHoursMinutes, speedConverter } from '../utils/functions';
 import Box from "@material-ui/core/Box";
 import ReportsConfig from "./ReportsConfig";
 import ReportsGraphic from "./ReportsGraphic";
@@ -714,51 +714,6 @@ export default function ReportsDialog({
         </div>
         }        
 
-        {/* Table for EVENTS Reports
-        <div
-          onScroll={handleScroll}
-          style={{ display: `${events.length === 0 ? "none" : "inline-block"}` }}
-          className={`scrollbar ${classes.tableEventsReports}`}
-        >
-            <Table stickyHeader={true}>
-              <TableHead>
-                <TableRow>
-                  <TableCell>{t("positionDate")}</TableCell>
-                  <TableCell>{t("reportDeviceName")}</TableCell>
-                  <TableCell>{t("sharedType")}</TableCell>
-                  <TableCell>{t("sharedGeofence")}</TableCell>
-                  <TableCell>{t("sharedMaintenance")}</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {events
-                  .slice(
-                    sliceFirstIndex < events.length - 30
-                      ? sliceFirstIndex
-                      : (events.length - 30) * (events.length > 30),
-                    sliceLastIndex < events.length
-                      ? sliceLastIndex
-                      : events.length
-                  )
-                  .map((object) => (
-                    <TableRow
-                      key={object.id}
-                      className={classes.row}
-                      // onClick={() => 
-                      //   handleSelectedPosition(positions.find((element) => element.id === object.positionId))                       
-                      // }
-                    >
-                      <TableCell>{getDateTime(object.serverTime)}</TableCell>
-                      <TableCell>{GetDeviceName(object.deviceId)}</TableCell>
-                      <TableCell>{t(`${object.type}`)}</TableCell>
-                      <TableCell>{object.geofenceId === 0 ? '' : object.geofenceId}</TableCell>
-                      <TableCell>{object.maintenanceId === 0 ? '' : object.maintenanceId}</TableCell>
-                    </TableRow>
-                  ))}
-              </TableBody>
-            </Table>
-        </div> */}
-
         {window.innerWidth > 767 &&
         <div
           onScroll={handleScroll}
@@ -804,7 +759,7 @@ export default function ReportsDialog({
                 </TableRow>
                 <TableRow className={classes.row}>
                 <TableCell>Velocidad</TableCell>
-                <TableCell>{positionState && positionState.speed.toFixed(1)} {server && `${server.attributes?.speedUnit}`}</TableCell>
+                <TableCell>{positionState && (positionState.speed * speedConverter(server.attributes?.speedUnit)).toFixed(0)} {server && `${server.attributes?.speedUnit}`}</TableCell>
                 </TableRow>
                 <TableRow className={classes.row}>
                 <TableCell>Curso</TableCell>

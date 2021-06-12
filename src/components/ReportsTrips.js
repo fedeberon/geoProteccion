@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import t from "../common/localization";
-import { getDateTime, getHoursMinutes } from '../utils/functions';
+import { getDateTime, getHoursMinutes, speedConverter } from '../utils/functions';
 import { DataGrid, isOverflown } from '@material-ui/data-grid';
 import reportsTripsStyles from "./styles/ReportsTripsStyles";
 import PropTypes from 'prop-types';
@@ -163,8 +163,8 @@ const ReportsTrips = ({dataTrips, dataPositions, selected}) => {
         endOdometer: Number((trip.endOdometer / 1000).toFixed(2)) + ` ${server && server.attributes?.distanceUnit}`,
         endAddress: trip.endAddress,
         distance: Number((trip.distance / 1000).toFixed(2)) + ` ${server && server.attributes?.distanceUnit}`, 
-        averageSpeed: Number(trip.averageSpeed.toFixed(2)) + ` ${server && server.attributes?.speedUnit}`,
-        maxSpeed: Number(trip.maxSpeed.toFixed(2)) + ` ${server && server.attributes?.speedUnit}`,
+        averageSpeed: Number((trip.averageSpeed * speedConverter(server && server.attributes?.speedUnit)).toFixed(0)) + ` ${server && server.attributes?.speedUnit}`,
+        maxSpeed: Number((trip.maxSpeed * speedConverter(server && server.attributes?.speedUnit)).toFixed(0)) + ` ${server && server.attributes?.speedUnit}`,
         duration: getHoursMinutes(trip.duration),
         spentFuel: Number(trip.spentFuel.toFixed(1)) + ` ${server && server.attributes?.volumeUnit}`,
         driverName: trip.driverName ? trip.driverName : "",

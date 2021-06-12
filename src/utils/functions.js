@@ -21,6 +21,18 @@ const attributes = [
   "ICCID",
 ];
 
+const speedConverter = unit => {
+  switch (unit) {
+    case 'kmh':
+      return 1.60934;
+    case 'mph':
+      return 1.15078;
+    case 'kn':
+    default:
+      return 1;
+  }
+};
+
 const getBreakpointFromWidth = (width) => {
   return breakpoints[
     (width >= 1920 * 1) +
@@ -147,4 +159,5 @@ export {
   getDateTime,
   getHoursMinutes,
   getDateTimeDevices,
+  speedConverter
 };
