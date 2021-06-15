@@ -5,8 +5,10 @@ const userPageStyle = makeStyles((theme) => ({
     width: "100%",
     height: "100%",
     overflowY: "auto",
+    paddingBottom: "15%",
     [theme.breakpoints.up("md")]: {
-     paddingTop: "4%",
+     paddingTop: "4%",  
+     paddingBottom: 0,   
     },
   },
   rootSnack: {
@@ -101,6 +103,7 @@ const userPageStyle = makeStyles((theme) => ({
       [theme.breakpoints.up("md")]: {
         width: "50%",
         marginTop: "1%",
+        marginBottom: "5%",
       },
   },
   buttonGroup: {
@@ -123,11 +126,25 @@ const userPageStyle = makeStyles((theme) => ({
     width: 200,
   },
   buttonsFooter: {
-    bottom: 0,
-    backgroundColor: "#eaeaea",
-    width: "23%",
+    width: "46%",
+    fontSize: "12px",
     margin: "0px 10px",
-  }
+    [theme.breakpoints.up("md")]: {
+      bottom: 0,
+      backgroundColor: "#eaeaea",
+      width: "23%",      
+    },
+  },
+  buttonsFooterContainer:{
+    backgroundColor: "white",
+    bottom: "8%",
+    display: "flex",
+    position: "absolute",
+    width: "100%",
+    [theme.breakpoints.up("md")]: {
+      bottom: "1%",
+    },
+  },
 }));
 
 export default userPageStyle;

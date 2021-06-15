@@ -450,7 +450,7 @@ const UserData = () => {
           </Table>
         </TableContainer>
       </div>
-      <div style={{backgroundColor: "white", bottom: "1%", display: "flex", position: "absolute", width: "100%"}}>
+      <div className={classes.buttonsFooterContainer}>
         <Button className={classes.buttonsFooter} onClick={() => getMapState()} fullWidth color="primary" variant="outlined">
             {t('sharedGetMapState')}
         </Button>
