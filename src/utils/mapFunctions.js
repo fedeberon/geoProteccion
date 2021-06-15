@@ -240,7 +240,7 @@ const getRandomHex = () => {
 function createFeature (devices, position, isViewportDesktop, server) {
     
   const device = devices[position.deviceId] || null;
-  const name = device.name;
+  const name = device.attributes?.carPlate;
   const model = device.attributes.model;
   const carPlate = device.attributes.carPlate;
   const brand = device.attributes.brand;

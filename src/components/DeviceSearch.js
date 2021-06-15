@@ -16,7 +16,7 @@ import { devicesActions } from "../store";
 import t from "../common/localization";
 import { useHistory } from "react-router-dom";
 import deviceSearchStyles from "./styles/DeviceSearchStyles";
-import { getDateTimeDevices } from '../utils/functions';
+import { getDateTimeDevices, speedConverter } from '../utils/functions';
 import { getSVG } from '../utils/svgGetter';
 import * as service from "../utils/serviceManager";
 
@@ -109,11 +109,9 @@ function DeviceSearch(deviceId) {
           }}
         />
         {showDeviceList ? (
-          <i onClick={() => toggleDeviceList()} className="fas fa-angle-up fa-lg" 
-          style={{ marginTop: "14px", position: 'absolute', right: '8%'}} />
+          <i onClick={() => toggleDeviceList()} className={`btn btn-searchbox fas fa-angle-up fa-lg ${classes.iconSearchbox}`}/>
         ) : (
-          <i onClick={() => toggleDeviceList()} className="fas fa-angle-down fa-lg" 
-          style={{ marginTop: "14px", position: 'absolute', right: '8%'}} />
+          <i onClick={() => toggleDeviceList()} className={`btn btn-searchbox fas fa-angle-down fa-lg ${classes.iconSearchbox}`}/>          
         )}
       </div>
       {/* <div
@@ -228,7 +226,7 @@ function DeviceSearch(deviceId) {
               <div className={classes.devsearchSpeed}>
                 <p className={classes.devsearchSpeedP}>
                   {positions && positions[device.id]
-                    ? positions[device.id].speed.toFixed(0)
+                    ? (positions[device.id].speed * speedConverter(server.attributes?.speedUnit)).toFixed(0)
                     : "0"}{" "}
                   {server && `${server.attributes?.speedUnit}`}
                 </p>

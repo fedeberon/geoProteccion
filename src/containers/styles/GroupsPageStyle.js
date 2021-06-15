@@ -24,8 +24,9 @@ const groupsPageStyle = makeStyles((theme) => ({
     overflowY: "scroll",
     display: "inherit",
     flexWrap: "wrap",
+    paddingBottom: "20%",
     [theme.breakpoints.up("md")]: {
-      paddingBottom: "4%",
+      paddingBottom: "10%",
     },
   },
 }));

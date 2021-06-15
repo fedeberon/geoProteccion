@@ -25,8 +25,7 @@ const MainPage = ({ width }) => {
   const open = useSelector((state) => state.modals.items.search);
   const user = useSelector((state) => state.session.user);
   const server = useSelector((state) => state.session.server);
-  const deviceSelected = useSelector((state) => state.devices.selectedDevice);
-  const [areGeozonesVisible, setAreGeozonesVisible] = useState(true);
+  const [areGeozonesVisible, setAreGeozonesVisible] = useState(false);
   const [showReports, setShowReports] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [mapZoom, setMapZoom] = useState(0);

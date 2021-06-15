@@ -157,7 +157,7 @@ const ReportsMap = ({geozones,route,events,trips,showMarkers,selectedPosition,gr
     };
   }, [mapManager.map]);
 
-  useEffect(() => {
+  const setGeozones = () => {
     let attributes = {
       lat: null,
       lng: null,
@@ -276,31 +276,67 @@ const ReportsMap = ({geozones,route,events,trips,showMarkers,selectedPosition,gr
     });
 
     mapManager.addLabelLayer("geozones-labels", "geozones-labels", "{name}");
+  }
 
-    return () => {
-      geozones.map((element, index) => {
-        const geozoneType = getGeozoneType(element.area);
+  const removeGeozones = () => {
+    geozones.map((element, index) => {
+      const geozoneType = getGeozoneType(element.area);
 
-        switch (geozoneType) {
-          case "CIRCLE":
+      switch (geozoneType) {
+        case "CIRCLE":
+          if(mapManager.map.getLayer(`circles-${index}`)){
             mapManager.map.removeLayer(`circles-${index}`);
+          }
+          if(mapManager.map.getLayer(`circles-${index}-outline`)){
+            mapManager.map.removeLayer(`circles-${index}-outline`);
+          }
+          if(mapManager.map.getSource(`circles-${index}`)){
             mapManager.map.removeSource(`circles-${index}`);
-            break;
-          case "POLYGON":
-            mapManager.map.removeLayer(`polygons-${index}`);
+          } 
+          break;
+        case "POLYGON":
+          if(mapManager.map.getLayer(`polygons-${index}`)){
+          mapManager.map.removeLayer(`polygons-${index}`);
+          }
+          if(mapManager.map.getLayer(`polygons-${index}-outline`)){
+          mapManager.map.removeLayer(`polygons-${index}-outline`);
+          }
+          if(mapManager.map.getSource(`polygons-${index}`)){
             mapManager.map.removeSource(`polygons-${index}`);
-            break;
-          case "LINESTRING":
-            mapManager.map.removeLayer(`polylines-${index}`);
+          }
+          break;
+        case "LINESTRING":
+          if(mapManager.map.getLayer(`polylines-${index}`)){
+          mapManager.map.removeLayer(`polylines-${index}`);
+          }
+          if(mapManager.map.getLayer(`polylines-${index}-outline`)){
+          mapManager.map.removeLayer(`polylines-${index}-outline`);
+          }
+          if(mapManager.map.getSource(`polylines-${index}`)){
             mapManager.map.removeSource(`polylines-${index}`);
-            break;
-          default:
-            break;
-        }
-      });
+          }
+          break;
+        default:
+          break;
+      }
+    });
+    if(mapManager.map.getLayer("geozones-labels")){
       mapManager.map.removeLayer("geozones-labels");
+    }
+    if(mapManager.map.getSource("geozones-labels")){
       mapManager.map.removeSource("geozones-labels");
-    };
+    }
+  }
+
+  useEffect(() => {    
+    if(!mapManager.map.getSource("geozones-labels")){
+      //setGeozones();
+    } else {
+      removeGeozones();
+    }
+    return () => {
+      removeGeozones();
+    }
   }, [geozones]);
 
   useEffect(() => {

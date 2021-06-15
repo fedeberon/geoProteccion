@@ -142,7 +142,7 @@ const addLayer = (id, source, icon, text, status, course) => {
     layer.layout = {
       ...layer.layout,
       "text-field": text,
-      "text-allow-overlap": true,
+      "text-allow-overlap": false,
       "text-anchor": "bottom",
       "text-offset": [0, -2],
       "text-font": ["Roboto Regular"],
@@ -188,7 +188,7 @@ const addLabelLayer = (id, source, text) => {
       source: source,
       layout: {
         "text-field": text,
-        "text-allow-overlap": true,
+        "text-allow-overlap": false,
         "text-anchor": "bottom",
         "text-offset": [0, 0.5],
         "text-font": ["Roboto Regular"],

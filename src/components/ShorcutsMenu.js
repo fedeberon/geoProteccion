@@ -92,6 +92,7 @@ export default function ShortcutsMenu({
             onClick={() => showReportDialog()}
           />
           <SpeedDial
+            id="showGeozones"
             title={t("geozones")}
             ariaLabel="Geozones"
             className={classes.speedDial}

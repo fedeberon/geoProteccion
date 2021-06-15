@@ -21,11 +21,22 @@ const deviceSearchStyles = makeStyles((theme) => ({
       width: "75%",
     },
   },
+  iconSearchbox: {
+    position: 'absolute', 
+    right: '1%', 
+    borderRadius: "20px", 
+    backgroundColor: "transparent", 
+    padding: "4% 5%",
+    [theme.breakpoints.up("md")]: {
+      right: '2.5%',
+      padding: "2% 4%",
+    },
+  },
   iconButton: {
     padding: 8,
   },
   div: {
-    paddingLeft: "5%",
+    paddingLeft: "2%",
     display: "flex",
   },
   input: {

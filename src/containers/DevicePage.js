@@ -29,7 +29,7 @@ import ExpandLess from "@material-ui/icons/ExpandLess";
 import ExpandMore from "@material-ui/icons/ExpandMore";
 import StarBorder from "@material-ui/icons/StarBorder";
 import Divider from "@material-ui/core/Divider";
-import { getCourse, getOriginalAttributes, getDateTime, getDateTimeDevices } from "../utils/functions";
+import { speedConverter, getCourse, getOriginalAttributes, getDateTime, getDateTimeDevices } from "../utils/functions";
 import AddIcon from "@material-ui/icons/Add";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
@@ -61,6 +61,7 @@ const DevicePage = () => {
     (state) => Object.values(state.devices.items),
     shallowEqual
   );
+  const server = useSelector((state) => state.session.server);
   const [devicesAux, setDevicesAux] = useState([]);
   const userId = useSelector((state) => state.session.user.id);
   const positions = useSelector((state) => state.positions.items, shallowEqual);
@@ -79,7 +80,7 @@ const DevicePage = () => {
   const [availableTypesByDeviceId, setAvailableTypesByDeviceId] = useState([]);
   const [openFullDialog, setOpenFullDialog] = useState(false);
   const [type, setType] = useState("");
-  const [ unitTime, setUnitTime ] = useState('');
+  const [unitTime, setUnitTime] = useState();
   const [flag, setFlag] = useState();
   const [commandToSend, setCommandToSend] = useState({
     attributes: {},
@@ -120,26 +121,26 @@ const DevicePage = () => {
   const [categories, setCategories] = useState([
     "categoryArrow",
     "categoryDefault",
-    "categoryAnimal",
-    "categoryBicycle",
-    "categoryBoat",
-    "categoryBus",
-    "categoryCar",
-    "categoryCrane",
-    "categoryHelicopter",
-    "categoryMotorcycle",
-    "categoryOffroad",
-    "categoryPerson",
-    "categoryPickup",
-    "categoryPlane",
-    "categoryShip",
-    "categoryTractor",
-    "categoryTrain",
-    "categoryTram",
-    "categoryTrolleybus",
-    "categoryTruck",
-    "categoryVan",
-    "categoryScooter",
+    // "categoryAnimal",
+    // "categoryBicycle",
+    // "categoryBoat",
+    // "categoryBus",
+    // "categoryCar",
+    // "categoryCrane",
+    // "categoryHelicopter",
+    // "categoryMotorcycle",
+    // "categoryOffroad",
+    // "categoryPerson",
+    // "categoryPickup",
+    // "categoryPlane",
+    // "categoryShip",
+    // "categoryTractor",
+    // "categoryTrain",
+    // "categoryTram",
+    // "categoryTrolleybus",
+    // "categoryTruck",
+    // "categoryVan",
+    // "categoryScooter",
   ]);
   const variable = {
     geocerca: "sharedGeofences",
@@ -781,7 +782,7 @@ const DevicePage = () => {
                         {t("positionSpeed")}:&nbsp;
                       </strong>
                       {positions && positions[device.id]
-                        ? `${positions[device.id].speed} Km/h`
+                        ? `${(positions[device.id].speed * speedConverter(server && server.attributes?.speedUnit)).toFixed(0)} ${server && server.attributes?.speedUnit}`
                         : "Undefined"}
                     </ListItemText>
                   </ListItem>
@@ -1070,7 +1071,7 @@ const DevicePage = () => {
                   <Select
                     style={{marginTop: '16px', marginBottom: '16px', height: '55px'}} 
                     fullWidth
-                    value={newDevice.category}
+                    value={newDevice.category ? newDevice.category : ''}
                     onChange={(event) =>
                       setNewDevice({
                         ...newDevice,

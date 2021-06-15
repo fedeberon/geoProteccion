@@ -22,7 +22,7 @@ const notificationsPageStyle = makeStyles((theme) => ({
     flexWrap: "wrap",
     paddingBottom: "20%",
     [theme.breakpoints.up("md")]: {
-      paddingBottom: "4%",
+      paddingBottom: "10%",
     },
   },
   formControlType: {

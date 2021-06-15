@@ -1,6 +1,6 @@
 import React, { useRef, useLayoutEffect, useEffect, useState, useMemo, useCallback } from "react";
 import mapManager from "../utils/mapManager";
-import {useSelector, shallowEqual} from "react-redux";
+import {useSelector} from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   calculatePolygonCenter,
@@ -54,7 +54,7 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource}) => {
   useEffect(() => {
       mapManager.map.easeTo({
         center: mapCenter,
-        duration: 750,
+        duration: 400,
         zoom: mapManager.map.getZoom(),
       });
   },[mapCenter]); 
@@ -99,6 +99,7 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource}) => {
     mapManager.registerListener(() => setMapReady(true));
   }, []);
 
+  //Initial data charge of devices on map
   useLayoutEffect(() => {
     if (mapReady) {
       let positionsByType = [];
@@ -202,7 +203,7 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource}) => {
     }  
   }
 
-  //Update device data on popup function
+  //Update device data on popup function manually
   useEffect(()=> {
     positions.features.map((position, index) => {
       let deviceData = document.getElementById(`header-${position.properties.deviceId}`)
@@ -274,7 +275,7 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource}) => {
     };
   }, [mapManager.map]);
 
-  useEffect(() => {
+  const drawGeozones = () => {
     let attributes = {
       lat: null,
       lng: null,
@@ -456,60 +457,64 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource}) => {
         }
       };      
     };
-  }, [geozones]);
+  }
 
-  useEffect(() => {
-    geozones.map((element, index) => {
-      const geozoneType = getGeozoneType(element.area);
-
-      switch (geozoneType) {
-        case "CIRCLE":
-          mapManager.map.setLayoutProperty(
-            `circles-${index}`,
-            "visibility",
-            areGeozonesVisible ? "visible" : "none"
-          );
-          mapManager.map.setLayoutProperty(
-            `circles-${index}-outline`,
-            "visibility",
-            areGeozonesVisible ? "visible" : "none"
-          );
-          break;
-        case "POLYGON":
-          mapManager.map.setLayoutProperty(
-            `polygons-${index}`,
-            "visibility",
-            areGeozonesVisible ? "visible" : "none"
-          );
-          mapManager.map.setLayoutProperty(
-            `polygons-${index}-outline`,
-            "visibility",
-            areGeozonesVisible ? "visible" : "none"
-          );
-          break;
-        case "LINESTRING":
-          mapManager.map.setLayoutProperty(
-            `polylines-${index}`,
-            "visibility",
-            areGeozonesVisible ? "visible" : "none"
-          );
-          break;
-        default:
-          break;
+  useEffect(()=> {
+    
+    if(areGeozonesVisible){
+      if(!mapManager.map.getSource("geozones-labels")){
+      drawGeozones();
       }
-    });
-    
-    try {
-      mapManager.map.setLayoutProperty(
-        "geozones-labels",
-        "visibility",
-        areGeozonesVisible ? "visible" : "none"
-      );
-    } catch(error){
-      console.error(error)
+    } else {
+      geozones.map((element, index) => {
+        const geozoneType = getGeozoneType(element.area);
+
+        switch (geozoneType) {
+          case "CIRCLE":
+            if(mapManager.map.getLayer(`circles-${index}`)){
+              mapManager.map.removeLayer(`circles-${index}`);
+            }
+            if(mapManager.map.getLayer(`circles-${index}-outline`)){
+              mapManager.map.removeLayer(`circles-${index}-outline`);
+            }
+            if(mapManager.map.getSource(`circles-${index}`)){
+              mapManager.map.removeSource(`circles-${index}`);
+            }            
+            break;
+          case "POLYGON":
+            if(mapManager.map.getLayer(`polygons-${index}`)){
+            mapManager.map.removeLayer(`polygons-${index}`);
+            }
+            if(mapManager.map.getLayer(`polygons-${index}-outline`)){
+            mapManager.map.removeLayer(`polygons-${index}-outline`);
+            }
+            if(mapManager.map.getSource(`polygons-${index}`)){
+              mapManager.map.removeSource(`polygons-${index}`);
+            }
+            break;
+          case "LINESTRING":
+            if(mapManager.map.getLayer(`polylines-${index}`)){
+            mapManager.map.removeLayer(`polylines-${index}`);
+            }
+            if(mapManager.map.getLayer(`polylines-${index}-outline`)){
+            mapManager.map.removeLayer(`polylines-${index}-outline`);
+            }
+            if(mapManager.map.getSource(`polylines-${index}`)){
+              mapManager.map.removeSource(`polylines-${index}`);
+            }
+            break;
+          default:
+            break;
+        }
+      });
+      if(mapManager.map.getLayer("geozones-labels")){
+        mapManager.map.removeLayer("geozones-labels");
+      }
+      if(mapManager.map.getSource("geozones-labels")){
+        mapManager.map.removeSource("geozones-labels");
+      }    
     }
-    
-  }, [areGeozonesVisible]);
+  },[areGeozonesVisible])
 
   return <div style={style} ref={containerEl} />;
 };

@@ -45,6 +45,12 @@ html, body, #root {
   color: white !important;
 }
 
+.btn-searchbox:active {
+  -webkit-transition-duration: 0.2s; /* Safari */
+  transition-duration: 0.2s;
+  background-color: steelblue !important;
+}
+
 .vehicle-type:active{
   background-color: steelblue  !important;
 }
@@ -142,8 +148,8 @@ button {
 .head-list {
   text-align: left;
   list-style-type: none;
-  padding-left: 13px;
-  padding-right: 23px;
+  padding-left: 1px;
+  padding-right: 10px;
   margin-left: auto;
   margin-right: auto;
   font-size: 12px;
@@ -643,7 +649,7 @@ button {
 
   .popup-map-div-mobile {
     padding: 3% 8%;
-    padding-top: 3%;
+    width: 90%;
     color: white;
     font-size: 12px;
     line-height: normal;

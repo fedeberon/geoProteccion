@@ -6,8 +6,8 @@ const userPageStyle = makeStyles((theme) => ({
     height: "100%",
     overflowY: "auto",
     [theme.breakpoints.up("md")]: {
-     paddingTop: "3%",
-         },
+     paddingTop: "4%",
+    },
   },
   rootSnack: {
     width: '100%',
