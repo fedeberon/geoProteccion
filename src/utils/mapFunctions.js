@@ -242,7 +242,6 @@ function createFeature (devices, position, isViewportDesktop, server) {
   const device = devices[position.deviceId] || null;
   const name = device.attributes?.carPlate;
   const model = device.attributes.model;
-  const carPlate = device.attributes.carPlate;
   const brand = device.attributes.brand;
   const year = device.attributes.year;
   const status = device.status;
@@ -251,7 +250,6 @@ function createFeature (devices, position, isViewportDesktop, server) {
   const speed = position.speed;
   const kilometers = position.attributes.totalDistance;
   const desktopView = isViewportDesktop;
-  const showData = '';
 
   return {
     deviceId: device.id,
@@ -264,7 +262,7 @@ function createFeature (devices, position, isViewportDesktop, server) {
                       <div class="popup-map-header" id="header-${device.id}">
                           <ul class="head-list">
                               <li>
-                                  <p style="${desktopView ? 'font-size: 16px' : 'font-size: 17px'}"><strong  class="bold">${carPlate + '</strong> - ' + device.name} </p>
+                                  <p style="${desktopView ? 'font-size: 16px' : 'font-size: 17px'}"><strong  class="bold">${device.attributes.carPlate + '</strong> - ' + device.name} </p>
                               </li>
                               <li>
                                   <p>${getDateTimeDevices(device.lastUpdate)}</p>

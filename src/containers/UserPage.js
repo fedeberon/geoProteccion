@@ -39,6 +39,7 @@ import UserData from '../components/UserData';
 import ServerAttributesDialog from '../components/ServerAttributesDialog';
 import positions from '../common/PositionsAttributes.json'
 import {sessionActions} from "../store";
+import mapManager from "../utils/mapManager";
 
 const styles = (theme) => ({});
 
@@ -273,6 +274,15 @@ const UserPage = () => {
     }
   }
 
+  const getMapState = () => {    
+    let lngLatCenter = mapManager.map.getCenter();
+    setServer({ 
+      ...server, 
+      latitude: lngLatCenter?.lat.toFixed(6),
+      longitude: lngLatCenter?.lng.toFixed(6),
+    })
+  }
+
   return (
     <div className={classes.root}>
       <div
@@ -322,7 +332,7 @@ const UserPage = () => {
                   onClick={handleModalDialogAttributes}>
                   {t("sharedAttributes")}
                 </Button>
-                <Button style={{backgroundColor: "#e6e6fa", fontSize: '12px', textTransform: 'capitalize', margin: '0 6px'}}>
+                <Button onClick={() => getMapState()} style={{backgroundColor: "#e6e6fa", fontSize: '12px', textTransform: 'capitalize', margin: '0 6px'}}>
                   <i className="fas fa-map-marker-alt" />
                   &nbsp;{t("sharedGetMapState")}
                 </Button>
@@ -409,6 +419,7 @@ const UserPage = () => {
                         />
                       </TableCell>
                     </TableRow>
+                    {/* // -33.320695, -70.004384 */}
                     <TableRow>
                       <TableCell>{t("positionLongitude")}:</TableCell>
                       <TableCell>

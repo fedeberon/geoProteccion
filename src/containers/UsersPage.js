@@ -139,7 +139,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: "white",
     [theme.breakpoints.up('md')]: {
       height: '86%',
-      width: '60%', 
+      width: '56%', 
       margin: '0 auto',
       paddingTop: 0,
     },

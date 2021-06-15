@@ -23,6 +23,7 @@ import CloseIcon from "@material-ui/icons/Close";
 import Select from "@material-ui/core/Select";
 import {DeleteTwoTone} from "@material-ui/icons";
 import tz from '../common/AllTimezones.json'
+import userAtt from '../common/CommonUserAttributes.json';
 
 const useStyles = makeStyles((theme) => ({
     closeButton: {
@@ -182,6 +183,11 @@ const ServerAttributesDialog = ({open, close, savingAttributes, data}) => {
       }
     }
 
+    function getDescription (value) {
+      let text = userAtt.userAttributes.find((object) => object.key === value) 
+      return text.name
+    }
+
     return (
       
         <div>          
@@ -273,7 +279,7 @@ const ServerAttributesDialog = ({open, close, savingAttributes, data}) => {
                           <TextField
                             style={{marginTop: '5px', marginBottom: '5px'                            
                             }}
-                            title={newAttribute.name === 'attributeSpeedLimit' ? `${newAttribute.value} ${t('sharedKn')}` : ''}
+                            title={newAttribute.name === 'attributeSpeedLimit' ? `${newAttribute.value} ${server.attributes?.speedUnit}` : ''}
                             placeholder={t('stateValue')}
                             id="outlined-margin-dense-value"
                             margin="dense"
@@ -336,7 +342,7 @@ const ServerAttributesDialog = ({open, close, savingAttributes, data}) => {
                   <TableCell title={`${t('sharedEdit')}`} style={{cursor: 'pointer'}}
                   onClick={() => handleEdit(attribute)}
                 //   >{t(`${attribute[0]}`)}
-                    >{attribute[0]}
+                    >{`${t(`${getDescription(attribute[0])}`)}`}
                   </TableCell>
                   <TableCell title={`${t('sharedEdit')}`} style={{cursor: 'pointer'}}
                   onClick={() => handleEdit(attribute)}

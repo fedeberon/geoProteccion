@@ -122,6 +122,12 @@ const userPageStyle = makeStyles((theme) => ({
     marginRight: theme.spacing(1),
     width: 200,
   },
+  buttonsFooter: {
+    bottom: 0,
+    backgroundColor: "#eaeaea",
+    width: "23%",
+    margin: "0px 10px",
+  }
 }));
 
 export default userPageStyle;

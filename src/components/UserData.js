@@ -22,6 +22,7 @@ import { getDate } from "../utils/functions";
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
 import {sessionActions} from "../store";
+import mapManager from "../utils/mapManager";
 
 const useStyles = userPageStyle;
 
@@ -103,6 +104,15 @@ const UserData = () => {
   //   const response = await service.getCommands();
   //   setSavedCommands(response);
   // };
+
+  const getMapState = () => {    
+    let lngLatCenter = mapManager.map.getCenter();
+    setSession({ 
+      ...session, 
+      latitude: lngLatCenter?.lat.toFixed(6),
+      longitude: lngLatCenter?.lng.toFixed(6),
+    })
+  }
 
   return (
 
@@ -440,8 +450,11 @@ const UserData = () => {
           </Table>
         </TableContainer>
       </div>
-      <div>
-        <Button style={{margin: '20px 0px'}} onClick={handleSaveData} fullWidth color="primary" variant="outlined">
+      <div style={{backgroundColor: "white", bottom: "1%", display: "flex", position: "absolute", width: "100%"}}>
+        <Button className={classes.buttonsFooter} onClick={() => getMapState()} fullWidth color="primary" variant="outlined">
+            {t('sharedGetMapState')}
+        </Button>
+        <Button className={classes.buttonsFooter} onClick={handleSaveData} fullWidth color="primary" variant="outlined">
           {t('sharedSave')}
         </Button>
       </div>
