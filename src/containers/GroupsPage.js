@@ -25,6 +25,8 @@ import AttributesDialog from '../components/AttributesDialog';
 import EditTwoToneIcon from "@material-ui/icons/EditTwoTone";
 import {DeleteTwoTone, MoreVert} from "@material-ui/icons";
 import DeviceConfigFull from "../components/DeviceConfigFull";
+import RemoveDialog from "../components/RemoveDialog";
+import DialogContentText from '@material-ui/core/DialogContentText';
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import { useSelector } from "react-redux";
@@ -44,12 +46,19 @@ const GroupsPage = () => {
   const [type, setType] = useState("");
   const [groupId, setGroupId] = useState('');
   const [groupAssignment, setGroupAssignment] = useState(false);
+  const [openRemoveDialog, setOpenRemoveDialog] = useState(false);
+  const [objectId, setObjectId] = useState('');
   const [newGroup, setNewGroup] = useState({
     id: '',
     name: '',
     groupId: '',
     attributes: {},
   })
+
+  const handleOpenRemoveDialog = (objectId) => {
+    setOpenRemoveDialog(true);
+    setObjectId(objectId)
+  };
 
   const handleOpenDialog = (group) => {
     setOpenAddGroup(true);
@@ -132,18 +141,21 @@ const GroupsPage = () => {
     setOpenAddGroup(false);
   }
 
-  const handleRemove = (id) => {
-    let option = confirm(`¿${t('sharedRemove')} id ${id}?`);
-    if(option){
-      fetch(`api/groups/${id}`, {method: 'DELETE'})
-        .then(response => {
-          if(response.ok){
-            getGroups();
-          }
-        })
-        .catch(error => console.log(error))
-    }
-  }
+  const handleRemove = () => {
+    fetch(`api/groups/${objectId}`, {method: 'DELETE'})
+      .then(response => {
+        if(response.ok){
+          getGroups();
+        }
+      })
+      .catch(error => console.log(error))
+      handleCloseRemoveDialog();
+  };
+  
+  const handleCloseRemoveDialog = () => {
+    setOpenRemoveDialog(false);
+    setObjectId('');
+  };
 
   const handleClickMenuMore = (event) => {
     setAnchorEl(event.currentTarget);
@@ -212,7 +224,7 @@ const GroupsPage = () => {
                       <EditTwoToneIcon/>
                     </Button>
                     <Button className={classes.buttonFunctions} 
-                    onClick={() => handleRemove(group.id)} title={t('sharedRemove')}
+                    onClick={() => handleOpenRemoveDialog(group.id)} title={t('sharedRemove')}
                     >
                       <DeleteTwoTone />
                     </Button>
@@ -249,7 +261,7 @@ const GroupsPage = () => {
                       <MenuItem style={{display: 'none'}} onClick={() => handleOpenFullDialog(variable.mantenimiento, group.id)}>
                         {t("sharedMaintenance")}
                       </MenuItem>
-                      <MenuItem style={{display: 'none'}}  onClick={() => handleOpenAcumulators(group.id)}>
+                      <MenuItem style={{display: 'none'}} >
                         {t("sharedDeviceAccumulators")}
                       </MenuItem>
                     </Menu>
@@ -362,6 +374,31 @@ const GroupsPage = () => {
             groupAssignment={groupAssignment}
             currentUserId={userId}
           />
+        </div>
+        <div>
+        <div>
+            <Dialog
+            open={openRemoveDialog}
+            onClose={handleCloseRemoveDialog}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+            >
+            <DialogTitle id="alert-dialog-remove-user">{t('settingsUser')}</DialogTitle>
+            <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                {t('sharedRemoveConfirm')}
+                </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={handleCloseRemoveDialog} color="primary">
+                {t('sharedCancel')}
+                </Button>
+                <Button onClick={handleRemove} color="primary" autoFocus>
+                {t('sharedRemove')}
+                </Button>
+            </DialogActions>
+            </Dialog>
+      </div>
         </div>
     </div>
   );
