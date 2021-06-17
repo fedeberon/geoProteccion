@@ -11,9 +11,9 @@ module.exports = {
   },
   devServer: {
     proxy: {
-      '/api': 'http://164.68.101.162:8082',
+      '/api': 'http://95.111.255.8:8085',
       '/api/socket': {
-        target: 'ws://164.68.101.162:8082',
+        target: 'ws://95.111.255.8:8085',
         secure: true
       }
     }
