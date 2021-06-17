@@ -153,7 +153,7 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource}) => {
        let sourceData = mapManager.map.getSource(`places-${index}`);
           // if(pos.properties.status !== sourceData?._data.features[0].properties.status){
             let layer = mapManager.map.getLayer(`device-${pos.properties.type}-${pos.properties.deviceId}`);
-            if(layer){
+            if(layer && sourceData){
               mapManager.map.removeLayer(`device-${pos.properties.type}-${pos.properties.deviceId}`); 
               sourceData.setData({
                 type: "FeatureCollection",

@@ -131,6 +131,10 @@ const devicePageStyle = makeStyles((theme) => ({
   MuiContentRoot: {
     padding: "0",
     overflowY: "scroll",
+    maxWidth: "377px",
+    [theme.breakpoints.up("md")]: {
+      
+    },
   },
   cardItemText: {
     color: "black",

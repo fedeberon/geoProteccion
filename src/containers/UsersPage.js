@@ -231,10 +231,6 @@ const UsersPage = () => {
     });
   }
 
-  useEffect(()=> {
-    console.log(userSelected);
-  },[userSelected]);
-
   const handleOpenFullDialog = (parametro, deviceId) => {
     setOpenFullDialog(true);
     setType(parametro);
@@ -255,10 +251,6 @@ const UsersPage = () => {
     mantenimiento: "sharedMaintenance",
     calendars: "sharedCalendars",
   };
-
-  useEffect(()=> {
-    console.log(user);
-  },[user])
 
   const openUserManagement = (id) => {
     setUserManagement(true);

@@ -20,23 +20,26 @@ const { reducer, actions } = createSlice({
               alarm: item.attributes.alarm 
                 ? item.attributes.alarm 
                 : "undefined",
-              brand: item.attributes.brand
-                ? item.attributes.brand
+              brand: item.attributes.MARCA
+                ? item.attributes.MARCA
                 : "undefined",
-              model: item.attributes.model
-                ? item.attributes.model
+              model: item.attributes.MODELO
+                ? item.attributes.MODELO
                 : "undefined",
-              carPlate: item.attributes.carPlate
-                ? item.attributes.carPlate
+              chasis: item.attributes.CHASIS 
+                ? item.attributes.CHASIS 
                 : "undefined",
-              year: item.attributes.year ? item.attributes.year : "undefined",
-              schema: item.attributes.schema
-                ? item.attributes.schema
+              carPlate: item.attributes.PATENTE
+                ? item.attributes.PATENTE
                 : "undefined",
-              type: item.attributes.type ? item.attributes.type : "undefined",
-              auth: item.attributes.auth ? item.attributes.auth : "undefined",
-              iccid: item.attributes.iccid
-                ? item.attributes.iccid
+              year: item.attributes.ANO ? item.attributes.ANO : "undefined",
+              schema: item.attributes.SCHEMA
+                ? item.attributes.SCHEMA
+                : "undefined",
+              type: item.attributes.TYPE ? item.attributes.TYPE : "undefined",
+              auth: item.attributes.AUTH ? item.attributes.AUTH : "undefined",
+              iccid: item.attributes.ICCID
+                ? item.attributes.ICCID
                 : "undefined",
             },
             groupId: item.groupId,

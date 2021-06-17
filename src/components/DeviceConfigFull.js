@@ -577,8 +577,6 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupId, groupAssignmen
       }
     }
 
-    console.log(JSON.stringify(permission))
-
     fetch(`api/permissions`, {
       method: 'POST',
       headers: {"Content-Type": "application/json"},
@@ -669,7 +667,6 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupId, groupAssignmen
       }
     }  
 
-    console.log(JSON.stringify(permission))
     fetch(`api/permissions`, {
       method: 'DELETE',
       headers: {"Content-Type": "application/json"},
