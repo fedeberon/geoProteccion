@@ -53,12 +53,13 @@ function DeviceSearch(deviceId) {
 
   const filterDevices = (value = "") => {
     setInputSearch(value);
+    let object = document.getElementById("deviceListSearch");
     if(value.length > 0){
       setShowDeviceList(true)
-      let object = document.getElementById("deviceListSearch");
       object.style.height = 'auto';
     } else {
-      setShowDeviceList(false)      
+      setShowDeviceList(false);
+      object.style.height = null;
     }
 
     const regex = new RegExp(`${value !== "" ? value : ".+"}`, "gi");

@@ -378,11 +378,12 @@ const DevicePage = () => {
     setMoreInfo(!moreInfo);
   };
 
+  const getGroups = async () => {
+    let response = await service.getGroups();
+    setGroups(response);
+  };
+  
   useEffect(() => {
-    const getGroups = async () => {
-      let response = await service.getGroups();
-      setGroups(response);
-    };
     getGroups();
   }, []);
 
@@ -567,7 +568,7 @@ const DevicePage = () => {
                   </IconButton>
                 </div>
               }
-              title={`${device.attributes.carPlate} - ${device.name}`}
+              title={`${device.attributes.PATENTE} - ${device.name}`}
               subheader={getDateTimeDevices(device.lastUpdate)}
             />
             <Menu
@@ -819,7 +820,7 @@ const DevicePage = () => {
                       </strong>
                       <Button 
                         className={classes.showAddressButton}
-                        disabled={addressFound}
+                        disabled={addressFound !== ""}
                         size="small" 
                         color="primary" 
                         onClick={() => showAddress(positions[device.id].latitude, positions[device.id].longitude)} 

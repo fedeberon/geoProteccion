@@ -69,10 +69,6 @@ const UserData = () => {
     token: user.token,
   });
 
-  useEffect(()=> {
-    console.log(session)
-  },[session])
-
   const handleCloseSnack = (event, reason) => {
     if (reason === 'clickaway') {
       return;

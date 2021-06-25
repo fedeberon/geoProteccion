@@ -48,29 +48,34 @@ const App = () => {
   });
 
   useEffect(()=> {
-    userData
+
         if(localStorage.token){          
           history.push("/validation");      
-        }
-        const autoLogin = async () => {           
-        if(localStorage.token && localStorage.username && localStorage.password){        
-        response = await service.setSession(localStorage.username, localStorage.password);
-        let userData = response.status === 200 ? await response.json() : "";
 
-        if (response.status === 200) {
-          dispatch(sessionActions.authenticated(true));
-          dispatch(sessionActions.setUser(userData));
-          let responseServer = await service.getServer();
-          dispatch(sessionActions.setServer(responseServer));                   
-        }        
-        if(server && userData){
-          setTimeout(()=> {
-            history.push("/"); 
-          },2000)                   
-        }    
-      }
-    }
-    autoLogin();   
+          const autoLogin = async () => {           
+          if(localStorage.token && localStorage.username && localStorage.password){        
+          response = await service.setSession(localStorage.username, localStorage.password);
+          let userData = response.status === 200 ? await response.json() : "";
+          
+            if (response.status === 200) {
+              dispatch(sessionActions.authenticated(true));
+              dispatch(sessionActions.setUser(userData));
+              let responseServer = await service.getServer();
+              dispatch(sessionActions.setServer(responseServer)); 
+              if(server && userData){
+                setTimeout(()=> {
+                  history.push("/"); 
+                },2000)                   
+              }                  
+            } else {
+              setTimeout(()=> {
+                history.push("/login"); 
+              },2000) 
+            }     
+          }    
+        }
+        autoLogin(); 
+      }      
   },[]);  
 
   return (

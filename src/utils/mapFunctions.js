@@ -1,6 +1,6 @@
 import t from "../common/localization";
 import circleToPolygon from "circle-to-polygon";
-import { getCourse, getDateTime, getDateTimeDevices, speedConverter } from "./functions";
+import { getCourse, getDateTimeDevices, speedConverter } from "./functions";
 
 const typeRegEx = /(\w*)[ ]?[(]/;
 const circlePositionRegEx = /[(](.*) (.*)[,]/;
@@ -240,7 +240,7 @@ const getRandomHex = () => {
 function createFeature (devices, position, isViewportDesktop, server) {
     
   const device = devices[position.deviceId] || null;
-  const name = device.attributes?.carPlate;
+  const name = device.attributes.carPlate;
   const model = device.attributes.model;
   const brand = device.attributes.brand;
   const year = device.attributes.year;

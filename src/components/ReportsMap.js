@@ -90,28 +90,28 @@ const ReportsMap = ({geozones,route,events,trips,showMarkers,selectedPosition,gr
     mapManager.registerListener(() => setMapReady(true));
   }, []);
 
-  useEffect(() => {
-    if (mapReady) {
-      mapManager.map.addSource("places", {
-        type: "geojson",
-        data: positions,
-      });
-      mapManager.addLayer("device-icon", "places", "icon-marker", "{name}");
+  // useEffect(() => {
+  //   if (mapReady) {
+  //     mapManager.map.addSource("places", {
+  //       type: "geojson",
+  //       data: positions,
+  //     });
+  //     mapManager.addLayer("device-icon", "places", "icon-marker", "{name}");
 
-      const bounds = mapManager.calculateBounds(positions.features);
-      if (bounds) {
-        mapManager.map.fitBounds(bounds, {
-          padding: 100,
-          maxZoom: 9,
-        });
-      }
+  //     const bounds = mapManager.calculateBounds(positions.features);
+  //     if (bounds) {
+  //       mapManager.map.fitBounds(bounds, {
+  //         padding: 100,
+  //         maxZoom: 9,
+  //       });
+  //     }
 
-      return () => {
-        mapManager.map.removeLayer("device-icon");
-        mapManager.map.removeSource("places");
-      };
-    }
-  }, [mapReady]);
+  //     return () => {
+  //       mapManager.map.removeLayer("device-icon");
+  //       mapManager.map.removeSource("places");
+  //     };
+  //   }
+  // }, [mapReady]);
 
   useEffect(() => {
     mapManager.map.easeTo({

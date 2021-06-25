@@ -27,8 +27,6 @@ html, body, #root {
 }
 
 .vehicle-type {
-  -webkit-transition-duration: 0.1s; /* Safari */
-  transition-duration: 0.1s;
   font-size: 17px;
   color: #716a77;
   left: 88%;
@@ -265,10 +263,13 @@ button {
 }
 
 .mapboxgl-canvas  {
+  position: absolute !important;
+  top: 0 !important;
+  bottom: 0 !important;
   width: 100% !important;
   height: 100% !important;
-}
-
+}         
+        
 .display-none {
   display: none;
 }
@@ -276,6 +277,7 @@ button {
 .device-list {
   overflow-y: scroll;
   height: 300px;
+  max-height: 348px;
 }
 .device-list::-webkit-scrollbar {
   width: 10px;
