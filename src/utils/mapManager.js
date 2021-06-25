@@ -126,13 +126,13 @@ const addLayer = (id, source, icon, text, status, course) => {
     id: id,
     type: "symbol",
     source: source,
-    // properties: {
-    //   rotation: course
-    // },
+    properties: {
+      rotation: course
+    },
     layout: {
       "icon-image": status === 'offline' ? `${icon}-${status}` : icon,
       "icon-allow-overlap": false,
-      "icon-rotate": course,
+      "icon-rotate": ['get', 'course'],
     },
   };
   if (text) {
