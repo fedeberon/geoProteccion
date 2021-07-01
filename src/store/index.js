@@ -1,4 +1,4 @@
-import { combineReducers, configureStore } from "@reduxjs/toolkit";
+import { combineReducers, configureStore, getDefaultMiddleware } from "@reduxjs/toolkit";
 
 import { sessionReducer as session } from "./session";
 import { devicesReducer as devices } from "./devices";

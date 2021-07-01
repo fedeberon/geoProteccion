@@ -3,7 +3,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { HashRouter } from "react-router-dom";
 import { Provider } from "react-redux";
-
+import 'mapbox-gl/dist/mapbox-gl.css';
 import App from "./App";
 import * as serviceWorker from "./utils/serviceWorker";
 import store from "./store";

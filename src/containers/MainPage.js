@@ -25,11 +25,13 @@ const MainPage = ({ width }) => {
   const open = useSelector((state) => state.modals.items.search);
   const user = useSelector((state) => state.session.user);
   const server = useSelector((state) => state.session.server);
+  const devices = useSelector((state) => state.devices.items);
   const [areGeozonesVisible, setAreGeozonesVisible] = useState(false);
   const [showReports, setShowReports] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [mapZoom, setMapZoom] = useState(0);
   const [selectedState, setSelectedState] = useState(false);
+  const [devicesReady, setDevicesReady] = useState(false);
 
 
   const handleVisibilityModal = (name) => {
@@ -44,6 +46,17 @@ const MainPage = ({ width }) => {
     setMapZoom(user.zoom !== 0 ? user.zoom : server.zoom);
     getGeozones(user.id);
   }, [user.id]);
+
+  useEffect(()=> {
+    fetch("/api/devices").then((response) => {
+      if (response.ok) {
+        response.json().then((devices) => {
+          dispatch(devicesActions.update(devices));
+          setDevicesReady(true);
+        });   
+      }      
+    });
+  },[])
 
   const handleGeozones = () => {
     setAreGeozonesVisible(!areGeozonesVisible);
@@ -88,7 +101,7 @@ const MainPage = ({ width }) => {
           <DeviceList />
         </Drawer>
 
-        {!showReports && server && (
+        {!showReports && server && devicesReady && (
               <div className={classes.mapContainer}>
                 <ContainerDimensions>
                   <MainMap

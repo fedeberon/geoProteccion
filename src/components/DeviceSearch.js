@@ -12,7 +12,7 @@ import {
 import SearchIcon from "@material-ui/icons/Search";
 import React, { Fragment, useEffect, useState, useLayoutEffect } from "react";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
-import { devicesActions } from "../store";
+import { devicesActions, positionsActions } from "../store";
 import t from "../common/localization";
 import { useHistory } from "react-router-dom";
 import deviceSearchStyles from "./styles/DeviceSearchStyles";
@@ -28,6 +28,7 @@ function DeviceSearch(deviceId) {
   const classes = useStyles();
   const server = useSelector((state) => state.session.server);
   const [valueColor, setValueColor] = useState('#ffa2ad');
+  const enableIcon = useSelector(state => state.devices.selectEnable);
   const devicesRedux = useSelector(
     (state) => Object.values(state.devices.items),
     shallowEqual
@@ -36,6 +37,7 @@ function DeviceSearch(deviceId) {
   const positions = useSelector((state) => state.positions.items, shallowEqual);
   const [deviceList, setDeviceList] = useState(devicesRedux);
   const [showDeviceList, setShowDeviceList] = useState(false);
+  const selectedItems = useSelector((state) => state.positions.selectedItems);
 
   const toggleDeviceList = () => {
     setShowDeviceList(!showDeviceList);
@@ -87,6 +89,52 @@ function DeviceSearch(deviceId) {
     },1500);
   }
 
+  const handleSetItems = (device) => {
+    let icon = document.getElementById(`show-${device.id}`);
+    if(selectedItems.findIndex(elem => elem.id === device.id) === -1){      
+      dispatch(positionsActions.addSelectedDevice(device));
+      icon.style.color = "chartreuse";
+    } else {
+      dispatch(positionsActions.removeSelectedDevice(device));
+      dispatch(positionsActions.lastRemoved(device.id));
+      icon.style.color = "rgb(134, 128, 187)";
+    }    
+  }
+
+  useEffect(()=> {
+    if(selectedItems.length > 0){
+      selectedItems.map(item => {
+        let icon = document.getElementById(`show-${item.id}`)
+        if(icon){
+          icon.style.color = "chartreuse";
+        }
+      })
+    }
+  },[selectedItems])
+
+  useEffect(()=> {
+    fetch("/api/devices").then((response) => {
+      if (response.ok) {
+        response.json().then((devices) => {
+          dispatch(devicesActions.update(devices));
+        });    
+      }      
+    });
+  },[])
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+        fetch("/api/devices").then((response) => {
+          if (response.ok) {
+            response.json().then((devices) => {
+              dispatch(devicesActions.update(devices));
+            });    
+          }      
+        });
+    }, 30000);
+    return () => clearInterval(interval);
+  },[]);
+
   return (
     <Paper component="form" className={classes.paper}>
       <div className={classes.div}>
@@ -137,7 +185,7 @@ function DeviceSearch(deviceId) {
                   {getSVG(device.category, device.status)}
                 </Avatar>
               </ListItemAvatar>
-              <ListItemText>
+              <ListItemText >
                 <div className={classes.devsearchSt}>
                   <p className={classes.devsearchStP}>
                     <strong> {device.attributes.carPlate} </strong>-{" "}
@@ -171,11 +219,10 @@ function DeviceSearch(deviceId) {
                   }}
                 />
               </div>
-
               <ListItemSecondaryAction>
                 <IconButton
                   id={`device-info-${device.id}`}
-                  style={{ color: "#8680bb" }}
+                  style={{ color: "#8680bb", padding: '6px'}}
                   title={t("sharedInfoTitle")}
                   onClick={(e) => {
                     e.stopPropagation();
@@ -183,8 +230,22 @@ function DeviceSearch(deviceId) {
                   }}
                 >
                   <i className="fas fa-upload"></i>
-                </IconButton>
+                </IconButton> 
+                  {enableIcon && 
+                    <IconButton
+                      id={`device-object-${device.id}`}
+                      style={{ color: "#8680bb", padding: '6px'}}
+                      title={t("reportShow")}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleSetItems(device);
+                      }}
+                    >
+                      <i id={`show-${device.id}`} style={{fontSize: '20px'}}className={`fas fa-map-marked-alt`}></i>
+                    </IconButton> 
+                  }            
               </ListItemSecondaryAction>
+              
             </ListItem>
             {index < list.length - 1 ? <Divider /> : null}
           </Fragment>
@@ -206,7 +267,7 @@ function DeviceSearch(deviceId) {
                   {getSVG(device.category, device.status)}
                 </Avatar>
               </ListItemAvatar>
-              <ListItemText>
+              <ListItemText style={{maxWidth: (window.innerWidth > 760 && !enableIcon) ? 350 : ''}}>
                 <div className={classes.devsearchSt}>
                   <p className={classes.devsearchStP}>
                     <strong> {device.attributes.carPlate} </strong>-{" "}
@@ -244,7 +305,7 @@ function DeviceSearch(deviceId) {
               <ListItemSecondaryAction>
                 <IconButton
                   id={`device-info-${device.id}`}
-                  style={{ color: "#8680bb" }}
+                  style={{ color: "#8680bb", padding: '6px'}}
                   title={t("sharedInfoTitle")}
                   onClick={(e) => {
                     e.stopPropagation();
@@ -253,8 +314,22 @@ function DeviceSearch(deviceId) {
                 >
                   <i className="fas fa-upload"></i>
                 </IconButton>
+                {enableIcon &&
+                  <IconButton
+                  id={`device-object-${device.id}`}
+                  style={{ color: "#8680bb", padding: '6px'}}
+                  title={t("reportShow")}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleSetItems(device);
+                  }}
+                >
+                  <i id={`show-${device.id}`} style={{fontSize: '20px'}}className="fas fa-map-marked-alt"></i>
+                </IconButton>
+                }                            
               </ListItemSecondaryAction>
-            </ListItem>
+              
+              </ListItem>
             {index < list.length - 1 ? <Divider /> : null}
           </Fragment>
         ))}

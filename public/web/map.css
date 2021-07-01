@@ -456,6 +456,10 @@ button {
   /* .MuiDialog-paperWidthSm {
     max-width: 300px !important;
   } */
+  .MuiListItemText-root {
+    max-width: 300px;
+    margin: 2px;
+  }
 
   .MuiListItemAvatar-root {
     min-width: 45px !important;
@@ -507,7 +511,7 @@ button {
     padding-right: 42px !important;
   }
   .MuiListItemSecondaryAction-root {
-    right: 5px !important;
+    right: 1% !important;
   }
   .title-section {
     color: #155477;
@@ -810,7 +814,9 @@ button {
   }
 
   .MuiListItemSecondaryAction-root {
-    right: 1px !important;
+    right: 1px !important; 
+    display: flex;
+    flex-direction: column;   
   }
 
   .MuiListItem-secondaryAction {

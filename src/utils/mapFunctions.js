@@ -239,33 +239,31 @@ const getRandomHex = () => {
 
 function createFeature (devices, position, isViewportDesktop, server) {
     
-  const device = devices[position.deviceId] || null;
-  const name = device.attributes.carPlate;
-  const model = device.attributes.model;
-  const brand = device.attributes.brand;
-  const year = device.attributes.year;
-  const status = device.status;
-  const lastUpdate = device.lastUpdate;
+  const device = devices[position.deviceId];
+  const name = device ? device.attributes.carPlate : "undefined";
+  const model = device ? device.attributes.model : "undefined";
+  const brand = device ? device.attributes.brand : "undefined";
+  const year = device ? device.attributes.year : "undefined";
+  const status = device ? device.status : "undefined";
   const protocol = position.protocol;
   const speed = position.speed;
   const kilometers = position.attributes.totalDistance;
   const desktopView = isViewportDesktop;
 
   return {
-    deviceId: device.id,
-    type: device.category,
-    lastUpdate: lastUpdate,
-    course: position.course,
-    status: device.status,
+    deviceId: device ? device.id : '',
+    type: device ? device.category : '',
+    course: device ? position.course : '',
+    status: device ? device.status : '',
     name: device ? `${name}` : '',
     description: `<div class="${desktopView ? 'popup-map-div' : 'popup-map-div-mobile'}">
-                      <div class="popup-map-header" id="header-${device.id}">
+                      <div class="popup-map-header" id="header-${device ? device.id : ''}">
                           <ul class="head-list">
                               <li>
                                   <p style="${desktopView ? 'font-size: 16px' : 'font-size: 17px'}"><strong  class="bold">${device.attributes.carPlate + '</strong> - ' + device.name} </p>
                               </li>
                               <li>
-                                  <p>${getDateTimeDevices(device.lastUpdate)}</p>
+                                  <p>${getDateTimeDevices(device ? device.lastUpdate : '')}</p>
                               </li>
                               <!--
                               <li><p>${brand + ' ' + model + ' ' + year}</p></li>
@@ -274,25 +272,25 @@ function createFeature (devices, position, isViewportDesktop, server) {
                               <li>
                                   <tr>
                                       <p><strong>${t("currentAddress")+':'}</strong>
-                                      <p style="display: none" id="device-${device.id}">${t("deviceStatusUnknown")}</p></p>
+                                      <p style="display: none" id="device-${device ? device.id : ''}">${t("deviceStatusUnknown")}</p></p>
                                   </tr>
                                   <li>
-                                      <li style="color: blue; margin: 5px 0px;" id="addressShown" onClick="showAddress(${device.id},${position.latitude},${position.longitude})">${t("sharedShowAddress")}</li>
-                                      <li style="color: blue; margin: 5px 0px;" id="buttonShowMore" onClick="showDetails(${device.id})">${t(`showMore`)}</li>
+                                      <li style="color: blue; margin: 5px 0px;" id="addressShown" onClick="showAddress(${device ? device.id : ''},${position.latitude},${position.longitude})">${t("sharedShowAddress")}</li>
+                                      <li style="color: blue; margin: 5px 0px;" id="buttonShowMore" onClick="showDetails(${device ? device.id : ''})">${t(`showMore`)}</li>
                                       <i title="Update information" id="updatePopupInfo" type="button" class="fas fa-sync-alt vehicle-type"></i>
                                   </li>
                               </li>
                           </ul>
                       </div>
 
-                      <div id="details-${device.id}" style="display: none;">
+                      <div id="details-${device ? device.id : ''}" style="display: none;">
                           <table class="body-list">
                               <tr>
                                   <th>
                                       ${t("sharedHour")}
                                   </th>
                                   <td>
-                                      ${new Date(device.lastUpdate).toLocaleDateString()} ${new Date(device.lastUpdate).toLocaleTimeString()}
+                                      ${new Date(device ? device.lastUpdate  : '').toLocaleDateString()} ${new Date(device ? device.lastUpdate  : '').toLocaleTimeString()}
                                   </td>
                               </tr>
                               <tr>
@@ -402,7 +400,7 @@ function createFeature (devices, position, isViewportDesktop, server) {
                           </table>
                       </div>
 
-                      <div class="popup-map-body" id="main-data-${device.id}">
+                      <div class="popup-map-body" id="main-data-${device ? device.id : ''}">
 
                           <table class="body-list">
                               <tr>
@@ -455,7 +453,7 @@ function createFeature (devices, position, isViewportDesktop, server) {
                                   <td>
                                       <td>
                                           <p class="${desktopView ? 'status-inactive' : 'status-inactive-mobile'}">
-                                            ${device.attributes?.circuitBreaker === 'on' ? t('commandEnable') : t('sharedDisabled')}</p>
+                                            ${device && device.attributes?.circuitBreaker === 'on' ? t('commandEnable') : t('sharedDisabled')}</p>
                                       </td>
                                   </td>
                               </tr>
@@ -463,9 +461,9 @@ function createFeature (devices, position, isViewportDesktop, server) {
                       </div>
                       <div class="footer-sp">
                           
-                          <li id="buttonShowLess" style="color: blue; display: none"  onClick="showDetails(${device.id})">${t(`showLess`)}</li>
+                          <li id="buttonShowLess" style="color: blue; display: none"  onClick="showDetails(${device ? device.id : ''})">${t(`showLess`)}</li>
                           
-                          <button id="circuitBraker" onClick="goToDeviceRemoteControl(${device.id})"
+                          <button id="circuitBraker" onClick="goToDeviceRemoteControl(${device ? device.id : ''})"
                           class="${desktopView ? 'button-black' : 'button-black-mobile'}">
                               ${t("circuitBreaker")}
                           </button>
@@ -474,6 +472,8 @@ function createFeature (devices, position, isViewportDesktop, server) {
                   </div>`
   }
 };
+
+
 
 export {
   calculatePolygonCenter,

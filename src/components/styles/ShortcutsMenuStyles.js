@@ -4,6 +4,7 @@ const shortcutsMenuStyles = makeStyles((theme) => ({
   root: {
     position: "absolute",
     top: "0%",
+
     left: "auto",
     right: "3%",
     display: "flex",
@@ -11,6 +12,7 @@ const shortcutsMenuStyles = makeStyles((theme) => ({
     [theme.breakpoints.up("md")]: {
       top: "3%",
       right: "1%",
+      height: '75px',
       left: "auto",
       flexDirection: "unset",
     },

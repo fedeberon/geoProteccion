@@ -1,6 +1,6 @@
 import React, { useRef, useLayoutEffect, useEffect, useState, useMemo, useCallback } from "react";
 import mapManager from "../utils/mapManager";
-import {useSelector} from "react-redux";
+import {useSelector, useDispatch} from "react-redux";
 import {
   calculatePolygonCenter,
   createLabels,
@@ -13,14 +13,19 @@ import {
   getPolygonAttributes,
   getPolylineAttributes,
 } from "../utils/mapFunctions";
+import { devicesActions, positionsActions } from "../store";
 
 const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource}) => {
   let buttons = document.getElementById(`updatePopupInfo`);
   let statusShowingGeozones = mapManager.map.getSource("geozones-labels");
+  let sources;
+  const dispatch = useDispatch();
   const containerEl = useRef(null);
   const [mapReady, setMapReady] = useState(false); 
   const isViewportDesktop = useSelector((state) => state.session.deviceAttributes.isViewportDesktop);  
   const devices = useSelector((state) => Object.values(state.devices.items)); 
+  const selectedItems = useSelector((state) => state.positions.selectedItems);
+  const lastRemoved = useSelector((state) => state.positions.lastRemoved);
   const server = useSelector((state) => state.session.server);  
   const mapCenter = useSelector((state) => {
     if (state.devices.selectedId) {
@@ -31,31 +36,26 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource}) => {
     }
     return null;
   });
-  let sources;
+
   const positions = useSelector((state) => ({
-    type: "FeatureCollection",
-    features: Object.values(state.positions.items).map((position) => ({
-      type: "Feature",
-      id: position.id,
-      geometry: {
-        type: "Point",
-        coordinates: [position.longitude, position.latitude],
-      },
-      properties: createFeature(
-        state.devices.items,
-        position,
-        isViewportDesktop,
-        server
-      ),      
-    })),
+    type:"FeatureCollection",features: Object.values(state.positions.items).map((position) => ({
+    type: "Feature",geometry: {type: "Point", coordinates: [position.longitude, position.latitude]},
+    properties: createFeature(state.devices.items,position,isViewportDesktop,server)})),
   }));
 
   useEffect(() => {
-      mapManager.map.easeTo({
-        center: mapCenter,
-        duration: 400,
-        zoom: mapManager.map.getZoom(),
-      });
+      // mapManager.map.easeTo({
+      //   center: mapCenter,
+      //   duration: 400,
+      //   zoom: mapManager.map.getZoom() > 9 ? 9 : mapManager.map.getZoom(),
+      // });
+      mapManager.map.flyTo({
+      center: mapCenter,
+      zoom: mapManager.map.getZoom(),
+      bearing: 0,
+      speed: 0.9,
+      curve: 1
+      })
   },[mapCenter]); 
 
   var markerHeight = 0,
@@ -99,39 +99,42 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource}) => {
   }, []);
 
   //Initial data charge of devices on map
-  useLayoutEffect(() => {
+  useEffect(() => {
 
     if(statusShowingGeozones){
       areGeozonesVisible = true;
     }
-
-    if (mapReady) {
-
-      positions.features.map((position,index)=> {
-        mapManager.map.addSource(`places-${index}`, {
-          type: "geojson",
-          data: {...position},
-          });
-        mapManager.addLayer(`${position.properties.deviceId}`, 
-        `places-${index}`, `icon-${position.properties.type}`, "{name}", 
-        position.properties.status, position.properties.course);
-    })
-
-      mapManager.map.scrollZoom.setWheelZoomRate(1.5);
-
-      if (mapManager.map.getSource("raster-tiles") && rasterSource !== "") {
-        mapManager.map.getSource("raster-tiles").tiles = [rasterSource];
-      }
-      return () => {
-      
-        positions.features.map((position,index) => {
-          mapManager.map.removeLayer(`${position.properties.deviceId}`);
-          mapManager.map.removeSource(`places-${index}`);
+     if(mapReady && devices.length <= 50){
+        positions.features.map((position,index)=> {
+          mapManager.map.addSource(`places-${index}`, {
+            type: "geojson",
+            data: {...position},
+            });
+          mapManager.addLayer(`device-${position.properties.deviceId}`, 
+          `places-${index}`, `icon-${position.properties.type}`, "{name}", 
+          position.properties.status, position.properties.course);
         })
-      };
+     }
+
+    mapManager.map.scrollZoom.setWheelZoomRate(1.5);
+
+    if (mapManager.map.getSource("raster-tiles") && rasterSource !== "") {
+      mapManager.map.getSource("raster-tiles").tiles = [rasterSource];
     }
+    return () => {
+    
+      positions.features.map((position,index) => {
+        if(mapManager.map.getLayer(`device-${position.properties.deviceId}`))
+        mapManager.map.removeLayer(`device-${position.properties.deviceId}`);
+                
+        if(mapManager.map.getSource(`places-${index}`))
+        mapManager.map.removeSource(`places-${index}`);
+      })
+    };
+    
   },[mapReady, mapManager.map]);
 
+  //Updating layers positions 
   useEffect(()=> {
     if (!mapReady) {
       const bounds = mapManager.calculateBounds(positions.features);
@@ -143,8 +146,8 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource}) => {
       }
     }    
     if(mapReady && positions){
-      positions.features.map((position,index)=> {
-        sources = mapManager.map.getSource(`places-${index}`)
+      positions.features.map((position)=> {
+        sources = mapManager.map.getSource(`places-${position.properties.deviceId}`)
         if(sources){
           sources.setData({
             type: "FeatureCollection",
@@ -154,6 +157,42 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource}) => {
       }) 
     }
  },[positions])
+
+ useEffect(()=> {
+   if(devices.length > 50){
+    if(selectedItems.length > 0){
+      let positionsFiltered = [];
+      // let position = positions.features.find(elem => elem.properties.deviceId === item.id);
+      positions.features.map(position => {
+        if(selectedItems.findIndex(item => item.id === position.properties.deviceId) !== -1){
+          positionsFiltered.push(position);
+        };
+      });
+      if(positionsFiltered.length > 0){
+        positionsFiltered.map((position,index)=> {
+          if(!mapManager.map.getSource(`places-${position.properties.deviceId}`)){
+            mapManager.map.addSource(`places-${position.properties.deviceId}`, {
+              type: "geojson",
+              data: {...position},
+              });
+            mapManager.addLayer(`device-${position.properties.deviceId}`, 
+            `places-${position.properties.deviceId}`, `icon-${position.properties.type}`, "{name}", 
+            position.properties.status, position.properties.course);
+          }
+        })
+      }
+    }
+  }
+  if(lastRemoved !== 0){
+    if(mapManager.map.getLayer(`device-${lastRemoved}`)){
+      mapManager.map.removeLayer(`device-${lastRemoved}`);          
+    }
+    if(mapManager.map.getSource(`places-${lastRemoved}`)){
+      mapManager.map.removeSource(`places-${lastRemoved}`);
+    }
+    dispatch(positionsActions.lastRemoved(0));
+  }
+ },[positions, selectedItems, lastRemoved])
 
   const updatePopup = (object, position) => {
     if(object[0]){
@@ -213,9 +252,9 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource}) => {
       positions.features.map((feature, index) => {
         let featureType = feature.properties.type;
       if (features.indexOf(`${featureType}-${index}`) === -1) {
-        mapManager.map.on("click", `${feature.properties.deviceId}`, createPopup);
-        mapManager.map.on("mouseenter", `${feature.properties.deviceId}`, cursorPointer);
-        mapManager.map.on("mouseleave", `${feature.properties.deviceId}`, cursorDefault);
+        mapManager.map.on("click", `device-${feature.properties.deviceId}`, createPopup);
+        mapManager.map.on("mouseenter", `device-${feature.properties.deviceId}`, cursorPointer);
+        mapManager.map.on("mouseleave", `device-${feature.properties.deviceId}`, cursorDefault);
       }
       features.push(`${featureType}-${index}`);
     });
@@ -225,14 +264,14 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource}) => {
       positions.features.map((feature, index) => {
         let featureType = feature.properties.type;
         if (features.indexOf(`${featureType}-${index}`) === -1) {
-          mapManager.map.on("click", `${feature.properties.deviceId}`, createPopup);
-          mapManager.map.on("mouseenter", `${feature.properties.deviceId}`, cursorPointer);
-          mapManager.map.on("mouseleave", `${feature.properties.deviceId}`, cursorDefault);
+          mapManager.map.off("click", `device-${feature.properties.deviceId}`, createPopup);
+          mapManager.map.off("mouseenter", `device-${feature.properties.deviceId}`, cursorPointer);
+          mapManager.map.off("mouseleave", `device-${feature.properties.deviceId}`, cursorDefault);
         }
         features.push(`${featureType}-${index}`);
       });
     };
-  }, [mapManager.map]);
+  }, [mapManager.map, selectedItems]);
   
 
   const drawGeozones = () => {

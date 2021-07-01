@@ -6,6 +6,7 @@ const { reducer, actions } = createSlice({
     items: {},
     selectedId: null,
     selectedDevice: null,
+    selectEnable: false,
   },
   reducers: {
     update(state, action) {
@@ -65,6 +66,9 @@ const { reducer, actions } = createSlice({
     },
     remove(state, action) {
       delete state.items[action.payload];
+    },
+    setDisableIcon(state, action) {
+      state.selectEnable = action.payload;
     },
   },
 });

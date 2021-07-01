@@ -48,6 +48,7 @@ export default function ShortcutsMenu({
               <SpeedDial
                 ariaLabel="Notifications"
                 title={t("sharedNotifications")}
+                style={{maxHeight: '80px'}}
                 className={classes.speedDial}
                 icon={<i className="fas fa-bell fa-lg" />}
                 direction={isViewportDesktop ? "down" : "up"}
@@ -62,6 +63,7 @@ export default function ShortcutsMenu({
             <SpeedDial
               ariaLabel="Notifications"
               title={t("sharedNotifications")}
+              style={{maxHeight: '80px'}}
               className={classes.speedDialOpen}
               icon={<i className="fas fa-bell fa-lg" />}
               direction={isViewportDesktop ? "down" : "up"}
@@ -72,6 +74,7 @@ export default function ShortcutsMenu({
             ariaLabel="deviceFollow"
             title={onFollow ? t("") : t("deviceFollow")}
             className={classes.speedDial}
+            style={{maxHeight: '80px'}}
             icon={<i style={{color: onFollow ? '#ff2121' : ''}} className="fas fa-search-location fa-lg"></i>}
             direction={isViewportDesktop ? "down" : "up"}
             open={false}            
@@ -85,6 +88,7 @@ export default function ShortcutsMenu({
           <SpeedDial
             ariaLabel="Reports"
             title={t("reportTitle")}
+            style={{maxHeight: '80px'}}
             className={classes.speedDial}
             icon={<i className="fas fa-align-left fa-lg" />}
             direction={isViewportDesktop ? "down" : "up"}
@@ -95,6 +99,7 @@ export default function ShortcutsMenu({
             id="showGeozones"
             title={t("geozones")}
             ariaLabel="Geozones"
+            style={{maxHeight: '80px'}}
             className={classes.speedDial}
             icon={<i className="fas fa-draw-polygon fa-lg" />}
             direction={isViewportDesktop ? "down" : "up"}

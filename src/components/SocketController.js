@@ -22,7 +22,7 @@ const SocketController = () => {
     socket.onmessage = (event) => {
       const data = JSON.parse(event.data);
       if (data.devices) {
-        dispatch(devicesActions.update(data.devices));
+        //dispatch(devicesActions.update(data.devices));
       }
       if (data.positions) {
         dispatch(positionsActions.update(data.positions));
@@ -43,9 +43,12 @@ const SocketController = () => {
       if (response.ok) {
         response.json().then((devices) => {
           dispatch(devicesActions.update(devices));
+          if(devices.length > 50){
+            dispatch(devicesActions.setDisableIcon(true));
+          }
         });
-      }
       connectSocket();
+      }      
     });
   }, []);
 

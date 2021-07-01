@@ -85,6 +85,7 @@ const reportsDialogStyles = makeStyles((theme) => ({
   },
   tableReports: {
     top: "14%",
+    zIndex: '100',
     position: "absolute",
     width: "100%",
     height: "86%",
