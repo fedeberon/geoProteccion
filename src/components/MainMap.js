@@ -44,6 +44,19 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource}) => {
   }));
 
   useEffect(() => {
+    const interval = setInterval(() => {
+        fetch("/api/devices").then((response) => {
+          if (response.ok) {
+            response.json().then((devices) => {
+              dispatch(devicesActions.update(devices));
+            });    
+          }      
+        });
+    }, 30000);
+    return () => clearInterval(interval);
+  },[]);
+
+  useEffect(() => {
       mapManager.map.easeTo({
         center: mapCenter,
         duration: 500,

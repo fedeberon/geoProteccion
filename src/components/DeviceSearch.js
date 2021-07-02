@@ -122,19 +122,6 @@ function DeviceSearch(deviceId) {
     });
   },[])
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-        fetch("/api/devices").then((response) => {
-          if (response.ok) {
-            response.json().then((devices) => {
-              dispatch(devicesActions.update(devices));
-            });    
-          }      
-        });
-    }, 30000);
-    return () => clearInterval(interval);
-  },[]);
-
   return (
     <Paper component="form" className={classes.paper}>
       <div className={classes.div}>
