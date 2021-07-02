@@ -49,6 +49,10 @@ html, body, #root {
   background-color: steelblue !important;
 }
 
+.btn-searchbox:hover {
+  cursor: pointer !important;
+}
+
 .vehicle-type:active{
   background-color: steelblue  !important;
 }

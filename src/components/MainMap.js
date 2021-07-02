@@ -44,18 +44,18 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource}) => {
   }));
 
   useEffect(() => {
-      // mapManager.map.easeTo({
-      //   center: mapCenter,
-      //   duration: 400,
-      //   zoom: mapManager.map.getZoom() > 9 ? 9 : mapManager.map.getZoom(),
-      // });
-      mapManager.map.flyTo({
-      center: mapCenter,
-      zoom: mapManager.map.getZoom(),
-      bearing: 0,
-      speed: 0.9,
-      curve: 1
-      })
+      mapManager.map.easeTo({
+        center: mapCenter,
+        duration: 500,
+        zoom: mapManager.map.getZoom() > 9 ? 9 : mapManager.map.getZoom(),
+      });
+      // mapManager.map.flyTo({
+      // center: mapCenter,
+      // zoom: mapManager.map.getZoom(),
+      // bearing: 0,
+      // speed: 0.9,
+      // curve: 1
+      // })
   },[mapCenter]); 
 
   var markerHeight = 0,
@@ -169,7 +169,7 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource}) => {
         };
       });
       if(positionsFiltered.length > 0){
-        positionsFiltered.map((position,index)=> {
+        positionsFiltered.map((position)=> {
           if(!mapManager.map.getSource(`places-${position.properties.deviceId}`)){
             mapManager.map.addSource(`places-${position.properties.deviceId}`, {
               type: "geojson",
@@ -201,22 +201,19 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource}) => {
     }  
   }
 
-  //Update device data on popup function manually
-  useEffect(()=> {
-    positions.features.map((position, index) => {
-      let deviceData = document.getElementById(`header-${position.properties.deviceId}`)
-      let mapboxPopup = document.getElementsByClassName('mapboxgl-popup');
-      let sourceData = mapManager.map.getSource(`places-${index}`);
-      
-      if(deviceData && sourceData){  
-        if(buttons){
-          buttons.addEventListener("click", function(){   
+  if(buttons){
+    buttons.addEventListener("click", function(){ 
+      positions.features.map((position) => {
+        let deviceData = document.getElementById(`header-${position.properties.deviceId}`)
+        let mapboxPopup = document.getElementsByClassName('mapboxgl-popup');
+        let sourceData = mapManager.map.getSource(`places-${position.properties.deviceId}`);
+        if(deviceData && sourceData){  
           updatePopup(mapboxPopup, position);
-          })
-        }
-      }   
+          return;
+        }        
+      })
     })
-  },[positions])
+  }
 
   const style = {
     width: "100%",
