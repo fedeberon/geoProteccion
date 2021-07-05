@@ -43,14 +43,16 @@ function DeviceList  ({list, enableIcon, upIcon, closing}) {
 
   const handleSetItems = (device) => {
     let icon = document.getElementById(`show-${device.id}`);
-    if(selectedItems.findIndex(elem => elem.id === device.id) === -1){      
-      dispatch(positionsActions.addSelectedDevice(device));
-      icon.style.color = "chartreuse";
-    } else {
-      dispatch(positionsActions.removeSelectedDevice(device));
-      dispatch(positionsActions.lastRemoved(device.id));
-      icon.style.color = "rgb(134, 128, 187)";
-    }    
+    if(icon){
+      if(selectedItems.findIndex(elem => elem.id === device.id) === -1){      
+        dispatch(positionsActions.addSelectedDevice(device));
+        icon.style.color = "chartreuse";
+      } else {
+        dispatch(positionsActions.removeSelectedDevice(device));
+        dispatch(positionsActions.lastRemoved(device.id));
+        icon.style.color = "rgb(134, 128, 187)";
+      }  
+    }      
   }
 
   useEffect(()=> {
