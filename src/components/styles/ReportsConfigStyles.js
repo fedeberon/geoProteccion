@@ -29,6 +29,12 @@ const reportsConfigStyles = makeStyles((theme) => ({
     marginRight: theme.spacing(1),
     width: 200,
   },
+  itemsReportsMenu: {
+
+    [theme.breakpoints.up("md")]: {
+      minWidth: 'auto !important', 
+    },
+  },
 }));
 
 export default reportsConfigStyles;

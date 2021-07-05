@@ -93,7 +93,7 @@ function DeviceSearch() {
           type="text"
           className={classes.input}
           // placeholder={t("sharedSearch")}       
-          placeholder={devicesRedux ? `${devicesRedux.length} dispositivos` : `Cargando lista...` }      
+          placeholder={selectedItems && selectedItems.length > 0 ? `Mostrando ${selectedItems.length} dispositivo(s)` : devicesRedux && `${devicesRedux.length} dispositivos`}     
           onChange={(event) => filterDevices(event.target.value)}
           onKeyPress={function (event) {
             if(event.key === 'Enter'){

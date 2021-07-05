@@ -122,6 +122,7 @@ const reportsDialogStyles = makeStyles((theme) => ({
   },
   tableReportsState: {
     top: "19.5%",
+    zIndex: 1200,
     borderTop: 'outset',
     justifyContent: "end",
     right: 0,

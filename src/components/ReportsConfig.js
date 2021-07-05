@@ -218,7 +218,7 @@ export default function ReportsConfig({ handleReportsConfig, reportType }) {
                 )}
               >
                 {devices.map((device) => (
-                  <MenuItem key={device.name} value={device.name}>
+                  <MenuItem key={device.name} value={device.name} className={classes.itemsReportsMenu}>
                     {device.name}
                   </MenuItem>
                 ))}
