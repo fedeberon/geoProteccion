@@ -79,8 +79,7 @@ function DeviceList  ({list, enableIcon, upIcon}) {
           <ListItemText style={{maxWidth: (window.innerWidth > 760 && !enableIcon) ? 450 : ''}}>
             <div className={classes.devsearchSt}>
               <p className={classes.devsearchStP}>
-                <strong> {list[index].attributes.carPlate} </strong>-{" "}
-                {list[index].name}
+                <strong> {list[index].name} </strong>                
               </p>
               <div className={classes.devsearchSd}>
                 {getDateTimeDevices(list[index].lastUpdate)}
@@ -121,7 +120,7 @@ function DeviceList  ({list, enableIcon, upIcon}) {
                 history.push(`/device/${list[index].id}`);
               }}
             >
-              <i className="fas fa-upload"></i>
+              <i style={{fontSize: '18px'}} className="fas fa-upload"></i>
             </IconButton>
             {enableIcon &&
               <IconButton
@@ -133,7 +132,7 @@ function DeviceList  ({list, enableIcon, upIcon}) {
                 handleSetItems(list[index]);
               }}
             >
-              <i id={`show-${list[index].id}`} style={{fontSize: '20px'}}className="fas fa-eye"></i>
+              <i id={`show-${list[index].id}`} style={{fontSize: '18px'}}className="fas fa-eye"></i>
             </IconButton>
             } 
           </ListItemSecondaryAction>

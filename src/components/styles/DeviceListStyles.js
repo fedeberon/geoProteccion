@@ -67,7 +67,9 @@ const deviceSearchStyles = makeStyles((theme) => ({
   },
 
   devsearchSpeed: {
-    display: "grid",
+    display: "inline-block",
+    textAlign: "center",
+    minWidth: "30px",
     [theme.breakpoints.up("md")]: {
       display: "contents",
     },
@@ -99,15 +101,14 @@ const deviceSearchStyles = makeStyles((theme) => ({
       margin: 0,
     },
   },
-
   devsearchSd: {
+    display: "inline-block",
     [theme.breakpoints.up("md")]: {
-      display: "inline-flex",
     },
   },
-
   devsearchSdP: {
     margin: "3px 0",
+    display: "inline",
     fontSize: "10px",
     [theme.breakpoints.up("md")]: {
       paddingLeft: "10px",

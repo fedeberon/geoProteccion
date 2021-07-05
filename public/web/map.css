@@ -169,6 +169,8 @@ button {
   margin-left: auto;
   margin-right: auto;
   font-size: 12px;
+  margin-top: 10px;
+  margin-bottom: 0;
 }
 
 .head-list > li > p {
@@ -241,10 +243,12 @@ button {
 
 .status-offline {
   color: red;
+  font-size: 12px;
 }
 
 .status-unknown {
   color: orange;
+  font-size: 12px;
 }
 
 .status-inactive {
@@ -653,6 +657,11 @@ button {
 /* ancho de pantalla de menos de 600px* (mobile)*/
 @media only screen and (max-width: 600px) {
 
+  .ListItemEven,
+  .ListItemOdd {
+  display: block;
+  }
+
   #buttonActionsAtReports{
     justify-content: space-between !important;
     padding: 8px 24px !important;
@@ -838,17 +847,18 @@ button {
   }
 
   .MuiListItemSecondaryAction-root {
-    right: 1px !important; 
+    right: 8px !important; 
     display: flex;
     flex-direction: column;   
   }
 
   .MuiListItem-secondaryAction {
-    padding-right: 25px !important;
+    padding-right: 58px !important;
   }
 
   .MuiListItemText-root {
-    max-width: 140px;
+    max-width: 180px;
+    min-width: 77% !important;
     margin: 2px;
   }
 

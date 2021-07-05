@@ -260,7 +260,7 @@ function createFeature (devices, position, isViewportDesktop, server) {
                       <div class="popup-map-header" id="header-${device ? device.id : ''}">
                           <ul class="head-list">
                               <li>
-                                  <p style="${desktopView ? 'font-size: 16px' : 'font-size: 17px'}"><strong  class="bold">${device.attributes.carPlate + '</strong> - ' + device.name} </p>
+                                  <p style="${desktopView ? 'font-size: 16px' : 'font-size: 17px'}"><strong  class="bold">${device.name}</strong></p>
                               </li>
                               <li>
                                   <p>${getDateTimeDevices(device ? device.lastUpdate : '')}</p>
