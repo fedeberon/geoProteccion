@@ -37,12 +37,27 @@ function DeviceSearch() {
   const dispatchDevice = (device) => {
     dispatch(devicesActions.select(device));
     dispatch(devicesActions.selectedDevice(device));
-    toggleDeviceList();  
+    if(selectedItems.findIndex(elem => elem.id === device.id) === -1){
+      handleSetItems(device);
+    }
+    toggleDeviceList(); 
     
     setTimeout(()=> {
       dispatch(devicesActions.select(""));
     },750);
   };
+
+  const handleSetItems = (device) => {
+    let icon = document.getElementById(`show-${device.id}`);
+    if(selectedItems.findIndex(elem => elem.id === device.id) === -1){      
+      dispatch(positionsActions.addSelectedDevice(device));
+      icon.style.color = "chartreuse";
+    } else {
+      dispatch(positionsActions.removeSelectedDevice(device));
+      dispatch(positionsActions.lastRemoved(device.id));
+      icon.style.color = "rgb(134, 128, 187)";
+    }    
+  }
 
   const filterDevices = (value = "") => {
     setInputSearch(value);
@@ -112,11 +127,11 @@ function DeviceSearch() {
       <div>
         {inputSearch && inputSearch.length > 0 ? 
           <div id="deviceListSearch" className={showDeviceList ? "device-list" : "display-none"}>
-            <DeviceList enableIcon={enableIcon} list={deviceList} upIcon={upIcon}/>
+            <DeviceList enableIcon={enableIcon} list={deviceList} upIcon={upIcon} closing={toggleDeviceList}/>
           </div>
         :
           <div id="deviceListSearch" className={showDeviceList ? "device-list" : "display-none"}>
-            <DeviceList enableIcon={enableIcon} list={devicesRedux} upIcon={upIcon}/>
+            <DeviceList enableIcon={enableIcon} list={devicesRedux} upIcon={upIcon} closing={toggleDeviceList}/>
           </div>
         }
       </div>

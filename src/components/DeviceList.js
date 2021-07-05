@@ -17,7 +17,7 @@ import { devicesActions, positionsActions } from "../store";
 
 const useStyles = deviceListStyles;
 
-function DeviceList  ({list, enableIcon, upIcon}) {
+function DeviceList  ({list, enableIcon, upIcon, closing}) {
   const history = useHistory();
   const dispatch = useDispatch();
   const server = useSelector((state) => state.session.server);
@@ -32,7 +32,7 @@ function DeviceList  ({list, enableIcon, upIcon}) {
   const dispatchDevice = (device) => {
     dispatch(devicesActions.select(device));
     dispatch(devicesActions.selectedDevice(device));
-    // toggleDeviceList();
+    closing();
     if(selectedItems.findIndex(elem => elem.id === device.id) === -1){
       handleSetItems(device);
     }
