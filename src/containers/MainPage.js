@@ -2,10 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { modalsActions } from "../store";
 import { withWidth } from "@material-ui/core";
-import Drawer from "@material-ui/core/Drawer";
 import ContainerDimensions from "react-container-dimensions";
 import LinearProgress from "@material-ui/core/LinearProgress";
-import DeviceList from "../components/DeviceList";
 import MainMap from "../components/MainMap";
 import Menu from "../components/Menu";
 import * as service from "../utils/serviceManager";
@@ -13,7 +11,7 @@ import ShortcutsMenu from "../components/ShorcutsMenu";
 import ReportsDialog from "../components/ReportsDialog";
 import NotificationList from "../components/NotificationList";
 import mainPageStyle from "./styles/MainPageStyle";
-import { devicesActions } from "../store";
+import { devicesActions, positionsActions } from "../store";
 
 const useStyles = mainPageStyle;
 
@@ -22,7 +20,6 @@ const MainPage = ({ width }) => {
   const [geozones, setGeozones] = useState([]);
   const authenticated = useSelector((state) => state.session.authenticated);
   const classes = useStyles();
-  const open = useSelector((state) => state.modals.items.search);
   const user = useSelector((state) => state.session.user);
   const server = useSelector((state) => state.session.server);
   const devices = useSelector((state) => state.devices.items);
@@ -31,12 +28,7 @@ const MainPage = ({ width }) => {
   const [showNotifications, setShowNotifications] = useState(false);
   const [mapZoom, setMapZoom] = useState(0);
   const [selectedState, setSelectedState] = useState(false);
-  const [devicesReady, setDevicesReady] = useState(false);
-
-
-  const handleVisibilityModal = (name) => {
-    dispatch(modalsActions.show(name));
-  };
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     const getGeozones = async (userId) => {
@@ -47,14 +39,21 @@ const MainPage = ({ width }) => {
     getGeozones(user.id);
   }, [user.id]);
 
-  useEffect(()=> {
-    fetch("/api/devices").then((response) => {
+  useEffect(async()=> {
+    await fetch("/api/devices").then((response) => {
       if (response.ok) {
-        response.json().then((devices) => {
+        response.json().then(async(devices) => {
           dispatch(devicesActions.update(devices));
-          setDevicesReady(true);
-        });   
-      }      
+          await fetch("/api/positions").then((response) => {
+            if (response.ok) {
+              response.json().then((positions) => {
+                dispatch(positionsActions.update(positions));
+              });
+            }
+            setReady(true); 
+          });
+        });
+      }
     });
   },[])
 
@@ -85,23 +84,8 @@ const MainPage = ({ width }) => {
   ) : (
     <div className={classes.root}>
       <div className={classes.content}>
-        <Drawer
-          anchor="right"
-          open={open}
-          onClose={(e) => {
-            e.stopPropagation();
-            handleVisibilityModal("search");
-          }}
-          onClick={(e) => {
-            e.stopPropagation();
-            handleVisibilityModal("search");
-          }}
-          classes={{ paper: classes.drawerPaper }}
-        >
-          <DeviceList />
-        </Drawer>
 
-        {!showReports && server && devicesReady && (
+        {!showReports && server && ready && (
               <div className={classes.mapContainer}>
                 <ContainerDimensions>
                   <MainMap

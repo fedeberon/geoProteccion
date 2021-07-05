@@ -25,7 +25,7 @@ const SocketController = () => {
         //dispatch(devicesActions.update(data.devices));
       }
       if (data.positions) {
-        dispatch(positionsActions.update(data.positions));
+        //dispatch(positionsActions.update(data.positions));
       }
       if (data.events) {
         dispatch(
@@ -38,16 +38,18 @@ const SocketController = () => {
     };
   };
 
-  useEffect(() => {
-    fetch("/api/devices").then((response) => {
+  useEffect(async() => {
+    await fetch("/api/devices").then((response) => {
       if (response.ok) {
         response.json().then((devices) => {
           dispatch(devicesActions.update(devices));
           if(devices.length > 50){
             dispatch(devicesActions.setDisableIcon(true));
           }
+          setTimeout(()=> {
+            connectSocket();
+          },15000) 
         });
-      connectSocket();
       }      
     });
   }, []);

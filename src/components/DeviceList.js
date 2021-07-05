@@ -1,163 +1,161 @@
-import React, { Fragment, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useHistory } from "react-router-dom";
+import React, { Fragment, useState, useEffect } from "react";
+import { useDispatch, useSelector, shallowEqual } from "react-redux";
 import Avatar from "@material-ui/core/Avatar";
-import Divider from "@material-ui/core/Divider";
 import IconButton from "@material-ui/core/IconButton";
-import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
-import Menu from "@material-ui/core/Menu";
-import MenuItem from "@material-ui/core/MenuItem";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import ListItemText from "@material-ui/core/ListItemText";
-import MoreVertIcon from "@material-ui/icons/MoreVert";
-import Fab from "@material-ui/core/Fab";
-import AddIcon from "@material-ui/icons/Add";
-import CloseIcon from "@material-ui/icons/Close";
-import Paper from "@material-ui/core/Paper";
-import InputBase from "@material-ui/core/InputBase";
-import SearchIcon from "@material-ui/icons/Search";
-import LocalShippingOutlinedIcon from "@material-ui/icons/LocalShippingOutlined";
-
-import { devicesActions, modalsActions } from "../store";
+import { getSVG } from '../utils/svgGetter';
 import t from "../common/localization";
-import RemoveDialog from "./RemoveDialog";
-import ListSubheader from "@material-ui/core/ListSubheader";
+import { FixedSizeList as List } from 'react-window';
+import AutoSizer from "react-virtualized-auto-sizer";
+import { getDateTimeDevices } from '../utils/functions';
+import { useHistory } from "react-router-dom";
 import deviceListStyles from "./styles/DeviceListStyles";
+import { devicesActions, positionsActions } from "../store";
 
 const useStyles = deviceListStyles;
 
-const DeviceList = () => {
-  const [menuDeviceId, setMenuDeviceId] = useState(null);
-  const [menuAnchorEl, setMenuAnchorEl] = useState(undefined);
-  const [removeDialogOpen, setRemoveDialogOpen] = useState(false);
-  const devices = useSelector((state) => Object.values(state.devices.items));
-  const dispatch = useDispatch();
-  const classes = useStyles();
+function DeviceList  ({list, enableIcon, upIcon}) {
   const history = useHistory();
+  const dispatch = useDispatch();
+  const server = useSelector((state) => state.session.server);
+  const positions = useSelector((state) => state.positions.items, shallowEqual);
+  const classes = useStyles();
+  const devicesRedux = useSelector(
+    (state) => Object.values(state.devices.items),
+    shallowEqual
+  );
+  const selectedItems = useSelector((state) => state.positions.selectedItems);
 
-  const handleMenuClick = (event, deviceId) => {
-    setMenuDeviceId(deviceId);
-    setMenuAnchorEl(event.currentTarget);
+  const dispatchDevice = (device) => {
+    dispatch(devicesActions.select(device));
+    dispatch(devicesActions.selectedDevice(device));
+    // toggleDeviceList();  
+    
+    setTimeout(()=> {
+      dispatch(devicesActions.select(""));
+    },750);
   };
 
-  const handleMenuClose = () => {
-    setMenuAnchorEl(undefined);
-  };
+  const handleSetItems = (device) => {
+    let icon = document.getElementById(`show-${device.id}`);
+    if(selectedItems.findIndex(elem => elem.id === device.id) === -1){      
+      dispatch(positionsActions.addSelectedDevice(device));
+      icon.style.color = "chartreuse";
+    } else {
+      dispatch(positionsActions.removeSelectedDevice(device));
+      dispatch(positionsActions.lastRemoved(device.id));
+      icon.style.color = "rgb(134, 128, 187)";
+    }    
+  }
 
-  const handleMenuEdit = () => {
-    history.push(`/device/${menuDeviceId}`);
-    handleMenuClose();
-  };
-
-  const handleMenuRemove = () => {
-    setRemoveDialogOpen(true);
-    handleMenuClose();
-  };
-
-  const handleAdd = () => {
-    history.push("/device");
-    handleMenuClose();
-  };
-
-  const handleRemoveResult = (removed) => {
-    setRemoveDialogOpen(false);
-    if (removed) {
-      dispatch(devicesActions.remove(menuDeviceId));
+  useEffect(()=> {
+    if(selectedItems.length > 0){
+      selectedItems.map(item => {
+        let icon = document.getElementById(`show-${item.id}`)
+        if(icon){
+          icon.style.color = "chartreuse";
+        }
+      })
     }
-  };
+  },[devicesRedux, upIcon])
 
-  const handleHideModal = (name) => {
-    dispatch(modalsActions.hide(name));
-  };
+  const Row = ({index, style}) => (
+    <div className={index % 2 ? "ListItemOdd" : "ListItemEven"} style={style}>
+      <Fragment key={list[index].id}>
+        <ListItem
+          className={classes.listItem}
+          button
+          key={list[index].id}
+          onClick={() => dispatchDevice(list[index])}
+        >
+          <ListItemAvatar>
+            <Avatar className={classes.MuiAvatarRoot}>
+              {getSVG(list[index].category, list[index].status)}
+            </Avatar>
+          </ListItemAvatar>
+          <ListItemText style={{maxWidth: (window.innerWidth > 760 && !enableIcon) ? 450 : ''}}>
+            <div className={classes.devsearchSt}>
+              <p className={classes.devsearchStP}>
+                <strong> {list[index].attributes.carPlate} </strong>-{" "}
+                {list[index].name}
+              </p>
+              <div className={classes.devsearchSd}>
+                {getDateTimeDevices(list[index].lastUpdate)}
+                <p
+                  className={`status-${list[index].status} ${classes.devsearchSdP}`}
+                >
+                  {" "}
+                  {list[index].status}{" "}
+                </p>
+              </div>
+            </div>
+          </ListItemText>
+
+          <div className={classes.devsearchSpeed}>
+            <p className={classes.devsearchSpeedP}>                  
+              {positions && positions[list[index].id]
+                ? positions[list[index].id].speed.toFixed(0)
+                : "0"}{" "}
+              {server && `${server.attributes?.speedUnit}`}
+            </p>
+            <i
+              className={`far fa-circle fa-2x device-icon-${list[index].status} status-${list[index].status}`}
+              style={{
+                paddingRight: "0px",
+                display: "flex",
+                justifyContent: "center",
+              }}
+            />
+          </div>
+
+          <ListItemSecondaryAction>
+            <IconButton
+              id={`device-info-${list[index].id}`}
+              style={{ color: "#8680bb", padding: '6px'}}
+              title={t("sharedInfoTitle")}
+              onClick={(e) => {
+                e.stopPropagation();
+                history.push(`/device/${list[index].id}`);
+              }}
+            >
+              <i className="fas fa-upload"></i>
+            </IconButton>
+            {enableIcon &&
+              <IconButton
+              id={`device-object-${list[index].id}`}
+              style={{ color: "#8680bb", padding: '6px'}}
+              title={t("reportShow")}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleSetItems(list[index]);
+              }}
+            >
+              <i id={`show-${list[index].id}`} style={{fontSize: '20px'}}className="fas fa-eye"></i>
+            </IconButton>
+            } 
+          </ListItemSecondaryAction>
+          </ListItem>
+      </Fragment>
+      </div>
+  );
 
   return (
-    <div>
-      <List
-        className={classes.list}
-        subheader={<ListSubheader>{t("deviceTitle")}</ListSubheader>}
-      >
-        <Paper component="form" className={classes.root}>
-          <IconButton
-            type="submit"
-            className={classes.iconButton}
-            aria-label="search"
+    <AutoSizer>
+        {({height, width}) => (
+          <List
+            className="List"
+            height={height}
+            itemCount={list.length}
+            itemSize={55}
+            width={width}
           >
-            <SearchIcon />
-          </IconButton>
-          <InputBase
-            className={classes.input}
-            placeholder={t("sharedSearch")}
-            inputProps={{ "aria-label": "search google maps" }}
-          />
-        </Paper>
-        {devices.map((device, index, list) => (
-          <Fragment key={device.id}>
-            <ListItem
-              button
-              key={device.id}
-              onClick={() => dispatch(devicesActions.select(device))}
-            >
-              <ListItemAvatar>
-                <Avatar>
-                  <LocalShippingOutlinedIcon />
-                </Avatar>
-              </ListItemAvatar>
-              <ListItemText primary={device.name} secondary={device.uniqueId} />
-
-              <Avatar src={require("../../public/images/gps.gif")} />
-
-              <ListItemSecondaryAction>
-                <IconButton
-                  onClick={(event) => handleMenuClick(event, device.id)}
-                >
-                  <MoreVertIcon />
-                </IconButton>
-              </ListItemSecondaryAction>
-            </ListItem>
-            {index < list.length - 1 ? <Divider /> : null}
-          </Fragment>
-        ))}
-        <Divider />
-      </List>
-      <Fab
-        size="medium"
-        color="primary"
-        className={classes.fab}
-        onClick={handleAdd}
-      >
-        <AddIcon />
-      </Fab>
-
-      <Fab
-        size="medium"
-        color="primary"
-        className={classes.fab_close}
-        onClick={(e) => {
-          e.stopPropagation();
-          handleHideModal("search");
-        }}
-      >
-        <CloseIcon />
-      </Fab>
-
-      <Menu
-        id="device-menu"
-        anchorel={menuAnchorEl}
-        keepMounted
-        open={Boolean(menuAnchorEl)}
-        onClose={handleMenuClose}
-      >
-        <MenuItem onClick={handleMenuEdit}>{t("sharedEdit")}</MenuItem>
-        <MenuItem onClick={handleMenuRemove}>{t("sharedRemove")}</MenuItem>
-      </Menu>
-      <RemoveDialog
-        deviceId={menuDeviceId}
-        open={removeDialogOpen}
-        onResult={handleRemoveResult}
-      />
-    </div>
+            {Row}                    
+          </List>                 
+        )}
+    </AutoSizer>
   );
 };
 

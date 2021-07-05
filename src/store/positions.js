@@ -13,7 +13,7 @@ const { reducer, actions } = createSlice({
       //   action.payload.forEach((item) => (state.items[item["deviceId"]] = item));
       // } 
       // else {
-         action.payload.forEach((item) => (state.items[item["deviceId"]] = item));
+      action.payload.forEach((item) => (state.items[item["deviceId"]] = item));
       // }
     },
     addSelectedDevice(state, action) {

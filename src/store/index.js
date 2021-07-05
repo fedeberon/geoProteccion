@@ -1,4 +1,4 @@
-import { combineReducers, configureStore, getDefaultMiddleware } from "@reduxjs/toolkit";
+import { combineReducers, configureStore} from "@reduxjs/toolkit";
 
 import { sessionReducer as session } from "./session";
 import { devicesReducer as devices } from "./devices";
@@ -23,4 +23,8 @@ export { notificationActions } from "./notification";
 export { modalsActions } from "./modals";
 export { geofencesActions } from "./geofences";
 
-export default configureStore({ reducer });
+export default configureStore({ reducer,
+  middleware: (getDefaultMiddleware) =>
+  getDefaultMiddleware({
+    serializableCheck: false,
+  }), });

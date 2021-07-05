@@ -1,38 +1,29 @@
 import {
-  Avatar,
-  Divider,
   IconButton,
   InputBase,
-  ListItem,
-  ListItemAvatar,
-  ListItemSecondaryAction,
-  ListItemText,
   Paper,
 } from "@material-ui/core";
 import SearchIcon from "@material-ui/icons/Search";
 import React, { Fragment, useEffect, useState, useLayoutEffect } from "react";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { devicesActions, positionsActions } from "../store";
-import t from "../common/localization";
 import { useHistory } from "react-router-dom";
 import deviceSearchStyles from "./styles/DeviceSearchStyles";
-import { getDateTimeDevices, speedConverter } from '../utils/functions';
-import { getSVG } from '../utils/svgGetter';
-import * as service from "../utils/serviceManager";
+import DeviceList from "./DeviceList.js";
 
 const useStyles = deviceSearchStyles;
 
-function DeviceSearch(deviceId) {
+function DeviceSearch() {
   const dispatch = useDispatch();
   const history = useHistory();
   const classes = useStyles();
   const server = useSelector((state) => state.session.server);
-  const [valueColor, setValueColor] = useState('#ffa2ad');
   const enableIcon = useSelector(state => state.devices.selectEnable);
   const devicesRedux = useSelector(
     (state) => Object.values(state.devices.items),
     shallowEqual
   );
+  let upIcon = document.getElementById("searchbox-up");
   const [inputSearch, setInputSearch] = useState();
   const positions = useSelector((state) => state.positions.items, shallowEqual);
   const [deviceList, setDeviceList] = useState(devicesRedux);
@@ -56,20 +47,20 @@ function DeviceSearch(deviceId) {
   const filterDevices = (value = "") => {
     setInputSearch(value);
     let object = document.getElementById("deviceListSearch");
-    if(value.length > 0){
-      setShowDeviceList(true)
-      object.style.height = 'auto';
-    } else {
-      setShowDeviceList(false);
-      object.style.height = null;
-    }
 
     const regex = new RegExp(`${value !== "" ? value : ".+"}`, "gi");
     let filteredDevices = [];
     if (devicesRedux && devicesRedux.length > 0) {
       filteredDevices = devicesRedux.filter(
-        (e) => regex.test(e.name) || regex.test(e.attributes.carPlate)
+        (e) => regex.test(e.name) || regex.test(e.attributes.PATENTE)
       );
+    }    
+    if(value.length > 0){
+      setShowDeviceList(true)
+      object.style.height = `${65 * filteredDevices.length}px`;
+    } else {
+      setShowDeviceList(false);
+      object.style.height = null;
     }
     setDeviceList(filteredDevices);
   };
@@ -86,44 +77,10 @@ function DeviceSearch(deviceId) {
     }
     setTimeout(()=> {
       dispatch(devicesActions.select(""));
-    },1500);
+    },1000);
   }
 
-  const handleSetItems = (device) => {
-    let icon = document.getElementById(`show-${device.id}`);
-    if(selectedItems.findIndex(elem => elem.id === device.id) === -1){      
-      dispatch(positionsActions.addSelectedDevice(device));
-      icon.style.color = "chartreuse";
-    } else {
-      dispatch(positionsActions.removeSelectedDevice(device));
-      dispatch(positionsActions.lastRemoved(device.id));
-      icon.style.color = "rgb(134, 128, 187)";
-    }    
-  }
-
-  useEffect(()=> {
-    if(selectedItems.length > 0){
-      selectedItems.map(item => {
-        let icon = document.getElementById(`show-${item.id}`)
-        if(icon){
-          icon.style.color = "chartreuse";
-        }
-      })
-    }
-  },[selectedItems])
-
-  useEffect(()=> {
-    fetch("/api/devices").then((response) => {
-      if (response.ok) {
-        response.json().then((devices) => {
-          dispatch(devicesActions.update(devices));
-        });    
-      }      
-    });
-  },[])
-
-  return (
-    <Paper component="form" className={classes.paper}>
+  return (<Paper component="form" className={classes.paper}>
       <div className={classes.div}>
         <IconButton
           type="submit"
@@ -135,7 +92,8 @@ function DeviceSearch(deviceId) {
         <InputBase
           type="text"
           className={classes.input}
-          placeholder={t("sharedSearch")}          
+          // placeholder={t("sharedSearch")}       
+          placeholder={devicesRedux ? `${devicesRedux.length} dispositivos` : `Cargando lista...` }      
           onChange={(event) => filterDevices(event.target.value)}
           onKeyPress={function (event) {
             if(event.key === 'Enter'){
@@ -145,184 +103,23 @@ function DeviceSearch(deviceId) {
           }}
         />
         {showDeviceList ? (
-          <i onClick={() => toggleDeviceList()} className={`btn btn-searchbox fas fa-angle-up fa-lg ${classes.iconSearchbox}`}/>
+          <i id="searchbox-up" onClick={() => toggleDeviceList()} className={`btn btn-searchbox fas fa-angle-up fa-lg ${classes.iconSearchbox}`}/>
         ) : (
           <i onClick={() => toggleDeviceList()} className={`btn btn-searchbox fas fa-angle-down fa-lg ${classes.iconSearchbox}`}/>          
         )}
       </div>
-      {/* <div
-        style={{ display: "flex", width: "100%", cursor: "pointer" }}
-        onClick={() => toggleDeviceList()}
-      >
-        
-      </div> */}
-      {inputSearch && inputSearch.length > 0 ?
-        <div id="deviceListSearch"className={showDeviceList ? "device-list" : "display-none"}>
-        {deviceList.map((device, index, list) => (
-          <Fragment key={device.id}>
-            <ListItem
-              className={classes.listItem}
-              button
-              key={device.id}
-              onClick={() => dispatchDevice(device)}
-            >
-              <ListItemAvatar>
-                <Avatar className={classes.MuiAvatarRoot}>
-                  {/* <img src={`./web/images/${device.category}.svg`}></img>*/}
-                  {getSVG(device.category, device.status)}
-                </Avatar>
-              </ListItemAvatar>
-              <ListItemText >
-                <div className={classes.devsearchSt}>
-                  <p className={classes.devsearchStP}>
-                    <strong> {device.attributes.carPlate} </strong>-{" "}
-                    {device.name}
-                  </p>
-                  <div className={classes.devsearchSd}>
-                    {getDateTimeDevices(device.lastUpdate)}
-                    <p
-                      className={`status-${device.status} ${classes.devsearchSdP}`}
-                    >
-                      {" "}
-                      {device.status}{" "}
-                    </p>
-                  </div>
-                </div>
-              </ListItemText>
 
-              <div className={classes.devsearchSpeed}>
-                <p className={classes.devsearchSpeedP}>
-                  {positions && positions[device.id]
-                    ? positions[device.id].speed.toFixed(0)
-                    : "0"}{" "}
-                  {server && `${server.attributes?.speedUnit}`}
-                </p>
-                <i
-                  className={`far fa-circle fa-2x device-icon-${device.status} status-${device.status}`}
-                  style={{
-                    paddingRight: "0px",
-                    display: "flex",
-                    justifyContent: "center",
-                  }}
-                />
-              </div>
-              <ListItemSecondaryAction>
-                <IconButton
-                  id={`device-info-${device.id}`}
-                  style={{ color: "#8680bb", padding: '6px'}}
-                  title={t("sharedInfoTitle")}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    history.push(`/device/${device.id}`);
-                  }}
-                >
-                  <i className="fas fa-upload"></i>
-                </IconButton> 
-                  {enableIcon && 
-                    <IconButton
-                      id={`device-object-${device.id}`}
-                      style={{ color: "#8680bb", padding: '6px'}}
-                      title={t("reportShow")}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleSetItems(device);
-                      }}
-                    >
-                      <i id={`show-${device.id}`} style={{fontSize: '20px'}}className={`fas fa-map-marked-alt`}></i>
-                    </IconButton> 
-                  }            
-              </ListItemSecondaryAction>
-              
-            </ListItem>
-            {index < list.length - 1 ? <Divider /> : null}
-          </Fragment>
-        ))}
+      <div>
+        {inputSearch && inputSearch.length > 0 ? 
+          <div id="deviceListSearch" className={showDeviceList ? "device-list" : "display-none"}>
+            <DeviceList enableIcon={enableIcon} list={deviceList} upIcon={upIcon}/>
+          </div>
+        :
+          <div id="deviceListSearch" className={showDeviceList ? "device-list" : "display-none"}>
+            <DeviceList enableIcon={enableIcon} list={devicesRedux} upIcon={upIcon}/>
+          </div>
+        }
       </div>
-      :
-      <div id="deviceListSearch"className={showDeviceList ? "device-list" : "display-none"}>
-        {devicesRedux.map((device, index, list) => (
-          <Fragment key={device.id}>
-            <ListItem
-              className={classes.listItem}
-              button
-              key={device.id}
-              onClick={() => dispatchDevice(device)}
-            >
-              <ListItemAvatar>
-                <Avatar className={classes.MuiAvatarRoot}>
-                  {/* <img src={`./web/images/${device.category}.svg`}></img>*/}
-                  {getSVG(device.category, device.status)}
-                </Avatar>
-              </ListItemAvatar>
-              <ListItemText style={{maxWidth: (window.innerWidth > 760 && !enableIcon) ? 350 : ''}}>
-                <div className={classes.devsearchSt}>
-                  <p className={classes.devsearchStP}>
-                    <strong> {device.attributes.carPlate} </strong>-{" "}
-                    {device.name}
-                  </p>
-                  <div className={classes.devsearchSd}>
-                    {getDateTimeDevices(device.lastUpdate)}
-                    <p
-                      className={`status-${device.status} ${classes.devsearchSdP}`}
-                    >
-                      {" "}
-                      {device.status}{" "}
-                    </p>
-                  </div>
-                </div>
-              </ListItemText>
-
-              <div className={classes.devsearchSpeed}>
-                <p className={classes.devsearchSpeedP}>
-                  {positions && positions[device.id]
-                    ? (positions[device.id].speed * speedConverter(server.attributes?.speedUnit)).toFixed(0)
-                    : "0"}{" "}
-                  {server && `${server.attributes?.speedUnit}`}
-                </p>
-                <i
-                  className={`far fa-circle fa-2x device-icon-${device.status} status-${device.status}`}
-                  style={{
-                    paddingRight: "0px",
-                    display: "flex",
-                    justifyContent: "center",
-                  }}
-                />
-              </div>
-
-              <ListItemSecondaryAction>
-                <IconButton
-                  id={`device-info-${device.id}`}
-                  style={{ color: "#8680bb", padding: '6px'}}
-                  title={t("sharedInfoTitle")}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    history.push(`/device/${device.id}`);
-                  }}
-                >
-                  <i className="fas fa-upload"></i>
-                </IconButton>
-                {enableIcon &&
-                  <IconButton
-                  id={`device-object-${device.id}`}
-                  style={{ color: "#8680bb", padding: '6px'}}
-                  title={t("reportShow")}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleSetItems(device);
-                  }}
-                >
-                  <i id={`show-${device.id}`} style={{fontSize: '20px'}}className="fas fa-map-marked-alt"></i>
-                </IconButton>
-                }                            
-              </ListItemSecondaryAction>
-              
-              </ListItem>
-            {index < list.length - 1 ? <Divider /> : null}
-          </Fragment>
-        ))}
-      </div>
-      }
-      
     </Paper>
   );
 }

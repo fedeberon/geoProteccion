@@ -44,8 +44,8 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource}) => {
   }));
 
   useEffect(() => {
-    const interval = setInterval(() => {
-        fetch("/api/devices").then((response) => {
+    const interval = setInterval(async() => {
+      await fetch("/api/devices").then((response) => {
           if (response.ok) {
             response.json().then((devices) => {
               dispatch(devicesActions.update(devices));
@@ -57,18 +57,24 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource}) => {
   },[]);
 
   useEffect(() => {
+    const interval = setInterval(async() => {
+        await fetch("/api/positions").then((response) => {
+          if (response.ok) {
+            response.json().then((positions) => {
+              dispatch(positionsActions.update(positions));
+            });    
+          }      
+        });
+    }, 10000);
+    return () => clearInterval(interval);
+  },[]);
+
+  useEffect(() => {
       mapManager.map.easeTo({
         center: mapCenter,
         duration: 500,
-        zoom: mapManager.map.getZoom() > 9 ? 9 : mapManager.map.getZoom(),
+        zoom: mapManager.map.getZoom(),
       });
-      // mapManager.map.flyTo({
-      // center: mapCenter,
-      // zoom: mapManager.map.getZoom(),
-      // bearing: 0,
-      // speed: 0.9,
-      // curve: 1
-      // })
   },[mapCenter]); 
 
   var markerHeight = 0,
@@ -107,9 +113,9 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource}) => {
     };
   }, [containerEl]);
 
-  useEffect(() => {
-    mapManager.registerListener(() => setMapReady(true));
-  }, []);
+  // useEffect(() => {
+  //   mapManager.registerListener(() => setMapReady(true));
+  // }, []);
 
   //Initial data charge of devices on map
   useEffect(() => {
@@ -154,8 +160,9 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource}) => {
       if (bounds) {
         mapManager.map.fitBounds(bounds, {
           padding: 100,
-          maxZoom: zoom,
+          maxZoom: 9,
         });
+        setMapReady(true);
       }
     }    
     if(mapReady && positions){

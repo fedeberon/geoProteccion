@@ -42,6 +42,20 @@ html, body, #root {
   background-color: transparent;
   color: white !important;
 }
+.List {
+  border: 1px solid #d9dddd;
+}
+
+.ListItemEven,
+.ListItemOdd {
+  display: flex;
+  /* align-items: center;
+  justify-content: center; */
+}
+
+.ListItemEven {
+  background-color: #f8f8f0;
+}
 
 .btn-searchbox:active {
   -webkit-transition-duration: 0.2s; /* Safari */
@@ -282,7 +296,9 @@ button {
   overflow-y: scroll;
   height: 300px;
   max-height: 348px;
+  border-radius: 21px;
 }
+
 .device-list::-webkit-scrollbar {
   width: 10px;
   height: 8px;
@@ -460,6 +476,10 @@ button {
   /* .MuiDialog-paperWidthSm {
     max-width: 300px !important;
   } */
+  .MuiListItem-root {
+    min-width: 493px !important;
+  }
+
   .MuiListItemText-root {
     max-width: 300px;
     margin: 2px;

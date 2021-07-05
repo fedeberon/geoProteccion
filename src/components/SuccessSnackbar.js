@@ -27,9 +27,13 @@ export default function SuccessSnackbar() {
   useEffect(() => {
     let deviceName = "";
     if (successSnackbarMessage && devices) {
-      deviceName = devices.find(
-        (element) => element.id === successSnackbarMessage.deviceId
-      ).name;
+      try{
+        deviceName = devices.find(
+          (element) => element.id === successSnackbarMessage.deviceId
+        ).name;
+      } catch (error){
+        console.error(error);
+      }
     }
     setDevice(deviceName);
     setType(successSnackbarMessage.type);
