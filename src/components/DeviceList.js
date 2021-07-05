@@ -32,8 +32,10 @@ function DeviceList  ({list, enableIcon, upIcon}) {
   const dispatchDevice = (device) => {
     dispatch(devicesActions.select(device));
     dispatch(devicesActions.selectedDevice(device));
-    // toggleDeviceList();  
-    
+    // toggleDeviceList();
+    if(selectedItems.findIndex(elem => elem.id === device.id) === -1){
+      handleSetItems(device);
+    }
     setTimeout(()=> {
       dispatch(devicesActions.select(""));
     },750);
