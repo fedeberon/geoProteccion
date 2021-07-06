@@ -535,7 +535,7 @@ const DevicePage = () => {
           <Card key={index} className={classes.root}>
             <CardMedia
               className={classes.media}
-              image="http://164.68.101.162:8080/img/Tesla-maps.jpg"
+              image="images/Tesla-maps.jpg"
               title="Tesla"
             />
             <CardHeader
@@ -616,7 +616,7 @@ const DevicePage = () => {
                   aria-labelledby="nested-list-subheader"
                   className={classes.list}
                 >
-                  <ListItem>
+                  <ListItem style={{minWidth: "100% !important"}}>
                     <ListItemIcon style={{ minWidth: "30px" }}>
                       <i
                         style={{ fontSize: "17px" }}
@@ -936,7 +936,7 @@ const DevicePage = () => {
                   </ListItem>
 
                   <ListItem
-                    style={{ justifyContent: "center" }}
+                    style={{ justifyContent: "left"}}
                     button
                     onClick={() => showMore()}
                   >

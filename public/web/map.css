@@ -481,6 +481,10 @@ button {
   /* .MuiDialog-paperWidthSm {
     max-width: 300px !important;
   } */
+  .MuiCollapse-entered {
+    min-width: 100% !important;
+  }
+
   .List {
     border: 1px solid #d9dddd;
     height: 305px !important;
