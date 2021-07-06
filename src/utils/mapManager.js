@@ -130,7 +130,7 @@ const addLayer = (id, source, icon, text, status, course) => {
       rotation: course
     },
     layout: {
-      "icon-image": status === 'offline' ? `${icon}-${status}` : icon,
+      "icon-image": status === 'offline' || status === 'unknown' ? `${icon}-${status}` : icon,
       "icon-allow-overlap": false,
       "icon-rotate": ['get', 'course'],
     },
@@ -312,6 +312,18 @@ map.on("load", () => {
   loadImage("web/images/offline/arrow.svg").then((background) => {
     Promise.all([
       loadIcon("icon-arrow-offline", background, "web/images/offline/arrow.svg"),
+    ]).then(() => {
+      ready = true;
+      if (registeredListener) {
+        registeredListener();
+        registeredListener = null;
+      }
+    });
+  });
+
+  loadImage("web/images/arrow-unknown.svg").then((background) => {
+    Promise.all([
+      loadIcon("icon-arrow-unknown", background, "web/images/arrow-unknown.svg"),
     ]).then(() => {
       ready = true;
       if (registeredListener) {

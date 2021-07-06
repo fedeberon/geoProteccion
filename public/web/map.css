@@ -42,9 +42,10 @@ html, body, #root {
   background-color: transparent;
   color: white !important;
 }
-.List {
-  border: 1px solid #d9dddd;
-}
+
+/* .List::-webkit-scrollbar {
+  display: none;
+} */
 
 .ListItemEven,
 .ListItemOdd {
@@ -297,7 +298,7 @@ button {
 }
 
 .device-list {
-  overflow-y: scroll;
+  overflow-y: hidden;
   height: 300px;
   max-height: 348px;
   border-radius: 21px;
@@ -480,6 +481,12 @@ button {
   /* .MuiDialog-paperWidthSm {
     max-width: 300px !important;
   } */
+  .List {
+    border: 1px solid #d9dddd;
+    height: 305px !important;
+    width: 516px !important;
+  }
+
   .MuiListItem-root {
     min-width: 493px !important;
   }

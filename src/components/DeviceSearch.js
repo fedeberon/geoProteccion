@@ -10,6 +10,7 @@ import { devicesActions, positionsActions } from "../store";
 import { useHistory } from "react-router-dom";
 import deviceSearchStyles from "./styles/DeviceSearchStyles";
 import DeviceList from "./DeviceList.js";
+import t from "../common/localization";
 
 const useStyles = deviceSearchStyles;
 
@@ -108,7 +109,7 @@ function DeviceSearch() {
           type="text"
           className={classes.input}
           // placeholder={t("sharedSearch")}       
-          placeholder={selectedItems && selectedItems.length > 0 ? `Mostrando ${selectedItems.length} dispositivo(s)` : devicesRedux && `${devicesRedux.length} dispositivos`}     
+          placeholder={selectedItems && selectedItems.length > 0 ? `${t('sharedShow')} ${selectedItems.length} ${t('sharedDevice').toLowerCase()}(s)` : devicesRedux && `${devicesRedux.length} ${t('sharedDevice').toLowerCase()}(s)`}     
           onChange={(event) => filterDevices(event.target.value)}
           onKeyPress={function (event) {
             if(event.key === 'Enter'){

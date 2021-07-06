@@ -472,5 +472,6 @@
     "on": "On",
     "off": "Off",
     "true": "Yes",
-    "false": "No"
+    "false": "No",
+    "sharedShow": "Showing"
 }

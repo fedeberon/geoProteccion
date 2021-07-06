@@ -3,8 +3,10 @@ function getSVG (type, status) {
   
     if(status === 'offline'){
       valueColor = "#ffa2ad";
-    } else {
+    } else if (status === 'online'){
       valueColor = "#4dfa90";
+    } else {
+      valueColor = "#FFA500";
     }
   
     switch (type){
