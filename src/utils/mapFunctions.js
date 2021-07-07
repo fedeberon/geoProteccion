@@ -460,7 +460,7 @@ function createFeature (devices, position, isViewportDesktop, server) {
                           
                           <li id="buttonShowLess" style="color: blue; display: none"  onClick="showDetails(${device ? device.id : ''})">${t(`showLess`)}</li>
                           
-                          <button id="circuitBraker" onClick="goToDeviceRemoteControl(${device ? device.id : ''})"
+                          <button id="circuitBreaker" onClick="goToDeviceRemoteControl(${device.id})"
                           class="${desktopView ? 'button-black' : 'button-black-mobile'}">
                               ${t("circuitBreaker")}
                           </button>

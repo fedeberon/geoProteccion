@@ -18,9 +18,7 @@ const mainToolbarStyles = makeStyles((theme) => ({
     margin: 30,
   },
   titlePage: {
-    backgroundColor: "cadetblue",
-    backgroundImage:
-      "linear-gradient(25deg, #77F9D3 0%, #5CD2F8 50%, #5A79FF 100%);",
+    backgroundColor: "#5C7AFF",
     boxShadow: "rgba(102, 97, 102, 0.8) 0px 0px 7px 5px",
     display: "inline-flex",
     justifyContent: "space-between",

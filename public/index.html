@@ -33,7 +33,7 @@
         let buttonText = document.getElementById("buttonShowMore");
         let buttonTextLess = document.getElementById("buttonShowLess");
         let contentStyle = document.getElementById("mapboxgl-popup-content");
-        let circuitbrakerButton = document.getElementById("circuitBraker");
+        let circuitbreakerButton = document.getElementById("circuitBraeker");
 
         if (detailsElement.getAttribute('style') === 'display: none;') {
           headerElement.style = 'display: none;';
@@ -42,7 +42,7 @@
           buttonText.style.display = 'none';
           buttonTextLess.style = 'display: block';
           //contentStyle.style = 'top: 18% !important';
-          circuitbrakerButton.style.display = 'none';
+          circuitbreakerButton.style.display = 'none';
 
         } else {
           headerElement.style = '';
@@ -51,17 +51,17 @@
           buttonText.style.display = '';
           buttonTextLess.style.display = 'none';
           //contentStyle.style = 'top: 27% !important';
-          circuitbrakerButton.style.display = 'block';
+          circuitbreakerButton.style.display = 'block';
         }
       }
 
       function goToDeviceRemoteControl (id) {
         let idSpeedDial = document.getElementById("showShortcut");
+        let deviceSelected = document.getElementById(`device-info-${id}`);
         if(idSpeedDial && !idSpeedDial.className.includes('speedDialOpen')){
           idSpeedDial.click();
-        }
-        let deviceSelected = document.getElementById(`device-info-${id}`);
-        deviceSelected.click();
+        }      
+        //deviceSelected.click(); 
       }
 
     </script>

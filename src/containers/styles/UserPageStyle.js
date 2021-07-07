@@ -47,7 +47,7 @@ const userPageStyle = makeStyles((theme) => ({
   adminButton: {
     textTransform: 'capitalize',
     fontSize: '19px',
-    color: '#753aff',
+    color: '#1c2a39',
     minWidth: '40px',
     padding: '5px !important',
     //background: 'darkkhaki',

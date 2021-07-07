@@ -14,11 +14,15 @@ import {
   getPolylineAttributes,
 } from "../utils/mapFunctions";
 import { devicesActions, positionsActions } from "../store";
+import { useHistory } from "react-router-dom";
 
 const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource}) => {
   let buttons = document.getElementById(`updatePopupInfo`);
+  let circuitbreaker = document.getElementById("circuitBreaker");
   let statusShowingGeozones = mapManager.map.getSource("geozones-labels");
+  let mapboxPopup = document.getElementsByClassName('mapboxgl-popup');
   let sources;
+  const history = useHistory();
   const dispatch = useDispatch();
   const containerEl = useRef(null);
   const [centered, setCentered] = useState(false);
@@ -39,7 +43,6 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource}) => {
     }
     return null;
   });
-
   const positions = useSelector((state) => ({
     type:"FeatureCollection",features: Object.values(state.positions.items).map((position) => ({
     type: "Feature",geometry: {type: "Point", coordinates: [position.longitude, position.latitude]},
@@ -237,7 +240,7 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource}) => {
       object[0].remove();
       refreshPopup(position);
     }  
-  }
+  }  
 
   if(buttons){
     buttons.addEventListener("click", function(){ 
@@ -252,6 +255,23 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource}) => {
       })
     })
   }
+
+  useEffect(()=> {
+    if(mapboxPopup){
+      if(circuitbreaker){
+        circuitbreaker.addEventListener("click", function(){ 
+          positions.features.map((position) => {
+            let deviceData = document.getElementById(`header-${position.properties.deviceId}`)         
+            let sourceData = mapManager.map.getSource(`places-${position.properties.deviceId}`);
+            if(deviceData && sourceData){
+              history.push(`/device/${position.properties.deviceId}`);
+              return;
+            }        
+          })
+        })
+      }      
+    }
+  },[mapboxPopup, positions, devices, buttons, circuitbreaker]);
 
   const style = {
     width: "100%",
