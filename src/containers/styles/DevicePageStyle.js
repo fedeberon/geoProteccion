@@ -54,29 +54,30 @@ const devicePageStyle = makeStyles((theme) => ({
   },
   devicesTable: {
     width: "auto",
-    height: "100%",
-    overflow: "auto",
-    marginLeft: "5%",
+    height: "68vh",
+    padding: "0 7%",
     overflowY: "scroll",
     display: "inherit",
     flexWrap: "wrap",
-    paddingBottom: "50%",
+    paddingBottom: "10%",
     [theme.breakpoints.up("md")]: {
       width: "100%",
       marginLeft: "auto",
       marginRight: "auto",
-      paddingBottom: "20%",
+      paddingBottom: "5%",
     },
   },
   root: {
     width: "95%",
     height: "auto",
     display: "grid",
-    borderRadius: "30px",
+    borderRadius: "10px",
     margin: "3% 0 3% 1%",
-    boxShadow: "0px 0px 10px 1px rgba(102, 97, 102, 0.8)",
-    mozBoxShadow: "0px 0px 10px 1px rgba(102, 97, 102, 0.8)",
-    webkitBoxShadow: "0px 0px 10px 1px rgba(102, 97, 102, 0.8)",
+    borderColor: "#5C7AFF",
+    border: "1px solid",
+    // boxShadow: "0px 0px 10px 1px rgba(102, 97, 102, 0.8)",
+    // mozBoxShadow: "0px 0px 10px 1px rgba(102, 97, 102, 0.8)",
+    // webkitBoxShadow: "0px 0px 10px 1px rgba(102, 97, 102, 0.8)",
     [theme.breakpoints.up("md")]: {
       width: "29%",
       display: "inline-grid",
@@ -104,6 +105,7 @@ const devicePageStyle = makeStyles((theme) => ({
   },
   expandOpen: {
     transform: "rotate(180deg)",
+    transition: "transform 5ms cubic-bezier(0.4, 0, 0.2, 1) 0ms !important",
   },
   avatar: {
     backgroundColor: "#e4efea",
@@ -127,6 +129,7 @@ const devicePageStyle = makeStyles((theme) => ({
   },
   MuiHeaderRoot: {
     padding: "10px",
+    minHeight: "140px !important",
   },
   MuiContentRoot: {
     padding: "0",

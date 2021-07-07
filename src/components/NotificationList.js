@@ -35,16 +35,16 @@ function NotificationList() {
               <ListItem className={classes.listItem} button key={index}>
                 <ListItemText>
                   <div className={classes.devsearchSt}>
-                    <p className={classes.devsearchStP}>
+                    <p className={classes.notificationTitle}><strong>
                       {devices &&
                         devices.find((e) => e.id === notification.deviceId)
                           .name}
-                    </p>
+                    </strong></p>
                   </div>
                 </ListItemText>
                 <ListItemSecondaryAction>
                   <div className={classes.devsearchSpeed}>
-                    <p className={classes.devsearchSpeedP}>
+                    <p className={classes.notificationEvent}>
                       {t(notification.type)}
                     </p>
                   </div>

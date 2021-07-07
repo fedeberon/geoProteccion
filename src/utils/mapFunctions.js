@@ -262,9 +262,6 @@ function createFeature (devices, position, isViewportDesktop, server) {
                               <li>
                                   <p style="${desktopView ? 'font-size: 16px' : 'font-size: 17px'}"><strong  class="bold">${device.name}</strong></p>
                               </li>
-                              <li>
-                                  <p>${getDateTimeDevices(device ? device.lastUpdate : '')}</p>
-                              </li>
                               <!--
                               <li><p>${brand + ' ' + model + ' ' + year}</p></li>
                               <li><p>${protocol}</p></li>

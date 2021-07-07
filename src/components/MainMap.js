@@ -21,12 +21,15 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource}) => {
   let sources;
   const dispatch = useDispatch();
   const containerEl = useRef(null);
+  const [centered, setCentered] = useState(false);
   const [mapReady, setMapReady] = useState(false); 
   const isViewportDesktop = useSelector((state) => state.session.deviceAttributes.isViewportDesktop);  
   const devices = useSelector((state) => Object.values(state.devices.items)); 
   const selectedItems = useSelector((state) => state.positions.selectedItems);
   const lastRemoved = useSelector((state) => state.positions.lastRemoved);
   const server = useSelector((state) => state.session.server);  
+  const user = useSelector((state) => state.session.user);
+  const selectedDevice = useSelector((state) => state.devices.selectedDevice);
   const mapCenter = useSelector((state) => {
     if (state.devices.selectedId) {
       const position = state.positions.items[state.devices.selectedId] || null;
@@ -70,12 +73,27 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource}) => {
   },[]);
 
   useEffect(() => {
+    if(!centered){
+      mapManager.map.easeTo({
+        center: mapCenter,
+        duration: 500,
+        zoom: 13,
+      });
+    } else {
       mapManager.map.easeTo({
         center: mapCenter,
         duration: 500,
         zoom: mapManager.map.getZoom(),
       });
-  },[mapCenter]); 
+    }
+    setTimeout(()=> {
+      if(mapCenter !== null){
+        setCentered(true);
+      } else {
+        setCentered(false);
+      } 
+    },1000)    
+  },[selectedDevice, mapCenter]); 
 
   var markerHeight = 0,
     markerRadius = 0,

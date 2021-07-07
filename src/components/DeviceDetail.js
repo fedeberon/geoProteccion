@@ -272,7 +272,7 @@ const DeviceDetail = (props) => {
             <div className={classes.divCards}>
               <Button component="div" onClick={() => handleConfirmAlarm()}
               className={classes.buttonsCards} disabled={!availableFunction}>
-                <Card style={{backgroundColor: `${alarmActivated ? '#54ff54' : 'white'}`}}
+                <Card style={{backgroundColor: `${alarmActivated ? '#59D2FE' : 'black'}`}}
                   className={classes.root}
                   variant="outlined"
                 >
@@ -290,6 +290,7 @@ const DeviceDetail = (props) => {
                     </p>
                     <Typography className={classes.buttonTypogra}
                       variant="h6"
+                      style={{color: `${alarmActivated ? 'black' : 'white'}`}}
                       component="h4"
                     >
                       {t('commandAlarmArm')}/{t("commandAlarmDisarm")}
@@ -300,7 +301,12 @@ const DeviceDetail = (props) => {
                     >
                       Enviar SMS:
                   </Typography> */}
-                  <Typography style={{textAlign: 'center', marginTop: '25px' }} className={classes.pos} color="textSecondary">
+                  <Typography style={{
+                    textAlign: 'center', 
+                    marginTop: '25px',
+                    color: `${circuitBreaker ? 'black' : 'white'}`
+                    }} 
+                    className={classes.pos} color="textSecondary">
                       {`${alarmActivated ? `${t("commandEnable")}` : `${t("sharedDisabled")}`}`}
                     </Typography>
 
@@ -311,7 +317,7 @@ const DeviceDetail = (props) => {
               {/* Botton para activar o desactivar cortacorriente */}
               <Button component="div" onClick={() => handleConfirmcircuitBreaker()}
                 className={classes.buttonsCards} disabled={!availableFunction}>
-                <Card style={{backgroundColor: `${circuitBreaker ? '#54ff54' : 'white'}`}}
+                <Card style={{backgroundColor: `${circuitBreaker ? '#59D2FE' : 'black'}`}}
                 className={classes.root} variant="outlined">
                   <CardContent className="card-device-detail">
                     <IconButton style={{ backgroundColor: "cornflowerblue", width: '42px', height: '42px' }}>
@@ -327,11 +333,17 @@ const DeviceDetail = (props) => {
 
                     <Typography className={classes.buttonTypogra}
                       variant="h6"
+                      style={{color: `${circuitBreaker ? 'black' : 'white'}`}}
                       component="h4"
                     >
                       {t("circuitBreaker")}
                     </Typography>
-                    <Typography style={{textAlign: 'center', marginTop: '45px' }} className={classes.pos} color="textSecondary">
+                    <Typography style={{
+                      textAlign: 'center', 
+                      marginTop: '45px',
+                      color: `${circuitBreaker ? 'black' : 'white'}`
+                    }} 
+                    className={classes.pos} color="textSecondary">
                       {`${circuitBreaker ? `${t("commandEnable")}` : `${t("sharedDisabled")}`}`}
                     </Typography>
                   </CardContent>

@@ -57,9 +57,9 @@ const userPageStyle = makeStyles((theme) => ({
   subtitles: {
     fontSize: '19px',
     fontWeight: 600,    
-    backgroundColor: "lavender",
+    backgroundColor: "#73fbd3",
     padding: "4px",
-    color: "#848ca2",
+    color: "#1c2a39",
     alignItems: 'center',
     textAlign: "center",
     display: "flow-root",

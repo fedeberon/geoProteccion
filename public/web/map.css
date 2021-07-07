@@ -11,6 +11,15 @@ html, body, #root {
   background-color: #155477 !important;
 }
 
+.MuiSpeedDialAction-fab {
+  background-color: #5C7AFF !important;
+  color: white !important;
+}
+
+.MuiCardHeader-action {
+  display: contents !important;
+}
+
 /* .scrollbar::-webkit-scrollbar {
   display: none;
 } */
@@ -40,7 +49,7 @@ html, body, #root {
   border-bottom: none !important;
   box-shadow: 0 0 3px 0 rgba(102, 97, 102, 0.8) !important;
   background-color: transparent;
-  color: white !important;
+  color: #1c2a39 !important;
 }
 
 /* .List::-webkit-scrollbar {
@@ -87,7 +96,7 @@ button {
 
 .popup-map-div {
   font-size: 0.9em;
-  color: white;
+  color: #1c2a39;
 }
 
 #ContentServerDialog {
@@ -133,12 +142,12 @@ button {
   border-radius: 6px;
   background-color: transparent;
   text-transform: uppercase;
-  color: white;
+  color: #1c2a39;
   margin-bottom: 7px;
   padding: 7px;
   font-family: system-ui;
   font-size: 13px;
-  border-color: white;
+  border-color: #1c2a39;
   border: solid 1px;
 }
 
@@ -147,17 +156,17 @@ button {
   margin-top: 6px;
   margin-bottom: 6px;
   background-color: transparent;
-  border-color: white;
+  border-color: #1c2a39;
   padding: 6px;
   font-size: 11px;
   text-transform: uppercase;
-  color: white;
+  color: #1c2a39;
   border: solid 1px;
 }
 
 .icon-fa {
   font-size: 18px;
-  color: #2b2ba9;
+  color: #59d2fe;
   display: flex !important;
   justify-content: center;
 }
@@ -215,7 +224,6 @@ button {
 
 .mapboxgl-popup-content {
   background-color: white !important;
-  background-image: linear-gradient( 25deg, #77F9D3 0%, #5CD2F8 50%, #5A79FF 100%) !important;
   border-radius: 35px !important;
   padding: 0 12px !important;
   -webkit-box-shadow: 0px 0px 20px 1px rgba(102, 97, 102, 0.8) !important;
@@ -234,7 +242,7 @@ button {
 }
 
 .MuiFab-primary {
-  background-image: linear-gradient(25deg, #77F9D3 0%, #5CD2F8 50%, #5A79FF 100%);
+  background-color: #5C7AFF !important;
 }
 
 .status-online {
@@ -253,12 +261,12 @@ button {
 }
 
 .status-inactive {
-  color: white;
+  color: #1c2a39;
   margin: 0;
 }
 
 .status-inactive-mobile {
-  color: white;
+  color: #1c2a39;
   margin: 0 !important;
 }
 
@@ -335,7 +343,7 @@ button {
   font-size: 12px !important;
 }
 
-@media only screen and (max-width: 960px) {
+@media only screen and (max-width: 959px) {
 
   .mapboxgl-popup {
     max-width: 100% !important;
@@ -344,9 +352,7 @@ button {
 
   .mapboxgl-popup-content {
     display: flex !important;
-    top: 48% !important;
     z-index: 2 !important;
-    background-image: linear-gradient(25deg, #77F9D3 0%, #5CD2F8 50%, #5A79FF 100%) !important;
   }
 
   .MuiSpeedDial-root {
@@ -356,10 +362,6 @@ button {
   th tr td {
     padding: 0;
     margin: 0;
-  }
-
-  .icon-fa {
-    color: white;
   }
 
   #Menu-actions {
@@ -459,7 +461,7 @@ button {
   box-shadow: 0 0 3px 0 rgba(102, 97, 102, 0.8) !important;
   font-size: 25px;
   background-color: transparent !important;
-  color: white !important;
+  color: #1c2a39 !important;
 }
 
 .custom-tooltip{
@@ -473,7 +475,7 @@ button {
 }
 
 .MuiAvatar-colorDefault {
-  background-color: #dedddd !important;
+  background-color: #a5b2ea!important;
 }
 
 /* ancho de pantalla de mas de 960px (desktop-notebook)*/
@@ -481,6 +483,23 @@ button {
   /* .MuiDialog-paperWidthSm {
     max-width: 300px !important;
   } */
+  .MuiSpeedDial-root {
+    margin: 0 5px !important;
+  }
+
+  .MuiListItem-container {
+    min-width: 100%;
+  }
+
+  .ListDevices {
+    position: relative;
+    height: 68vh !important;
+    width: auto;
+    will-change: transform;
+    direction: ltr;
+    overflow: auto;
+  }
+
   .MuiCollapse-entered {
     min-width: 100% !important;
   }
@@ -492,7 +511,7 @@ button {
   }
 
   .MuiListItem-root {
-    min-width: 493px !important;
+    min-width: 100% !important;
   }
 
   .MuiListItemText-root {
@@ -553,7 +572,7 @@ button {
     right: 1% !important;
   }
   .title-section {
-    color: #155477;
+    color: #1c2a39;
     margin-top: 5%;
     text-align: center;
   }  
@@ -565,7 +584,7 @@ button {
     margin-top: 0;
   }
   .title-section-users {
-    color: #7b94a2;
+    color: #1c2a39;
     padding-top: 4.6%;
     background-color: aliceblue;
     text-align: center;
@@ -699,8 +718,8 @@ button {
 
   .popup-map-div-mobile {
     padding: 3% 8%;
-    width: 90%;
-    color: white;
+    width: 88%;
+    color: #1c2a39;
     font-size: 12px;
     line-height: normal;
   }
@@ -714,8 +733,8 @@ button {
     margin: 0;
     border-bottom: solid 0.1px;
     padding: 6px 0px;
-    background-color: #d8d8ff;
-    color: #7979ef;
+    background-color: #73fbd3;
+    color: #1c2a39;
   }
 
   .MuiButton-root {
@@ -732,9 +751,9 @@ button {
   }
 
   .title-section-users {
-    color: #fafafa;
+    color: #1c2a39;
     text-align: center;
-    background-color: cornflowerblue;
+    background-color: #73fbd3;
   }
   .title-section-users > h2 {
     padding: 10px;
@@ -840,8 +859,7 @@ button {
     margin: 0 auto;
     position: sticky !important;
     background-color: white !important;
-    background-image: linear-gradient( 25deg, #77F9D3 0%, #5CD2F8 50%, #5A79FF 100%) !important;
-    border-radius: 35px !important;
+    border-radius: 30px !important;
     padding: 0 12px !important;
     width: 90%;
     -webkit-box-shadow: 0px 0px 20px 1px rgba(102, 97, 102, 0.8) !important;

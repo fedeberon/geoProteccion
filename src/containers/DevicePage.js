@@ -9,6 +9,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 import * as service from "../utils/serviceManager";
 import t from "../common/localization";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
+import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import clsx from "clsx";
 import Card from "@material-ui/core/Card";
 import CardHeader from "@material-ui/core/CardHeader";
@@ -50,6 +51,8 @@ import devicePageStyle from "./styles/DevicePageStyle";
 import { devicesActions } from "../store";
 import Avatar from '@material-ui/core/Avatar';
 import AttributesDialog from '../components/AttributesDialog';
+import { FixedSizeList } from 'react-window';
+import AutoSizer from "react-virtualized-auto-sizer";
 
 const useStyles = devicePageStyle;
 
@@ -504,7 +507,7 @@ const DevicePage = () => {
         <h2>{t("deviceTitle")}</h2>
         <Divider />
       </div>
-      <Container style={{paddingBottom: '5px', display: `${window.innerWidth < 767 ? 'block' : 'inline-flex'}`, justifyContent: 'center'}}>
+      <Container style={{paddingBottom: '10px', display: `${window.innerWidth < 767 ? 'block' : 'inline-flex'}`, justifyContent: 'center'}}>
         <Button
           className={classes.buttonAddNewDevice}
           type="button"
@@ -531,13 +534,28 @@ const DevicePage = () => {
       </Container>
 
       <div className={classes.devicesTable}>
+        {/* <div style={{backgroundColor: "red", width: "100%", height: "100%"}}>
+          <AutoSizer>
+              {({height, width}) => (
+                <FixedSizeList
+                  className="ListDevices"
+                  height={height}
+                  itemCount={devices.length}
+                  itemSize={100}
+                  width={width}
+                >
+                  {Row}                    
+                </FixedSizeList>                 
+              )}
+          </AutoSizer>
+        </div> */}
         {devices.map((device, index) => (
           <Card key={index} className={classes.root}>
-            <CardMedia
+            {/* <CardMedia
               className={classes.media}
-              image="images/Tesla-maps.jpg"
+              // image="images/Tesla-maps.jpg"
               title="Tesla"
-            />
+            /> */}
             <CardHeader
               className={classes.MuiHeaderRoot}
               avatar={
@@ -546,7 +564,7 @@ const DevicePage = () => {
                 </Avatar>
               }
               action={
-                <div>
+                <div style={{display: "contents"}}>
                   <IconButton
                     className={clsx(classes.expand, {
                       [classes.expandOpen]: collapsedIndex === index,
@@ -557,18 +575,18 @@ const DevicePage = () => {
                     aria-expanded={collapsedIndex === index}
                     aria-label="show more"
                   >
-                    <ExpandMoreIcon />
+                    <ExpandMoreIcon style={{color: "#a5b2ea"}}/>
                   </IconButton>
                   <IconButton
                     value={device.id}
                     aria-label="settings"
                     onClick={handleClickMenuMore}
                   >
-                    <MoreVertIcon />
+                    <MoreVertIcon style={{color: "#a5b2ea"}}/>
                   </IconButton>
                 </div>
-              }
-              title={`${device.attributes.PATENTE} - ${device.name}`}
+              } //${device.attributes.PATENTE} - 
+              title={`${device.name}`}
               subheader={getDateTimeDevices(device.lastUpdate)}
             />
             <Menu
@@ -894,7 +912,7 @@ const DevicePage = () => {
                         {t("positionDistance")}:&nbsp;
                       </strong>
                       {positions && positions[device.id]
-                        ? `${positions[device.id].attributes.distance} Km`
+                        ? `${positions[device.id].attributes.distance} ${server && server.attributes?.distanceUnit}`
                         : "Undefined"}
                     </ListItemText>
                   </ListItem>
@@ -912,7 +930,7 @@ const DevicePage = () => {
                         {t("deviceTotalDistance")}:&nbsp;
                       </strong>
                       {positions && positions[device.id]
-                        ? `${(Math.round((positions[device.id].attributes.totalDistance.toFixed(2)) / 10)) / 100} Km`
+                        ? `${(Math.round((positions[device.id].attributes.totalDistance.toFixed(2)) / 10)) / 100} ${server && server.attributes?.distanceUnit}`
                         : "Undefined"}
                     </ListItemText>
                   </ListItem>
@@ -936,7 +954,7 @@ const DevicePage = () => {
                   </ListItem>
 
                   <ListItem
-                    style={{ justifyContent: "left"}}
+                    style={{ justifyContent: "center"}}
                     button
                     onClick={() => showMore()}
                   >
@@ -1482,7 +1500,7 @@ const DevicePage = () => {
                           }}
                         />
                       </TableCell>
-                      <TableCell style={{ padding: 0 }}>Km</TableCell>
+                      <TableCell style={{ padding: 0 }}>{server && server.attributes?.distanceUnit}</TableCell>
                     </TableRow>
                     <TableRow>
                       <TableCell style={{ padding: 0 }}>

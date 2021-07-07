@@ -46,11 +46,11 @@ function DeviceList  ({list, enableIcon, upIcon, closing}) {
     if(icon){
       if(selectedItems.findIndex(elem => elem.id === device.id) === -1){      
         dispatch(positionsActions.addSelectedDevice(device));
-        icon.style.color = "chartreuse";
+        icon.style.color = "#59D2FE";
       } else {
         dispatch(positionsActions.removeSelectedDevice(device));
         dispatch(positionsActions.lastRemoved(device.id));
-        icon.style.color = "rgb(134, 128, 187)";
+        icon.style.color = "#1C2A39";
       }  
     }      
   }
@@ -60,7 +60,7 @@ function DeviceList  ({list, enableIcon, upIcon, closing}) {
       selectedItems.map(item => {
         let icon = document.getElementById(`show-${item.id}`)
         if(icon){
-          icon.style.color = "chartreuse";
+          icon.style.color = "#59D2FE";
         }
       })
     }
@@ -108,6 +108,7 @@ function DeviceList  ({list, enableIcon, upIcon, closing}) {
               className={`far fa-circle fa-2x device-icon-${list[index].status} status-${list[index].status}`}
               style={{
                 paddingRight: "0px",
+                paddingLeft: "2px",
                 display: "flex",
                 justifyContent: "center",
               }}
@@ -117,7 +118,7 @@ function DeviceList  ({list, enableIcon, upIcon, closing}) {
           <ListItemSecondaryAction>
             <IconButton
               id={`device-info-${list[index].id}`}
-              style={{ color: "#8680bb", padding: '6px'}}
+              style={{ color: "#1C2A39", padding: '6px'}}
               title={t("sharedInfoTitle")}
               onClick={(e) => {
                 e.stopPropagation();
@@ -129,7 +130,7 @@ function DeviceList  ({list, enableIcon, upIcon, closing}) {
             {enableIcon &&
               <IconButton
               id={`device-object-${list[index].id}`}
-              style={{ color: "#8680bb", padding: '6px'}}
+              style={{ color: "#1C2A39", padding: '6px'}}
               title={t("reportShow")}
               onClick={(e) => {
                 e.stopPropagation();

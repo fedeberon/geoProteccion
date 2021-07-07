@@ -20,9 +20,9 @@ const notificationListStyles = makeStyles((theme) => ({
     [theme.breakpoints.up("md")]: {
       position: "absolute",
       margin: "0px 15px 0px 10px",
-      width: "35%",
-      top: "9%",
-      left: "11%",
+      width: "32%",
+      top: "12%",
+      left: "5%",
     },        
   },
   iconButton: {
@@ -66,12 +66,12 @@ const notificationListStyles = makeStyles((theme) => ({
     },
   },
 
-  devsearchSpeedP: {
+  notificationEvent: {
     fontSize: "10px",
     display: "contents",
     justifyContent: "center",
     [theme.breakpoints.up("md")]: {
-      fontSize: "15px",
+      fontSize: "13px",
       padding: "0 5px 0 0",
     },
   },
@@ -84,11 +84,11 @@ const notificationListStyles = makeStyles((theme) => ({
       fontSize: "12px",
     },
   },
-  devsearchStP: {
+  notificationTitle: {
     fontSize: "12px",
     margin: "3px 0",
     [theme.breakpoints.up("md")]: {
-      fontSize: "15px",
+      fontSize: "13px",
       margin: 0,
     },
   },
