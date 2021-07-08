@@ -15,6 +15,7 @@ import {
 } from "../utils/mapFunctions";
 import { devicesActions, positionsActions } from "../store";
 import { useHistory } from "react-router-dom";
+import t from "../common/localization";
 
 const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource}) => {
   let buttons = document.getElementById(`updatePopupInfo`);
@@ -256,9 +257,10 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource}) => {
     })
   }
 
-  useEffect(()=> {
+  useEffect(()=> {   
     if(mapboxPopup){
       if(circuitbreaker){
+        circuitbreaker.innerHTML = `${t("circuitBreaker")}`;
         circuitbreaker.addEventListener("click", function(){ 
           positions.features.map((position) => {
             let deviceData = document.getElementById(`header-${position.properties.deviceId}`)         
@@ -270,6 +272,10 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource}) => {
           })
         })
       }      
+    } else {
+      if(circuitbreaker){
+        circuitbreaker.style.borderColor = "green";
+      }
     }
   },[mapboxPopup, positions, devices, buttons, circuitbreaker]);
 

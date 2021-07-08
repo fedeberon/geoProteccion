@@ -462,9 +462,8 @@ function createFeature (devices, position, isViewportDesktop, server) {
                           
                           <button id="circuitBreaker" onClick="goToDeviceRemoteControl(${device.id})"
                           class="${desktopView ? 'button-black' : 'button-black-mobile'}">
-                              ${t("circuitBreaker")}
+                              ${t("sharedRecovering")}
                           </button>
-                          
                       </div>
                   </div>`
   }

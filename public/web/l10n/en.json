@@ -473,5 +473,6 @@
     "off": "Off",
     "true": "Yes",
     "false": "No",
-    "sharedShow": "Showing"
+    "sharedShow": "Showing",
+    "sharedRecovering": "Recovering information..."
 }

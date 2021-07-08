@@ -469,5 +469,6 @@
     "positionDate": "Fecha",
     "on": "Encedido",
     "off": "Apagado",
-    "sharedShow": "Mostrando"
+    "sharedShow": "Mostrando",
+    "sharedRecovering": "Recuperando información..."
 }
