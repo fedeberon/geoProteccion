@@ -1,6 +1,6 @@
-import React, { useRef, useLayoutEffect, useEffect, useState, useMemo, useCallback } from "react";
+import React, { memo, useRef, useLayoutEffect, useEffect, useState, useMemo, useCallback } from "react";
 import mapManager from "../utils/mapManager";
-import {useSelector, useDispatch} from "react-redux";
+import {useSelector, useDispatch, shallowEqual} from "react-redux";
 import {
   calculatePolygonCenter,
   createLabels,
@@ -17,7 +17,7 @@ import { devicesActions, positionsActions } from "../store";
 import { useHistory } from "react-router-dom";
 import t from "../common/localization";
 
-const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource}) => {
+const MainMap = memo(({ geozones, areGeozonesVisible, rasterSource}) => {
   let buttons = document.getElementById(`updatePopupInfo`);
   let circuitbreaker = document.getElementById("circuitBreaker");
   let statusShowingGeozones = mapManager.map.getSource("geozones-labels");
@@ -28,13 +28,12 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource}) => {
   const containerEl = useRef(null);
   const [centered, setCentered] = useState(false);
   const [mapReady, setMapReady] = useState(false); 
-  const isViewportDesktop = useSelector((state) => state.session.deviceAttributes.isViewportDesktop);  
-  const devices = useSelector((state) => Object.values(state.devices.items)); 
-  const selectedItems = useSelector((state) => state.positions.selectedItems);
-  const lastRemoved = useSelector((state) => state.positions.lastRemoved);
-  const server = useSelector((state) => state.session.server);  
-  const user = useSelector((state) => state.session.user);
-  const selectedDevice = useSelector((state) => state.devices.selectedDevice);
+  const isViewportDesktop = useSelector((state) => state.session.deviceAttributes.isViewportDesktop, shallowEqual);  
+  const devices = useSelector((state) => Object.values(state.devices.items), shallowEqual); 
+  const selectedItems = useSelector((state) => state.positions.selectedItems, shallowEqual);
+  const lastRemoved = useSelector((state) => state.positions.lastRemoved, shallowEqual);
+  const server = useSelector((state) => state.session.server, shallowEqual);
+  const selectedDevice = useSelector((state) => state.devices.selectedDevice, shallowEqual);
   const mapCenter = useSelector((state) => {
     if (state.devices.selectedId) {
       const position = state.positions.items[state.devices.selectedId] || null;
@@ -43,7 +42,7 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource}) => {
       }
     }
     return null;
-  });
+  }, shallowEqual);
   const positions = useSelector((state) => ({
     type:"FeatureCollection",features: Object.values(state.positions.items).map((position) => ({
     type: "Feature",geometry: {type: "Point", coordinates: [position.longitude, position.latitude]},
@@ -68,9 +67,9 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource}) => {
         await fetch("/api/positions").then((response) => {
           if (response.ok) {
             response.json().then((positions) => {
-              dispatch(positionsActions.update(positions));
+              dispatch(positionsActions.refreshPositions(positions));
             });    
-          }      
+          }
         });
     }, 10000);
     return () => clearInterval(interval);
@@ -139,7 +138,7 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource}) => {
   //   mapManager.registerListener(() => setMapReady(true));
   // }, []);
 
-  //Initial data charge of devices on map
+  //Initial data load of devices on the map
   useEffect(() => {
 
     if(statusShowingGeozones){
@@ -272,10 +271,6 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource}) => {
           })
         })
       }      
-    } else {
-      if(circuitbreaker){
-        circuitbreaker.style.borderColor = "green";
-      }
     }
   },[mapboxPopup, positions, devices, buttons, circuitbreaker]);
 
@@ -580,6 +575,6 @@ const MainMap = ({ geozones, areGeozonesVisible, zoom, rasterSource}) => {
   },[areGeozonesVisible])
 
   return <div style={style} ref={containerEl} />;
-};
+});
 
-export default MainMap;
+export default memo(MainMap);

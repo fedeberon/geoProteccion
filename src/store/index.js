@@ -1,4 +1,4 @@
-import { combineReducers, configureStore} from "@reduxjs/toolkit";
+import { combineReducers, configureStore, createImmutableStateInvariantMiddleware} from "@reduxjs/toolkit";
 
 import { sessionReducer as session } from "./session";
 import { devicesReducer as devices } from "./devices";
@@ -16,6 +16,11 @@ const reducer = combineReducers({
   geofences,
 });
 
+const immutableInvariantMiddleware = createImmutableStateInvariantMiddleware({
+  ignoredPaths: ['items'],
+  warnAfter: 400,
+})
+
 export { sessionActions } from "./session";
 export { devicesActions } from "./devices";
 export { positionsActions } from "./positions";
@@ -23,8 +28,7 @@ export { notificationActions } from "./notification";
 export { modalsActions } from "./modals";
 export { geofencesActions } from "./geofences";
 
-export default configureStore({ reducer,
-  middleware: (getDefaultMiddleware) =>
-  getDefaultMiddleware({
-    serializableCheck: false,
-  }), });
+export default configureStore({ 
+  reducer: reducer,
+  middleware: [immutableInvariantMiddleware], 
+});

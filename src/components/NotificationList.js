@@ -1,30 +1,21 @@
 import {
-  Avatar,
   Divider,
-  IconButton,
-  InputBase,
   ListItem,
-  ListItemAvatar,
   ListItemSecondaryAction,
   ListItemText,
   Paper,
 } from "@material-ui/core";
-import SearchIcon from "@material-ui/icons/Search";
-import React, { Fragment, useEffect, useState } from "react";
-import { shallowEqual, useDispatch, useSelector } from "react-redux";
+import React, { memo, Fragment } from "react";
+import { shallowEqual, useSelector } from "react-redux";
 import { notificationActions } from "../store";
 import t from "../common/localization";
 import notificationListStyles from "./styles/NotificationListStyles";
 
 const useStyles = notificationListStyles;
 
-function NotificationList() {
+const NotificationList = memo(function NotificationList({devices}) {
   const classes = useStyles();
-  const devices = useSelector(
-    (state) => Object.values(state.devices.items),
-    shallowEqual
-  );
-  const notifications = useSelector((state) => state.notification.items);
+  const notifications = useSelector((state) => state.notification.items, shallowEqual);
 
   return (
     <Paper component="form" className={classes.paper + " scrollbar"}>
@@ -56,6 +47,6 @@ function NotificationList() {
       </div>
     </Paper>
   );
-}
+});
 
-export default NotificationList;
+export default memo(NotificationList);

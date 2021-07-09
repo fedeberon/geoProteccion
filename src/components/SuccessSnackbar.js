@@ -6,15 +6,25 @@ import Button from "@material-ui/core/Button";
 import Slide from "@material-ui/core/Slide";
 import t from "../common/localization";
 
-export default function SuccessSnackbar() {
+function SuccessSnackbar() {
   const dispatch = useDispatch();
   const isViewportDesktop = useSelector((state) => state.session.deviceAttributes.isViewportDesktop);
   const { successSnackbarMessage, successSnackbarOpen } = useSelector(
     (state) => state.notification
   );
-  const devices = useSelector((state) => Object.values(state.devices.items));
+  const [devices, setDevices] = useState();
   const [device, setDevice] = useState({});
   const [type, setType] = useState("");
+
+  useEffect(async () => {
+    await fetch("/api/devices").then((response) => {
+      if (response.ok) {
+        response.json().then((devices) => {
+          setDevices(devices);
+        });
+      }      
+    });
+  }, []);
 
   const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="down" ref={ref} {...props} />;
@@ -37,7 +47,7 @@ export default function SuccessSnackbar() {
     }
     setDevice(deviceName);
     setType(successSnackbarMessage.type);
-  }, [devices]);
+  }, [successSnackbarMessage]);
 
   return (
     <>
@@ -49,7 +59,7 @@ export default function SuccessSnackbar() {
         horizontal: "right",
       }}
       open={successSnackbarOpen}
-      autoHideDuration={4000}
+      autoHideDuration={3000}
       onClose={handleClose}
       aria-describedby="client-snackbar"
       TransitionComponent={Transition}
@@ -66,4 +76,6 @@ export default function SuccessSnackbar() {
     />
     </>    
   );
-}
+};
+
+export default SuccessSnackbar;

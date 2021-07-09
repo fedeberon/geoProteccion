@@ -4,10 +4,9 @@ import {
   Paper,
 } from "@material-ui/core";
 import SearchIcon from "@material-ui/icons/Search";
-import React, { Fragment, useEffect, useState, useLayoutEffect } from "react";
+import React, { useEffect, useState, } from "react";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { devicesActions, positionsActions } from "../store";
-import { useHistory } from "react-router-dom";
 import deviceSearchStyles from "./styles/DeviceSearchStyles";
 import DeviceList from "./DeviceList.js";
 import t from "../common/localization";
@@ -16,9 +15,7 @@ const useStyles = deviceSearchStyles;
 
 function DeviceSearch() {
   const dispatch = useDispatch();
-  const history = useHistory();
   const classes = useStyles();
-  const server = useSelector((state) => state.session.server);
   const enableIcon = useSelector(state => state.devices.selectEnable);
   const devicesRedux = useSelector(
     (state) => Object.values(state.devices.items),
@@ -26,7 +23,6 @@ function DeviceSearch() {
   );
   let upIcon = document.getElementById("searchbox-up");
   const [inputSearch, setInputSearch] = useState();
-  const positions = useSelector((state) => state.positions.items, shallowEqual);
   const [deviceList, setDeviceList] = useState(devicesRedux);
   const [showDeviceList, setShowDeviceList] = useState(false);
   const selectedItems = useSelector((state) => state.positions.selectedItems);

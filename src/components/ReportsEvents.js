@@ -44,7 +44,7 @@ try {
   events && events.map((event,index) => {
     eventsRows.push({
     id: index,
-    date: getDateTime(event.eventTime),
+    date: getDateTime(event.serverTime),
     deviceName: GetDeviceName(event.deviceId),        
     type: t(`${event.type}`),
     geofence: event.geofenceId === 0 ? '' : event.geofenceId,

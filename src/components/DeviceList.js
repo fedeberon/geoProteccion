@@ -17,17 +17,17 @@ import { devicesActions, positionsActions } from "../store";
 
 const useStyles = deviceListStyles;
 
-function DeviceList  ({list, enableIcon, upIcon, closing}) {
+const DeviceList = React.memo(function DeviceList ({list, enableIcon, upIcon, closing}) {
   const history = useHistory();
   const dispatch = useDispatch();
-  const server = useSelector((state) => state.session.server);
+  const server = useSelector((state) => state.session.server, shallowEqual);
   const positions = useSelector((state) => state.positions.items, shallowEqual);
   const classes = useStyles();
   const devicesRedux = useSelector(
     (state) => Object.values(state.devices.items),
     shallowEqual
   );
-  const selectedItems = useSelector((state) => state.positions.selectedItems);
+  const selectedItems = useSelector((state) => state.positions.selectedItems, shallowEqual);
 
   const dispatchDevice = (device) => {
     dispatch(devicesActions.select(device));
@@ -161,6 +161,6 @@ function DeviceList  ({list, enableIcon, upIcon, closing}) {
         )}
     </AutoSizer>
   );
-};
+});
 
-export default DeviceList;
+export default React.memo(DeviceList);

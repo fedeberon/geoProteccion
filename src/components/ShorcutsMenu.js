@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { memo, useState, useEffect } from "react";
 import Backdrop from "@material-ui/core/Backdrop";
 import SpeedDial from "@material-ui/lab/SpeedDial";
 import t from "../common/localization";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector, shallowEqual} from "react-redux";
 import DeviceSearch from "./DeviceSearch";
 import Badge from "@material-ui/core/Badge";
 import { notificationActions } from "../store";
@@ -10,22 +10,18 @@ import shortcutsMenuStyles from "./styles/ShortcutsMenuStyles";
 
 const useStyles = shortcutsMenuStyles;
 
-export default function ShortcutsMenu({
-  toggleGeozones,
-  showReportDialog,
-  setDeviceFollow,
-  showNotificationsDialog,
-}) {
+const ShortcutsMenu = memo(({toggleGeozones,showReportDialog,setDeviceFollow,showNotificationsDialog}) => {
+
   const dispatch = useDispatch();
   const classes = useStyles();
   const isViewportDesktop = useSelector(
-    (state) => state.session.deviceAttributes.isViewportDesktop
+    (state) => state.session.deviceAttributes.isViewportDesktop, shallowEqual
   );
-  const notifications = useSelector((state) => state.notification.items);
+  const notifications = useSelector((state) => state.notification.items, shallowEqual);
   const [showShortcutMenu, setShowShortcutMenu] = useState(isViewportDesktop);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [onFollow, setOnFollow] = useState(false);
-  const deviceSelected = useSelector((state) => state.devices.selectedDevice);
+  const deviceSelected = useSelector((state) => state.devices.selectedDevice, shallowEqual);
 
   const handleShowShortcutMenu = () => {
     setShowShortcutMenu(!showShortcutMenu);
@@ -132,4 +128,6 @@ export default function ShortcutsMenu({
       )}
     </div>
   );
-}
+});
+
+export default ShortcutsMenu;

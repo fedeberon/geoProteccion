@@ -8,13 +8,13 @@ const { reducer, actions } = createSlice({
     lastRemoved: 0,
   },
   reducers: {
-    update(state, action) {  
-      // if(state.selectedItems.findIndex(elem => elem.id === action.payload[0].deviceId) !== -1){
-      //   action.payload.forEach((item) => (state.items[item["deviceId"]] = item));
-      // } 
-      // else {
+    updateSelectedPositions(state, action) {  
+      if(state.selectedItems.findIndex(elem => elem.id === action.payload[0].deviceId) !== -1){
+        action.payload.forEach((item) => (state.items[item["deviceId"]] = item));
+      } 
+    },
+    refreshPositions(state, action) {
       action.payload.forEach((item) => (state.items[item["deviceId"]] = item));
-      // }
     },
     addSelectedDevice(state, action) {
       state.selectedItems.push(action.payload);

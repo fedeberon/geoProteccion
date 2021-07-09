@@ -22,7 +22,7 @@ const MainPage = ({ width }) => {
   const classes = useStyles();
   const user = useSelector((state) => state.session.user);
   const server = useSelector((state) => state.session.server);
-  const devices = useSelector((state) => state.devices.items);
+  const [devices, setDevices] = useState();
   const [areGeozonesVisible, setAreGeozonesVisible] = useState(false);
   const [showReports, setShowReports] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
@@ -44,10 +44,11 @@ const MainPage = ({ width }) => {
       if (response.ok) {
         response.json().then(async(devices) => {
           dispatch(devicesActions.update(devices));
+          setDevices(devices);
           await fetch("/api/positions").then((response) => {
             if (response.ok) {
               response.json().then((positions) => {
-                dispatch(positionsActions.update(positions));
+                dispatch(positionsActions.refreshPositions(positions));
               });
             }
             setReady(true); 
@@ -121,7 +122,7 @@ const MainPage = ({ width }) => {
 
       {showNotifications && (
         <div>
-          <NotificationList />
+          <NotificationList devices={devices}/>
         </div>
       )}
     </div>
