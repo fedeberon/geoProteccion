@@ -21,15 +21,30 @@ const deviceSearchStyles = makeStyles((theme) => ({
       width: "75%",
     },
   },
+  formControlFilter: {
+    margin: theme.spacing(1),
+    minWidth: 120,
+  },
   iconSearchbox: {
+    position: 'absolute', 
+    right: '13%', 
+    borderRadius: "20px", 
+    backgroundColor: "transparent", 
+    padding: "4% 5%",
+    [theme.breakpoints.up("md")]: {
+      right: '8%',
+      padding: "2% 4%",
+    },
+  },
+  iconFilterSearchbox: {
     position: 'absolute', 
     right: '1%', 
     borderRadius: "20px", 
     backgroundColor: "transparent", 
     padding: "4% 5%",
     [theme.breakpoints.up("md")]: {
-      right: '2.5%',
-      padding: "2% 4%",
+      right: '3%',
+      padding: "2% 2%",
     },
   },
   iconButton: {

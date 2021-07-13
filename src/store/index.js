@@ -18,7 +18,7 @@ const reducer = combineReducers({
 
 const immutableInvariantMiddleware = createImmutableStateInvariantMiddleware({
   ignoredPaths: ['items'],
-  warnAfter: 400,
+  warnAfter: 800,
 })
 
 export { sessionActions } from "./session";

@@ -145,13 +145,13 @@ const MainMap = memo(({ geozones, areGeozonesVisible, rasterSource}) => {
       areGeozonesVisible = true;
     }
      if(mapReady && devices.length <= 50){
-        positions.features.map((position,index)=> {
-          mapManager.map.addSource(`places-${index}`, {
+        positions.features.map((position)=> {
+          mapManager.map.addSource(`places-${position.properties.deviceId}`, {
             type: "geojson",
             data: {...position},
             });
           mapManager.addLayer(`device-${position.properties.deviceId}`, 
-          `places-${index}`, `icon-${position.properties.type}`, "{name}", 
+          `places-${position.properties.deviceId}`, `icon-${position.properties.type}`, "{name}", 
           position.properties.status, position.properties.course);
         })
      }
@@ -163,12 +163,12 @@ const MainMap = memo(({ geozones, areGeozonesVisible, rasterSource}) => {
     }
     return () => {
     
-      positions.features.map((position,index) => {
+      positions.features.map((position) => {
         if(mapManager.map.getLayer(`device-${position.properties.deviceId}`))
         mapManager.map.removeLayer(`device-${position.properties.deviceId}`);
                 
-        if(mapManager.map.getSource(`places-${index}`))
-        mapManager.map.removeSource(`places-${index}`);
+        if(mapManager.map.getSource(`places-${position.properties.deviceId}`))
+        mapManager.map.removeSource(`places-${position.properties.deviceId}`);
       })
     };
     
@@ -327,7 +327,7 @@ const MainMap = memo(({ geozones, areGeozonesVisible, rasterSource}) => {
         features.push(`${featureType}-${index}`);
       });
     };
-  }, [mapManager.map, selectedItems]);
+  }, [mapManager.map, selectedItems, positions]);
   
 
   const drawGeozones = () => {

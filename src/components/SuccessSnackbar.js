@@ -16,8 +16,8 @@ function SuccessSnackbar() {
   const [device, setDevice] = useState({});
   const [type, setType] = useState("");
 
-  useEffect(async () => {
-    await fetch("/api/devices").then((response) => {
+  useEffect(() => {
+    fetch("/api/devices").then((response) => {
       if (response.ok) {
         response.json().then((devices) => {
           setDevices(devices);

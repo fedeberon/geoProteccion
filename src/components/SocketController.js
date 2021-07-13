@@ -5,11 +5,13 @@ import {
   notificationActions,
   positionsActions,
 } from "../store";
+import {Observable, interval} from "rxjs";
 
 const SocketController = () => {
   const dispatch = useDispatch();
 
   const connectSocket = () => {
+    
     const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
     const socket = new WebSocket(
       protocol + "//" + window.location.host + "/api/socket"
@@ -25,7 +27,11 @@ const SocketController = () => {
         //dispatch(devicesActions.update(data.devices));
       }
       if (data.positions) {
-        //dispatch(positionsActions.update(data.positions));
+        // const observable = new Observable(suscriber => {
+        //   suscriber.next(dispatch(positionsActions.updateSelectedPositions(data.positions)));
+        //   suscriber.complete();
+        // });
+        // observable.subscribe(x => x);
       }
       if (data.events) {
         dispatch(

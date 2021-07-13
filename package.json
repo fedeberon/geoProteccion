@@ -29,6 +29,7 @@
     "react-window": "^1.8.6",
     "recharts": "^2.0.9",
     "redux": "^4.0.5",
+    "rxjs": "^6.6.3",
     "typeface-roboto": "0.0.75"
   },
   "scripts": {

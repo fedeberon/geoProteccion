@@ -7,7 +7,6 @@ import {
 } from "@material-ui/core";
 import React, { memo, Fragment } from "react";
 import { shallowEqual, useSelector } from "react-redux";
-import { notificationActions } from "../store";
 import t from "../common/localization";
 import notificationListStyles from "./styles/NotificationListStyles";
 
