@@ -55,6 +55,7 @@ function DeviceSearch() {
     (state) => Object.values(state.devices.items),
     shallowEqual
   );
+  const user = useSelector((state) => state.session.user, shallowEqual);
   const [groups, setGroups] = useState();
   const [selectedGroup, setSelectedGroup] = useState(null);
   const [selectedStatus, setSelectedStatus] = useState(null);
@@ -101,8 +102,14 @@ function DeviceSearch() {
   };
 
   const getGroups = async () => {
-    let response = await service.getGroups();
-    setGroups(response);
+    fetch(`api/groups?userId=${user.id}`, { method: "GET" })
+    .catch(function (error) {
+      console.log("setGroups error: ", error);
+    })
+    .then((response) => response.json())
+    .then((data) => {
+      setGroups(data);
+    });
   }
 
   useEffect(()=> {
