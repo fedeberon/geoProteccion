@@ -82,7 +82,7 @@ const App = () => {
     
     <>
       <CssBaseline />
-      <SuccessSnackbar />      
+      {authenticated && <SuccessSnackbar />}   
       {authenticated && <SocketController />}         
       <Switch>       
         <Route exact path="/validation" component={Validation}/>  

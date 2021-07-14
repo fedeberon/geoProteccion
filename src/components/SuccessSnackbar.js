@@ -16,15 +16,15 @@ function SuccessSnackbar() {
   const [device, setDevice] = useState({});
   const [type, setType] = useState("");
 
-  useEffect(() => {
-    fetch("/api/devices").then((response) => {
+  useEffect(async() => {
+    await fetch("/api/devices").then((response) => {
       if (response.ok) {
         response.json().then((devices) => {
           setDevices(devices);
         });
       }      
     });
-  }, []);
+  },[]);
 
   const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="down" ref={ref} {...props} />;
