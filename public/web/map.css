@@ -312,8 +312,8 @@ button {
 
 .device-list {
   overflow-y: hidden;
-  height: 300px;
-  max-height: 348px;
+  height: 305px;
+  max-height: 305px;
   border-radius: 21px;
 }
 

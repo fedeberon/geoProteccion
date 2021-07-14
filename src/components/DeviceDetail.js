@@ -253,7 +253,7 @@ const DeviceDetail = (props) => {
               <img
                 className={classes.dashImg}
                 alt=""
-                src="https://i.pinimg.com/originals/ef/f2/91/eff29127abbf0d8e5e99cda29401fa7f.png"
+                src={require("../../public/images/teslacontrol.png").default}
               />
             </div>
             <div style={{ display: 'block', textAlign: 'center' }}>

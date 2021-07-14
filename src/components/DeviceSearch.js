@@ -59,6 +59,7 @@ function DeviceSearch() {
   const [groups, setGroups] = useState();
   const [selectedGroup, setSelectedGroup] = useState(null);
   const [selectedStatus, setSelectedStatus] = useState(null);
+  let object = document.getElementById("deviceListSearch");
   let upIcon = document.getElementById("searchbox-up");
   const [inputSearch, setInputSearch] = useState();
   const [deviceList, setDeviceList] = useState(devicesRedux);
@@ -143,7 +144,7 @@ function DeviceSearch() {
 
   const filterDevices = (value = "") => {
     setInputSearch(value);
-    let object = document.getElementById("deviceListSearch");
+    
 
     const regex = new RegExp(`${value !== "" ? value : ".+"}`, "gi");
     let filteredDevices = [];
@@ -173,6 +174,11 @@ function DeviceSearch() {
           );
         }        
       }
+      if(filteredDevices.length > 0){
+        object.style.height = `${65 * filteredDevices.length}px`;
+      } else {
+        object.style.height = null;
+      }
       setDeviceList(filteredDevices);
       dispatch(positionsActions.listFiltered(true));
       filteredDevices.map(device => {
@@ -184,7 +190,12 @@ function DeviceSearch() {
         filteredDevices = devicesRedux.filter(
           (e) => e.status === selectedStatus
         );
-      }   
+      }
+      if(filteredDevices.length > 0){
+        object.style.height = `${65 * filteredDevices.length}px`;
+      } else {
+        object.style.height = null;
+      } 
       setDeviceList(filteredDevices);
       dispatch(positionsActions.listFiltered(true));
       filteredDevices.map(device => {
@@ -211,7 +222,8 @@ function DeviceSearch() {
       setSelectedStatus("offline");
     } else {
       setSelectedStatus("unknown");
-    }    
+    }   
+    handleClearList(); 
     setSelectedGroup(null);
     handleCloseStatusOptionsList();
   }
@@ -237,6 +249,7 @@ function DeviceSearch() {
 
   const handleClearList = () => { 
     let nullArray = [];
+    object.style.height = null;
     dispatch(positionsActions.resetSelectedItems(nullArray));
     dispatch(positionsActions.listFiltered(false));
   }
