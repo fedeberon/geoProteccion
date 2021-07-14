@@ -20,6 +20,8 @@ import ListItem from '@material-ui/core/ListItem';
 import List from '@material-ui/core/List';
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import * as service from "../utils/serviceManager";
+import BackspaceIcon from '@material-ui/icons/Backspace';
+import PowerIcon from '@material-ui/icons/Power';
 
 const StyledMenu = withStyles({
   paper: {
@@ -54,8 +56,8 @@ function DeviceSearch() {
     shallowEqual
   );
   const [groups, setGroups] = useState();
-  const [selectedGroup, setSelectedGroup] = useState();
-  const [selectedStatus, setSelectedStatus] = useState('');
+  const [selectedGroup, setSelectedGroup] = useState(null);
+  const [selectedStatus, setSelectedStatus] = useState(null);
   let upIcon = document.getElementById("searchbox-up");
   const [inputSearch, setInputSearch] = useState();
   const [deviceList, setDeviceList] = useState(devicesRedux);
@@ -107,11 +109,6 @@ function DeviceSearch() {
     getGroups();
   },[])
 
-  // useEffect(()=> {
-  //   console.log(selectedGroup);
-  //   console.log(selectedStatus);
-  // },[selectedStatus, selectedGroup])
-
   const dispatchDevice = (device) => {
     dispatch(devicesActions.select(device));
     dispatch(devicesActions.selectedDevice(device));
@@ -160,7 +157,20 @@ function DeviceSearch() {
 
   const filterDevicesMenu = () => {
     if(selectedGroup !== null){
-      //do something
+      let filteredDevices = [];
+      if (devicesRedux && devicesRedux.length > 0) {
+        let object = groups.find(e => e.name === selectedGroup);
+        if(groups && object){
+          filteredDevices = devicesRedux.filter(
+            (e) => e?.groupId === object?.id
+          );
+        }        
+      }
+      setDeviceList(filteredDevices);
+      dispatch(positionsActions.listFiltered(true));
+      filteredDevices.map(device => {
+        dispatch(positionsActions.addSelectedDevice(device));
+      })
     } else if (selectedStatus !== null) {
       let filteredDevices = [];
       if (devicesRedux && devicesRedux.length > 0) {
@@ -174,15 +184,6 @@ function DeviceSearch() {
         dispatch(positionsActions.addSelectedDevice(device));
       })
     }
-  
-    // switch (option){
-    //   case "asd":
-    //     return null
-    //   case "dsa":
-    //     return null 
-    //   default:
-    //     return null
-    // }
   }
 
   useEffect(()=> {
@@ -191,18 +192,14 @@ function DeviceSearch() {
     }
   },[selectedItems])
 
-  // useEffect(()=> {
-  //   console.log(deviceList);
-  // },[deviceList])
-
   const handleChangeGroup = (event) => {
     setSelectedGroup(event.target.innerText);
     setSelectedStatus(null);
+    handleClearList();
     handleCloseGroupsOptionsList();
   }
 
   const handleChangeStatus = (event) => {
-    // console.log(event.target.innerText);
     if(event.target.innerText === `${t("deviceStatusOffline")}`){
       setSelectedStatus("offline");
     } else {
@@ -237,21 +234,6 @@ function DeviceSearch() {
     dispatch(positionsActions.listFiltered(false));
   }
 
-  // useEffect(() => {
-  //   console.log(listFiltered)
-  //   console.log(selectedItems);
-  //   // if(selectedItems){
-  //   //   console.log(selectedItems.includes('offline'))
-  //   // }
-  // },[listFiltered, selectedItems])
-
-  // function GetBool (object) {
-  //   if(selectedItems){
-  //     console.log(selectedItems.includes(object.status === 'offline'))
-  //   }
-  //   // console.log(selectedItems)
-  // }
-
   return (<Paper component="form" className={classes.paper}>
       <div className={classes.div}>
         <IconButton
@@ -263,8 +245,7 @@ function DeviceSearch() {
         </IconButton>
         <InputBase
           type="text"
-          className={classes.input}
-          // placeholder={t("sharedSearch")}       
+          className={classes.input}      
           placeholder={selectedItems && selectedItems.length > 0 ? `${t('sharedShow')} ${selectedItems.length} ${t('sharedDevice').toLowerCase()}(s)` : listFiltered ? `${deviceList.length} ${t('sharedDevice').toLowerCase()}(s)` : devicesRedux && `${devicesRedux.length} ${t('sharedDevice').toLowerCase()}(s)`}     
           onChange={(event) => filterDevices(event.target.value)}
           onKeyPress={function (event) {
@@ -308,10 +289,10 @@ function DeviceSearch() {
             aria-haspopup="true"  
             onClick={handleClickStatusOptionsList}>
               <ListItemIcon>
-                <GroupIcon/>
+                <PowerIcon/>
               </ListItemIcon>
               <ListItemText>
-                Estado
+                <span>{t("deviceStatus")}</span>
               </ListItemText>
               <ListItemSecondaryAction>
                   <Menu                        
@@ -327,14 +308,10 @@ function DeviceSearch() {
                     },
                   }}
                 >
-                  <MenuItem
-                    // disabled={GetBool} 
-                    onClick={handleChangeStatus}>
+                  <MenuItem onClick={handleChangeStatus}>
                       {t("deviceStatusOffline")}
                   </MenuItem>
-                  <MenuItem 
-                    disabled={deviceList.includes("unknown")} 
-                    onClick={handleChangeStatus}>
+                  <MenuItem onClick={handleChangeStatus}>
                       {t("deviceStatusUnknown")}
                   </MenuItem>
                 </Menu>
@@ -349,7 +326,7 @@ function DeviceSearch() {
                 <GroupIcon/>
               </ListItemIcon>
               <ListItemText>
-                Grupo
+                <span>{t("groupDialog")}</span>
               </ListItemText>
               <ListItemSecondaryAction>
                   <Menu                        
@@ -368,7 +345,7 @@ function DeviceSearch() {
                   }}
                 >
                   {groups && groups.map((group) => (
-                    <MenuItem disabled={true} onClick={handleChangeGroup} key={group.id}>
+                    <MenuItem disabled={false} onClick={handleChangeGroup} key={group.id}>
                       {group.name}
                     </MenuItem> 
                   ))}
@@ -383,10 +360,10 @@ function DeviceSearch() {
               onClick={handleClearList}
               >
               <ListItemIcon>
-                <GroupIcon/>
+                <BackspaceIcon/>
               </ListItemIcon>
               <ListItemText>
-                Eliminar filtro
+                <span>{t("removeFilter")}</span>
               </ListItemText>
             </ListItem>
             }

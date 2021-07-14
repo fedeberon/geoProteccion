@@ -474,5 +474,6 @@
     "true": "Yes",
     "false": "No",
     "sharedShow": "Showing",
-    "sharedRecovering": "Recovering information..."
+    "sharedRecovering": "Recovering information...",
+    "removeFilter": "Remove filter"
 }

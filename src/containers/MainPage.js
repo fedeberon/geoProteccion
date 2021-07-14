@@ -39,13 +39,13 @@ const MainPage = ({ width }) => {
     getGeozones(user.id);
   }, [user.id]);
 
-  useEffect(async()=> {
-    await fetch("/api/devices").then((response) => {
+  useEffect(()=> {
+    fetch("/api/devices").then((response) => {
       if (response.ok) {
-        response.json().then(async(devices) => {
+        response.json().then((devices) => {
           dispatch(devicesActions.update(devices));
           setDevices(devices);
-          await fetch("/api/positions").then((response) => {
+          fetch("/api/positions").then((response) => {
             if (response.ok) {
               response.json().then((positions) => {
                 dispatch(positionsActions.refreshPositions(positions));

@@ -470,5 +470,6 @@
     "on": "Encedido",
     "off": "Apagado",
     "sharedShow": "Mostrando",
-    "sharedRecovering": "Recuperando información..."
+    "sharedRecovering": "Recuperando información...",
+    "removeFilter": "Eliminar filtro"
 }
