@@ -235,6 +235,18 @@ const MainMap = memo(({ geozones, areGeozonesVisible, rasterSource}) => {
   }
  },[positions, selectedItems, lastRemoved])
 
+ useEffect(()=> {
+    if(selectedItems.length === 0){
+      positions.features.map((position) => {
+        if(mapManager.map.getLayer(`device-${position.properties.deviceId}`))
+        mapManager.map.removeLayer(`device-${position.properties.deviceId}`);
+                
+        if(mapManager.map.getSource(`places-${position.properties.deviceId}`))
+        mapManager.map.removeSource(`places-${position.properties.deviceId}`);
+      })
+    }
+ },[selectedItems])
+
   const updatePopup = (object, position) => {
     if(object[0]){
       object[0].remove();

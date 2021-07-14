@@ -66,7 +66,7 @@ function DeviceSearch() {
   const [statusOptionsList, setStatusOptionsList] = React.useState(null);
   const openGroup = Boolean(groupsOptionsList);
   const openStatus = Boolean(statusOptionsList);
-  const [listFiltered, setListFiltered] = useState(false);
+  const listFiltered = useSelector(state => state.positions.listFiltered, shallowEqual);
 
   const handleClickGroupsOptionsList = (event) => {
     setGroupsOptionsList(event.currentTarget);
@@ -107,10 +107,10 @@ function DeviceSearch() {
     getGroups();
   },[])
 
-  useEffect(()=> {
-    console.log(selectedGroup);
-    console.log(selectedStatus);
-  },[selectedStatus, selectedGroup])
+  // useEffect(()=> {
+  //   console.log(selectedGroup);
+  //   console.log(selectedStatus);
+  // },[selectedStatus, selectedGroup])
 
   const dispatchDevice = (device) => {
     dispatch(devicesActions.select(device));
@@ -159,15 +159,41 @@ function DeviceSearch() {
   };
 
   const filterDevicesMenu = () => {
-    switch (option){
-      case "asd":
-        return null
-      case "dsa":
-        return null 
-      default:
-        return null
+    if(selectedGroup !== null){
+      //do something
+    } else if (selectedStatus !== null) {
+      let filteredDevices = [];
+      if (devicesRedux && devicesRedux.length > 0) {
+        filteredDevices = devicesRedux.filter(
+          (e) => e.status === selectedStatus
+        );
+      }   
+      setDeviceList(filteredDevices);
+      dispatch(positionsActions.listFiltered(true));
+      filteredDevices.map(device => {
+        dispatch(positionsActions.addSelectedDevice(device));
+      })
     }
+  
+    // switch (option){
+    //   case "asd":
+    //     return null
+    //   case "dsa":
+    //     return null 
+    //   default:
+    //     return null
+    // }
   }
+
+  useEffect(()=> {
+    if(selectedItems.length > 0){
+      setDeviceList(selectedItems);
+    }
+  },[selectedItems])
+
+  // useEffect(()=> {
+  //   console.log(deviceList);
+  // },[deviceList])
 
   const handleChangeGroup = (event) => {
     setSelectedGroup(event.target.innerText);
@@ -176,10 +202,19 @@ function DeviceSearch() {
   }
 
   const handleChangeStatus = (event) => {
-    setSelectedStatus(event.target.innerText);
+    // console.log(event.target.innerText);
+    if(event.target.innerText === `${t("deviceStatusOffline")}`){
+      setSelectedStatus("offline");
+    } else {
+      setSelectedStatus("unknown");
+    }    
     setSelectedGroup(null);
     handleCloseStatusOptionsList();
   }
+
+  useEffect(()=> {
+    filterDevicesMenu();
+  },[selectedGroup, selectedStatus]);
 
   const goSearch = (event) => {
     let value;
@@ -196,6 +231,27 @@ function DeviceSearch() {
     },1000);
   }
 
+  const handleClearList = () => { 
+    let nullArray = [];
+    dispatch(positionsActions.resetSelectedItems(nullArray));
+    dispatch(positionsActions.listFiltered(false));
+  }
+
+  // useEffect(() => {
+  //   console.log(listFiltered)
+  //   console.log(selectedItems);
+  //   // if(selectedItems){
+  //   //   console.log(selectedItems.includes('offline'))
+  //   // }
+  // },[listFiltered, selectedItems])
+
+  // function GetBool (object) {
+  //   if(selectedItems){
+  //     console.log(selectedItems.includes(object.status === 'offline'))
+  //   }
+  //   // console.log(selectedItems)
+  // }
+
   return (<Paper component="form" className={classes.paper}>
       <div className={classes.div}>
         <IconButton
@@ -209,7 +265,7 @@ function DeviceSearch() {
           type="text"
           className={classes.input}
           // placeholder={t("sharedSearch")}       
-          placeholder={selectedItems && selectedItems.length > 0 ? `${t('sharedShow')} ${selectedItems.length} ${t('sharedDevice').toLowerCase()}(s)` : devicesRedux && `${devicesRedux.length} ${t('sharedDevice').toLowerCase()}(s)`}     
+          placeholder={selectedItems && selectedItems.length > 0 ? `${t('sharedShow')} ${selectedItems.length} ${t('sharedDevice').toLowerCase()}(s)` : listFiltered ? `${deviceList.length} ${t('sharedDevice').toLowerCase()}(s)` : devicesRedux && `${devicesRedux.length} ${t('sharedDevice').toLowerCase()}(s)`}     
           onChange={(event) => filterDevices(event.target.value)}
           onKeyPress={function (event) {
             if(event.key === 'Enter'){
@@ -227,13 +283,13 @@ function DeviceSearch() {
       </div>
 
       <div>
-        {inputSearch && inputSearch.length > 0 ? 
+        {inputSearch && inputSearch.length > 0 || listFiltered ? 
           <div id="deviceListSearch" className={showDeviceList ? "device-list" : "display-none"}>
             <DeviceList enableIcon={enableIcon} list={deviceList} upIcon={upIcon} closing={toggleDeviceList}/>
           </div>
         :
           <div id="deviceListSearch" className={showDeviceList ? "device-list" : "display-none"}>
-            <DeviceList enableIcon={enableIcon} list={devicesRedux} upIcon={upIcon} closing={toggleDeviceList}/>
+            <DeviceList enableIcon={enableIcon} list={devicesRedux} upIcon={upIcon} closing={toggleDeviceList} />
           </div>
         }
       </div>
@@ -263,8 +319,6 @@ function DeviceSearch() {
                   anchorEl={statusOptionsList}
                   keepMounted
                   open={openStatus}
-                  // value={selectedStatus}
-                  // onChange={(event) => setSelectedStatus(event.target.innerText)}
                   onClose={handleCloseStatusOptionsList}
                   PaperProps={{
                     style: {
@@ -273,9 +327,16 @@ function DeviceSearch() {
                     },
                   }}
                 >
-                  <MenuItem onClick={handleChangeStatus}>En linea</MenuItem>
-                  <MenuItem onClick={handleChangeStatus}>Fuera de linea</MenuItem>
-                  <MenuItem onClick={handleChangeStatus}>Desconocido</MenuItem>
+                  <MenuItem
+                    // disabled={GetBool} 
+                    onClick={handleChangeStatus}>
+                      {t("deviceStatusOffline")}
+                  </MenuItem>
+                  <MenuItem 
+                    disabled={deviceList.includes("unknown")} 
+                    onClick={handleChangeStatus}>
+                      {t("deviceStatusUnknown")}
+                  </MenuItem>
                 </Menu>
               </ListItemSecondaryAction>
             </ListItem>
@@ -302,18 +363,33 @@ function DeviceSearch() {
                   PaperProps={{
                     style: {
                       maxHeight: ITEM_HEIGHT * 4.5,
-                      width: '20ch',
+                      width: '25ch',
                     },
                   }}
                 >
                   {groups && groups.map((group) => (
-                    <MenuItem onClick={handleChangeGroup} key={group.id} value={`${group.name}`}>
+                    <MenuItem disabled={true} onClick={handleChangeGroup} key={group.id}>
                       {group.name}
                     </MenuItem> 
                   ))}
                 </Menu>
               </ListItemSecondaryAction>
             </ListItem>
+            {listFiltered && 
+            <ListItem button  
+              aria-label="more"
+              aria-controls="long-menu"
+              aria-haspopup="true"  
+              onClick={handleClearList}
+              >
+              <ListItemIcon>
+                <GroupIcon/>
+              </ListItemIcon>
+              <ListItemText>
+                Eliminar filtro
+              </ListItemText>
+            </ListItem>
+            }
           </List>                  
         </StyledMenu>
       </div>

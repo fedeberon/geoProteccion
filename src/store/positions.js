@@ -6,6 +6,7 @@ const { reducer, actions } = createSlice({
     items: {},
     selectedItems: [],
     lastRemoved: 0,
+    listFiltered: false,
   },
   reducers: {
     updateSelectedPositions(state, action) {  
@@ -26,6 +27,9 @@ const { reducer, actions } = createSlice({
       //   delete state.items[action.payload.id];
       // }      
     },
+    resetSelectedItems(state, action){
+      state.selectedItems = action.payload;
+    },
     updateSelected(state, action){
       if(selectedItems.length > 0){
         action.payload.forEach((item) => (state.selectedItems[item["deviceId"]] = item));
@@ -33,6 +37,9 @@ const { reducer, actions } = createSlice({
     },
     lastRemoved(state, action){
       state.lastRemoved = action.payload;
+    },
+    listFiltered(state, action){
+      state.listFiltered = action.payload;
     }
   },
 });
