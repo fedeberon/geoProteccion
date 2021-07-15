@@ -261,7 +261,7 @@ function DeviceSearch() {
           className={classes.iconButton}
           aria-label="search"
         >
-          <SearchIcon />
+          <SearchIcon onKeyPress={function(e){e.preventDefault()}}/>
         </IconButton>
         <InputBase
           type="text"

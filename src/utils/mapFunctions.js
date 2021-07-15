@@ -238,7 +238,8 @@ const getRandomHex = () => {
 };
 
 function createFeature (devices, position, isViewportDesktop, server) {
-    
+  
+  try{
   const device = devices[position.deviceId];
   const name = device ? device.attributes.carPlate : "undefined";
   const model = device ? device.attributes.model : "undefined";
@@ -466,6 +467,10 @@ function createFeature (devices, position, isViewportDesktop, server) {
                           </button>
                       </div>
                   </div>`
+    }
+  } catch (error){
+    console.log(error);
+    location.reload();
   }
 };
 

@@ -34,6 +34,7 @@ const MainMap = memo(({ geozones, areGeozonesVisible, rasterSource}) => {
   const lastRemoved = useSelector((state) => state.positions.lastRemoved, shallowEqual);
   const server = useSelector((state) => state.session.server, shallowEqual);
   const selectedDevice = useSelector((state) => state.devices.selectedDevice, shallowEqual);
+  const listFiltered = useSelector((state) => state.positions.listFiltered, shallowEqual);
   const mapCenter = useSelector((state) => {
     if (state.devices.selectedId) {
       const position = state.positions.items[state.devices.selectedId] || null;
@@ -48,6 +49,8 @@ const MainMap = memo(({ geozones, areGeozonesVisible, rasterSource}) => {
     type: "Feature",geometry: {type: "Point", coordinates: [position.longitude, position.latitude]},
     properties: createFeature(state.devices.items,position,isViewportDesktop,server)})),
   }));
+
+  if(!positions){return;} 
 
   useEffect(() => {
     const interval = setInterval(async() => {
@@ -200,7 +203,7 @@ const MainMap = memo(({ geozones, areGeozonesVisible, rasterSource}) => {
  },[positions])
 
  useEffect(()=> {
-   if(devices.length > 50){
+  //  if(devices.length > 50){
     if(selectedItems.length > 0){
       let positionsFiltered = [];
       // let position = positions.features.find(elem => elem.properties.deviceId === item.id);
@@ -223,7 +226,7 @@ const MainMap = memo(({ geozones, areGeozonesVisible, rasterSource}) => {
         })
       }
     }
-  }
+  // }
   if(lastRemoved !== 0){
     if(mapManager.map.getLayer(`device-${lastRemoved}`)){
       mapManager.map.removeLayer(`device-${lastRemoved}`);          
@@ -245,7 +248,27 @@ const MainMap = memo(({ geozones, areGeozonesVisible, rasterSource}) => {
         mapManager.map.removeSource(`places-${position.properties.deviceId}`);
       })
     }
- },[selectedItems])
+ },[selectedItems]);
+
+ const drawDevices = () => {
+  positions.features.map((position)=> {
+    if(!mapManager.map.getSource(`places-${position.properties.deviceId}`)){
+      mapManager.map.addSource(`places-${position.properties.deviceId}`, {
+        type: "geojson",
+        data: {...position},
+        });
+      mapManager.addLayer(`device-${position.properties.deviceId}`, 
+      `places-${position.properties.deviceId}`, `icon-${position.properties.type}`, "{name}", 
+      position.properties.status, position.properties.course);
+    }    
+  })
+ } 
+
+ useEffect(()=> {
+  if(!listFiltered && selectedItems.length === 0 && devices.length <= 50){
+    drawDevices();
+  }
+ },[listFiltered])
 
   const updatePopup = (object, position) => {
     if(object[0]){
