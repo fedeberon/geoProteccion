@@ -131,7 +131,7 @@ const addLayer = (id, source, icon, text, status, course) => {
     },
     layout: {
       "icon-image": status === 'offline' || status === 'unknown' ? `${icon}-${status}` : icon,
-      "icon-allow-overlap": false,
+      "icon-allow-overlap": true,
       "icon-rotate": ['get', 'course'],
     },
   };

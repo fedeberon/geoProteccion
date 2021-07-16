@@ -260,8 +260,9 @@ function DeviceSearch() {
           type="submit"
           className={classes.iconButton}
           aria-label="search"
+          onClick={function(e){e.preventDefault()}}
         >
-          <SearchIcon onClick={function(e){e.preventDefault()}}/>
+          <SearchIcon />
         </IconButton>
         <InputBase
           type="text"
