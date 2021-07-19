@@ -20,6 +20,10 @@ const deviceConfigFullStyles = makeStyles((theme) => ({
   table: {
     minWidth: "auto",
   },
+  backdrop: {
+    zIndex: theme.zIndex.drawer + 1,
+    color: '#eaeaea',
+  },
   visuallyHidden: {
     border: 0,
     clip: "rect(0 0 0 0)",

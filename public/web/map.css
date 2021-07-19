@@ -7,6 +7,10 @@ html, body, #root {
   display: grid;
 }
 
+.MuiDialog-paper {
+  overflow-y: hidden !important;
+}
+
 .MuiSnackbar-content-root {
   background-color: #155477 !important;
 }
@@ -825,9 +829,6 @@ button {
   /* .MuiDialog-paperScrollPaper {
     display: inline-table !important;
   } */
-  .MuiDialog-paper {
-    overflow-y: hidden;
-  }
 
   .MuiTableCell-root {
     padding: 8px 3px !important;

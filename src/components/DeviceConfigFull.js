@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useLayoutEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useEffect, useState, Fragment } from "react";
+import { useDispatch } from "react-redux";
 import Dialog from "@material-ui/core/Dialog";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
@@ -20,7 +20,6 @@ import Checkbox from "@material-ui/core/Checkbox";
 import t from "../common/localization";
 import * as service from "../utils/serviceManager";
 import deviceConfigFullStyles from "./styles/DeviceConfigFullStyles";
-import { LeakAddTwoTone } from "@material-ui/icons";
 import { devicesActions } from "../store";
 
 const useStyles = deviceConfigFullStyles;
@@ -193,10 +192,6 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupId, groupAssignmen
   const [arrayToMap, setArrayToMap] = useState([]);
   const [allData, setAllData] = useState([]);
   const [geofencesByUserId, setGeofencesByUserId] = useState([]);
-  const [geofencesByGroupId, setGeofencesByGroupId] = useState([]);
-  const [notificationsByGroupId, setNotificationsByGroupId] = useState([]);
-  const [computedAttributesByGroupId, setComputedAttributesByGroupId] = useState([]);
-  let asd = [];
 
   useEffect(() => {
     setOpenFull(open);
@@ -515,7 +510,7 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupId, groupAssignmen
     setOrderBy(property);
   };
 
-  const handleClick = (name, type, id) => {
+  const handleClick = (name) => {
     let selectedIndex = selected.indexOf(name);
     let newSelected = [];
 
@@ -535,7 +530,8 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupId, groupAssignmen
   };
 
   //Agregar permisos
-  const handleSetSelectedItem = (id, name) => {
+  const handleSetSelectedItem = async (id, name) => {
+
     let permission = {};
 
     if(groupAssignment){
@@ -549,7 +545,7 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupId, groupAssignmen
       } else if (type === "sharedSavedCommands"){
         permission.commandId = id;
       }
-    } else if (deviceId) {
+    } else if (deviceId) { //Asiggnments from Devices Page 
       permission.deviceId = deviceId;
       if(type === 'sharedGeofences'){
         permission.geofenceId = id;
@@ -558,7 +554,7 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupId, groupAssignmen
       } else if(type === "sharedComputedAttributes"){
         permission.attributeId = id;
       }
-    } else if (userId) {
+    } else if (userId) {  //Asiggnments from UserManagement 
       permission.userId = userId.id;
       if(type === 'sharedGeofences'){
         permission.geofenceId = id;
@@ -577,55 +573,18 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupId, groupAssignmen
       }
     }
 
-    fetch(`api/permissions`, {
+      await fetch(`api/permissions`, {
       method: 'POST',
       headers: {"Content-Type": "application/json"},
       body: JSON.stringify(permission),
     }).then(response => response)
       .then(response => {
-        if(type === 'deviceTitle'){
-          getDevicesByUser();
-        } else if(type === 'sharedGeofences'){
-          if(deviceId){
-            getGeozonesByDeviceId();            
-          } else if(groupId) {
-            getGeozonesByGroup();
-          } else {
-            getGeozones();
-          }          
-        } else if(type === 'settingsGroups'){
-          getGroupsByUser()
-        } else if(type === "sharedNotifications"){
-          if (groupId) {
-            getNotificationsByGroupId();          
-          } else if(deviceId){
-            getNotificationsByDeviceId();
-          } else { 
-            getNotificationsByUser();
-          }
-        } else if (type === "settingsUsers"){
-          getUsersByUserSelected();
-        } else if (type === "sharedComputedAttributes"){
-          if (deviceId) {
-            getComputedAttributesByDeviceId();
-          } else if (groupId) {
-            getComputedAttributesByGroup();
-          } else {
-            getComputedAttributesByUserId();
-          } 
-        } else if (type === "sharedSavedCommands"){
-          if(groupId){
-            getSavedCommandsByGroup();
-          } else {
-            getCommandsByUserId();
-          }
-        }
         handleClick(name);
       })
   }
 
   //Eliminar permisos
-  const handleDeleteSelectedItem = (id, name) => {
+  const handleDeleteSelectedItem = async (id, name) => {
     let permission = {};
     
     if(groupAssignment){
@@ -639,7 +598,7 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupId, groupAssignmen
       } else if(type === "sharedSavedCommands"){
         permission.commandId = id;
       }
-    } else if (deviceId) {
+    } else if (deviceId) { //Asiggnments from Devices Page 
       permission.deviceId = deviceId;
       if(type === 'sharedGeofences'){
         permission.geofenceId = id;
@@ -648,7 +607,7 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupId, groupAssignmen
       } else if(type === "sharedComputedAttributes"){
         permission.attributeId = id;
       }
-    } else if (userId) {
+    } else if (userId) { //Asiggnments from UserManagement
       permission.userId = userId.id;
       if(type === 'sharedGeofences'){
         permission.geofenceId = id;
@@ -667,50 +626,13 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupId, groupAssignmen
       }
     }  
 
-    fetch(`api/permissions`, {
+    await fetch(`api/permissions`, {
       method: 'DELETE',
       headers: {"Content-Type": "application/json"},
       body: JSON.stringify(permission),
     }).then(response => response)
       .then(data => {
-        if(type==='deviceTitle'){
-          getDevicesByUser();
-        } else if(type==='sharedGeofences'){
-          if(deviceId){
-            getGeozonesByDeviceId();            
-          } else if(groupId) {
-            getGeozonesByGroup();
-          } else {
-            getGeozones();
-          } 
-        } else if (type==='settingsGroups') {
-          getGroupsByUser()
-        } else if (type === "sharedNotifications") {
-          if (groupId) {
-            getNotificationsByGroupId();          
-          } else if(deviceId) {
-            getNotificationsByDeviceId();
-          } else { 
-            getNotificationsByUser();
-          }
-        } else if (type === "settingsUsers"){
-          getUsersByUserSelected();
-        } else if (type === "sharedComputedAttributes"){
-          if (deviceId) {
-            getComputedAttributesByDeviceId();
-          } else if (groupId) {
-            getComputedAttributesByGroup();
-          } else {
-            getComputedAttributesByUserId();
-          }          
-        } else if (type === "sharedSavedCommands"){
-          if(groupId){
-            getSavedCommandsByGroup();
-          } else {
-            getCommandsByUserId();
-          }
-        }
-        handleClick(name);
+        handleClick(name);                 
       })
   }
 
@@ -1091,7 +1013,8 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupId, groupAssignmen
                 return (
                   <TableRow
                     hover
-                    onClick={function () {                      
+                    onClick={function () {  
+                      // handleToggleBackdrop();                    
                       if(!isItemSelected){              
                         handleSetSelectedItem(row.id, row.name);
                       } else {
@@ -1134,8 +1057,8 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupId, groupAssignmen
   
                   return (
                     <TableRow
-                      hover
-                      onClick={function () {                      
+                      // hover
+                      onClick={function () {                   
                         if(!isItemSelected){              
                           handleSetSelectedItem(row.id, row.name);
                         } else {
@@ -1182,7 +1105,6 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupId, groupAssignmen
   
                   return (
                     <TableRow
-                      hover
                       onClick={function () {                      
                         if(!isItemSelected){              
                           handleSetSelectedItem(row.id, row.name);
@@ -1225,8 +1147,7 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupId, groupAssignmen
                 let labelId = `enhanced-table-checkbox-${index}`;
 
                 return (
-                  <TableRow
-                    hover
+                  <TableRow                   
                     onClick={function () {                      
                       if(!isItemSelected){              
                         handleSetSelectedItem(row.id, row.name);
@@ -1263,18 +1184,16 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupId, groupAssignmen
           <TableBody>
             {stableSort(arrayToMap.length > 0 ? arrayToMap : allData, getComparator(order, orderBy)).map(
               (row, index) => {
-                const isItemSelected = isSelected(row.type);
-                const labelId = `enhanced-table-checkbox-${index}`;
+                let isItemSelected = isSelected(row.type);
+                let labelId = `enhanced-table-checkbox-${index}`;
 
                 return (
                   <TableRow
-                    hover
                     onClick={function () {
-                      handleClick(row.type, row.id);
                       if(!isItemSelected){              
-                        handleSetSelectedItem(row.id);
+                        handleSetSelectedItem(row.id, row.type);
                       } else {
-                        handleDeleteSelectedItem(row.id);
+                        handleDeleteSelectedItem(row.id, row.type);
                       }
                     }}   
                     role="checkbox"
@@ -1315,13 +1234,11 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupId, groupAssignmen
 
                 return (
                   <TableRow
-                    hover
                     onClick={function () {
-                      handleClick(row.description, row.id);
                       if(!isItemSelected){              
-                        handleSetSelectedItem(row.id);
+                        handleSetSelectedItem(row.id, row.description);
                       } else {
-                        handleDeleteSelectedItem(row.id);
+                        handleDeleteSelectedItem(row.id, row.description);
                       }
                     }}  
                     role="checkbox"
@@ -1340,7 +1257,7 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupId, groupAssignmen
                       scope="row"
                       padding="none"
                     >
-                      {row.description}
+                      {row.description ? row.description : "Undefined"}
                     </TableCell>
                     <TableCell align="inherit">
                       {row.attribute}
@@ -1363,11 +1280,10 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupId, groupAssignmen
                   <TableRow
                     hover
                     onClick={function () {
-                      handleClick(row.description, row.id);
                       if(!isItemSelected){              
-                        handleSetSelectedItem(row.id);
+                        handleSetSelectedItem(row.id, row.description);
                       } else {
-                        handleDeleteSelectedItem(row.id);
+                        handleDeleteSelectedItem(row.id, row.description);
                       }
                     }} 
                     role="checkbox"
@@ -1410,7 +1326,6 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupId, groupAssignmen
 
                 return (
                   <TableRow
-                    hover
                     onClick={(event) => handleClick(event, row.id)}
                     role="checkbox"
                     aria-checked={isItemSelected}
@@ -1453,7 +1368,7 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupId, groupAssignmen
   }
 
   return (
-    <div>
+    <Fragment>
       <Dialog
         fullScreen
         open={openFull}
@@ -1489,7 +1404,7 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupId, groupAssignmen
                 {t(`${type}`)}
               </Typography>
             </Toolbar>
-            <TableContainer>               
+            <TableContainer style={{overflowY: "scroll" , height: '81vh'}}>               
               <Table
               className={classes.table}
               aria-labelledby="tableTitle"
@@ -1509,9 +1424,8 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupId, groupAssignmen
             </TableContainer>
           </Paper>
         </div>
-        
       </Dialog>
-    </div>    
+    </Fragment>    
   );
 };
 export default DeviceConfigFull;
