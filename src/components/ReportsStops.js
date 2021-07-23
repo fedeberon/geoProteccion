@@ -22,11 +22,11 @@ const ReportsStops = ({dataStops, dataPositions, selected}) => {
   },[dataStops, dataPositions]);
 
   const stopsColumns = [
-    { field: 'deviceName', headerName: `${t(`reportDeviceName`)}`, width: 260 },
-    { field: 'startTime', headerName: `${t(`reportStartTime`)}`, width: 165 },    
+    { field: 'deviceName', headerName: `${t(`reportDeviceName`)}`, width: 200 },
+    { field: 'startTime', headerName: `${t(`reportStartTime`)}`, width: 190 },    
     { field: 'startOdometer', headerName: `${t(`reportStartOdometer`)}`, width: 130 },
     { field: 'address', headerName: `${t(`reportStartAddress`)}`, width: 300 },
-    { field: 'endTime', headerName: `${t(`reportEndTime`)}`, width: 165 },
+    { field: 'endTime', headerName: `${t(`reportEndTime`)}`, width: 190 },
     { field: 'duration', headerName: `${t(`reportDuration`)}`, width: 130 },
     { field: 'engineHours', headerName: `${t(`reportEngineHours`)}`, width: 130 },    
     { field: 'spentFuel', headerName: `${t(`reportSpentFuel`)}`, width: 100 },
@@ -37,13 +37,13 @@ const ReportsStops = ({dataStops, dataPositions, selected}) => {
         stopsRows.push({
         id: index,
         deviceName: stops.deviceName,
-        startTime: getDateTime(stops.startTime),        
+        startTime: new Date(stops.startTime).toLocaleDateString() + ' - ' + new Date(stops.startTime).toLocaleTimeString(),        
         startOdometer: Number((stops.startOdometer/1000).toFixed(2)) + ` ${server && server.attributes?.distanceUnit}`,
         address: stops.address,
-        endTime: getDateTime(stops.endTime),      
+        endTime: new Date(stops.endTime).toLocaleDateString() + ' - ' + new Date(stops.endTime).toLocaleTimeString(),      
         duration: getHoursMinutes(stops.duration),
         engineHours: getHoursMinutes(stops.engineHours),
-        spentFuel: Number(stops.spentFuel.toFixed(1)) + ` ${server && server.attributes?.volumeUnit}`,
+        spentFuel: Number(stops.spentFuel.toFixed(1)) + ` ${server && server.attributes?.volumeUnit ? server && server.attributes?.volumeUnit : ''}`,
         positionId: stops.positionId
       });
     });

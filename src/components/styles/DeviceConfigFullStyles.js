@@ -35,6 +35,30 @@ const deviceConfigFullStyles = makeStyles((theme) => ({
     top: 20,
     width: 1,
   },
+  rootSearch: {
+    height: '33px',
+    margin: '5px auto',
+    padding: '2px 4px',
+    display: 'flex',
+    alignItems: 'center',
+    width: '80%',
+    [theme.breakpoints.up("md")]: {
+      width: 400,
+    },
+  },
+  inputSearch: {
+    marginLeft: theme.spacing(1),
+    flex: 1,
+  },
+  searchButton: {
+    padding: "10px !important",
+    textAlign: "center",
+    width: "100%",
+  },
+  divider: {
+    height: 28,
+    margin: 4,
+  },
 }));
 
 export default deviceConfigFullStyles;

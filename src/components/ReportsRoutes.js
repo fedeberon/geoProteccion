@@ -37,7 +37,7 @@ const GetDeviceName = (id) => {
 }
 
 const routesColumns = [
-{ field: 'deviceName', headerName: `${t(`reportDeviceName`)}`, width: 260 },
+{ field: 'deviceName', headerName: `${t(`reportDeviceName`)}`, width: 200 },
 { field: 'valid', headerName: `${t("positionValid")}`, width: 100 },    
 { field: 'date', headerName: `${t(`positionDate`)}`, width: 200 },
 { field: 'latitude', headerName: `${t(`positionLatitude`)}`, width: 130 },
@@ -52,7 +52,7 @@ routes && routes.map((route,index) => {
     id: index,
     deviceName: GetDeviceName(route.deviceId),
     valid: t(`${Boolean(route.valid)}`),
-    date: getDateTime(route.deviceTime),
+    date: new Date(route.deviceTime).toLocaleDateString() + ' - ' + new Date(route.deviceTime).toLocaleTimeString(),
     latitude: route.latitude.toFixed(6) + '°',
     longitude: route.longitude.toFixed(6) + '°',      
     altitude: route.altitude,

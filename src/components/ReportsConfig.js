@@ -137,37 +137,37 @@ export default function ReportsConfig({ handleReportsConfig, reportType }) {
     switch(period) {
       case 'today':
         forward(week, 1);    
-        setFromDateTime(`${dateNow.getFullYear()}-${dateNow.getMonth()+1 < 10 ? `0${dateNow.getMonth()+1}` : dateNow.getMonth()+1}-${dateNow.getDate() < 10 ? `0${dateNow.getDate()}` : dateNow.getDate()}T00:00`)
-        setToDateTime(`${week.getFullYear()}-${week.getMonth()+1 < 10 ? `0${week.getMonth()+1}` : week.getMonth()+1}-${week.getDate() < 10 ? `0${week.getDate()}` : week.getDate()}T00:00`)
+        setFromDateTime(`${dateNow.getFullYear()}-${dateNow.getMonth()+1 < 10 ? `0${dateNow.getMonth()+1}` : dateNow.getMonth()+1}-${dateNow.getDate() < 10 ? `0${dateNow.getDate()}` : dateNow.getDate()}T0${dateNow.getUTCHours() - dateNow.getHours()}:00`)
+        setToDateTime(`${week.getFullYear()}-${week.getMonth()+1 < 10 ? `0${week.getMonth()+1}` : week.getMonth()+1}-${week.getDate() < 10 ? `0${week.getDate()}` : week.getDate()}T0${dateNow.getUTCHours() - dateNow.getHours()}:00`)
         break;
       case 'yesterday':
         previous(week, 1);
-        setFromDateTime(`${week.getFullYear()}-${week.getMonth()+1 < 10 ? `0${week.getMonth()+1}` : `${week.getMonth()+1}`}-${week.getDate() < 10 ? `0${week.getDate()}` : week.getDate()}T00:00`)
-        setToDateTime(`${dateNow.getFullYear()}-${dateNow.getMonth()+1 < 10 ? `0${dateNow.getMonth()+1}` : dateNow.getMonth()+1}-${dateNow.getDate() < 10 ? `0${dateNow.getDate()}` : dateNow.getDate()}T00:00`)
+        setFromDateTime(`${week.getFullYear()}-${week.getMonth()+1 < 10 ? `0${week.getMonth()+1}` : `${week.getMonth()+1}`}-${week.getDate() < 10 ? `0${week.getDate()}` : week.getDate()}T0${dateNow.getUTCHours() - dateNow.getHours()}:00`)
+        setToDateTime(`${dateNow.getFullYear()}-${dateNow.getMonth()+1 < 10 ? `0${dateNow.getMonth()+1}` : dateNow.getMonth()+1}-${dateNow.getDate() < 10 ? `0${dateNow.getDate()}` : dateNow.getDate()}T0${dateNow.getUTCHours() - dateNow.getHours()}:00`)
         break;
       case 'thisWeek':
         week.setDate(dateNow.getDate() - dateNow.getDay() + 1);
         forward(week, 7);
         dateNow.setDate(dateNow.getDate() - dateNow.getDay() + 1);     
-        setFromDateTime(`${dateNow.getFullYear()}-${dateNow.getMonth()+1 < 10 ? `0${dateNow.getMonth()+1}` : dateNow.getMonth()+1}-${dateNow.getDate() < 10 ? `0${dateNow.getDate()}` : dateNow.getDate()}T00:00`)
-        setToDateTime(`${week.getFullYear()}-${week.getMonth()+1 < 10 ? `0${week.getMonth()+1}` : week.getMonth()+1}-${week.getDate() < 10 ? `0${week.getDate()}` : week.getDate()}T00:00`)
+        setFromDateTime(`${dateNow.getFullYear()}-${dateNow.getMonth()+1 < 10 ? `0${dateNow.getMonth()+1}` : dateNow.getMonth()+1}-${dateNow.getDate() < 10 ? `0${dateNow.getDate()}` : dateNow.getDate()}T0${dateNow.getUTCHours() - dateNow.getHours()}:00`)
+        setToDateTime(`${week.getFullYear()}-${week.getMonth()+1 < 10 ? `0${week.getMonth()+1}` : week.getMonth()+1}-${week.getDate() < 10 ? `0${week.getDate()}` : week.getDate()}T0${dateNow.getUTCHours() - dateNow.getHours()}:00`)
         break;
       case 'previousWeek':        
         week.setDate(dateNow.getDate() - dateNow.getDay() + 1);
         previous(week, 7);
         dateNow.setDate(dateNow.getDate() - dateNow.getDay() + 1);
-        setFromDateTime(`${week.getFullYear()}-${week.getMonth()+1 < 10 ? `0${week.getMonth()+1}` : `${week.getMonth()+1}`}-${week.getDate() < 10 ? `0${week.getDate()}` : week.getDate()}T00:00`)
-        setToDateTime(`${dateNow.getFullYear()}-${dateNow.getMonth()+1 < 10 ? `0${dateNow.getMonth()+1}` : dateNow.getMonth()+1}-${dateNow.getDate() < 10 ? `0${dateNow.getDate()}` : dateNow.getDate()}T00:00`)
+        setFromDateTime(`${week.getFullYear()}-${week.getMonth()+1 < 10 ? `0${week.getMonth()+1}` : `${week.getMonth()+1}`}-${week.getDate() < 10 ? `0${week.getDate()}` : week.getDate()}T0${dateNow.getUTCHours() - dateNow.getHours()}:00`)
+        setToDateTime(`${dateNow.getFullYear()}-${dateNow.getMonth()+1 < 10 ? `0${dateNow.getMonth()+1}` : dateNow.getMonth()+1}-${dateNow.getDate() < 10 ? `0${dateNow.getDate()}` : dateNow.getDate()}T0${dateNow.getUTCHours() - dateNow.getHours()}:00`)
         break;
       case 'thisMonth':
         week.setMonth(dateNow.getMonth() + 1)
-        setFromDateTime(`${dateNow.getFullYear()}-${dateNow.getMonth()+1 < 10 ? `0${dateNow.getMonth()+1}` : dateNow.getMonth()+1}-01T00:00`)
-        setToDateTime(`${week.getFullYear()}-${week.getMonth()+1 < 10 ? `0${week.getMonth()+1}` : week.getMonth()+1}-01T00:00`)
+        setFromDateTime(`${dateNow.getFullYear()}-${dateNow.getMonth()+1 < 10 ? `0${dateNow.getMonth()+1}` : dateNow.getMonth()+1}-01T0${dateNow.getUTCHours() - dateNow.getHours()}:00`)
+        setToDateTime(`${week.getFullYear()}-${week.getMonth()+1 < 10 ? `0${week.getMonth()+1}` : week.getMonth()+1}-01T0${dateNow.getUTCHours() - dateNow.getHours()}:00`)
         break;
       case 'previousMonth':
         week.setDate(dateNow.getDate() - 30)
-        setFromDateTime(`${week.getFullYear()}-${(week.getMonth()+1) < 10 ? `0${(week.getMonth()+1)}` : (week.getMonth()+1)}-01T00:00`)
-        setToDateTime(`${dateNow.getFullYear()}-${dateNow.getMonth()+1 < 10 ? `0${dateNow.getMonth()+1}` : dateNow.getMonth()+1}-01T00:00`)
+        setFromDateTime(`${week.getFullYear()}-${(week.getMonth()+1) < 10 ? `0${(week.getMonth()+1)}` : (week.getMonth()+1)}-01T0${dateNow.getUTCHours() - dateNow.getHours()}:00`)
+        setToDateTime(`${dateNow.getFullYear()}-${dateNow.getMonth()+1 < 10 ? `0${dateNow.getMonth()+1}` : dateNow.getMonth()+1}-01T0${dateNow.getUTCHours() - dateNow.getHours()}:00`)
         break;
       default: 
         break;  

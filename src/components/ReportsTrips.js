@@ -136,14 +136,14 @@ const ReportsTrips = ({dataTrips, dataPositions, selected}) => {
   },[dataTrips, dataPositions]);
 
   const tripsColumns = [
-    { field: 'deviceName', headerName: `${t(`reportDeviceName`)}`, width: 260, renderCell: renderCellExpand, },
-    { field: 'startTime', headerName: `${t(`reportStartTime`)}`, width: 165 },
-    { field: 'endTime', headerName: `${t(`reportEndTime`)}`, width: 165 },
+    { field: 'deviceName', headerName: `${t(`reportDeviceName`)}`, width: 200, renderCell: renderCellExpand, },
+    { field: 'startTime', headerName: `${t(`reportStartTime`)}`, width: 190 },
+    { field: 'endTime', headerName: `${t(`reportEndTime`)}`, width: 190 },
     { field: 'startOdometer', headerName: `${t(`reportStartOdometer`)}`, width: 130 },
-    { field: 'startAddress', headerName: `${t(`reportStartAddress`)}`, width: 400, renderCell: renderCellExpand, },
+    { field: 'startAddress', headerName: `${t(`reportStartAddress`)}`, width: 450, renderCell: renderCellExpand, },
     { field: 'endOdometer', headerName: `${t(`reportEndOdometer`)}`, width: 130 },
-    { field: 'endAddress', headerName: `${t(`reportEndAddress`)}`, width: 400, renderCell: renderCellExpand, },
-    { field: 'distance', headerName: `${t(`sharedDistance`)}`, width: 150 },
+    { field: 'endAddress', headerName: `${t(`reportEndAddress`)}`, width: 450, renderCell: renderCellExpand, },
+    { field: 'distance', headerName: `${t(`sharedDistance`)}`, width: 100 },
     { field: 'averageSpeed', headerName: `${t(`reportAverageSpeed`)}`, width: 100 },
     { field: 'maxSpeed', headerName: `${t(`reportMaximumSpeed`)}`, width: 100 },
     { field: 'duration', headerName: `${t(`reportDuration`)}`, width: 130 },
@@ -156,8 +156,8 @@ const ReportsTrips = ({dataTrips, dataPositions, selected}) => {
       tripsRows.push({
         id: index,
         deviceName: trip.deviceName,
-        startTime: getDateTime(trip.startTime),
-        endTime: getDateTime(trip.endTime),
+        startTime: new Date(trip.startTime).toLocaleDateString() + ' - ' + new Date(trip.startTime).toLocaleTimeString(),
+        endTime: new Date(trip.endTime).toLocaleDateString() + ' - ' + new Date(trip.endTime).toLocaleTimeString(),
         startOdometer: Number((trip.startOdometer/1000).toFixed(2)) + ` ${server && server.attributes?.distanceUnit}`,
         startAddress: trip.startAddress,
         endOdometer: Number((trip.endOdometer / 1000).toFixed(2)) + ` ${server && server.attributes?.distanceUnit}`,
@@ -166,7 +166,7 @@ const ReportsTrips = ({dataTrips, dataPositions, selected}) => {
         averageSpeed: Number((trip.averageSpeed * speedConverter(server && server.attributes?.speedUnit)).toFixed(0)) + ` ${server && server.attributes?.speedUnit}`,
         maxSpeed: Number((trip.maxSpeed * speedConverter(server && server.attributes?.speedUnit)).toFixed(0)) + ` ${server && server.attributes?.speedUnit}`,
         duration: getHoursMinutes(trip.duration),
-        spentFuel: Number(trip.spentFuel.toFixed(1)) + ` ${server && server.attributes?.volumeUnit}`,
+        spentFuel: Number(trip.spentFuel.toFixed(1)) + ` ${server && server.attributes?.volumeUnit ? server && server.attributes?.volumeUnit : ''}`,
         driverName: trip.driverName ? trip.driverName : "",
         startPositionId: trip.startPositionId
       });

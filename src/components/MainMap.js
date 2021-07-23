@@ -74,7 +74,7 @@ const MainMap = memo(({ geozones, areGeozonesVisible, rasterSource}) => {
             });    
           }
         });
-    }, 10000);
+    }, 8000);
     return () => clearInterval(interval);
   },[]);
 
@@ -143,21 +143,20 @@ const MainMap = memo(({ geozones, areGeozonesVisible, rasterSource}) => {
 
   //Initial data load of devices on the map
   useEffect(() => {
-
     if(statusShowingGeozones){
       areGeozonesVisible = true;
     }
-     if(mapReady && devices.length <= 50){
-        positions.features.map((position)=> {
-          mapManager.map.addSource(`places-${position.properties.deviceId}`, {
-            type: "geojson",
-            data: {...position},
-            });
-          mapManager.addLayer(`device-${position.properties.deviceId}`, 
-          `places-${position.properties.deviceId}`, `icon-${position.properties.type}`, "{name}", 
-          position.properties.status, position.properties.course);
-        })
-     }
+    if(mapReady && devices.length <= 50){
+      positions.features.map((position)=> {
+        mapManager.map.addSource(`places-${position.properties.deviceId}`, {
+          type: "geojson",
+          data: {...position},
+          });
+        mapManager.addLayer(`device-${position.properties.deviceId}`, 
+        `places-${position.properties.deviceId}`, `icon-${position.properties.type}`, "{name}", 
+        position.properties.status, position.properties.course);
+      })
+    }
 
     mapManager.map.scrollZoom.setWheelZoomRate(1.5);
 
@@ -165,7 +164,6 @@ const MainMap = memo(({ geozones, areGeozonesVisible, rasterSource}) => {
       mapManager.map.getSource("raster-tiles").tiles = [rasterSource];
     }
     return () => {
-    
       positions.features.map((position) => {
         if(mapManager.map.getLayer(`device-${position.properties.deviceId}`))
         mapManager.map.removeLayer(`device-${position.properties.deviceId}`);
@@ -188,16 +186,16 @@ const MainMap = memo(({ geozones, areGeozonesVisible, rasterSource}) => {
         });
         setMapReady(true);
       }
-    }    
+    }
     if(mapReady && positions){
       positions.features.map((position)=> {
-        sources = mapManager.map.getSource(`places-${position.properties.deviceId}`)
+        sources = mapManager.map.getSource(`places-${position.properties.deviceId}`);
         if(sources){
           sources.setData({
             type: "FeatureCollection",
             features: [{...position}],
           });
-        } 
+        }
       }) 
     }
  },[positions])

@@ -70,7 +70,7 @@ export default function ReportsDialog({
   const [addressFound, setAddressFound] = useState('');
   const [open, setOpen] = React.useState(false);
   const [fullscreen, setFullscreen] = useState(false);
-  const [hidden, setHidden] = useState(false);
+  const [hidden, setHidden] = useState(true);
   const [openConfigModal, setOpenConfigModal] = useState(false);
   const [reportConfiguration, setReportConfiguration] = useState({});
   const [route, setRoute] = useState([]);

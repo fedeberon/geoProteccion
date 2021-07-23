@@ -21,6 +21,9 @@ import t from "../common/localization";
 import * as service from "../utils/serviceManager";
 import deviceConfigFullStyles from "./styles/DeviceConfigFullStyles";
 import { devicesActions } from "../store";
+import InputBase from '@material-ui/core/InputBase';
+import SearchIcon from '@material-ui/icons/Search';
+import Divider from "@material-ui/core/Divider";
 
 const useStyles = deviceConfigFullStyles;
 
@@ -192,6 +195,8 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupId, groupAssignmen
   const [arrayToMap, setArrayToMap] = useState([]);
   const [allData, setAllData] = useState([]);
   const [geofencesByUserId, setGeofencesByUserId] = useState([]);
+  const [dataArray, setDataArray] = useState([]);
+  const [inputSearch, setInputSearch] = useState();
 
   useEffect(() => {
     setOpenFull(open);
@@ -1050,7 +1055,7 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupId, groupAssignmen
           return (  
              
             <TableBody>    
-              {stableSort(arrayToMap.length > 0 ? arrayToMap : allData , getComparator(order, orderBy)).map(
+              {stableSort(arrayToMap.length > 0 ? arrayToMap : inputSearch && inputSearch.length > 0 ? dataArray : allData , getComparator(order, orderBy)).map(
                 (row, index) => {                
                   let isItemSelected = isSelected(row.name);
                   let labelId = `enhanced-table-checkbox-${index}`;
@@ -1367,6 +1372,22 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupId, groupAssignmen
     }
   }
 
+  const filterData = (value = "") => {
+    setInputSearch(value);
+    if(value.length > 0){
+    const regex = new RegExp(`${value !== "" ? value : ".+"}`, "gi");
+    let dataFiltered = [];
+    if (allData && allData.length > 0) {
+      dataFiltered = allData.filter(
+        (e) => regex.test(e.name) || regex.test(e.email)
+      );
+    }
+      setDataArray(dataFiltered);
+    } else {
+      setDataArray(allData);
+    }
+  };
+
   return (
     <Fragment>
       <Dialog
@@ -1404,7 +1425,22 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupId, groupAssignmen
                 {t(`${type}`)}
               </Typography>
             </Toolbar>
-            <TableContainer style={{overflowY: "scroll" , height: '81vh'}}>               
+            {type === "deviceTitle" &&
+            <Paper component="form" className={classes.rootSearch}>
+                <InputBase
+                  onChange={(event) => filterData(event.target.value)}
+                  className={classes.inputSearch}
+                  placeholder={`${t('sharedSearch')}`}
+                  inputProps={{ 'aria-label': 'search google maps' }}
+                />
+                <Divider className={classes.divider} orientation="vertical" />
+                <IconButton className={classes.iconButtonSeach} aria-label="search">
+                  <SearchIcon />
+                </IconButton>            
+            </Paper>
+            }
+            
+            <TableContainer style={{overflowY: "scroll" , height: `${type === 'deviceTitle' ? '74' : '81'}vh`}}>               
               <Table
               className={classes.table}
               aria-labelledby="tableTitle"
