@@ -348,7 +348,7 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupId, groupAssignmen
           getCommandsByUserId();
         }
       } 
-    }, [open===true, type, deviceId, groupAssignment]);
+    }, [type, deviceId, groupAssignment, userId]);
 
   //Funcion solo para configuracion desde UserConfig
   const getGeozones = () => {
@@ -417,7 +417,6 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupId, groupAssignmen
     .then((data) => {
       settingSelectedItems(data);
       setDevicesByUserId(data);
-      dispatch(devicesActions.update(data));
     });
   };
 
@@ -653,14 +652,14 @@ const DeviceConfigFull = ({ open, close, type, deviceId, groupId, groupAssignmen
   };
 
   const handleClose = () => {
-    setArrayToMap([]);
-    setAllData([]);
-    setSelected([]);
-    setGeofencesByUserId([]);
-    setDevicesByUserId([]);
-    setGroupsByUserId([]);
-    setNotificationsByUserId([]);
-    setUsersByUserId([]);
+    // setArrayToMap([]);
+    // setAllData([]);
+    // setSelected([]);
+    // setGeofencesByUserId([]);
+    // setDevicesByUserId([]);
+    // setGroupsByUserId([]);
+    // setNotificationsByUserId([]);
+    // setUsersByUserId([]);
     close();
   };
 

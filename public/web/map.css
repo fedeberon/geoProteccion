@@ -247,7 +247,7 @@ button {
 }
 
 .MuiButton-containedPrimary {
-  background-image: linear-gradient(25deg, #77F9D3 0%, #5CD2F8 50%, #5A79FF 100%);
+  background-image: #5C7AFF !important;
 }
 
 .MuiFab-primary {
@@ -606,7 +606,7 @@ button {
     margin-top: 0;
   }
   .MuiDrawer-paperAnchorRight {
-    background-image: linear-gradient(25deg, #77F9D3 0%, #5CD2F8 50%, #5A79FF 100%);
+    background-color: #5C7AFF !important;
     border-radius: 20px 0 0 20px;
     height: 98% !important;
     top: 4px !important;
@@ -841,7 +841,7 @@ button {
   }
 
   .MuiAppBar-colorPrimary {
-    background-image: linear-gradient(25deg, #77F9D3 0%, #5CD2F8 50%, #5A79FF 100%);
+    background-image: #5C7AFF !important;
   }
 
   /* .mapboxgl-popup-close-button {
@@ -906,7 +906,7 @@ button {
     display: inline-block !important;
   }
   .MuiDrawer-paperAnchorRight {
-    background-image: linear-gradient(25deg, #77F9D3 0%, #5CD2F8 50%, #5A79FF 100%);
+    background-image: #5C7AFF !important;
     border-radius: 20px 0 0 20px;
     height: 98% !important;
     top: 4px !important;

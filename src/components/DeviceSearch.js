@@ -254,6 +254,10 @@ function DeviceSearch() {
     dispatch(positionsActions.listFiltered(false));
   }
 
+  useEffect(()=> {
+    console.log(devicesRedux);
+  },[devicesRedux])
+
   return (<Paper component="form" className={classes.paper}>
       <div className={classes.div}>
         <IconButton
