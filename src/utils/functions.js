@@ -24,7 +24,7 @@ const attributes = [
 const speedConverter = unit => {
   switch (unit) {
     case 'kmh':
-      return 1.60934;
+      return 1.852;
     case 'mph':
       return 1.15078;
     case 'kn':

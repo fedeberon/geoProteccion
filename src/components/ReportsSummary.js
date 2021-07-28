@@ -20,7 +20,7 @@ const ReportsStops = ({dataSummary}) => {
   },[dataSummary]);
 
   const summaryColumns = [
-    { field: 'deviceName', headerName: `${t(`reportDeviceName`)}`, width: 260 },
+    { field: 'deviceName', headerName: `${t(`reportDeviceName`)}`, width: 200 },
     { field: 'distance', headerName: `${t(`sharedDistance`)}`, width: 130 },   
     { field: 'startOdometer', headerName: `${t(`reportStartOdometer`)}`, width: 150 },
     { field: 'endOdometer', headerName: `${t(`reportEndOdometer`)}`, width: 150 },
@@ -41,7 +41,7 @@ const ReportsStops = ({dataSummary}) => {
         averageSpeed: Number((summary.averageSpeed * speedConverter(server && server.attributes?.speedUnit)).toFixed(0)) + ` ${server && server.attributes?.speedUnit}`,
         maxSpeed: Number((summary.maxSpeed * speedConverter(server && server.attributes?.speedUnit)).toFixed(2)) + ` ${server && server.attributes?.speedUnit}`,
         engineHours: getHoursMinutes(summary.engineHours),
-        spentFuel: Number(summary.spentFuel.toFixed(1)) + ` ${server && server.attributes?.volumeUnit}`,
+        spentFuel: Number(summary.spentFuel.toFixed(1)) + ` ${server && server.attributes?.volumeUnit ? server.attributes?.volumeUnit : ''}`,
       });
     });
   } catch (error) {

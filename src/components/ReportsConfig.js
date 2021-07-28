@@ -1,15 +1,13 @@
 import React, { useEffect, useState } from "react";
 import FormControl from "@material-ui/core/FormControl";
-import InputLabel from "@material-ui/core/InputLabel";
 import Select from "@material-ui/core/Select";
 import Input from "@material-ui/core/Input";
 import MenuItem from "@material-ui/core/MenuItem";
-import Checkbox from "@material-ui/core/Checkbox";
 import TableBody from "@material-ui/core/TableBody";
 import TextField from "@material-ui/core/TextField";
 import t from "../common/localization";
 import * as service from "../utils/serviceManager";
-import { useSelector } from "react-redux";
+import { useSelector, shallowEqual } from "react-redux";
 import TableCell from "@material-ui/core/TableCell";
 import TableRow from "@material-ui/core/TableRow";
 import Table from "@material-ui/core/Table";
@@ -33,10 +31,10 @@ const MenuProps = {
 
 export default function ReportsConfig({ handleReportsConfig, reportType }) {
   const userId = useSelector((state) => state.session.user.id);
+  const devices = useSelector((state) => Object.values(state.devices.items), shallowEqual);
   const classes = useStyles();
   let dateNow = new Date();
   let week = new Date();
-  const [devices, setDevices] = useState([]);
   const [deviceSelected, setDeviceSelected] = useState([]);
   const [listDeviceSelected, setListDeviceSelected] = useState([]);
   const [typeEventSelected, setTypeEventSelected] = useState(['allEvents']);
@@ -137,53 +135,47 @@ export default function ReportsConfig({ handleReportsConfig, reportType }) {
     switch(period) {
       case 'today':
         forward(week, 1);    
-        setFromDateTime(`${dateNow.getFullYear()}-${dateNow.getMonth()+1 < 10 ? `0${dateNow.getMonth()+1}` : dateNow.getMonth()+1}-${dateNow.getDate() < 10 ? `0${dateNow.getDate()}` : dateNow.getDate()}T0${dateNow.getUTCHours() - dateNow.getHours()}:00`)
-        setToDateTime(`${week.getFullYear()}-${week.getMonth()+1 < 10 ? `0${week.getMonth()+1}` : week.getMonth()+1}-${week.getDate() < 10 ? `0${week.getDate()}` : week.getDate()}T0${dateNow.getUTCHours() - dateNow.getHours()}:00`)
+        setFromDateTime(`${dateNow.getFullYear()}-${dateNow.getMonth()+1 < 10 ? `0${dateNow.getMonth()+1}` : dateNow.getMonth()+1}-${dateNow.getDate() < 10 ? `0${dateNow.getDate()}` : dateNow.getDate()}T03:00`)
+        setToDateTime(`${week.getFullYear()}-${week.getMonth()+1 < 10 ? `0${week.getMonth()+1}` : week.getMonth()+1}-${week.getDate() < 10 ? `0${week.getDate()}` : week.getDate()}T03:00`)
         break;
       case 'yesterday':
         previous(week, 1);
-        setFromDateTime(`${week.getFullYear()}-${week.getMonth()+1 < 10 ? `0${week.getMonth()+1}` : `${week.getMonth()+1}`}-${week.getDate() < 10 ? `0${week.getDate()}` : week.getDate()}T0${dateNow.getUTCHours() - dateNow.getHours()}:00`)
-        setToDateTime(`${dateNow.getFullYear()}-${dateNow.getMonth()+1 < 10 ? `0${dateNow.getMonth()+1}` : dateNow.getMonth()+1}-${dateNow.getDate() < 10 ? `0${dateNow.getDate()}` : dateNow.getDate()}T0${dateNow.getUTCHours() - dateNow.getHours()}:00`)
+        setFromDateTime(`${week.getFullYear()}-${week.getMonth()+1 < 10 ? `0${week.getMonth()+1}` : `${week.getMonth()+1}`}-${week.getDate() < 10 ? `0${week.getDate()}` : week.getDate()}T03:00`)
+        setToDateTime(`${dateNow.getFullYear()}-${dateNow.getMonth()+1 < 10 ? `0${dateNow.getMonth()+1}` : dateNow.getMonth()+1}-${dateNow.getDate() < 10 ? `0${dateNow.getDate()}` : dateNow.getDate()}T03:00`)
         break;
       case 'thisWeek':
         week.setDate(dateNow.getDate() - dateNow.getDay() + 1);
         forward(week, 7);
         dateNow.setDate(dateNow.getDate() - dateNow.getDay() + 1);     
-        setFromDateTime(`${dateNow.getFullYear()}-${dateNow.getMonth()+1 < 10 ? `0${dateNow.getMonth()+1}` : dateNow.getMonth()+1}-${dateNow.getDate() < 10 ? `0${dateNow.getDate()}` : dateNow.getDate()}T0${dateNow.getUTCHours() - dateNow.getHours()}:00`)
-        setToDateTime(`${week.getFullYear()}-${week.getMonth()+1 < 10 ? `0${week.getMonth()+1}` : week.getMonth()+1}-${week.getDate() < 10 ? `0${week.getDate()}` : week.getDate()}T0${dateNow.getUTCHours() - dateNow.getHours()}:00`)
+        setFromDateTime(`${dateNow.getFullYear()}-${dateNow.getMonth()+1 < 10 ? `0${dateNow.getMonth()+1}` : dateNow.getMonth()+1}-${dateNow.getDate() < 10 ? `0${dateNow.getDate()}` : dateNow.getDate()}T03:00`)
+        setToDateTime(`${week.getFullYear()}-${week.getMonth()+1 < 10 ? `0${week.getMonth()+1}` : week.getMonth()+1}-${week.getDate() < 10 ? `0${week.getDate()}` : week.getDate()}T03:00`)
         break;
       case 'previousWeek':        
         week.setDate(dateNow.getDate() - dateNow.getDay() + 1);
         previous(week, 7);
         dateNow.setDate(dateNow.getDate() - dateNow.getDay() + 1);
-        setFromDateTime(`${week.getFullYear()}-${week.getMonth()+1 < 10 ? `0${week.getMonth()+1}` : `${week.getMonth()+1}`}-${week.getDate() < 10 ? `0${week.getDate()}` : week.getDate()}T0${dateNow.getUTCHours() - dateNow.getHours()}:00`)
-        setToDateTime(`${dateNow.getFullYear()}-${dateNow.getMonth()+1 < 10 ? `0${dateNow.getMonth()+1}` : dateNow.getMonth()+1}-${dateNow.getDate() < 10 ? `0${dateNow.getDate()}` : dateNow.getDate()}T0${dateNow.getUTCHours() - dateNow.getHours()}:00`)
+        setFromDateTime(`${week.getFullYear()}-${week.getMonth()+1 < 10 ? `0${week.getMonth()+1}` : `${week.getMonth()+1}`}-${week.getDate() < 10 ? `0${week.getDate()}` : week.getDate()}T03:00`)
+        setToDateTime(`${dateNow.getFullYear()}-${dateNow.getMonth()+1 < 10 ? `0${dateNow.getMonth()+1}` : dateNow.getMonth()+1}-${dateNow.getDate() < 10 ? `0${dateNow.getDate()}` : dateNow.getDate()}T03:00`)
         break;
       case 'thisMonth':
         week.setMonth(dateNow.getMonth() + 1)
-        setFromDateTime(`${dateNow.getFullYear()}-${dateNow.getMonth()+1 < 10 ? `0${dateNow.getMonth()+1}` : dateNow.getMonth()+1}-01T0${dateNow.getUTCHours() - dateNow.getHours()}:00`)
-        setToDateTime(`${week.getFullYear()}-${week.getMonth()+1 < 10 ? `0${week.getMonth()+1}` : week.getMonth()+1}-01T0${dateNow.getUTCHours() - dateNow.getHours()}:00`)
+        setFromDateTime(`${dateNow.getFullYear()}-${dateNow.getMonth()+1 < 10 ? `0${dateNow.getMonth()+1}` : dateNow.getMonth()+1}-01T03:00`)
+        setToDateTime(`${week.getFullYear()}-${week.getMonth()+1 < 10 ? `0${week.getMonth()+1}` : week.getMonth()+1}-01T03:00`)
         break;
       case 'previousMonth':
         week.setDate(dateNow.getDate() - 30)
-        setFromDateTime(`${week.getFullYear()}-${(week.getMonth()+1) < 10 ? `0${(week.getMonth()+1)}` : (week.getMonth()+1)}-01T0${dateNow.getUTCHours() - dateNow.getHours()}:00`)
-        setToDateTime(`${dateNow.getFullYear()}-${dateNow.getMonth()+1 < 10 ? `0${dateNow.getMonth()+1}` : dateNow.getMonth()+1}-01T0${dateNow.getUTCHours() - dateNow.getHours()}:00`)
+        setFromDateTime(`${week.getFullYear()}-${(week.getMonth()+1) < 10 ? `0${(week.getMonth()+1)}` : (week.getMonth()+1)}-01T03:00`)
+        setToDateTime(`${dateNow.getFullYear()}-${dateNow.getMonth()+1 < 10 ? `0${dateNow.getMonth()+1}` : dateNow.getMonth()+1}-01T03:00`)
         break;
       default: 
         break;  
     }
-  },[period])
+  },[period]);
 
-  useEffect(() => {    
-    getDevices(userId);
+  useEffect(() => {
     getAvailableTypes();
     getAvailableGroups();
   }, [userId]);
-
-  const getDevices = async (userId) => {
-    const response = await service.getDeviceByUserId(userId);
-    setDevices(response);
-  };
 
   const getAvailableTypes = async () => {
     const response = await service.getAvailableTypes();

@@ -182,10 +182,8 @@ export default function ReportsDialog({
     handleCloseConfigModal();
   };
 
-  const handleShowConfig = async () => {
+  const handleShowConfig = async (mail, json) => {
     setHidden(false);
-    handleClearTables();
-    setTripsRoutes([]);
     setSliceFirstIndex(0);
     setSliceLastIndex(15);
     setIsLoading(true);
@@ -194,6 +192,7 @@ export default function ReportsDialog({
     let response = "";
     let types = "";
     let positions = "";
+    let accept = json ? 'application/json' : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 
     switch (reportType) {
       case "route":
@@ -207,14 +206,24 @@ export default function ReportsDialog({
           reportConfiguration.fromDate, 
           reportConfiguration.toDate, 
           params,
-          groups
+          groups,
+          mail,
+          accept
         );
-        setRoute(response);
+        if(response.ok){
+          const contentType = response.headers.get('content-type');
+          if(contentType && contentType === 'application/json'){
+            setRoute(await response.json());
+          } else {
+            if(!mail){
+              window.location.assign(window.URL.createObjectURL(await response.blob()));
+            }
+          }
+        }
         setIsLoading(false);
         if(!isViewportDesktop){
           setHidden(true);
-        }
-        
+        }        
         break;
       case "events":
         setHidden(true);
@@ -229,22 +238,26 @@ export default function ReportsDialog({
           reportConfiguration.fromDate, 
           reportConfiguration.toDate, 
           params, 
-          types
+          types,
+          mail,
+          accept
         );
-        setEvents(response);
-
-        // response.map((element, index) => {
-        //   if (element.positionId !== 0) {
-        //     positions = positions + "id=" + element.positionId + `${index !== events.length - 1 ? "&" : ""}`;
-        //   }
-        // });
-
-        // let responsePositions = await getPositionsReports(positions);
-        // setPositions(responsePositions);
+        if(response.ok){
+          const contentType = response.headers.get('content-type');
+          if(contentType && contentType === 'application/json'){
+            setEvents(await response.json());
+          } else {
+            if(!mail){
+              window.location.assign(window.URL.createObjectURL(await response.blob()));
+            }
+          }
+        }
         setIsLoading(false);
         break;
       case "trips":
         setHidden(true);
+        let tripsArray = [];
+        let tripsRouteArray = [];
         reportConfiguration.arrayDeviceSelected.map((element) => {
           params = params + "deviceId=" + element + "&";
         });
@@ -256,11 +269,23 @@ export default function ReportsDialog({
           reportConfiguration.fromDate, 
           reportConfiguration.toDate,  
           types, 
-          params);
-        setTrips(response);
-
-        let tripsArray = [...response];
-        let tripsRouteArray = [];
+          params,
+          mail,
+          accept
+        );
+        if(response.ok){
+          const contentType = response.headers.get('content-type');
+          if(contentType && contentType === 'application/json'){
+            await response.json().then((data) => {
+              setTrips(data);
+              tripsArray = [...data];
+            })           
+          } else {
+            if(!mail){
+              window.location.assign(window.URL.createObjectURL(await response.blob()));
+            }            
+          }
+        }
 
         await getPositions(reportConfiguration.arrayDeviceSelected, reportConfiguration.fromDate, reportConfiguration.toDate)
           .then((results) => {
@@ -292,19 +317,34 @@ export default function ReportsDialog({
           params = params + "deviceId=" + element + "&";
         });
 
-        response = await getStopsReports(reportConfiguration.fromDate, reportConfiguration.toDate, params);
-        setStops(response);
-
-        response.map((element, index) => {
-          if (element.positionId !== 0) {
-            positions =
-              positions +
-              "id=" +
-              element.positionId +
-              `${index !== events.length - 1 ? "&" : ""}`;
+        response = await getStopsReports(
+          reportConfiguration.fromDate, 
+          reportConfiguration.toDate, 
+          params,
+          mail,
+          accept
+        );
+        if(response.ok){
+          const contentType = response.headers.get('content-type');
+          if(contentType && contentType === 'application/json'){
+            await response.json().then((data) => {
+              setStops(data);
+              data.map((element, index) => {
+                if (element.positionId !== 0) {
+                  positions =
+                    positions +
+                    "id=" +
+                    element.positionId +
+                    `${index !== events.length - 1 ? "&" : ""}`;
+                }
+              });
+            })            
+          } else {
+            if(!mail){
+              window.location.assign(window.URL.createObjectURL(await response.blob()));
+            }
           }
-        });
-
+        }
         response = await getPositionsReports(positions);
         setPositions(response);
         setIsLoading(false);
@@ -315,8 +355,23 @@ export default function ReportsDialog({
           params = params + "deviceId=" + element + "&";
         });
 
-        response = await getSummaryReports(reportConfiguration.fromDate, reportConfiguration.toDate, params);
-        setSummary(response);
+        response = await getSummaryReports(
+          reportConfiguration.fromDate, 
+          reportConfiguration.toDate, 
+          params,
+          mail,
+          accept
+        );
+        if(response.ok){
+          const contentType = response.headers.get('content-type');
+          if(contentType && contentType === 'application/json'){
+            setSummary(await response.json());
+          } else {
+            if(!mail){
+              window.location.assign(window.URL.createObjectURL(await response.blob()));
+            }
+          }
+        }        
         setIsLoading(false);
         break;
       case "graphic":
@@ -386,154 +441,6 @@ export default function ReportsDialog({
 
     setAddressFound(response);
   };  
-
-  const handleDownloadExcel = () => {
-    let columns = [];
-    let data = [];
-
-    switch (reportType) {
-      case "route":
-        columns = [
-          "Id",
-          "N dispositivo",
-          "Valida",
-          "Fecha y hora",
-          "Latitud",
-          "Longitud",
-          "Altitud",
-          "Velocidad",
-        ];
-        route.map((e) => {
-          data = [
-            ...data,
-            e.id,
-            e.deviceId,
-            e.valid,
-            e.serverTime,
-            e.latitude,
-            e.longitude,
-            e.altitude,
-            e.speed,
-          ];
-        });
-        break;
-      case "events":
-        columns = [
-          "Id",
-          "Fecha y hora",
-          "Nombre de dispositivo",
-          "Tipo",
-          "Geocerca",
-          "Mantenimiento",
-        ];
-        events.map((e) => {
-          data = [
-            ...data,
-            e.id,
-            e.serverTime,
-            e.deviceId,
-            e.type,
-            e.geofenceId,
-            e.maintenanceId,
-          ];
-        });
-        break;
-      case "trips":
-        columns = [
-          "Id",
-          "Nombre de dispositivo",
-          "Hora de Inicio",
-          "Hora de Fin",
-          "Odómetro inicial",
-          "Dirección de inicio",
-          "Odómetro final",
-          "Dirección final",
-          "Distancia",
-          "Velocidad promedio",
-          "Velocidad máxima",
-          "Duración",
-          "Combustible utilizado",
-          "Conductor",
-        ];
-        trips.map((e) => {
-          data = [
-            ...data,
-            e.id,
-            e.deviceName,
-            e.startTime,
-            e.endTime,
-            e.startOdometer,
-            e.startAddress,
-            e.endOdometer,
-            e.endAddress,
-            e.distance,
-            e.averageSpeed,
-            e.maxSpeed,
-            e.duration,
-            e.spentFuel,
-            e.driverName ? e.driverName : "null",
-          ];
-        });
-        break;
-      case "stops":
-        columns = [
-          "Id",
-          "Nombre de dispositivo ",
-          "Hora de inicio",
-          "Hora de fin",
-          "Odómetro",
-          "Dirección",
-          "Duración",
-          "Horas motor",
-          "Combustible utilizado",
-        ];
-        stops.map((e) => {
-          data = [
-            ...data,
-            e.id,
-            e.deviceName,
-            e.startTime,
-            e.endTime,
-            e.startOdometer,
-            e.Address,
-            e.duration,
-            e.engineHours,
-            e.spentFuel,
-          ];
-        });
-        break;
-      case "summary":
-        columns = [
-          "Id",
-          "Nombre de dispositivo",
-          "Distancia",
-          "Odómetro inicial",
-          "Odómetro final",
-          "Velocidad promedio",
-          "Velocidad máxima",
-          "Horas motor",
-          "Combustible utilizado",
-        ];
-        summary.map((e) => {
-          data = [
-            ...data,
-            e.id,
-            e.deviceName,
-            e.startTime,
-            e.endTime,
-            e.startOdometer,
-            e.Address,
-            e.duration,
-            e.engineHours,
-            e.spentFuel,
-          ];
-        });
-        break;
-      default:
-        break;
-    }
-    downloadCsv(columns, data, reportType);
-  };
 
   const GetDeviceName = (id) => {
     let name;
@@ -617,28 +524,30 @@ export default function ReportsDialog({
                   </Button>
                 </TableCell>
                 <TableCell style={{padding: 0}}>
-                <Button
-                  className={classes.buttonsConfig}
-                  variant="outlined"
-                  color="primary"
-                  disabled={
-                    reportType === "graphic" ||
-                    !reportType
-                  }
-                  onClick={handleDownloadExcel}
-                >
-                   {window.innerWidth < 767 ? <GetAppIcon title={t("reportExport")} /> : t("reportExport")}
-                   
-                </Button>
+                  <Button
+                    className={classes.buttonsConfig}
+                    variant="outlined"
+                    color="primary"
+                    disabled={
+                      reportType === "graphic" ||
+                      !reportType
+                    }
+                    onClick={() => handleShowConfig(false, false)}
+                  >
+                    {window.innerWidth < 767 ? <GetAppIcon title={t("reportExport")} /> : t("reportExport")}
+                  </Button>
                 </TableCell>
                 <TableCell style={{padding: 0}}>
                   <Button
-                      className={classes.buttonsConfig}
-                      variant="outlined"
-                      color="primary"
-                      disabled={!reportType}
-                      //onClick={handleOpenConfigModal}
-                    >
+                    className={classes.buttonsConfig}
+                    variant="outlined"
+                    color="primary"
+                    disabled={
+                      reportType === "graphic" ||
+                      !reportType
+                    }
+                    onClick={() => handleShowConfig(true, false)}                    
+                  >
                     {window.innerWidth < 767 ? <MailOutlineIcon title={t("reportEmail")}/> : t("reportEmail")}
                   </Button>
                 </TableCell>
@@ -688,10 +597,14 @@ export default function ReportsDialog({
               <ReportsConfig reportType={reportType} handleReportsConfig={handleReportsConfig} />  {/* Reports CONFIG */}
             </DialogContent>
             <DialogActions id="buttonActionsAtReports"> 
-              <Button style={{padding: '4px 11px !Important'}} onClick={handleResetConfig} variant='outlined' color="primary">
+              <Button style={{padding: '4px 11px !Important'}} 
+                onClick={handleResetConfig} 
+                variant='outlined' color="primary">
                 {t("sharedCancel")}
               </Button>
-              <Button style={{padding: '4px 11px !Important'}} onClick={handleShowConfig} variant='outlined' color="primary" autoFocus>
+              <Button style={{padding: '4px 11px !Important'}} 
+                onClick={() => handleShowConfig(false, true)} 
+                variant='outlined' color="primary" autoFocus>
                 {t("reportShow")}
               </Button>
             </DialogActions>
@@ -732,7 +645,7 @@ export default function ReportsDialog({
                 <TableRow className={classes.row}>
                 <TableCell>Hora</TableCell>
                 <TableCell>{positionState && 
-                            positionState.serverTime ? getDateTime(positionState.serverTime) : ""}</TableCell>
+                            positionState.serverTime ? new Date(positionState.serverTime).toLocaleDateString() + ' ' + new Date(positionState.serverTime).toLocaleTimeString() : ""}</TableCell>
                 </TableRow>
                 <TableRow className={classes.row}>
                 <TableCell>Latitud</TableCell>
