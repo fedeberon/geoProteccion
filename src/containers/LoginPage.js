@@ -14,7 +14,11 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
 import Link from "@material-ui/core/Link";
 import Box from "@material-ui/core/Box";
-import ListItem from "@material-ui/core/ListItem";
+import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
+import RadioButtonUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
+import PermIdentityIcon from '@material-ui/icons/PermIdentity';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import LockIcon from '@material-ui/icons/Lock';
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
@@ -24,7 +28,7 @@ import loginPageStyle from "./styles/LoginPageStyle";
 
 function Copyright() {
   return (
-    <Typography variant="body2" color="textSecondary" align="center">
+    <Typography variant="body2" style={{color: "white"}} align="center">
       {"Copyright © "}
       <Link color="inherit" href="https://www.geoproteccion.com/">
         Geos
@@ -142,54 +146,76 @@ const LoginPage = () => {
   return (
     <Grid container component="main" className={classes.root}>
       <CssBaseline />
-      <Grid item xs={false} sm={4} md={7} className={classes.image} />
-      <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
+      <Grid item xs={false} sm={4} md={12} className={classes.image} />
+      <Grid item xs={12} sm={8} md={4} className={classes.imageRight} component={Paper} elevation={6} square>
         <div
           className={classes.paper}
           style={{ display: signUpView ? "none" : "flex" }}
         >
-          <img
+          {/* <img
             alt="logo"
             loading="lazy"
             style={{ width: 80, margin: 20 }}
             src={require("../../public/images/logogeos.png").default}
-          />
+          /> */}
 
           <form className={classes.form} noValidate onSubmit={handleLogin}>
             <TextField
-              margin="normal"
+              // margin="normal"
+              id="emailInput"
               required
               fullWidth
               error={failed}
-              label={t("userEmail")}
+              placeholder={t("userEmail")}
               name="email"
               value={email}
               autoComplete="off"
               autoFocus
               onChange={handleEmailChange}
               helperText={failed && `${t("loginFailed")}`}
+              InputProps={{
+                className: classes.inputLogin,
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <PermIdentityIcon />
+                  </InputAdornment>)
+              }}
             />
 
             <TextField
-              margin="normal"
+              // margin="normal"
+              id="passwordInput"              
               required
               fullWidth
+              className={classes.passwordTextField}
               error={failed}
-              label={t("userPassword")}
+              placeholder={t("userPassword")}
               name="password"
               value={password}
               type="password"
               autoComplete="off"
               onChange={handlePasswordChange}
-            />
+              InputProps={{
+                className: classes.inputLogin,
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <LockIcon />
+                  </InputAdornment>)
+              }}
+            /> 
 
             <FormControlLabel
+              className={classes.rememberForm}
+              id="rememberControl"              
               control={
                 <Checkbox
+                  className={classes.checkBoxIcon}
+                  icon={<RadioButtonUncheckedIcon/> }
+                  checkedIcon={<CheckCircleOutlineIcon/>}
                   onChange={() => handleChangeCheckbox()}
                   checked={isChecked}
                   value={isChecked}
-                  color="primary"
+                  // color="primary"
                 />
               }
               label={t("userRemember")}
@@ -197,130 +223,22 @@ const LoginPage = () => {
 
             <Button
               type="submit"
-              fullWidth
+              // fullWidth
               variant="contained"
               color="primary"
               className={classes.submit}
-              style={{ color: "white" }}
+              // style={{ color: "black" }}
               disabled={!email || !password}
             >
               {t("loginLogin")}
             </Button>
 
-            <Box mt={5}>
-              <Copyright />
-            </Box>
           </form>
+          <Box mt={1} className={classes.copyrightString}>
+            <Copyright />
+          </Box>
         </div>
 
-        <div
-          className={classes.paper}
-          style={{ display: signUpView ? "flex" : "none", margin: "47px 32px" }}
-        >
-          <div className={classes.registerTitle}>
-            <h2>{t("serverRegistration")}</h2>
-          </div>
-
-          <form className={classes.form} id="formreg">
-            <ListItem style={{ padding: 0 }}>
-              <TextField
-                required
-                fullWidth
-                error={failed}
-                label="Nombre"
-                margin="normal"
-                placeholder="Enter your name"
-                name="name"
-                type="name"
-                variant="outlined"
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                onChange={handleNameChange}
-              />
-
-              <i
-                title="No deberá contener más de 30 caracteres"
-                onClick={() => setFailed(!failed)}
-                className={`far fa-question-circle ${classes.faIcons}`}
-              />
-            </ListItem>
-            <ListItem style={{ padding: 0 }}>
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                label={t("userEmail")}
-                placeholder="Enter your email"
-                variant="outlined"
-                error={failed}
-                name="email"
-                autoFocus
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                onChange={handleEmailChange}
-              />
-
-              <i
-                title="Deberá ingresar un email válido para confirmar"
-                className={`far fa-question-circle ${classes.faIcons}`}
-              />
-            </ListItem>
-            <ListItem style={{ padding: 0 }}>
-              <TextField
-                margin="normal"
-                required
-                label={t("userPassword")}
-                fullWidth
-                error={failed}
-                placeholder="Enter your password"
-                variant="outlined"
-                name="password"
-                type={`${passVisible ? "text" : "password"}`}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                onChange={handlePasswordChange}
-              ></TextField>
-
-              <i
-                title="Ver/Ocultar Password"
-                style={{ right: "7%" }}
-                onClick={() => setPassVisible(!passVisible)}
-                className={`${
-                  passVisible ? "far fa-eye-slash" : "far fa-eye"
-                } ${classes.faIcons}`}
-              />
-
-              <i
-                title="Deberá ser alfanumérico"
-                className={`far fa-question-circle ${classes.faIcons}`}
-              />
-            </ListItem>
-
-            <Button
-              className="btn-submit-register"
-              // type="submit"
-              fullWidth
-              variant="contained"
-            >
-              {t("loginRegister")}
-            </Button>
-            <Button
-              className="btn-back-register"
-              variant="contained"
-              fullWidth
-              onClick={() => setSignUpView(false)}
-            >
-              {t("sharedCancel")}
-            </Button>
-            <Grid container></Grid>
-            <Box mt={5}>
-              <Copyright />
-            </Box>
-          </form>
-        </div>
         <div>
           <Dialog
             open={showDialogSuccess}

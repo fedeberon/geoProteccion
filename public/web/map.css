@@ -121,6 +121,38 @@ button {
   cursor: pointer;
 }
 
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active
+{
+  -webkit-box-shadow: 0 0 0 30px #22303D inset !important;
+  border-radius: 0px 15px 15px 0px !important;
+  background-color: #22303D !important;
+  -webkit-text-fill-color: white !important;
+}
+
+@-webkit-keyframes autofill {
+  0%,100% {
+      color: #666;
+      background: transparent;
+  }
+}
+
+#emailInput {
+  color: white !important;
+  text-transform: uppercase;
+}
+
+#passwordInput {
+  color: white !important;
+  text-transform: uppercase;  
+}
+
+.MuiInputAdornment-positionStart {
+  color: rgb(238 231 238 / 80%);
+  margin-left: 5px;
+}
 
 .computedAtribRows:hover {
   cursor: pointer;

@@ -187,7 +187,7 @@ const MainMap = memo(({ geozones, areGeozonesVisible, rasterSource}) => {
         setMapReady(true);
       }
     }
-    console.log(positions)
+    
     if(mapReady && positions){
       positions.features.map((position)=> {
         sources = mapManager.map.getSource(`places-${position.properties.deviceId}`);
