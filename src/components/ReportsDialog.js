@@ -643,68 +643,68 @@ export default function ReportsDialog({
               </TableHead>
               <TableBody style={{display: positionState && !positionState.serverTime ? 'none' : ''}}>
                 <TableRow className={classes.row}>
-                <TableCell>Hora</TableCell>
+                <TableCell>{t('positionFixTime')}</TableCell>
                 <TableCell>{positionState && 
                             positionState.serverTime ? new Date(positionState.serverTime).toLocaleDateString() + ' ' + new Date(positionState.serverTime).toLocaleTimeString() : ""}</TableCell>
                 </TableRow>
                 <TableRow className={classes.row}>
-                <TableCell>Latitud</TableCell>
+                <TableCell>{t('positionLatitude')}</TableCell>
                 <TableCell>{positionState && positionState.latitude.toFixed(6)}°</TableCell>
                 </TableRow>
                 <TableRow className={classes.row}>
-                <TableCell>Longitud</TableCell>
+                <TableCell>{t('positionLongitude')}</TableCell>
                 <TableCell>{positionState && positionState.longitude.toFixed(6)}°</TableCell>
                 </TableRow>
                 <TableRow className={classes.row}>
-                <TableCell>Válida</TableCell>
+                <TableCell>{t('positionValid')}</TableCell>
                 <TableCell>{t(`${Boolean(positionState && positionState.valid)}`)}</TableCell>
                 </TableRow>
                 <TableRow className={classes.row}>
-                <TableCell>Precisión</TableCell>
+                <TableCell>{t('positionAccuracy')}</TableCell>
                 <TableCell>{positionState && positionState.accuracy.toFixed(2)} {server && `${server.attributes?.distanceUnit}`}</TableCell>
                 </TableRow>
                 <TableRow className={classes.row}>
-                <TableCell>Altitud</TableCell>
+                <TableCell>{t('positionAltitude')}</TableCell>
                 <TableCell>{positionState && positionState.altitude}</TableCell>
                 </TableRow>
                 <TableRow className={classes.row}>
-                <TableCell>Velocidad</TableCell>
+                <TableCell>{t('positionSpeed')}</TableCell>
                 <TableCell>{positionState && (positionState.speed * speedConverter(server.attributes?.speedUnit)).toFixed(0)} {server && `${server.attributes?.speedUnit}`}</TableCell>
                 </TableRow>
                 <TableRow className={classes.row}>
-                <TableCell>Curso</TableCell>
+                <TableCell>{t('positionCourse')}</TableCell>
                 <TableCell>{getCourse(positionState && positionState.course)}</TableCell>
                 </TableRow>
                 <TableRow className={classes.row}>
-                <TableCell>Dirección</TableCell>
+                <TableCell>{t('positionAddress')}</TableCell>
                 <TableCell style={{color: 'blue', textDecoration: 'underline'}}
                 disabled={addressFound} onClick={() => getAddress(positionState && positionState.latitude, positionState.longitude)}>
                 {`${addressFound === "" ? `${t("sharedShowAddress")}` : `${addressFound}`}`}
                 </TableCell>
                 </TableRow>
                 <TableRow className={classes.row}>
-                <TableCell>Distancia</TableCell>
+                <TableCell>{t('sharedDistance')}</TableCell>
                 <TableCell>{positionState && (positionState.attributes?.distance /1000).toFixed(2)} {server && `${server.attributes?.distanceUnit}`}</TableCell>
                 </TableRow>
                 <TableRow className={classes.row}>
-                <TableCell>Distancia Total</TableCell>
+                <TableCell>{t('deviceTotalDistance')}</TableCell>
                 <TableCell>
                     {(Math.round(positionState && positionState.attributes?.totalDistance) / 1000).toFixed(2)} {server && `${server.attributes?.distanceUnit}`}</TableCell>
                 </TableRow>
                 <TableRow className={classes.row}>
-                <TableCell>Encendido</TableCell>
+                <TableCell>{t('positionIgnition')}</TableCell>
                 <TableCell>{t(`${Boolean(positionState && positionState.attributes?.ignition)}`)}</TableCell>
                 </TableRow>
                 <TableRow className={classes.row}>
-                <TableCell>Horas</TableCell>
+                <TableCell>{t('positionHours')}</TableCell>
                 <TableCell>{positionState && getHoursMinutes(positionState.attributes?.hours)}</TableCell>
                 </TableRow>
                 <TableRow className={classes.row}>
-                <TableCell>Movimiento</TableCell>
+                <TableCell>{t('positionMotion')}</TableCell>
                 <TableCell>{t(`${Boolean(positionState && positionState.attributes?.motion)}`)}</TableCell>
                 </TableRow>
                 <TableRow className={classes.row}>
-                <TableCell>Protocolo</TableCell>
+                <TableCell>{t('positionProtocol')}</TableCell>
                 <TableCell>{`${positionState && positionState.protocol}`}</TableCell>
                 </TableRow>
               </TableBody>

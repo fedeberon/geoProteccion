@@ -393,7 +393,7 @@ const UsersPage = () => {
                     <LightTooltip title={`${t(`sharedGeofences`)}`}>
                         <ListItem disabled={!userSelected} onClick={() => handleOpenFullDialog(variable.geocerca)} button key={"geofences"}>
                           <ListItemIcon>
-                            <i style={{paddingLeft: "5%", fontSize: "20px"}} className="fas fa-street-view" />
+                            <i style={{paddingBottom: "5%", paddingLeft: "5%", fontSize: "20px"}} className="fas fa-street-view" />
                           </ListItemIcon>
                           {window.innerWidth > 960 &&
                           <ListItemText primary={`${t(`sharedGeofences`)}`} />}
@@ -402,7 +402,7 @@ const UsersPage = () => {
                       <LightTooltip title={`${t(`deviceTitle`)}`}>
                         <ListItem disabled={!userSelected} onClick={() => handleOpenFullDialog(variable.device)} button key={"devices"}>
                           <ListItemIcon>
-                            <i style={{paddingLeft: "5%", fontSize: "20px"}} className="fas fa-car" />
+                            <i style={{paddingBottom: "5%", paddingLeft: "5%", fontSize: "20px"}} className="fas fa-car" />
                           </ListItemIcon>
                           {window.innerWidth > 960 &&
                           <ListItemText primary={`${t(`deviceTitle`)}`} />}
@@ -411,7 +411,7 @@ const UsersPage = () => {
                       <LightTooltip title={`${t(`settingsGroups`)}`}>
                         <ListItem disabled={!userSelected} onClick={() => handleOpenFullDialog(variable.group)} button key={"geofences"}>
                           <ListItemIcon>
-                            <i style={{paddingLeft: "5%", fontSize: "20px"}} className="fas fa-object-group"></i>
+                            <i style={{paddingBottom: "5%", paddingLeft: "5%", fontSize: "20px"}} className="fas fa-object-group"></i>
                           </ListItemIcon>
                           {window.innerWidth > 960 &&
                           <ListItemText primary={`${t(`settingsGroups`)}`} />}
@@ -421,7 +421,7 @@ const UsersPage = () => {
                         <ListItem disabled={!userSelected || userIdSelected.userLimit === 0}  
                             onClick={() => handleOpenFullDialog(variable.user)}  button key={"users"}>
                           <ListItemIcon>
-                          <i style={{paddingLeft: "5%", fontSize: "20px"}} className="fas fa-users"></i>
+                          <i style={{paddingBottom: "5%", paddingLeft: "5%", fontSize: "20px"}} className="fas fa-users"></i>
                           </ListItemIcon>
                           {window.innerWidth > 960 &&
                           <ListItemText primary={`${t(`settingsUsers`)}`} />}
@@ -430,7 +430,7 @@ const UsersPage = () => {
                       <LightTooltip title={`${t(`sharedNotifications`)}`}>
                         <ListItem disabled={!userSelected} onClick={() => handleOpenFullDialog(variable.notification)} button key={"notifications"}>
                           <ListItemIcon>
-                            <i style={{paddingLeft: "5%", fontSize: "20px"}} className="far fa-comment-alt"></i>
+                            <i style={{paddingBottom: "5%", paddingLeft: "5%", fontSize: "20px"}} className="far fa-comment-alt"></i>
                           </ListItemIcon>
                           {window.innerWidth > 960 &&
                           <ListItemText primary={`${t(`sharedNotifications`)}`} />}
@@ -439,7 +439,7 @@ const UsersPage = () => {
                       <LightTooltip title={`${t(`sharedComputedAttributes`)}`}>
                         <ListItem disabled={!userSelected} onClick={() => handleOpenFullDialog(variable.atrCalculados)} button key={"comp-attributes"}>
                           <ListItemIcon>
-                          <i style={{paddingLeft: "5%", fontSize: "20px"}} className="fas fa-tasks"></i>
+                          <i style={{paddingBottom: "5%", paddingLeft: "5%", fontSize: "20px"}} className="fas fa-tasks"></i>
                           </ListItemIcon>
                           {window.innerWidth > 960 &&
                           <ListItemText primary={`${t(`sharedComputedAttributes`)}`} />}
@@ -448,7 +448,7 @@ const UsersPage = () => {
                       <LightTooltip title={`${t(`sharedSavedCommands`)}`}>
                         <ListItem disabled={!userSelected} onClick={() => handleOpenFullDialog(variable.comGuardados)} button key={"savedcommands"}>
                           <ListItemIcon>
-                          <i style={{paddingLeft: "5%", fontSize: "20px"}} className="fas fa-download"></i>
+                          <i style={{paddingBottom: "5%", paddingLeft: "5%", fontSize: "20px"}} className="fas fa-download"></i>
                           </ListItemIcon>
                           {window.innerWidth > 960 &&
                           <ListItemText primary={`${t(`sharedSavedCommands`)}`} />}
@@ -457,7 +457,7 @@ const UsersPage = () => {
                       <LightTooltip title={`${t(`sharedCalendars`)}`}>
                         <ListItem disabled={true} /*!userSelected*/  button key={"calendars"}>
                           <ListItemIcon>
-                            <i style={{paddingLeft: "5%", fontSize: "20px"}} className="far fa-calendar-alt"></i>
+                            <i style={{paddingBottom: "5%", paddingLeft: "5%", fontSize: "20px"}} className="far fa-calendar-alt"></i>
                           </ListItemIcon>
                           {window.innerWidth > 960 &&
                           <ListItemText primary={`${t(`sharedCalendars`)}`} />}
@@ -466,7 +466,7 @@ const UsersPage = () => {
                       <LightTooltip title={`${t(`sharedDrivers`)}`}>
                         <ListItem disabled={true} /*!userSelected*/  button key={"drivers"}>
                           <ListItemIcon>
-                          <i style={{paddingLeft: "5%", fontSize: "20px"}} className="fas fa-key"></i>
+                          <i style={{paddingBottom: "10%", paddingLeft: "5%", fontSize: "20px"}} className="fas fa-key"></i>
                           </ListItemIcon>
                           {window.innerWidth > 960 &&
                           <ListItemText primary={`${t(`sharedDrivers`)}`} />}

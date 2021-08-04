@@ -15,6 +15,7 @@ import FormHelperText from "@material-ui/core/FormHelperText";
 import Radio from "@material-ui/core/Radio";
 import Chip from '@material-ui/core/Chip';
 import reportsConfigStyles from "./styles/ReportsConfigStyles";
+import Autocomplete from '@material-ui/lab/Autocomplete';
 
 const useStyles = reportsConfigStyles;
 
@@ -35,8 +36,6 @@ export default function ReportsConfig({ handleReportsConfig, reportType }) {
   const classes = useStyles();
   let dateNow = new Date();
   let week = new Date();
-  const [deviceSelected, setDeviceSelected] = useState([]);
-  const [listDeviceSelected, setListDeviceSelected] = useState([]);
   const [typeEventSelected, setTypeEventSelected] = useState(['allEvents']);
   const [fromDateTime, setFromDateTime] = useState("");
   const [toDateTime, setToDateTime] = useState("");
@@ -47,6 +46,7 @@ export default function ReportsConfig({ handleReportsConfig, reportType }) {
   const [graphicType, setGraphicType] = useState("speed");
   const [showMarkers, setShowMarkers] = useState(false);
   const [period, setPeriod] = useState('');
+  const [deviceSelected, setDeviceSelected] = useState([]);
 
   useEffect(() => {
     handleShowReport();
@@ -65,19 +65,6 @@ export default function ReportsConfig({ handleReportsConfig, reportType }) {
 
   const onChangeToDateTime = (event) => {
     setToDateTime(event.target.value);
-  };
-
-  const handleChangeDevices = (event) => {
-    let ids = [];
-    event.target.value.map(object => {
-      devices.map(dev => {        
-        if(dev.name === object){
-          ids.push(dev.id);          
-        }        
-      })      
-    })    
-    setDeviceSelected(ids);
-    setListDeviceSelected(event.target.value);
   };
 
   const handleChangeGroup = (event) => {
@@ -187,6 +174,14 @@ export default function ReportsConfig({ handleReportsConfig, reportType }) {
     setGroups(response);
   }
 
+  const handleChangeDevices = (e, value) => {
+    let ids = [];
+    value.map(el => {
+      ids.push(el.id);
+    });
+    setDeviceSelected(ids);
+  }; 
+
   return (
     <div>
       <Table>
@@ -194,27 +189,22 @@ export default function ReportsConfig({ handleReportsConfig, reportType }) {
         <TableRow>
           <TableCell>{t("sharedSelectDevice")}:</TableCell>
           <TableCell>
-            <FormControl className={classes.formControlDevices}>              
-              <Select
+            <FormControl className={classes.formControlDevices}>   
+              <Autocomplete
                 multiple
-                id="select-multiple-chip"
-                value={listDeviceSelected}
-                onChange={handleChangeDevices}
-                input={<Input id="select-multiple-chip" />}
-                renderValue={(selected) => (
-                  <div className={classes.chips}>
-                    {selected.map((value) => (
-                      <Chip key={value} label={value} className={classes.chip} />
-                    ))}
-                  </div>
+                id="tags-standard"
+                filterSelectedOptions={true}
+                onChange={(e, value) => {handleChangeDevices(e, value)}}
+                options={devices}
+                getOptionLabel={(option) => option.name}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    variant="standard"
+                    placeholder={t('sharedSearch')}
+                  />
                 )}
-              >
-                {devices.map((device) => (
-                  <MenuItem key={device.id} value={device.name} className={classes.itemsReportsMenu}>
-                    {device.name}
-                  </MenuItem>
-                ))}
-              </Select>
+              />
             </FormControl>
             <br />
           </TableCell>

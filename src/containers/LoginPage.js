@@ -30,7 +30,7 @@ function Copyright() {
   return (
     <Typography variant="body2" style={{color: "white"}} align="center">
       {"Copyright © "}
-      <Link color="inherit" href="https://www.geoproteccion.com/">
+      <Link color="inherit" href="https://www.geos.cl/">
         Geos
       </Link>{" "}
       {new Date().getFullYear()}

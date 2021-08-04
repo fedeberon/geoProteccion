@@ -24,6 +24,12 @@ const reportsConfigStyles = makeStyles((theme) => ({
   chip: {
     margin: 2,
   },
+  inputSearch: {
+    '& > *': {
+      margin: theme.spacing(1),
+      width: '25ch',
+    },
+  },
   textFieldDateTime: {
     marginLeft: theme.spacing(1),
     marginRight: theme.spacing(1),
